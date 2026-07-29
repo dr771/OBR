@@ -1,0 +1,8 @@
+# local AI-tool / editor config -- not part of the site
+.agents/
+.claude/
+.vscode/
+skills-lock.json
+
+# internal planning notes, not for the public repo
+MIXED-SHOPS-PLAYBOOK.md

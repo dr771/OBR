@@ -1,0 +1,939 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Original Brands — Sterke specialisten voor elk moment van je dag</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* ---- brand color tokens: change these two and the whole site follows ---- */
+    --color-primary:#8fabb3;      /* brand blue */
+    --color-primary-deep:#6b8890; /* hover/active state of primary */
+    --color-secondary:#f7391e;    /* brand red/ember */
+    --color-secondary-deep:#d92c15;
+    --on-primary:#ffffff;
+    --on-secondary:#ffffff;
+
+    /* semantic roles -- point these at primary or secondary to re-balance the palette */
+    --color-cta-bg:var(--color-secondary);
+    --color-cta-bg-hover:var(--color-secondary-deep);
+    --color-cta-text:var(--on-secondary);
+    --color-accent:var(--color-primary);       /* icons, tags, active nav underline */
+    --color-accent-deep:var(--color-primary-deep);
+    --color-utility-bg:var(--color-primary);   /* top bar */
+    --color-utility-text:#ffffff;
+    --color-badge-bg:var(--color-secondary);   /* sale ribbons */
+    --color-badge-text:#ffffff;
+
+    --ink:#111719;
+    --muted:#4d595a;
+    --line:#e7e7e2;
+    --paper:#ffffff;
+    --offwhite:#f6f6f3;
+    --icon-ink:#587f84;        /* trust-bar icons, sampled from Home-v2.png */
+    --icon-theme:#588590;      /* occasion-card icons, sampled from Home-v2.png */
+    --muted-strong:#363e40;    /* card body copy -- darker than --muted, per draft */
+
+    --font-display:"DM Serif Display", Georgia, serif;
+    --font-body:"Inter", -apple-system, "Segoe UI", Arial, sans-serif;
+    --font-soft:"Manrope", "Inter", sans-serif;
+
+    --arrow-glyph:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'><path d='M3 12h17M13 5l7 7-7 7'/></svg>");
+
+    --radius-s:8px;
+    --radius-m:14px;
+    --radius-l:22px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; overflow-x:clip;}
+  svg{stroke-linecap:round; stroke-linejoin:round;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--font-body); line-height:1.5; -webkit-font-smoothing:antialiased;
+    overflow-x:clip;
+  }
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms !important; animation-iteration-count:1 !important;} }
+  img{max-width:100%; display:block;}
+  a{color:inherit; text-decoration:none;}
+  h1,h2,h3{font-family:var(--font-display); font-weight:400; letter-spacing:-0.01em; margin:0; text-wrap:balance;}
+  button{font-family:inherit;}
+  a:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--color-accent-deep); outline-offset:2px;}
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:.65rem; cursor:pointer;
+    min-block-size:2.75rem; border:1px solid var(--color-cta-bg);
+    padding:.72rem 1.3rem; border-radius:4px; font-weight:700; font-size:.875rem; line-height:1.1; letter-spacing:.005em;
+    background:var(--color-cta-bg); color:var(--color-cta-text);
+    transition:background-color .16s ease, border-color .16s ease, color .16s ease;
+  }
+  .btn:hover:not(:disabled){background:var(--color-cta-bg-hover); border-color:var(--color-cta-bg-hover);}
+  .btn:active:not(:disabled){background:var(--color-secondary-deep); border-color:var(--color-secondary-deep);}
+  .btn.outline{
+    background:var(--paper); color:var(--color-secondary);
+    border-color:var(--color-secondary);
+  }
+  .btn.outline:hover{
+    background:color-mix(in oklab, var(--color-secondary) 7%, var(--paper));
+    color:var(--color-secondary-deep); border-color:var(--color-secondary-deep);
+  }
+  .btn.on-primary{background:var(--paper); color:var(--ink); border-color:var(--paper);}
+  .btn.on-primary:hover:not(:disabled){background:var(--offwhite); border-color:var(--offwhite);}
+
+  .tag{
+    display:inline-flex; align-items:center; font-family:var(--font-soft); font-weight:700;
+    font-size:.7rem; text-transform:uppercase; letter-spacing:.05em; color:#fff;
+    background:var(--color-accent); padding:.32rem .65rem; border-radius:99px;
+  }
+  .link{font-size:.88rem; font-weight:700; transition:color .15s ease;}
+  .link:hover{color:var(--color-secondary);}
+
+  .wrap{max-width:1300px; margin:0 auto; padding:0 1.75rem;}
+
+  /* ---------------- utility bar ---------------- */
+  .utility-bar{background:#eef2f4; color:var(--ink); border:0;}
+  .utility-bar .wrap{
+    display:flex; justify-content:center; gap:2.5rem; padding:.55rem 1.75rem;
+    font-family:var(--font-soft); font-size:.78rem; font-weight:600; flex-wrap:wrap;
+  }
+  .utility-bar .item{display:flex; align-items:center; gap:.45rem;}
+  .utility-bar svg{width:15px; height:15px; stroke:var(--color-accent-deep); fill:none; stroke-width:1.8;}
+
+  /* ---------------- header ---------------- */
+  header.site{border-bottom:1px solid var(--line); background:var(--paper);}
+  .header-top{display:flex; align-items:center; gap:2.25rem; padding:1rem 1.75rem;}
+  .logo{display:flex; align-items:center; gap:.6rem; flex:none;}
+  /* viewBox is cropped to the artwork's real ink box (5,0 1387x204); the authored
+     362-unit height was 44% empty, which rendered the mark small AND top-heavy */
+  .logo svg{height:34px; width:auto; display:block;}
+  .logo svg .a{fill:var(--color-secondary);}
+  .logo svg .b{fill:var(--ink);}
+  .search{
+    flex:1; display:flex; align-items:center; max-width:500px; margin:0 auto;
+    border:1px solid var(--line); border-radius:5px; padding:.45rem .5rem .45rem .9rem; background:var(--paper);
+  }
+  .search input{flex:1; border:none; background:none; font-size:.9rem; font-family:var(--font-body); outline:none; color:var(--ink);}
+  .search button{border:none; background:none; color:var(--ink); width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background .15s ease;}
+  .search button:hover{background:var(--line);}
+  .search svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2;}
+  .header-actions{display:flex; align-items:center; gap:1.35rem; flex:none;}
+  .header-actions .item{display:flex; align-items:center; gap:.45rem; font-size:.78rem; font-weight:700; cursor:pointer; position:relative; color:var(--ink);}
+  .header-actions svg{width:20px; height:20px; stroke:var(--ink); fill:none; stroke-width:1.6;}
+  .header-actions .count{
+    position:absolute; top:-6px; left:12px; background:var(--color-secondary); color:#fff; font-size:.62rem; font-weight:700;
+    width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  }
+
+  nav.primary{border-top:0;}   /* proto has no separator above the nav row */
+  nav.primary .wrap{display:flex; justify-content:center; gap:clamp(1.25rem,2.4vw,2rem); padding:.7rem 1.75rem; flex-wrap:wrap;}
+  nav.primary a{font-size:.85rem; font-weight:700; padding-bottom:0; border-bottom:0; transition:color .15s ease;}
+  /* the underline is gone, so hover needs to read as a colour change instead */
+  nav.primary a:hover{color:var(--color-secondary);}
+  nav.primary a.sale{color:var(--color-secondary);}
+
+  /* ---------------- hero ---------------- */
+  .hero{padding:3.4rem 0 3.8rem;}
+  .hero .wrap{display:grid; grid-template-columns:1.2fr 1.8fr; gap:3rem; align-items:center;}
+  .hero-copy h1{font-size:clamp(2.1rem,3.6vw,3.1rem); line-height:1.1; margin:0 0 1.2rem;}
+  .hero-copy p{font-family:var(--font-soft); color:var(--muted); font-size:1rem; line-height:1.6; max-width:35ch; margin:0 0 2.2rem;}
+  .hero-ctas{display:flex; flex-direction:column; align-items:flex-start; gap:.85rem;}
+  .hero-ctas .btn{min-width:250px;}
+
+  /* carousel column bleeds to the right viewport edge, like the draft */
+  .hero-visual{
+    position:relative; min-width:0;
+    margin-left:-105px; /* tuck the diagonal edge in next to the text, like the draft */
+    margin-right:calc(-1.75rem - max((100vw - 1300px) / 2, 0px));
+    --h1:305px; --w1:380px; --h2:140px; --w2:225px; --gap:6px;
+  }
+  .hero-ribbon{
+    position:absolute; top:2px; left:26px; z-index:4; transform:rotate(-6deg);
+    background:var(--color-badge-bg); color:var(--color-badge-text);
+    font-family:var(--font-soft); font-weight:700; font-size:.95rem;
+    padding:.55rem 1.15rem; border-radius:var(--radius-s);
+    box-shadow:0 6px 18px rgba(0,0,0,.18);
+  }
+
+  /* the whole gallery is clipped along one continuous 12deg diagonal on the
+     left, so slides scroll in/out through a diagonal edge like the draft */
+  .marquee-stack{clip-path:polygon(calc(tan(12deg) * (var(--h1) + var(--h2) + var(--gap))) 0, 100% 0, 100% 100%, 0 100%);}
+
+  /* slides are skewed parallelograms; the inner img counter-skews so the
+     photo stays upright while the wrapper clips it diagonally with radius */
+  .marquee-row{overflow:hidden; margin-bottom:var(--gap); --h:var(--h1); --w:var(--w1);}
+  .marquee-row:last-child{margin-bottom:0;}
+  .marquee-row.row-small{--h:var(--h2); --w:var(--w2);}
+  .marquee-track{display:flex; width:max-content; animation:scroll-left 75s linear infinite; cursor:grab;}
+  .marquee-row.row-small .marquee-track{animation:scroll-right 60s linear infinite;}
+  .slide{
+    flex:none; width:var(--w); height:var(--h); margin-right:var(--gap);
+    transform:skewX(-12deg); border-radius:5px; overflow:hidden;
+  }
+  .slide img{
+    --ext:calc(tan(12deg) * var(--h) / 2 + 2px);
+    width:calc(100% + 2 * var(--ext)); max-width:none; height:100%;
+    object-fit:cover; margin-left:calc(-1 * var(--ext)); transform:skewX(12deg);
+  }
+  @keyframes scroll-left{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  @keyframes scroll-right{ from{transform:translateX(-50%);} to{transform:translateX(0);} }
+
+  @media (max-width:900px){
+    .hero .wrap{grid-template-columns:1fr;}
+    .hero-visual{margin-left:0; --h1:200px; --w1:250px; --h2:110px; --w2:170px;}
+  }
+
+  /* ---------------- occasion cards ---------------- */
+  .occasions{padding:1rem 0 2.4rem;}
+  .occasions .wrap{display:grid; grid-template-columns:repeat(3,1fr); gap:1.6rem;}
+  .occasion-card{
+    display:flex; flex-direction:column;
+    border:1px solid var(--line); border-radius:var(--radius-l); overflow:hidden; background:var(--paper);
+    /* resting shadow measured off Home-v2.png: ~7px soft halo, peak darkening ~5% */
+    box-shadow:0 1px 2px rgba(32,48,47,.04), 0 6px 16px -6px rgba(32,48,47,.10);
+    transition:box-shadow .22s ease, transform .22s ease, border-color .22s ease;
+  }
+  .occasion-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 4px 8px rgba(32,48,47,.05), 0 18px 34px -14px rgba(32,48,47,.18);
+    border-color:#dcdcd5;
+  }
+
+  /* media collage: straight outer edges, diagonal 6px divisions inside,
+     same 12deg language as the hero (skewed wrapper + counter-skewed img) */
+  .occasion-media{display:flex; gap:6px; height:230px; overflow:hidden;}
+  .om{flex:1; transform:skewX(-12deg); border-radius:5px; overflow:hidden; --ph:230px;}
+  .occasion-media .om:first-child{margin-left:-28px;}
+  .occasion-media .om:last-child{margin-right:-28px;}
+  .om img{
+    --ext:calc(tan(12deg) * var(--ph) / 2 + 2px);
+    width:calc(100% + 2 * var(--ext)); max-width:none; height:100%;
+    object-fit:cover; margin-left:calc(-1 * var(--ext)); transform:skewX(12deg);
+  }
+
+  .occasion-body{padding:1.4rem 1.5rem 1.4rem; display:flex; flex-direction:column; gap:.85rem; flex:1;}
+  /* proto layout: one row -- icon left, h3 + copy stacked right -- lifted so the
+     icon bubble sits over the bottom of the image collage */
+  .occasion-head{
+    display:flex; align-items:flex-start; gap:.95rem;
+    margin-top:-40px; position:relative; z-index:1;
+  }
+  .occasion-copy{min-width:0; display:flex; flex-direction:column; gap:.4rem; padding-top:.7rem; padding-bottom:.7rem;}
+  .occasion-icon{
+    width:78px; height:78px; flex:none; border-radius:50%;
+    background:color-mix(in srgb, var(--color-secondary) 4%, #fff);
+    border:1px solid color-mix(in srgb, var(--color-secondary) 36%, transparent);
+    color:var(--color-secondary);
+    display:flex; align-items:center; justify-content:center;
+  }
+  /* 45px box lands the artwork's ink at ~33x38 css, matching the draft; stroke-width
+     is dialled back so the heavier box doesn't thicken the line past the draft's ~2.8px */
+  .occasion-icon svg{width:45px; height:45px; stroke:currentColor; fill:none; stroke-width:1.5;}
+  /* icons whose artwork is an outline drawn as a filled path (healthicons, phosphor) */
+  .occasion-icon svg.ico-solid,
+  .trust-item .ic svg.ico-solid{fill:currentColor; stroke:none;}
+  .occasion-body h3{font-size:1.5rem; padding-top:1.4rem;}
+  .occasion-body p{font-family:var(--font-soft); color:var(--muted-strong); font-size:.9rem; line-height:1.55; margin:0;}
+  /* one row that never wraps -- when the wordmarks overflow they scroll endlessly.
+     JS duplicates the track, so translateX(-50%) loops seamlessly. The per-pill
+     margin (not `gap`) is what makes each copy self-contained and the loop exact. */
+  .occasion-brands{display:flex; overflow:hidden; padding:.2rem 0;}
+  .brand-track{display:flex; flex-wrap:nowrap; align-items:center; width:max-content;}
+  .occasion-brands .pill{display:inline-flex; align-items:center; flex:none; margin-inline-end:1.25rem;}
+  .occasion-brands.is-scrolling .brand-track{animation:brand-marquee var(--marquee-dur,20s) linear infinite;}
+  .occasion-brands.is-scrolling:hover .brand-track{animation-play-state:paused;}
+  .occasion-brands.is-scrolling{
+    -webkit-mask:linear-gradient(90deg,transparent,#000 20px,#000 calc(100% - 20px),transparent);
+            mask:linear-gradient(90deg,transparent,#000 20px,#000 calc(100% - 20px),transparent);
+  }
+  @keyframes brand-marquee{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+  /* no animation available -- let the row be swiped instead of clipping brands */
+  @media (prefers-reduced-motion: reduce){
+    .occasion-brands{overflow-x:auto; scrollbar-width:none;}
+    .occasion-brands::-webkit-scrollbar{display:none;}
+  }
+  .occasion-body .btn{width:100%;}
+  /* slack collects ABOVE the logo row, so logos->button stays identical on every
+     card while description->logos is free to vary with the copy length */
+  .occasion-body .occasion-brands{margin-top:auto;}
+  /* draft: 41px tall, divider at ~82% of the width, label optically centred in the
+     space LEFT of the divider (not in the whole button), arrow centred in its cell */
+  .occasion-body .btn,
+  .product-card .btn{
+    position:relative; justify-content:center; min-block-size:2.55rem;
+    padding-inline:.9rem calc(.9rem + 2.7rem);
+  }
+  .occasion-body .btn span,
+  .product-card .btn span{
+    position:absolute; inset-block:0; inset-inline-end:0; inline-size:2.7rem;
+    display:flex; align-items:center; justify-content:center;
+    border-inline-start:1px solid color-mix(in oklab, #fff 48%, transparent);
+    font-size:0;   /* hides the &rarr; text node -- the mask below draws the arrow. flex
+                      (not grid) so the zero-size text node can't form its own row and
+                      push the icon off-centre */
+  }
+  /* draft's arrow is a thin hairline stroke (like &rarr;), not a solid glyph -- but
+     the &rarr; character renders inconsistently across fonts/OSes, so paint the same
+     thin shape as a masked stroke instead, for a crisp, font-independent result */
+  .occasion-body .btn span::before,
+  .product-card .btn span::before{
+    content:""; inline-size:14px; block-size:14px; background:currentColor;
+    -webkit-mask:var(--arrow-glyph) center/contain no-repeat;
+            mask:var(--arrow-glyph) center/contain no-repeat;
+  }
+
+  /* ---------------- trust boxes ---------------- */
+  .trust-bar .wrap{display:grid; grid-template-columns:repeat(4,1fr); gap:1.1rem;}
+  .trust-item{
+    display:flex; gap:.85rem; align-items:flex-start;
+    border:1px solid var(--line); border-radius:12px; background:var(--paper); padding:1.05rem 1.15rem;
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .trust-item:hover{border-color:#d8d8d0; box-shadow:0 12px 24px -18px rgba(32,48,47,.35);}
+  .trust-item .ic{
+    width:52px; height:52px; flex:none;
+    background:transparent; color:var(--icon-ink);
+    box-shadow:none;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .trust-item .ic svg{width:40px; height:40px; stroke:currentColor; fill:none; stroke-width:1.2;}
+  .trust-item strong{display:block; font-size:.86rem; margin-bottom:.15rem;}
+  .trust-item span{font-family:var(--font-soft); font-size:.78rem; color:var(--muted); line-height:1.4;}
+  @media (max-width:900px){.trust-bar .wrap{grid-template-columns:1fr 1fr;}}
+
+  /* ---------------- product sections ---------------- */
+  .section{padding:4rem 0;}
+  .section-head{display:flex; justify-content:space-between; align-items:flex-end; gap:1.5rem; margin-bottom:1.8rem; flex-wrap:wrap;}
+  .section-head h2{font-size:1.7rem;}
+  .row-controls{display:flex; gap:1.5rem; align-items:center;}
+  .scroller-wrap{position:relative;}
+  .scroll-edge{
+    position:absolute; top:40%; transform:translateY(-50%); z-index:3;
+    width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:var(--paper);
+    cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:var(--ink);
+    box-shadow:0 6px 16px rgba(0,0,0,.08);
+  }
+  .scroll-edge:hover{border-color:var(--color-accent-deep); color:var(--color-accent-deep);}
+  .scroll-edge.prev{left:-20px;}
+  .scroll-edge.next{right:-20px;}
+
+  .product-scroller{display:flex; gap:1.1rem; overflow-x:auto; scroll-snap-type:x mandatory; padding:4px; scrollbar-width:none; -ms-overflow-style:none;}
+  .product-scroller::-webkit-scrollbar{display:none;}
+  .product-card{
+    flex:0 0 256px; scroll-snap-align:start; display:flex; flex-direction:column;
+    border:1px solid var(--line); border-radius:var(--radius-m); background:var(--paper); overflow:hidden;
+    transition:box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+  }
+  .product-card:hover{transform:translateY(-3px); box-shadow:0 16px 30px -18px rgba(32,48,47,.35); border-color:#dcdcd5;}
+  .product-card figure{margin:0; aspect-ratio:1/1; background:#fff; overflow:hidden; border-bottom:1px solid var(--offwhite);}
+  .product-card img{width:100%; height:100%; object-fit:contain; padding:.75rem; transition:transform .35s ease;}
+  .product-card:hover img{transform:scale(1.05);}
+  .product-card .body{padding:.95rem 1.05rem 1.05rem; display:flex; flex-direction:column; flex:1;}
+  .product-card .brand{display:flex; margin:0 0 .3rem; color:var(--ink);}
+  .product-card .brand .logotype{zoom:.82;}
+  .product-card .title{font-size:.92rem; margin:0 0 .45rem; line-height:1.35; min-height:2.7em;}
+  .product-card .price{font-size:.95rem; font-weight:800; margin:0 0 .9rem;}
+  .product-card .price .was{color:var(--muted); text-decoration:line-through; font-weight:500; margin-right:.45rem; font-size:.85rem;}
+  .product-card .price .now{color:var(--ink);}
+  .product-card .price.sale .now{color:var(--color-secondary);}
+  .product-card .btn{width:100%; justify-content:space-between; margin-top:auto; padding:.7rem 1.1rem;}
+
+  /* ---------------- featured brands ---------------- */
+  .brands-section{padding:0 0 3.8rem;}
+  /* flex, not grid -- 11 brands don't divide evenly into fixed columns, and a grid's
+     last row would leave a dead gap. flex:1 lets every row's chips (however many fit)
+     stretch to fill the full width, so row count varies but there's never empty space. */
+  .brand-grid{display:flex; flex-wrap:wrap; gap:.9rem;}
+  .brand-grid .brand-chip{flex:1 1 160px;}
+  .brand-chip{
+    display:flex; align-items:center; justify-content:center; min-height:92px; padding:.9rem 1rem;
+    background:var(--paper); border:1px solid var(--line); border-radius:10px; color:var(--ink);
+    transition:border-color .18s ease, box-shadow .18s ease, color .18s ease;
+  }
+  /* Optical sizing. Every mark is scaled so sqrt(ink_w * ink_h) lands on the same
+     value (~58px) -- equalising area, not width, is what makes marks of very
+     different aspect ratio (IRASUTO 227x22 vs Pas de Monaco 77x38) read as the
+     same size. Values are derived from measured ink boxes, not guessed. */
+  /* nowrap keeps the measurement deterministic -- a mark that silently wraps to two
+     lines changes its own aspect ratio and breaks the optical match. Pas de Monaco
+     is a flex column, so it stays two lines regardless. */
+  .brand-chip .logotype{zoom:2.25; white-space:nowrap;}
+  .brand-chip .lt-hitec{zoom:2.05;}
+  .brand-chip .lt-rhplus{zoom:2.35;}
+  .brand-chip .lt-fitflop{zoom:2.15;}
+  .brand-chip .lt-sneakerlab{zoom:1.75;}
+  .brand-chip .lt-pasdemonaco{zoom:1.65;}
+  .brand-chip .lt-lowenweiss{zoom:1.55;}
+  .brand-chip .lt-holster{zoom:1.45;}
+  .brand-chip .lt-irasuto{zoom:1.40;}
+  .brand-chip .lt-magnum{zoom:1.35;}
+  .brand-chip .lt-juicy{zoom:1.35;}
+  .brand-chip:hover{border-color:var(--color-accent-deep); color:var(--color-accent-deep); box-shadow:0 8px 18px -15px rgba(32,48,47,.4);}
+
+  /* ---------------- brand logotypes (styled wordmarks, no external logo files) ---------------- */
+  .logotype{display:inline-flex; align-items:center; gap:.4rem; color:currentColor; line-height:1;}
+  .lt-odlo{font-family:var(--font-body); font-weight:800; font-size:.95rem; letter-spacing:.01em;}
+  .lt-hitec{font-family:var(--font-body); font-weight:800; font-style:italic; font-size:.95rem; letter-spacing:-0.01em;}
+  .lt-magnum{font-family:var(--font-body); font-weight:800; font-size:.82rem; letter-spacing:.04em; background:var(--ink); color:#fff; padding:.28rem .55rem; border-radius:3px;}
+  .lt-fitflop{font-family:var(--font-body); font-weight:800; font-size:1rem; text-transform:lowercase; letter-spacing:-0.02em;}
+  .lt-holster{font-family:var(--font-body); font-weight:700; font-size:.9rem; text-transform:lowercase;}
+  .lt-holster small{display:block; font-size:.58em; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:1px;}
+  .lt-juicy{font-family:var(--font-display); font-style:italic; font-size:1.1rem;}
+  .lt-lowenweiss{font-family:var(--font-display); font-size:1rem;}
+  .lt-rhplus{font-family:var(--font-body); font-weight:800; font-size:.88rem;}
+  .lt-rhplus .bars{display:flex; gap:2px;}
+  .lt-rhplus .bars span{width:3px; height:13px; background:var(--color-secondary);}
+  .lt-mechanix{font-family:var(--font-body); font-weight:800; font-size:.8rem; letter-spacing:.04em;}
+  /* .logotype is a flex row, so a two-line mark needs an explicit column + gap:0 --
+     `display:block` on the <small> alone does nothing to a flex item */
+  .lt-pasdemonaco{font-family:var(--font-display); font-size:.95rem; letter-spacing:.02em; line-height:1.05;
+                  flex-direction:column; align-items:center; gap:0;}
+  .lt-pasdemonaco small{display:block; font-family:var(--font-body); font-size:.55em; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--muted);}
+  .lt-sneakerlab{font-family:var(--font-body); font-weight:800; font-size:.9rem; letter-spacing:-.01em; text-transform:lowercase; gap:0;}
+  .lt-sneakerlab b{font-weight:400;}
+  .lt-irasuto{font-family:var(--font-body); font-weight:600; font-size:.82rem; letter-spacing:.16em; text-transform:uppercase;}
+  .lt-irasuto small{font-size:.8em; letter-spacing:.1em; color:var(--muted);}
+
+  .occasion-brands .pill{zoom:1.2;}
+  /* the old #comfort zoom:.75 shrank 4 wordmarks to force them onto one row --
+     the marquee handles overflow now, so every card keeps the same scale */
+
+  /* ---------------- promo banner ---------------- */
+  .promo{background:var(--color-secondary); color:#fff; border-radius:var(--radius-l); position:relative; overflow:hidden;}
+  .promo-inner{
+    display:flex; align-items:center; justify-content:space-between; gap:2.5rem;
+    padding:2.4rem 3rem 2.4rem 2.6rem; flex-wrap:wrap; position:relative;
+  }
+  .promo h3{font-size:1.8rem; line-height:1.15; color:#fff;}
+  .promo p{font-family:var(--font-soft); margin:0; opacity:.94; font-size:.95rem; line-height:1.55;}
+  .promo .btn{position:relative; z-index:1;}
+  .promo-pct{
+    position:absolute; right:.9rem; top:50%; transform:translateY(-52%) rotate(8deg);
+    font-family:var(--font-display); font-size:11rem; line-height:1; color:rgba(255,255,255,.14);
+    pointer-events:none; user-select:none;
+  }
+
+  /* ---------------- newsletter ---------------- */
+  .newsletter{padding:0 0 3.4rem;}
+  .newsletter-box{
+    background:color-mix(in srgb, var(--color-secondary) 6%, #fff); border-radius:var(--radius-m);
+    border:1px solid color-mix(in srgb, var(--color-secondary) 36%, transparent);
+    display:flex; align-items:center; justify-content:space-between; gap:2.5rem; flex-wrap:wrap;
+    padding:1.9rem 2.2rem;
+  }
+  .newsletter-intro{display:flex; align-items:center; gap:1.1rem;}
+  .nl-icon{
+    width:48px; height:48px; flex:none; border-radius:50%;
+    background:#fff;
+    color:var(--color-secondary);
+    box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--color-secondary) 28%, #fff);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .nl-icon svg{width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.7;}
+  .newsletter h3{font-family:var(--font-soft); font-weight:800; font-size:1.15rem; margin:0 0 .25rem; letter-spacing:-.01em;}
+  .newsletter p{font-family:var(--font-soft); color:var(--muted); font-size:.9rem; margin:0;}
+  .newsletter-form{display:flex; flex-direction:column; gap:.6rem; min-width:380px;}
+  .newsletter-form .row{display:flex; gap:.6rem;}
+  .newsletter-form input[type="email"]{
+    flex:1; border:1px solid var(--line); border-radius:10px; background:var(--paper);
+    padding:.8rem 1.1rem; font-size:.9rem; font-family:var(--font-body); outline:none;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .newsletter-form input[type="email"]:focus{border-color:var(--color-secondary); box-shadow:0 0 0 3px color-mix(in srgb, var(--color-secondary) 20%, transparent);}
+  .consent{display:flex; align-items:flex-start; gap:.5rem; font-family:var(--font-soft); font-size:.78rem; color:var(--muted);}
+  .consent input{margin-top:3px; accent-color:var(--color-secondary);}
+  @media (max-width:900px){.newsletter-form{min-width:0; width:100%;}}
+
+  /* ---------------- footer ---------------- */
+  footer{border-top:1px solid var(--line); padding:3.2rem 0 1.6rem;}
+  .footer-grid{display:grid; grid-template-columns:1.35fr 1fr 1fr 1fr 1.25fr; gap:2.2rem; margin-bottom:2.6rem;}
+  .brand-lockup{display:flex; align-items:center; gap:.7rem;}
+  .lockup-mark{height:40px; width:auto; fill:var(--color-secondary);}
+  .lockup-text{font-weight:800; font-size:1.02rem; line-height:1.12; text-transform:uppercase; letter-spacing:.05em;}
+  .footer-tagline{font-family:var(--font-soft); color:var(--muted); font-size:.85rem; line-height:1.5; margin:1rem 0 0; max-width:24ch;}
+  .footer-grid h4{font-family:var(--font-soft); font-size:.74rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0 0 1rem; font-weight:700;}
+  .footer-grid ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.6rem;}
+  .footer-grid a{font-size:.9rem;}
+  .footer-grid a:hover{color:var(--color-accent-deep);}
+  .payment-icons{display:flex; flex-wrap:wrap; gap:.45rem;}
+  .pay{
+    display:inline-flex; align-items:center; gap:.35rem; border:1px solid var(--line); border-radius:7px;
+    padding:.42rem .6rem; font-size:.72rem; font-weight:800; color:var(--ink); background:var(--paper); line-height:1;
+  }
+  .pay-bancontact{color:#005498;}
+  .pay-ideal{color:#c06;}
+  .pay-klarna{background:#ffb3c7; border-color:#ffb3c7; color:#17120f;}
+  .pay-visa{color:#1a1f71; font-style:italic; letter-spacing:.03em;}
+  .mc-dots{
+    width:20px; height:12px; display:inline-block;
+    background:radial-gradient(circle at 34% 50%, #eb001b 0 46%, transparent 47%),
+               radial-gradient(circle at 66% 50%, #f79e1b 0 46%, transparent 47%);
+  }
+  .footer-base{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:1rem; padding-top:1.6rem; border-top:1px solid var(--line);}
+  .footer-base .brand{grid-row:1; grid-column:2; display:flex; align-items:center; gap:.6rem; font-size:.82rem; color:var(--muted);}
+  .footer-base .brand > svg{display:none;} /* lockup in the brand column replaces the mini logo */
+  /* proto: bare brand marks in the footer's first column, no ring */
+  .socials{display:flex; gap:.85rem; margin-top:1.35rem;}
+  .socials a{
+    display:flex; align-items:center; justify-content:center; color:var(--ink);
+    transition:color .15s ease, transform .15s ease;
+  }
+  .socials a:hover{color:var(--color-secondary); transform:translateY(-1px);}
+  .socials svg{width:22px; height:22px; fill:currentColor; stroke:none;}
+  @media (max-width:900px){
+    .footer-base{grid-template-columns:1fr; justify-items:center;}
+    .footer-base .brand{grid-column:1; grid-row:2;}
+  }
+
+  @media (max-width:900px){
+    .footer-grid{grid-template-columns:1fr 1fr;}
+    .occasions .wrap{grid-template-columns:1fr;}
+  }
+  @media (max-width:760px){
+    .wrap{padding-inline:1rem;}
+    .utility-bar .wrap{gap:.4rem 1rem; padding:.5rem 1rem; justify-content:flex-start; font-size:.7rem;}
+    .header-top{gap:.8rem; padding:.7rem 1rem; flex-wrap:wrap;}
+    .logo svg{height:35px;}
+    .search{order:3; flex-basis:100%; max-width:none;}
+    .header-actions{margin-left:auto; gap:.9rem;}
+    .header-actions .item{font-size:0; gap:0; min-inline-size:24px; min-block-size:24px; justify-content:center;}
+    .header-actions .item svg{width:21px; height:21px;}
+    .header-actions .count{font-size:.6rem;}
+    nav.primary .wrap{justify-content:flex-start; flex-wrap:nowrap; gap:1.35rem; overflow-x:auto; scrollbar-width:none; padding:.7rem 1rem;}
+    nav.primary .wrap::-webkit-scrollbar{display:none;}
+    nav.primary a{flex:none;}
+    .brand-scroller{padding-inline:.25rem;}
+    .brand-chip{padding-inline:.8rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="utility-bar">
+  <div class="wrap">
+    <span class="item"><svg viewBox="0 0 24 24"><path d="M3 5h2l2.2 11.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 8H6"/></svg>Gratis levering vanaf &euro;70 in BE &amp; NL</span>
+    <span class="item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Voor 17u besteld, volgende werkdag geleverd</span>
+    <span class="item"><svg viewBox="0 0 24 24"><path d="M3 10a9 9 0 1 1 2.6 6.3L3 19"/><path d="M3 10v6h6"/></svg>Eenvoudig retourneren binnen 30 dagen</span>
+  </div>
+</div>
+
+<header class="site">
+  <div class="header-top wrap" style="max-width:1300px;">
+    <a class="logo" href="#" aria-label="Original Brands">
+      <svg viewBox="5 0 1387 204"><path id="ob-flower" class="a" d="M687.165,106.667c-13.25,1.744-17.845,22.731-34.543,19.218-13.25-.567-20.732-10.472-21.312-24.476,0.58-12.236,8.062-22.141,21.312-23.314,16.7-2.907,21.293,18.08,34.543,19.238,5.754,0.587,13.232-1.158,16.119-5.825C707.313,83.935,699.253,71.7,691.2,71.7c-6.917-1.764-13.255,1.158-19.009-1.177-10.943-2.331-18.421-11.078-18.421-22.141,0-12.827,10.364-24.5,23.615-24.5A22.882,22.882,0,0,1,700.4,46.625q0,0.287,0,.575c0,2.922-2.288,33.223,21.312,26.812,9.22-2.316,9.784-11.649,9.784-17.474C729.186,44.3,714.231,43.124,711.924,27.4c-2.886-16.907,6.9-27.4,23.6-27.4,16.122,0,25.922,10.491,23.035,27.4-2.867,15.726-16.7,16.9-19,29.143,0,5.825,1.163,15.158,9.8,17.474,23.6,6.411,20.728-23.889,20.728-26.812,0.565-13.394,10.368-23.318,23.6-23.318,12.671,0,23.035,11.669,23.035,24.5a23.731,23.731,0,0,1-17.281,22.731c-6.338,1.745-12.671-1.177-19.569.587-8.057,0-16.118,12.236-12.088,19.809,2.868,4.667,10.364,6.412,15.539,5.825,13.811-1.158,17.841-22.145,35.123-19.809,13.25,1.745,20.728,11.649,20.728,23.885,0,14-7.478,23.909-20.728,25.067-17.282,2.922-21.312-18.065-35.123-19.809-5.175-.587-12.671,1.744-15.539,6.411-4.03,6.983,4.031,19.81,12.088,20.4,6.9,0.591,13.231-1.744,19.569,0a23.7,23.7,0,0,1,17.272,22.722c0,12.236-10.364,24.476-23.035,24.476a23.629,23.629,0,0,1-23.6-22.732c0-10.491.565-27.965-13.83-27.965-12.091,0-17.845,5.825-16.118,18.061s14.983,14.571,17.283,29.733C760.282,194.666,750.5,204,733.8,204s-24.758-9.334-21.872-26.221c2.307-15.162,17.262-17.493,19.569-29.733,0-6.412-.564-15.158-9.784-18.061-23.6-5.844-21.312,23.885-21.312,27.965a23.119,23.119,0,0,1-23.016,22.732c-13.251,0-23.615-12.24-23.615-24.476,0-11.082,7.478-19.825,18.421-22.732,5.754-1.744,12.092.591,19.009-.586,8.057,0,16.118-12.827,12.088-19.81C700.4,108.411,692.919,106.08,687.165,106.667Zm31.093-5.258c0,11.082,6.337,16.907,16.7,18.084,9.2,0.568,16.682-7.588,17.261-18.084,0-8.156-8.06-16.9-17.261-16.316C725.739,84.507,718.822,93.253,718.258,101.409Z"/><path class="b" d="M114.912,96.62q0,27.473-14.687,43.226T59.967,155.6q-25.646,0-40.257-15.943T5.1,96.62Q5.1,69.3,19.71,53.433T59.967,37.566q25.57,0,40.258,15.791T114.912,96.62Zm-29.375-.076a61.745,61.745,0,0,0-2.093-17.237,35.558,35.558,0,0,0-5.594-11.681,21.611,21.611,0,0,0-8.257-6.659,24.382,24.382,0,0,0-19.063-.152,22.84,22.84,0,0,0-8.219,6.659,34.575,34.575,0,0,0-5.669,11.719A61.689,61.689,0,0,0,34.474,96.62a61.612,61.612,0,0,0,2.055,17.313,35.158,35.158,0,0,0,5.631,11.529,21.266,21.266,0,0,0,8.3,6.735,23.818,23.818,0,0,0,9.588,2.017,23.078,23.078,0,0,0,9.741-2.169,21.218,21.218,0,0,0,8.143-6.735,37.3,37.3,0,0,0,5.631-11.529Q85.537,107.2,85.538,96.544Z"/><path class="b" d="M187.589,92.967h-2.207a19.617,19.617,0,0,0-4.414-.8q-2.893-.266-6.393-0.267a34.406,34.406,0,0,0-8.79,1.218,85.766,85.766,0,0,0-8.942,2.892v57.228H130.209V67.778h26.635V80.03q1.826-1.673,5.061-4.224a49.037,49.037,0,0,1,5.9-4.071,32.449,32.449,0,0,1,6.735-3.006,23.427,23.427,0,0,1,7.268-1.255q1.293,0,2.892.076t2.892,0.228V92.967Z"/><path class="b" d="M225.183,55.6H197.025V34.826h28.157V55.6Zm-0.761,97.637H197.787V67.778h26.635v85.461Z"/><path class="b" d="M322.516,143.422q0,11.872-3.424,20.167a31,31,0,0,1-9.361,12.938,37.148,37.148,0,0,1-14.23,6.811,75.323,75.323,0,0,1-18.417,2.093,113.386,113.386,0,0,1-16.171-1.1,127.351,127.351,0,0,1-13.28-2.55V160.392h3.12q1.978,0.76,4.68,1.674t5.441,1.674q3.271,0.836,6.393,1.37a37.977,37.977,0,0,0,6.392.533,38.647,38.647,0,0,0,11.3-1.408,14.667,14.667,0,0,0,6.811-4,15.238,15.238,0,0,0,3.2-6.278,37.925,37.925,0,0,0,.913-9.094v-1.6a36.156,36.156,0,0,1-10.388,6.354,31.959,31.959,0,0,1-12.138,2.4q-16.591,0-25.608-10.806t-9.018-32.875A54.708,54.708,0,0,1,241.506,90.3a40.525,40.525,0,0,1,7.724-13.622,31.961,31.961,0,0,1,11.415-8.333,34.4,34.4,0,0,1,13.927-2.93,38.019,38.019,0,0,1,11.719,1.674,38.579,38.579,0,0,1,9.437,4.49l0.989-3.805h25.8v75.645ZM295.88,126.3V87.564a23.156,23.156,0,0,0-4.871-1.522,28.053,28.053,0,0,0-5.784-.608q-9.588,0-14.421,6.2t-4.833,17.313a51.751,51.751,0,0,0,.723,9.4,18.165,18.165,0,0,0,2.7,6.811,12.2,12.2,0,0,0,4.984,4.375,18.179,18.179,0,0,0,7.876,1.484,21.08,21.08,0,0,0,7.04-1.217A25.36,25.36,0,0,0,295.88,126.3Z"/><path class="b" d="M370.307,55.6H342.149V34.826h28.157V55.6Zm-0.761,97.637H342.911V67.778h26.635v85.461Z"/><path class="b" d="M470,153.239H443.211V110.851q0-5.175-.418-10.312a23.421,23.421,0,0,0-1.56-7.572,8.425,8.425,0,0,0-3.958-4.147,16.021,16.021,0,0,0-6.925-1.256,19.294,19.294,0,0,0-6.621,1.218,31.436,31.436,0,0,0-7.153,3.881v60.576H389.941V67.778h26.635v9.437a65.36,65.36,0,0,1,12.747-8.675,30.136,30.136,0,0,1,13.736-3.12q13.088,0,20.015,8.257T470,97.609v55.63Z"/><path class="b" d="M536.816,144.183q-2.74,2.283-4.909,4.109a29.774,29.774,0,0,1-5.822,3.653,38.911,38.911,0,0,1-6.963,2.664,38.2,38.2,0,0,1-9.475.914,25.339,25.339,0,0,1-18.835-7.61q-7.5-7.609-7.5-19.177,0-9.512,3.8-15.373a26.116,26.116,0,0,1,10.959-9.284,57.384,57.384,0,0,1,17.275-4.871q10.045-1.37,21.612-2.131V96.62q0-7.077-5.213-9.779t-15.639-2.7a42.967,42.967,0,0,0-11.035,1.712,85.87,85.87,0,0,0-12.328,4.375H490.47V69.6q3.956-1.142,12.785-2.7a102.217,102.217,0,0,1,17.808-1.56q22.069,0,32.152,7.344T563.3,95.1v58.141H536.816v-9.056Zm0-13.241V113.134q-6.774.685-10.959,1.179a37.3,37.3,0,0,0-8.219,1.941,11.507,11.507,0,0,0-5.441,3.691,10.368,10.368,0,0,0-1.941,6.583q0,6.012,3.234,8.257t9.551,2.245a17.77,17.77,0,0,0,7.153-1.6A22.155,22.155,0,0,0,536.816,130.942Z"/><path class="b" d="M609.645,153.239H583.009V34.826h26.635V153.239Z"/><path class="b" d="M950.5,118.537a32.772,32.772,0,0,1-3.2,14.84,30.3,30.3,0,0,1-8.6,10.578,39.833,39.833,0,0,1-14.04,7.153q-7.648,2.131-19.444,2.131H859.864V39.925h40.029a139.611,139.611,0,0,1,18.911.952,36.4,36.4,0,0,1,12.062,4,21.827,21.827,0,0,1,9.094,8.751,25.843,25.843,0,0,1,3.006,12.633,26.756,26.756,0,0,1-4.147,14.764,24.4,24.4,0,0,1-11.453,9.513v0.609q10.5,2.208,16.818,9.018T950.5,118.537ZM914.047,71.963a12.827,12.827,0,0,0-1.408-5.631,8.5,8.5,0,0,0-4.375-4.186,18.078,18.078,0,0,0-6.659-1.332q-3.844-.114-11.453-0.114h-1.979V84.672h3.576q7.307,0,10.236-.152a16.4,16.4,0,0,0,6.05-1.6,9.168,9.168,0,0,0,4.718-4.414A15.533,15.533,0,0,0,914.047,71.963ZM921.2,118q0-5.251-2.131-8.219a12.937,12.937,0,0,0-6.393-4.49,22.127,22.127,0,0,0-7.115-1.1q-4.528-.114-12.138-0.114h-5.251v28.386h1.521q11.111,0,15.373-.152a24,24,0,0,0,8.675-2.055,11.325,11.325,0,0,0,5.67-4.909A14.928,14.928,0,0,0,921.2,118Z"/><path class="b" d="M1022.643,92.967h-2.206a19.616,19.616,0,0,0-4.414-.8q-2.893-.266-6.393-0.267a34.412,34.412,0,0,0-8.79,1.218,85.757,85.757,0,0,0-8.941,2.892v57.228H965.263V67.778H991.9V80.03q1.827-1.673,5.061-4.224a49.112,49.112,0,0,1,5.9-4.071,32.465,32.465,0,0,1,6.735-3.006,23.429,23.429,0,0,1,7.268-1.255q1.293,0,2.892.076t2.892,0.228V92.967Z"/><path class="b" d="M1079.948,144.183q-2.739,2.283-4.908,4.109a29.8,29.8,0,0,1-5.821,3.653,38.929,38.929,0,0,1-6.964,2.664,38.2,38.2,0,0,1-9.475.914,25.341,25.341,0,0,1-18.835-7.61q-7.5-7.609-7.5-19.177,0-9.512,3.806-15.373a26.11,26.11,0,0,1,10.958-9.284,57.388,57.388,0,0,1,17.275-4.871q10.044-1.37,21.612-2.131V96.62q0-7.077-5.213-9.779t-15.639-2.7a42.96,42.96,0,0,0-11.034,1.712,85.9,85.9,0,0,0-12.329,4.375H1033.6V69.6q3.955-1.142,12.784-2.7a102.225,102.225,0,0,1,17.808-1.56q22.069,0,32.153,7.344T1106.431,95.1v58.141h-26.483v-9.056Zm0-13.241V113.134q-6.773.685-10.958,1.179a37.3,37.3,0,0,0-8.219,1.941,11.506,11.506,0,0,0-5.441,3.691,10.368,10.368,0,0,0-1.94,6.583q0,6.012,3.234,8.257t9.55,2.245a17.776,17.776,0,0,0,7.154-1.6A22.157,22.157,0,0,0,1079.948,130.942Z"/><path class="b" d="M1206.2,153.239h-26.788V110.851q0-5.175-.418-10.312a23.38,23.38,0,0,0-1.561-7.572,8.419,8.419,0,0,0-3.957-4.147,16.022,16.022,0,0,0-6.925-1.256,19.291,19.291,0,0,0-6.621,1.218,31.426,31.426,0,0,0-7.153,3.881v60.576h-26.636V67.778h26.636v9.437a65.348,65.348,0,0,1,12.747-8.675,30.13,30.13,0,0,1,13.736-3.12q13.087,0,20.014,8.257t6.926,23.934v55.63Z"/><path class="b" d="M1303.608,153.239h-26.636v-8.9q-2.587,2.131-5.9,4.566a38.527,38.527,0,0,1-5.821,3.653,32.822,32.822,0,0,1-6.316,2.283,31.9,31.9,0,0,1-7.458.761q-14.612,0-23.135-12.1t-8.523-32.343a58.524,58.524,0,0,1,2.892-19.406,45.622,45.622,0,0,1,7.991-14.307,33.878,33.878,0,0,1,11.263-8.79,31.5,31.5,0,0,1,14-3.234,36.018,36.018,0,0,1,11,1.408,68.6,68.6,0,0,1,10.007,4.376V34.826h26.636V153.239Zm-26.636-23.591V87.716a21.178,21.178,0,0,0-5.175-1.636,28.352,28.352,0,0,0-5.479-.646q-9.589,0-14.422,6.7t-4.832,18.721q0,12.634,3.843,18.264t12.442,5.631a19.7,19.7,0,0,0,7.078-1.37A24.569,24.569,0,0,0,1276.972,129.648Z"/><path class="b" d="M1350.029,155.6a74.955,74.955,0,0,1-17.846-2.055,66.992,66.992,0,0,1-13.888-4.794V126.223h2.207q1.9,1.447,4.337,3.2a38.043,38.043,0,0,0,6.773,3.653,50.7,50.7,0,0,0,8.409,3.006,39.119,39.119,0,0,0,10.159,1.255,26.185,26.185,0,0,0,9.932-1.75q4.3-1.75,4.3-5.556a5.318,5.318,0,0,0-1.979-4.49q-1.98-1.521-7.687-2.892-3.045-.76-7.687-1.636a69.527,69.527,0,0,1-8.219-2.017q-10.046-3.119-15.105-9.246t-5.062-16.1a23.063,23.063,0,0,1,2.626-10.769,27.447,27.447,0,0,1,7.724-9.018A39.7,39.7,0,0,1,1341.62,67.7a58.067,58.067,0,0,1,16.933-2.283,71.531,71.531,0,0,1,16.514,1.788,62.32,62.32,0,0,1,12.709,4.3V93.119h-2.131a47.951,47.951,0,0,0-4.337-2.854,59.435,59.435,0,0,0-5.784-3.082,41.338,41.338,0,0,0-7.5-2.511,36.489,36.489,0,0,0-8.485-.989,21.885,21.885,0,0,0-9.778,1.979q-4,1.98-4,5.251a5.661,5.661,0,0,0,1.979,4.566q1.978,1.675,8.6,3.272,3.425,0.839,7.877,1.636a61.31,61.31,0,0,1,8.562,2.169q9.207,2.968,13.964,8.713t4.757,15.258a24.586,24.586,0,0,1-2.816,11.453,25.832,25.832,0,0,1-7.99,9.17,41.484,41.484,0,0,1-12.9,6.24A62.843,62.843,0,0,1,1350.029,155.6Z"/></svg>
+    </a>
+
+    <div class="search">
+      <input type="text" placeholder="Zoek merk, product of categorie...">
+      <button aria-label="Zoeken"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+    </div>
+
+    <div class="header-actions">
+      <span class="item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>Inloggen</span>
+      <span class="item"><span class="count">3</span><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.2C.4 8.3 2 4.5 5.6 4c2-.3 3.9.7 5 2.3C11.7 4.7 13.6 3.7 15.6 4c3.6.5 5.2 4.3 3.6 7.8C16.5 16.4 12 21 12 21z"/></svg>Verlanglijst</span>
+      <span class="item"><span class="count">2</span><svg viewBox="0 0 24 24"><path d="M3 5h2l2.2 11.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="10" cy="21" r="1"/><circle cx="17" cy="21" r="1"/></svg></span>
+    </div>
+  </div>
+
+  <nav class="primary">
+    <div class="wrap">
+      <a href="#">Dames</a>
+      <a href="#">Heren</a>
+      <a href="#">Kinderen</a>
+      <a href="#train">Sport &amp; Training</a>
+      <a href="#outdoor">Outdoor &amp; Werk</a>
+      <a href="#">Schoenen</a>
+      <a href="#">Kleding</a>
+      <a href="#">Accessoires</a>
+      <a href="#brands">Merken</a>
+      <a href="#sale" class="sale">Solden</a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-copy">
+      <h1>Sterke specialisten voor elk moment van je dag</h1>
+      <p>Van training tot outdoor en everyday comfort &mdash; wij kiezen per behoefte het juiste merk, zodat jij slimmer shopt.</p>
+      <div class="hero-ctas">
+        <a href="#occasions" class="btn">Shop per gelegenheid</a>
+        <a href="#sale" class="btn outline">Bekijk solden</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <span class="hero-ribbon">tot -40%</span>
+
+      <div class="marquee-stack">
+      <div class="marquee-row row-large">
+        <div class="marquee-track">
+          <div class="slide"><img src="assets/images/sweatybetty.jpg" alt="Sportkleding voor training"></div>
+          <div class="slide"><img src="assets/images/magnum.png" alt="Magnum"></div>
+          <div class="slide"><img src="assets/images/hitec.png" alt="Hi-Tec"></div>
+          <div class="slide"><img src="assets/images/rhplus.jpg" alt="RH+"></div>
+          <div class="slide"><img src="assets/images/holster.png" alt="Holster Australia"></div>
+          <!-- duplicate set for seamless loop -->
+          <div class="slide" aria-hidden="true"><img src="assets/images/sweatybetty.jpg" alt=""></div>
+          <div class="slide" aria-hidden="true"><img src="assets/images/magnum.png" alt=""></div>
+          <div class="slide" aria-hidden="true"><img src="assets/images/hitec.png" alt=""></div>
+          <div class="slide" aria-hidden="true"><img src="assets/images/rhplus.jpg" alt=""></div>
+          <div class="slide" aria-hidden="true"><img src="assets/images/holster.png" alt=""></div>
+        </div>
+      </div>
+
+      <div class="marquee-row row-small">
+        <div class="marquee-track">
+          <div class="slide"><img src="assets/images/odlo.jpg" alt="Odlo"></div>
+          <div class="slide"><img src="assets/images/juicy.jpg" alt="Juicy Couture"></div>
+          <div class="slide"><img src="assets/images/fitflop.png" alt="FitFlop"></div>
+          <div class="slide"><img src="assets/images/mechanix.jpg" alt="Mechanix"></div>
+          <div class="slide"><img src="assets/images/lowenweiss.jpg" alt="L&ouml;wenweiss"></div>
+          <!-- duplicate set for seamless loop -->
+          <div class="slide" aria-hidden="true"><img src="assets/images/odlo.jpg" alt=""></div>
+          <div class="slide" aria-hidden="true"><img src="assets/images/juicy.jpg" alt=""></div>
+          <div class="slide" aria-hidden="true"><img src="assets/images/fitflop.png" alt=""></div>
+          <div class="slide" aria-hidden="true"><img src="assets/images/mechanix.jpg" alt=""></div>
+          <div class="slide" aria-hidden="true"><img src="assets/images/lowenweiss.jpg" alt=""></div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap" style="padding-bottom:3.4rem;">
+  <div class="promo">
+    <div class="promo-inner">
+      <h3>Slim gekozen.<br>Extra scherp geprijsd.</h3>
+      <p>Ontdek outlet-deals op topmerken tot -40%.<br>Beperkte stock, op = op.</p>
+      <a href="#sale" class="btn on-primary">Shop outlet <span>&rarr;</span></a>
+      <span class="promo-pct" aria-hidden="true">%</span>
+    </div>
+  </div>
+</div>
+
+<section class="occasions" id="occasions">
+  <div class="wrap">
+
+    <div class="occasion-card" id="train">
+      <div class="occasion-media">
+        <div class="om"><img src="assets/images/odlo.jpg" alt="Odlo"></div>
+        <div class="om"><img src="assets/images/sweatybetty.jpg" alt="Sportkleding voor training"></div>
+      </div>
+      <div class="occasion-body">
+        <div class="occasion-head">
+          <div class="occasion-icon"><svg class="ico-solid" viewBox="0 0 48 48" aria-hidden="true"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M37.001 9a5 5 0 1 1-10 0a5 5 0 0 1 10 0m-2 0a3 3 0 1 1-6 0a3 3 0 0 1 6 0m-8.684 3.572c-1.429-.682-2.908-.691-4.122-.547c-3.341.396-5.832 2.326-7.467 4.03c-1.346 1.402-2.343 2.913-2.816 3.63l-.007.01c-.1.15-.164.248-.207.31a3 3 0 0 0 4.905 3.454c.12-.17.25-.364.382-.564l.005-.008c.46-.692 1.042-1.564 1.854-2.45c-.596 1.653-1.16 3.24-1.277 3.641a3.2 3.2 0 0 0-.083 1.39c.045.285.119.52.174.674c.11.31.252.586.362.789c.229.42.53.886.838 1.334c.627.915 1.462 2.029 2.28 3.09c.723.94 1.458 1.875 2.06 2.64l.244.308c.324.412.591.753.787 1.007l.068.09s.054.213.087.355c.113.486.245 1.127.387 1.844l.279 1.437l.003.015c.187.971.374 1.942.519 2.597a3 3 0 1 0 5.858-1.296c-.126-.573-.29-1.417-.472-2.365c-.096-.502-.198-1.03-.301-1.55a66 66 0 0 0-.429-2.04a17 17 0 0 0-.215-.842l-.002-.007a4.8 4.8 0 0 0-.417-1.034a8 8 0 0 0-.583-.828l-.028-.036c-.218-.284-.505-.65-.826-1.058l-.244-.308l-.002-.003a367 367 0 0 1-1.873-2.395l1.993-4.105a7.8 7.8 0 0 0 4.07 1.406c2.475.133 4.637-.952 5.451-1.36l.026-.013c.094-.048.157-.08.203-.1a3 3 0 1 0-2.56-5.427q-.172.08-.34.163h-.002c-.925.447-1.677.788-2.458.746c-.328-.018-.692-.113-1.12-.457c-.465-.373-1.126-1.138-1.803-2.691c-.657-1.506-1.675-2.758-3.181-3.476m-2.02 22.827c-.011-.044.01.035 0 0m-1.866-21.388c1.035-.123 2.08-.084 3.025.366c.97.462 1.694 1.29 2.208 2.47c.767 1.76 1.6 2.822 2.385 3.452c.773.62 1.543.855 2.265.894c1.339.072 2.523-.5 3.363-.907l.072-.034l.325-.156a1 1 0 0 1 .854 1.808l-.239.118l-.008.004c-.804.404-2.556 1.267-4.474 1.164c-1.116-.06-2.291-.434-3.409-1.33a7 7 0 0 1-.432-.377a1 1 0 0 0-1.585.292l-2.812 5.793a1 1 0 0 0 .106 1.045l.233.303c.708.92 1.429 1.836 2.032 2.602l.003.005h.001l.241.307c.322.41.603.766.813 1.04l.01.012c.179.233.367.481.45.625c.108.19.184.434.234.606c.06.208.124.46.188.737c.129.554.272 1.25.415 1.974c.102.516.203 1.039.3 1.54l.002.016c.18.93.347 1.801.48 2.404a1 1 0 0 1-1.952.432c-.139-.625-.32-1.57-.511-2.558v-.002l-.281-1.445c-.143-.72-.28-1.388-.4-1.908a13 13 0 0 0-.161-.632a1 1 0 0 0-.16-.32l-.198-.261a136 136 0 0 0-.8-1.024l-.242-.307a298 298 0 0 1-2.05-2.623c-.812-1.056-1.62-2.134-2.214-3a14 14 0 0 1-.732-1.162a4 4 0 0 1-.235-.505a1.7 1.7 0 0 1-.081-.311a1.2 1.2 0 0 1 .028-.524c.122-.418.927-2.664 1.677-4.738l.732-2.02a1 1 0 0 0-1.373-1.243c-1.104.53-2.074 1.32-2.91 2.191c-1.055 1.1-1.78 2.19-2.28 2.943l-.01.013c-.138.21-.253.382-.356.528a1 1 0 0 1-1.635-1.152c.063-.089.145-.213.233-.347l.009-.013c.468-.71 1.382-2.092 2.596-3.356c1.481-1.544 3.572-3.11 6.26-3.43"/><path d="M18.564 29.779a1 1 0 0 0-1.756.255l-.525 1.508l-4.096-.962a3 3 0 0 0-1.373 5.84l6.728 1.582a3 3 0 0 0 3.52-1.935l.49-1.408a1 1 0 0 0-.133-.912zm-.688 3.271l.188-.541l1.428 1.984l-.32.917a1 1 0 0 1-1.172.645l-6.728-1.581a1 1 0 0 1 .457-1.947l4.974 1.168a1 1 0 0 0 1.173-.645"/></g></svg></div>
+          <div class="occasion-copy">
+            <h3>Sport &amp; Training</h3>
+            <p>Performance, support en comfort voor elke workout. Van yoga tot run &mdash; beweeg op jouw manier.</p>
+          </div>
+        </div>
+        <div class="occasion-brands">
+          <div class="brand-track">
+            <span class="pill"><span class="logotype lt-odlo">ODLO</span></span>
+            <span class="pill"><span class="logotype lt-rhplus"><span class="bars"><span></span><span></span><span></span></span>rh+</span></span>
+            <span class="pill"><span class="logotype lt-sneakerlab">sneaker<b>lab</b></span></span>
+          </div>
+        </div>
+        <a href="#" class="btn">Ontdek sport &amp; training <span>&rarr;</span></a>
+      </div>
+    </div>
+
+    <div class="occasion-card" id="outdoor">
+      <div class="occasion-media">
+        <div class="om"><img src="assets/images/magnum.png" alt="Magnum"></div>
+        <div class="om"><img src="assets/images/hitec.png" alt="Hi-Tec"></div>
+      </div>
+      <div class="occasion-body">
+        <div class="occasion-head">
+          <div class="occasion-icon"><svg class="ico-solid" viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M164 78a26 26 0 1 0-26-26a26 26 0 0 0 26 26m0-40a14 14 0 1 1-14 14a14 14 0 0 1 14-14m89.16 158.94l-54.56-92.08a13.9 13.9 0 0 0-12-6.86a13.88 13.88 0 0 0-12 6.86l-27.88 47.05l-46.56-79a14 14 0 0 0-24.13 0L2.83 197A6 6 0 0 0 8 206h240a6 6 0 0 0 5.16-9.06M86.27 79a2 2 0 0 1 3.46 0l25.34 43H60.93ZM18.5 194l35.36-60h68.29l19.3 32.77l16 27.2Zm152.93 0l-17.85-30.29L184.83 111a2 2 0 0 1 1.72-1a1.93 1.93 0 0 1 1.72 1l49.2 83Z"/></svg></div>
+          <div class="occasion-copy">
+            <h3>Outdoor &amp; Werk</h3>
+            <p>Betrouwbare gear voor buiten, avontuur en werk. Duurzaam, functioneel en klaar voor elke uitdaging.</p>
+          </div>
+        </div>
+        <div class="occasion-brands">
+          <div class="brand-track">
+            <span class="pill"><span class="logotype lt-hitec">HI-TEC</span></span>
+            <span class="pill"><span class="logotype lt-magnum">MAGNUM</span></span>
+            <span class="pill"><span class="logotype lt-mechanix">MECHANIX</span></span>
+            <span class="pill"><span class="logotype lt-rhplus"><span class="bars"><span></span><span></span><span></span></span>rh+</span></span>
+          </div>
+        </div>
+        <a href="#" class="btn">Shop outdoor &amp; werk <span>&rarr;</span></a>
+      </div>
+    </div>
+
+    <div class="occasion-card" id="comfort">
+      <div class="occasion-media">
+        <div class="om"><img src="assets/images/fitflop.png" alt="FitFlop"></div>
+        <div class="om"><img src="assets/images/holster.png" alt="Holster Australia"></div>
+      </div>
+      <div class="occasion-body">
+        <div class="occasion-head">
+          <div class="occasion-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(-0.4 -1.2) scale(0.88)" stroke-width="1.36"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676a.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></g><g transform="translate(12.9 11.6) scale(0.45)" stroke-width="2.67"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8c0 5.5-4.78 10-10 10"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></g></svg></div>
+          <div class="occasion-copy">
+            <h3>Dagelijks Comfort</h3>
+            <p>Stijl, gemak en comfort voor elke dag. Van thuis tot city &mdash; voel je goed in elke stap.</p>
+          </div>
+        </div>
+        <div class="occasion-brands">
+          <div class="brand-track">
+            <span class="pill"><span class="logotype lt-fitflop">fitflop</span></span>
+            <span class="pill"><span class="logotype lt-holster">holster<small>australia</small></span></span>
+            <span class="pill"><span class="logotype lt-juicy">Juicy Couture</span></span>
+            <span class="pill"><span class="logotype lt-lowenweiss">L&ouml;wenweiss</span></span>
+          </div>
+        </div>
+        <a href="#" class="btn">Bekijk comfort picks <span>&rarr;</span></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="trust-bar">
+  <div class="wrap">
+    <div class="trust-item">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.417c0-3.198 0-4.797.378-5.335c.377-.537 1.88-1.052 4.887-2.081l.573-.196C10.405 2.268 11.188 2 12 2s1.595.268 3.162.805l.573.196c3.007 1.029 4.51 1.544 4.887 2.081C21 5.62 21 7.22 21 10.417v1.574c0 5.638-4.239 8.375-6.899 9.536C13.38 21.842 13.02 22 12 22s-1.38-.158-2.101-.473C7.239 20.365 3 17.63 3 11.991z"/><path d="m9.5 12.4l1.429 1.6l3.571-4"/></svg></span>
+      <span><strong>Officiële merkenshop</strong><span>100% authentieke producten direct van de merken</span></span>
+    </div>
+    <div class="trust-item">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17a2 2 0 1 0 4 0a2 2 0 1 0-4 0m10 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0"/><path d="M5 17H3v-4M2 5h11v12m-4 0h6m4 0h2v-6h-8m0-5h5l3 5M3 9h4"/></svg></span>
+      <span><strong>Snelle levering</strong><span>Voor 17u besteld, volgende werkdag geleverd</span></span>
+    </div>
+    <div class="trust-item">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="M3.29 7L12 12l8.71-5M7.5 4.27l9 5.15"/></svg></span>
+      <span><strong>Gratis verzending vanaf &euro;70</strong><span>In Belgi&euml; en Nederland, zonder extra kosten</span></span>
+    </div>
+    <div class="trust-item">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path transform="scale(-1 1) translate(-24 0)" d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="16.5" cy="7.5" r=".9" fill="currentColor" stroke="none"/><g stroke-width="1.7"><circle cx="10.6" cy="10.6" r="1.1"/><circle cx="14.4" cy="14.4" r="1.1"/><path d="M15.4 9.6L9.6 15.4"/></g></svg></span>
+      <span><strong>Slimme solden &amp; outlet deals</strong><span>Topmerken, extra scherp geprijsd. Elke dag.</span></span>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Onze bestsellers</h2>
+      <a href="#" class="link">Bekijk alle bestsellers &rarr;</a>
+    </div>
+    <div class="scroller-wrap">
+      <button class="scroll-edge prev" onclick="document.getElementById('sc-best').scrollBy({left:-270,behavior:'smooth'})" aria-label="Vorige">&#8249;</button>
+      <button class="scroll-edge next" onclick="document.getElementById('sc-best').scrollBy({left:270,behavior:'smooth'})" aria-label="Volgende">&#8250;</button>
+      <div class="product-scroller" id="sc-best">
+        <div class="product-card">
+          <figure><img src="assets/images/product-puffer.jpg" alt="Nimbus Mid Waterproof Puffer"></figure>
+          <div class="body">
+            <p class="brand"><span class="logotype lt-odlo">ODLO</span></p>
+            <p class="title">Nimbus Mid Waterproof Puffer</p>
+            <p class="price sale"><span class="was">&euro;&nbsp;380,00</span><span class="now">&euro;&nbsp;228,00</span></p>
+            <a href="#" class="btn">Bekijk product <span>&rarr;</span></a>
+          </div>
+        </div>
+        <div class="product-card">
+          <figure><img src="assets/images/product-fitflop-jewel.jpg" alt="F-Mode Ultra-Jewel Leather Toe-Post Sandals"></figure>
+          <div class="body">
+            <p class="brand"><span class="logotype lt-fitflop">fitflop</span></p>
+            <p class="title">F-Mode Ultra-Jewel Leather Toe-Post Sandals</p>
+            <p class="price"><span class="now">&euro;&nbsp;162,00</span></p>
+            <a href="#" class="btn">Bekijk product <span>&rarr;</span></a>
+          </div>
+        </div>
+        <div class="product-card">
+          <figure><img src="assets/images/product-magnum-ultima.jpg" alt="Magnum Ultima 6.0 Waterproof"></figure>
+          <div class="body">
+            <p class="brand"><span class="logotype lt-magnum">MAGNUM</span></p>
+            <p class="title">Ultima 6.0 Waterproof</p>
+            <p class="price"><span class="now">&euro;&nbsp;108,00</span></p>
+            <a href="#" class="btn">Bekijk product <span>&rarr;</span></a>
+          </div>
+        </div>
+        <div class="product-card">
+          <figure><img src="assets/images/product-juicy-tee.jpg" alt="I Love Juicy Fitted Ringer Tee"></figure>
+          <div class="body">
+            <p class="brand"><span class="logotype lt-juicy">Juicy Couture</span></p>
+            <p class="title">'I &hearts; Juicy' Fitted Ringer Tee</p>
+            <p class="price"><span class="now">&euro;&nbsp;28,00</span></p>
+            <a href="#" class="btn">Bekijk product <span>&rarr;</span></a>
+          </div>
+        </div>
+        <div class="product-card">
+          <figure><img src="assets/images/product-fitflop-dash.jpg" alt="The Dash T-Toe Suede Sneakers"></figure>
+          <div class="body">
+            <p class="brand"><span class="logotype lt-fitflop">fitflop</span></p>
+            <p class="title">The Dash T-Toe Suede Sneakers</p>
+            <p class="price"><span class="now">&euro;&nbsp;108,00</span></p>
+            <a href="#" class="btn">Bekijk product <span>&rarr;</span></a>
+          </div>
+        </div>
+        <div class="product-card">
+          <figure><img src="assets/images/product-sb-sweatshirt.jpg" alt="After Class Longline Sweatshirt"></figure>
+          <div class="body">
+            <p class="brand"><span class="logotype lt-odlo">ODLO</span></p>
+            <p class="title">After Class Longline Sweatshirt</p>
+            <p class="price sale"><span class="was">&euro;&nbsp;75,00</span><span class="now">&euro;&nbsp;45,00</span></p>
+            <a href="#" class="btn">Bekijk product <span>&rarr;</span></a>
+          </div>
+        </div>
+        <div class="product-card">
+          <figure><img src="assets/images/product-fitflop-genff.jpg" alt="Gen-FF Soft-Leather Back-Strap Sandals"></figure>
+          <div class="body">
+            <p class="brand"><span class="logotype lt-fitflop">fitflop</span></p>
+            <p class="title">Gen-FF Soft-Leather Back-Strap Sandals</p>
+            <p class="price"><span class="now">&euro;&nbsp;136,00</span></p>
+            <a href="#" class="btn">Bekijk product <span>&rarr;</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="brands-section" id="brands">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Uitgelichte merken</h2>
+    </div>
+    <div class="brand-grid">
+      <span class="brand-chip"><span class="logotype lt-odlo">ODLO</span></span>
+      <span class="brand-chip"><span class="logotype lt-juicy">Juicy Couture</span></span>
+      <span class="brand-chip"><span class="logotype lt-hitec">HI-TEC</span></span>
+      <span class="brand-chip"><span class="logotype lt-rhplus"><span class="bars"><span></span><span></span><span></span></span>rh+</span></span>
+      <span class="brand-chip"><span class="logotype lt-fitflop">fitflop</span></span>
+      <span class="brand-chip"><span class="logotype lt-holster">holster<small>australia</small></span></span>
+      <span class="brand-chip"><span class="logotype lt-lowenweiss">L&ouml;wenweiss</span></span>
+      <span class="brand-chip"><span class="logotype lt-magnum">MAGNUM</span></span>
+      <span class="brand-chip"><span class="logotype lt-pasdemonaco">Pas de<small>Monaco</small></span></span>
+      <span class="brand-chip"><span class="logotype lt-sneakerlab">sneaker<b>lab</b></span></span>
+      <span class="brand-chip"><span class="logotype lt-irasuto">Irasuto <small>Studios</small></span></span>
+    </div>
+  </div>
+</section>
+
+
+<section class="newsletter">
+  <div class="wrap">
+    <div class="newsletter-box">
+      <div class="newsletter-intro">
+        <span class="nl-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M4.2 7.6l7.8 5.4 7.8-5.4"/></svg></span>
+        <div>
+          <h3>Blijf als eerste op de hoogte</h3>
+          <p>Ontvang nieuwe collecties, exclusieve deals en voordelen.</p>
+        </div>
+      </div>
+      <form class="newsletter-form" onsubmit="return false;">
+        <div class="row">
+          <input type="email" placeholder="Jouw e-mailadres" aria-label="E-mailadres" required>
+          <button type="submit" class="btn">Schrijf me in</button>
+        </div>
+        <label class="consent"><input type="checkbox" required> Ik ga akkoord met de <a href="#" class="link">privacyverklaring</a></label>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand-col">
+        <div class="brand-lockup">
+          <svg class="lockup-mark" viewBox="631 0 209 204" aria-hidden="true"><use href="#ob-flower"/></svg>
+          <span class="lockup-text">Original<br>Brands</span>
+        </div>
+        <p class="footer-tagline">Sterke specialisten voor elk moment van je dag.</p>
+        <div class="socials">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.001 9a3 3 0 1 0 0 6a3 3 0 0 0 0-6m0-2a5 5 0 1 1 0 10a5 5 0 0 1 0-10m6.5-.25a1.25 1.25 0 0 1-2.5 0a1.25 1.25 0 0 1 2.5 0M12.001 4c-2.474 0-2.878.007-4.029.058c-.784.037-1.31.142-1.798.332a2.9 2.9 0 0 0-1.08.703a2.9 2.9 0 0 0-.704 1.08c-.19.49-.295 1.015-.331 1.798C4.007 9.075 4 9.461 4 12c0 2.475.007 2.878.058 4.029c.037.783.142 1.31.331 1.797c.17.435.37.748.702 1.08c.337.336.65.537 1.08.703c.494.191 1.02.297 1.8.333C9.075 19.994 9.461 20 12 20c2.475 0 2.878-.007 4.029-.058c.782-.037 1.308-.142 1.797-.331a2.9 2.9 0 0 0 1.08-.703c.337-.336.538-.649.704-1.08c.19-.492.296-1.018.332-1.8c.052-1.103.058-1.49.058-4.028c0-2.474-.007-2.878-.058-4.029c-.037-.782-.143-1.31-.332-1.798a2.9 2.9 0 0 0-.703-1.08a2.9 2.9 0 0 0-1.08-.704c-.49-.19-1.016-.295-1.798-.331C14.926 4.006 14.54 4 12 4m0-2c2.717 0 3.056.01 4.123.06c1.064.05 1.79.217 2.427.465c.66.254 1.216.598 1.772 1.153a4.9 4.9 0 0 1 1.153 1.772c.247.637.415 1.363.465 2.428c.047 1.066.06 1.405.06 4.122s-.01 3.056-.06 4.122s-.218 1.79-.465 2.428a4.9 4.9 0 0 1-1.153 1.772a4.9 4.9 0 0 1-1.772 1.153c-.637.247-1.363.415-2.427.465c-1.067.047-1.406.06-4.123.06s-3.056-.01-4.123-.06c-1.064-.05-1.789-.218-2.427-.465a4.9 4.9 0 0 1-1.772-1.153a4.9 4.9 0 0 1-1.153-1.772c-.248-.637-.415-1.363-.465-2.428C2.012 15.056 2 14.717 2 12s.01-3.056.06-4.122s.217-1.79.465-2.428a4.9 4.9 0 0 1 1.153-1.772A4.9 4.9 0 0 1 5.45 2.525c.637-.248 1.362-.415 2.427-.465C8.945 2.013 9.284 2 12.001 2"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.043-1.557-.14-2.857-.14C11.928 2 10 3.657 10 6.7v2.8H7v4h3V22h4z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.244 4c.534.003 1.87.016 3.29.073l.504.022c1.429.067 2.857.183 3.566.38c.945.266 1.687 1.04 1.938 2.022c.4 1.56.45 4.602.456 5.339l.001.152v.174c-.007.737-.057 3.78-.457 5.339c-.254.985-.997 1.76-1.938 2.022c-.709.197-2.137.313-3.566.38l-.504.023c-1.42.056-2.756.07-3.29.072l-.235.001h-.255c-1.13-.007-5.856-.058-7.36-.476c-.944-.266-1.687-1.04-1.938-2.022c-.4-1.56-.45-4.602-.456-5.339v-.326c.006-.737.056-3.78.456-5.339c.254-.985.997-1.76 1.939-2.021c1.503-.419 6.23-.47 7.36-.476zM9.999 8.5v7l6-3.5z"/></svg></a>
+          <a href="#" aria-label="Pinterest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.372 2.094a10.003 10.003 0 0 0-5.369 19.074a7.8 7.8 0 0 1 .162-2.292c.185-.839 1.296-5.463 1.296-5.463a3.7 3.7 0 0 1-.324-1.577c0-1.485.857-2.593 1.923-2.593a1.334 1.334 0 0 1 1.342 1.508c0 .9-.578 2.262-.88 3.54a1.544 1.544 0 0 0 1.575 1.923c1.897 0 3.17-2.431 3.17-5.301c0-2.201-1.457-3.847-4.143-3.847a4.746 4.746 0 0 0-4.93 4.793a2.96 2.96 0 0 0 .648 1.97a.48.48 0 0 1 .162.554c-.046.184-.162.623-.208.785a.354.354 0 0 1-.51.253c-1.384-.554-2.036-2.077-2.036-3.816c0-2.847 2.384-6.255 7.154-6.255c3.796 0 6.319 2.777 6.319 5.747c0 3.909-2.176 6.848-5.393 6.848a2.86 2.86 0 0 1-2.454-1.246s-.579 2.316-.692 2.754a8 8 0 0 1-1.019 2.131c.923.28 1.882.42 2.846.416a9.99 9.99 0 0 0 9.996-10.002a10 10 0 0 0-8.635-9.904"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Klantenservice</h4>
+        <ul>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Veelgestelde vragen</a></li>
+          <li><a href="#">Retourneren &amp; ruilen</a></li>
+          <li><a href="#">Verzending &amp; levering</a></li>
+          <li><a href="#">Maatadvies</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Over ons</h4>
+        <ul>
+          <li><a href="#">Over Original Brands</a></li>
+          <li><a href="#">Onze merken</a></li>
+          <li><a href="#">Werken bij</a></li>
+          <li><a href="#">Nieuws</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Handige links</h4>
+        <ul>
+          <li><a href="#">Cadeaubon</a></li>
+          <li><a href="#">Merken A-Z</a></li>
+          <li><a href="#">Algemene voorwaarden</a></li>
+          <li><a href="#">Privacyverklaring</a></li>
+          <li><a href="#">Cookies</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Veilig betalen met</h4>
+        <div class="payment-icons">
+          <span class="pay pay-bancontact">Bancontact</span>
+          <span class="pay pay-ideal">iDEAL</span>
+          <span class="pay pay-klarna">Klarna.</span>
+          <span class="pay pay-visa">VISA</span>
+          <span class="pay pay-mc"><span class="mc-dots"></span>Mastercard</span>
+          <span class="pay">Apple&nbsp;Pay</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-base">
+      <span class="brand">
+        <svg viewBox="0 0 1394.016 362.081"><path class="a" d="M687.165,106.667c-13.25,1.744-17.845,22.731-34.543,19.218-13.25-.567-20.732-10.472-21.312-24.476,0.58-12.236,8.062-22.141,21.312-23.314,16.7-2.907,21.293,18.08,34.543,19.238,5.754,0.587,13.232-1.158,16.119-5.825C707.313,83.935,699.253,71.7,691.2,71.7c-6.917-1.764-13.255,1.158-19.009-1.177-10.943-2.331-18.421-11.078-18.421-22.141,0-12.827,10.364-24.5,23.615-24.5A22.882,22.882,0,0,1,700.4,46.625q0,0.287,0,.575c0,2.922-2.288,33.223,21.312,26.812,9.22-2.316,9.784-11.649,9.784-17.474C729.186,44.3,714.231,43.124,711.924,27.4c-2.886-16.907,6.9-27.4,23.6-27.4,16.122,0,25.922,10.491,23.035,27.4-2.867,15.726-16.7,16.9-19,29.143,0,5.825,1.163,15.158,9.8,17.474,23.6,6.411,20.728-23.889,20.728-26.812,0.565-13.394,10.368-23.318,23.6-23.318,12.671,0,23.035,11.669,23.035,24.5a23.731,23.731,0,0,1-17.281,22.731c-6.338,1.745-12.671-1.177-19.569.587-8.057,0-16.118,12.236-12.088,19.809,2.868,4.667,10.364,6.412,15.539,5.825,13.811-1.158,17.841-22.145,35.123-19.809,13.25,1.745,20.728,11.649,20.728,23.885,0,14-7.478,23.909-20.728,25.067-17.282,2.922-21.312-18.065-35.123-19.809-5.175-.587-12.671,1.744-15.539,6.411-4.03,6.983,4.031,19.81,12.088,20.4,6.9,0.591,13.231-1.744,19.569,0a23.7,23.7,0,0,1,17.272,22.722c0,12.236-10.364,24.476-23.035,24.476a23.629,23.629,0,0,1-23.6-22.732c0-10.491.565-27.965-13.83-27.965-12.091,0-17.845,5.825-16.118,18.061s14.983,14.571,17.283,29.733C760.282,194.666,750.5,204,733.8,204s-24.758-9.334-21.872-26.221c2.307-15.162,17.262-17.493,19.569-29.733,0-6.412-.564-15.158-9.784-18.061-23.6-5.844-21.312,23.885-21.312,27.965a23.119,23.119,0,0,1-23.016,22.732c-13.251,0-23.615-12.24-23.615-24.476,0-11.082,7.478-19.825,18.421-22.732,5.754-1.744,12.092.591,19.009-.586,8.057,0,16.118-12.827,12.088-19.81C700.4,108.411,692.919,106.08,687.165,106.667Zm31.093-5.258c0,11.082,6.337,16.907,16.7,18.084,9.2,0.568,16.682-7.588,17.261-18.084,0-8.156-8.06-16.9-17.261-16.316C725.739,84.507,718.822,93.253,718.258,101.409Z"/><path class="b" d="M114.912,96.62q0,27.473-14.687,43.226T59.967,155.6q-25.646,0-40.257-15.943T5.1,96.62Q5.1,69.3,19.71,53.433T59.967,37.566q25.57,0,40.258,15.791T114.912,96.62Zm-29.375-.076a61.745,61.745,0,0,0-2.093-17.237,35.558,35.558,0,0,0-5.594-11.681,21.611,21.611,0,0,0-8.257-6.659,24.382,24.382,0,0,0-19.063-.152,22.84,22.84,0,0,0-8.219,6.659,34.575,34.575,0,0,0-5.669,11.719A61.689,61.689,0,0,0,34.474,96.62a61.612,61.612,0,0,0,2.055,17.313,35.158,35.158,0,0,0,5.631,11.529,21.266,21.266,0,0,0,8.3,6.735,23.818,23.818,0,0,0,9.588,2.017,23.078,23.078,0,0,0,9.741-2.169,21.218,21.218,0,0,0,8.143-6.735,37.3,37.3,0,0,0,5.631-11.529Q85.537,107.2,85.538,96.544Z"/></svg>
+        &copy; 2026 Original Brands &mdash; Alle rechten voorbehouden
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script>
+
+  /* Brand rows: only scroll the ones that actually overflow. Measured after fonts
+     load, because the wordmarks are text and their widths change on font swap. */
+  function initBrandMarquees(){
+    document.querySelectorAll('.occasion-brands').forEach(function(box){
+      var track = box.querySelector('.brand-track');
+      if (!track || box.classList.contains('is-scrolling')) return;
+      var one = track.getBoundingClientRect().width;
+      if (one <= box.getBoundingClientRect().width + 1) return;   // fits: leave static
+      Array.prototype.slice.call(track.children).forEach(function(el){
+        var copy = el.cloneNode(true);
+        copy.setAttribute('aria-hidden', 'true');
+        track.appendChild(copy);
+      });
+      box.style.setProperty('--marquee-dur', Math.max(8, Math.round(one / 32)) + 's');
+      box.classList.add('is-scrolling');
+    });
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(initBrandMarquees);
+  else window.addEventListener('load', initBrandMarquees);
+
+  document.querySelectorAll('.marquee-row').forEach(function(row){
+    var track = row.querySelector('.marquee-track');
+    row.addEventListener('mouseenter', function(){
+      track.getAnimations().forEach(function(a){ a.playbackRate = 0.3; });
+    });
+    row.addEventListener('mouseleave', function(){
+      track.getAnimations().forEach(function(a){ a.playbackRate = 1; });
+    });
+  });
+</script>
+</body>
+</html>
