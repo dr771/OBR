@@ -135,7 +135,7 @@
   nav.primary a.sale{color:var(--color-secondary);}
 
   /* ---------------- hero ---------------- */
-  .hero{padding:3.4rem 0 3.8rem;}
+  .hero{padding:3.4rem 0 0rem;}
   .hero .wrap{display:grid; grid-template-columns:1.2fr 1.8fr; gap:3rem; align-items:center;}
   .hero-copy h1{font-size:clamp(2.1rem,3.6vw,3.1rem); line-height:1.1; margin:0 0 1.2rem;}
   .hero-copy p{font-family:var(--font-soft); color:var(--muted); font-size:1rem; line-height:1.6; max-width:35ch; margin:0 0 2.2rem;}
@@ -147,7 +147,7 @@
     position:relative; min-width:0;
     margin-left:-105px; /* tuck the diagonal edge in next to the text, like the draft */
     margin-right:calc(-1.75rem - max((100vw - 1300px) / 2, 0px));
-    --h1:305px; --w1:380px; --h2:140px; --w2:225px; --gap:6px;
+    --h1:351px; --w1:437px; --h2:161px; --w2:259px; --gap:7px; /* +15% over the draft's 305/380/140/225/6 */
   }
   .hero-ribbon{
     position:absolute; top:2px; left:26px; z-index:4; transform:rotate(-6deg);
@@ -182,7 +182,7 @@
 
   @media (max-width:900px){
     .hero .wrap{grid-template-columns:1fr;}
-    .hero-visual{margin-left:0; --h1:200px; --w1:250px; --h2:110px; --w2:170px;}
+    .hero-visual{margin-left:0; --h1:230px; --w1:288px; --h2:127px; --w2:196px;}
   }
 
   /* ---------------- occasion cards ---------------- */
@@ -261,12 +261,14 @@
   /* draft: 41px tall, divider at ~82% of the width, label optically centred in the
      space LEFT of the divider (not in the whole button), arrow centred in its cell */
   .occasion-body .btn,
-  .product-card .btn{
+  .product-card .btn,
+  .promo-bg-copy .btn{
     position:relative; justify-content:center; min-block-size:2.55rem;
     padding-inline:.9rem calc(.9rem + 2.7rem);
   }
   .occasion-body .btn span,
-  .product-card .btn span{
+  .product-card .btn span,
+  .promo-bg-copy .btn span{
     position:absolute; inset-block:0; inset-inline-end:0; inline-size:2.7rem;
     display:flex; align-items:center; justify-content:center;
     border-inline-start:1px solid color-mix(in oklab, #fff 48%, transparent);
@@ -278,7 +280,8 @@
      the &rarr; character renders inconsistently across fonts/OSes, so paint the same
      thin shape as a masked stroke instead, for a crisp, font-independent result */
   .occasion-body .btn span::before,
-  .product-card .btn span::before{
+  .product-card .btn span::before,
+  .promo-bg-copy .btn span::before{
     content:""; inline-size:14px; block-size:14px; background:currentColor;
     -webkit-mask:var(--arrow-glyph) center/contain no-repeat;
             mask:var(--arrow-glyph) center/contain no-repeat;
@@ -406,13 +409,51 @@
     display:flex; align-items:center; justify-content:space-between; gap:2.5rem;
     padding:2.4rem 3rem 2.4rem 2.6rem; flex-wrap:wrap; position:relative;
   }
+  .promo h3, .promo p, .promo .btn{position:relative; z-index:1;}
   .promo h3{font-size:1.8rem; line-height:1.15; color:#fff;}
   .promo p{font-family:var(--font-soft); margin:0; opacity:.94; font-size:.95rem; line-height:1.55;}
-  .promo .btn{position:relative; z-index:1;}
   .promo-pct{
     position:absolute; right:.9rem; top:50%; transform:translateY(-52%) rotate(8deg);
     font-family:var(--font-display); font-size:11rem; line-height:1; color:rgba(255,255,255,.14);
-    pointer-events:none; user-select:none;
+    pointer-events:none; user-select:none; z-index:0;
+  }
+  /* photo variant -- the banner is a single finished graphic (headline, price-off and
+     product shots baked into the asset), so it's just a full-bleed link, no overlay text */
+  .promo-photo-link{display:block; line-height:0;}
+  .promo-photo-link img{width:100%; height:auto; display:block;}
+
+  /* bg variant -- same product photography, but as a plain background (no text baked
+     in) so the copy is real, selectable/indexable HTML sitting on top of it */
+  .promo-bg{
+    position:relative; border-radius:var(--radius-l); overflow:hidden;
+    background:#eef0ef url("assets/rabatt-bg.webp") center/cover no-repeat;
+    aspect-ratio:1903/826; display:flex; align-items:center;
+  }
+  .promo-bg-copy{display:flex; flex-direction:column; align-items:flex-start; gap:.6rem; max-width:480px; padding:0 2rem 0 2.6rem;}
+  .promo-bg-eyebrow{font-family:var(--font-soft); font-weight:700; font-size:1.05rem; color:var(--color-primary); margin:0;}
+  .promo-bg-rule{width:42px; height:3px; background:var(--color-secondary); border-radius:2px;}
+  .promo-bg-copy h3{font-size:3.5rem; line-height:1.15; color:var(--ink); margin:.2rem 0 0; white-space:nowrap;}
+  .promo-bg-copy p{
+    font-family:var(--font-soft); color:var(--muted); font-size:.95rem; margin:0;
+    padding-top:.75rem; border-top:0px solid var(--line); width:100%;
+  }
+  .promo-bg-copy .btn{margin-top:.3rem; border:none;}
+  @media (max-width:900px){
+    .promo-bg{aspect-ratio:auto; min-height:340px;}
+    .promo-bg-copy{max-width:78%; padding:0 1.2rem 0 1.4rem;}
+  }
+
+  /* items variant, aka "PHS" (promo-html-section) -- 3-items.webp is only the isolated
+     product cutouts (1153x826, cropped from the same 1903x826 master as rabatt-bg.webp,
+     right-aligned, no diagonal backdrop baked in). background-size:auto 100% scales it
+     by the same factor as the full-canvas variant, and position:right keeps the crop's
+     right edge -- which was already the master canvas's right edge -- flush, so the
+     shoe/sandal/jacket land in the exact same spot on screen. */
+  .promo-bg--items{
+    border-radius:0 0 var(--radius-l) var(--radius-l);
+    background:
+      url("assets/3-items-ORB.png") right center/auto 100% no-repeat,
+      linear-gradient(to top, #eef0ef 0%, #ffffff 60%);
   }
 
   /* ---------------- newsletter ---------------- */
@@ -432,7 +473,7 @@
     display:flex; align-items:center; justify-content:center;
   }
   .nl-icon svg{width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.7;}
-  .newsletter h3{font-family:var(--font-soft); font-weight:800; font-size:1.15rem; margin:0 0 .25rem; letter-spacing:-.01em;}
+  .newsletter h3{font-family:var(--font-display); font-weight:800; font-size:1.15rem; margin:0 0 .25rem; letter-spacing:-.01em;}
   .newsletter p{font-family:var(--font-soft); color:var(--muted); font-size:.9rem; margin:0;}
   .newsletter-form{display:flex; flex-direction:column; gap:.6rem; min-width:380px;}
   .newsletter-form .row{display:flex; gap:.6rem;}
@@ -604,39 +645,35 @@
   </div>
 </section>
 
-<style>
-  .promo2{background:var(--color-secondary); color:#fff; border-radius:var(--radius-l); position:relative; overflow:hidden;}
-  .promo2-inner{display:flex; align-items:center; justify-content:space-between; gap:2.5rem; padding:2.4rem 3rem 2.4rem 2.6rem; flex-wrap:wrap; position:relative;}
-  .promo2 h3{font-size:2.6rem; line-height:1.15; color:#fff; white-space:nowrap;}
-  .promo2 p{font-family:var(--font-soft); margin:0; opacity:.94; font-size:.95rem; line-height:1.55;}
-  .promo2-pct{
-    position:absolute; left:65%; top:50%; transform:translate(-50%,-50%) rotate(8deg);
-    font-family:var(--font-display); font-size:19rem; line-height:1; color:rgba(255,255,255,.3);
-    pointer-events:none; user-select:none; z-index:0; white-space:nowrap;
-  }
-  .promo2-cta{
-    position:relative; z-index:1; display:inline-flex; align-items:center; gap:1rem;
-    background:#fff; color:var(--color-secondary); padding:.5rem .5rem .5rem 1.6rem;
-    border-radius:99px; font-weight:800; font-size:1rem; letter-spacing:-0.01em;
-    box-shadow:0 10px 24px -8px rgba(0,0,0,.35); transition:transform .18s ease, box-shadow .18s ease;
-  }
-  .promo2-cta:hover{transform:translateY(-2px); box-shadow:0 14px 30px -8px rgba(0,0,0,.4);}
-  .promo2-cta .arrow{width:2.75rem; height:2.75rem; border-radius:50%; background:var(--color-secondary); color:#fff; display:flex; align-items:center; justify-content:center; flex:none;}
-  @media (max-width:900px){.promo2 h3{white-space:normal; font-size:2rem;}}
-</style>
-<div class="wrap" style="padding-bottom:3.4rem;">
-  <div class="promo2">
-    <div class="promo2-inner">
-      <div>
-        <h3>Slim gekozen. Extra scherp geprijsd.</h3>
-        <p>Ontdek outlet-deals op topmerken tot -40%.<br>Beperkte stock, op = op.</p>
-      </div>
-      <a href="#sale" class="promo2-cta">
-        <span>Shop de outlet</span>
-        <span class="arrow"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h17M13 5l7 7-7 7"/></svg></span>
-      </a>
-      <span class="promo2-pct" aria-hidden="true">%</span>
+<div class="wrap" style="padding-bottom:1.1rem; display:none;">
+  <div class="promo-bg">
+    <div class="promo-bg-copy">
+      <p class="promo-bg-eyebrow">Slim gekozen.</p>
+      <span class="promo-bg-rule" aria-hidden="true"></span>
+      <h3>Topmerken.<br>Tot 40% minder.</h3>
+      <p>Topmerken, laatste maten. Op = op.</p>
+      <a href="#sale" class="btn">Shop de outlet <span>&rarr;</span></a>
     </div>
+  </div>
+</div>
+
+<div class="wrap" style="padding-bottom:1.1rem;">
+  <div class="promo-bg promo-bg--items" id="promo-html-section">
+    <div class="promo-bg-copy">
+      <p class="promo-bg-eyebrow">Slim gekozen.</p>
+      <span class="promo-bg-rule" aria-hidden="true"></span>
+      <h3>Topmerken.<br>Tot 40% minder.</h3>
+      <p>Topmerken, laatste maten. Op = op.</p>
+      <a href="#sale" class="btn">Shop de outlet <span>&rarr;</span></a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap" style="padding-bottom:1.1rem; display:none;">
+  <div class="promo">
+    <a href="#sale" class="promo-photo-link">
+      <img src="assets/rabatt-banner.png" alt="Slim gekozen. Topmerken, tot 40% minder. Shop de outlet.">
+    </a>
   </div>
 </div>
 
@@ -840,6 +877,16 @@
   </div>
 </section>
 
+<div class="wrap" style="padding-bottom:3.4rem;">
+  <div class="promo">
+    <div class="promo-inner">
+      <h3>Slim gekozen.<br>Extra scherp geprijsd.</h3>
+      <p>Ontdek outlet-deals op topmerken tot -40%.<br>Beperkte stock, op = op.</p>
+      <a href="#sale" class="btn on-primary">Shop outlet <span>&rarr;</span></a>
+      <span class="promo-pct" aria-hidden="true">%</span>
+    </div>
+  </div>
+</div>
 
 <section class="newsletter">
   <div class="wrap">
