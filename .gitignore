@@ -1,8 +1,15 @@
 # local AI-tool / editor config -- not part of the site
 .agents/
-.claude/
+.claude/*
 .vscode/
 skills-lock.json
+*.lnk
+
+# ...except the OpenSpec slash commands/skills, which are project tooling (matches SweatyBetty)
+!.claude/commands/
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/openspec-*/
 
 # OS generated files #
 ######################
