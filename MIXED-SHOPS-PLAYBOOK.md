@@ -30,7 +30,13 @@ Nick (Akeneo side) asked which mapping to build the first OB sync on:
 
 **Accepted trade-off:** colorway-level merchandising is impossible on Shopify — tags, collections and channel publishing are product-level, so you cannot put only the black colorway in "New In", cannot tag one color "Sale", and a new colorway added to an existing product will not surface in New-Arrivals sorts (product `created_at` stays old). Owner confirmed 2026-08-04 that marketing per color is not needed.
 
-**Insurance regardless:** have Akeneo emit stable keys as metafields from day one — `model_code` on the product, `color_code` + `size_code` on the variant. Costs nothing now, turns a future color-level split from archaeology into a data migration.
+**Insurance regardless:** have Akeneo emit stable keys as metafields from day one. Costs nothing now, turns a future color-level split from archaeology into a data migration.
+
+**Confirmed against the first 3 synced products (2026-08-10):** Nick's Akeneo naming, not the placeholder names originally sketched above — follow his convention, don't rename on the theme side. Actual keys landing in Shopify:
+- Product: `custom.itemid` (model code, e.g. `A3Z`, `HST480`)
+- Variant: `custom.colorid` (e.g. `FF_090`, `HLR_BE`), `custom.sizeid` (e.g. `36`)
+- Variant option names arrive as `[color]` / `[shoe_size_eu]` (footwear) — same bracket-key pattern `akeneo-option-handling` already expects, new key for the EU shoe-size axis.
+- Also present: `custom.filtercolors` (metaobject reference(s) on the variant, for color-family/swatch filtering), `custom.genderid` (Women/Unisex seen so far), `custom.shopify_originalbrands_category`, `custom.activities`, `custom.materials_maintenance`, `global.harmonized_system_code` on variants.
 
 ### D1 — Card image must follow `first_available`, not `featured_media`
 
