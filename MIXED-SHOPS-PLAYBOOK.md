@@ -1,22 +1,17 @@
-# Mixed-Shops Playbook — Original Brands (Only Brands killed)
+# Original Brands — Playbook
 
-**Status:** Only Brands is killed (confirmed 2026-08-10) — Original Brands is now the sole active project this doc serves. Original Brands has its own repo as of 2026-08-10 (`C:\Users\rezni\SHOPIFY\OriginalBrands`, Dawn theme scaffolded, connected to `original-brands-dev.myshopify.com`); this doc stays at its root as the architecture/decision reference, no longer a not-a-spec brainstorm doc. SB work remains paused. Same stack as SB: Shopify + Akeneo.
+Shopify + Akeneo migration for Original Brands (originalbrands.nl), multi-brand apparel + footwear retailer replacing a custom Drupal-ish CMS. Repo: `C:\Users\rezni\SHOPIFY\OriginalBrands` — Dawn theme, connected to `original-brands-dev.myshopify.com`. Reuse source: SweatyBetty (`C:\Users\rezni\SHOPIFY\SweatyBetty`), same stack, further along — check the reuse ledger below before re-deriving architecture.
 
-The Only Brands content below (live-site audit, per-shop notes, some open questions) is kept as **historical context, not an active workstream** — it documents comparative reasoning that shaped several Original Brands decisions (e.g. the Brand/Gender facet gap, several "take it / skip it" frontend calls). Don't scope new Only Brands work off it.
+## Confirmed facts (site audit, 2026-07-14)
 
-Sites: [originalbrands.nl](https://www.originalbrands.nl/) · ~~[onlybrands.nl](https://www.onlybrands.nl/)~~ (killed)
-
-## Confirmed facts (from live-site audit, 2026-07-14)
-
-- **Both current sites are migrations, not "existing Shopify to copy."** Original Brands runs a custom Drupal-ish CMS (`itr_theme`, `photohost.be` image CDN); Only Brands runs Magento (`/customer/account/login`, `/checkout/cart`, classic layered-nav filters). Same situation SB was in vs. WooCommerce: content/UX parity target, not code to port. Expect the same per-variant-URL → single-Shopify-product consolidation + redirect-mapping work SB needed.
-- **Not marketplaces** — single-operator, multi-brand retailers. Product structure matches SB: 1 item + color/size variants. Confirmed directly on an Original Brands PDP (color links + size dropdown, one SKU per color/size combo).
-- **Brand is a first-class dimension on both**, but expressed differently: Original Brands exposes it as a real PLP facet ("Merk", with counts) *and* top-nav brand links; Only Brands expresses it mostly as URL/category structure (`/fitflop.html`, `/teva.html`, brand landing pages) rather than a checkbox facet within a mixed listing. Either way: Dawn's stock `vendor` field is the natural home for it — unlike SB, where it sat unused and got repurposed for "material."
-- **Facet set is a superset of SB's shipped facets.** Original Brands PLP: Merk / Geslacht / Kleur / Maat / Materiaal / Prijs, all open-by-default accordions (same UX pattern SB already ships). Only Brands (Magento layer nav): Category-type / Gender / Schoenmaat (EU shoe sizing) / Materiaal / Kleur, all with counts.
+- **Current site is a migration, not "existing Shopify to copy."** Original Brands runs a custom Drupal-ish CMS (`itr_theme`, `photohost.be` image CDN) — content/UX parity target, not code to port. Expect the same per-variant-URL → single-Shopify-product consolidation + redirect-mapping work SB needed.
+- **Not a marketplace** — single-operator, multi-brand retailer. Product structure matches SB: 1 item + color/size variants. Confirmed directly on a PDP (color links + size dropdown, one SKU per color/size combo).
+- **Brand is a first-class dimension**, exposed as a real PLP facet ("Merk", with counts) *and* top-nav brand links. Dawn's stock `vendor` field is the natural home for it — unlike SB, where it sat unused and got repurposed for "material."
+- **Facet set is a superset of SB's shipped facets:** Merk / Geslacht / Kleur / Maat / Materiaal / Prijs, all open-by-default accordions (same UX pattern SB already ships).
   - **Gap vs. SB today: no Brand facet, no Gender facet.** Everything else (color, size, material, price) SB already has a working pattern for.
-- **Card pattern on both** = swatch/color links + inline size availability + sale-% badge — functionally what `plp-card-swatches` / `plp-size-facet-grid` already do.
-- **Both already show a wishlist icon in the header** on their current sites — the Wishlist King header/PDP/cart-drawer integration (`wishlist-integration` spec) is a straight port, not new discovery work.
-- **Only Brands adds a Trustpilot review carousel** on-site (homepage + likely PDP) — genuinely new, SB has no reviews capability yet (explicitly out of scope for SB's Milestone 1).
-- Both have standard trust-badge / newsletter-signup patterns (delivery cutoff, return window, discount-on-signup) — content parity items, not architecture.
+- **Card pattern** = swatch/color links + inline size availability + sale-% badge — functionally what `plp-card-swatches` / `plp-size-facet-grid` already do.
+- **Already shows a wishlist icon in the header** — the Wishlist King header/PDP/cart-drawer integration (`wishlist-integration` spec) is a straight port, not new discovery work.
+- Standard trust-badge / newsletter-signup patterns (delivery cutoff, return window, discount-on-signup) — content parity items, not architecture.
 
 ## Product-model decision (Akeneo → Shopify) — decided 2026-08-04
 
@@ -59,49 +54,48 @@ So once color 1 sells out, the grid tile still shows color 1 while the click lan
 | Capability (spec) | Verdict | Note |
 |---|---|---|
 | `akeneo-option-handling` | **Reuse as-is** | Bracket-key detection (`[color]`, `[size]`) is Akeneo-universal, not SB-specific |
-| `plp-color-filter` + `plp-card-swatches` | **Reuse as-is** | Color-family merge, swatch chips, hover-pair swap — matches both sites' card pattern |
-| `plp-size-facet-grid` | **Reuse, adapt** | Box-grid pattern holds; Only Brands' EU shoe sizing (36–46) needs its own ordering, not SB's XS–XXL/bra-size logic |
-| `plp-filter-panel-chrome` | **Reuse as-is** | Open-by-default accordions, "Shop by ..." labels — both target sites already use open-by-default accordions natively |
+| `plp-color-filter` + `plp-card-swatches` | **Reuse as-is** | Color-family merge, swatch chips, hover-pair swap — matches this site's card pattern |
+| `plp-size-facet-grid` | **Reuse, adapt** | Box-grid pattern holds; footwear brands (FitFlop, Hi-Tec, Magnum, etc.) need EU shoe-size ordering (36–46), not SB's XS–XXL/bra-size logic |
+| `plp-filter-panel-chrome` | **Reuse as-is** | Open-by-default accordions, "Shop by ..." labels — matches the site's native pattern |
 | `plp-mobile-filter-bar` | **Reuse as-is** | Nothing brand-specific in the mechanism |
 | `plp-grid-config`, `plp-loading-feedback`, `plp-scroll-clamp`, `plp-sort-options` | **Reuse as-is** | Pure UX/perf plumbing, no brand coupling |
 | `pdp-color-swatches` | **Reuse as-is** | Same variant-swatch-via-metaobject approach applies |
-| `pdp-feature-icons` | **Reuse, verify data** | Depends on whether Akeneo feeds for these catalogs carry an equivalent icon/attribute metaobject — confirm before assuming |
+| `pdp-feature-icons` | **Reuse, verify data** | Depends on whether the Akeneo feed carries an equivalent icon/attribute metaobject — confirm before assuming |
 | `predictive-search-overlay` | **Reuse as-is** | Generic search UX |
 | `cart-drawer-line-item-layout` | **Reuse as-is** | Generic |
-| `wishlist-integration` | **Reuse as-is** | Both sites already have wishlist icons today — validates this is wanted, not a guess |
+| `wishlist-integration` | **Reuse as-is** | Site already has a wishlist icon today — validates this is wanted, not a guess |
 | `header-animated-logo` | **Retire (SB-specific)** | Built to match sweatybetty.com's exact wordmark/monogram SVG — not applicable unless a brand asks for the same treatment |
 | `link-underline-style`, `branded-dropdown-controls` | **Reuse pattern, not values** | The *mechanism* (sitewide override) is reusable; the actual style call is per-brand |
-| Boost (archived) | **Retired, don't reopen** | Only real "didn't work" data point so far: native beat Boost by ~40–50% LCP for SB (`archive/NO-BOOST-TEST.md`) — treat native-first as the default starting point for both new shops too, skip re-litigating Boost vs. native from scratch |
+| Boost (archived) | **Retired, don't reopen** | Only real "didn't work" data point so far: native beat Boost by ~40–50% LCP for SB (`archive/NO-BOOST-TEST.md`) — treat native-first as the default starting point here too, skip re-litigating Boost vs. native from scratch |
 
 **New capabilities to design (not covered by any SB spec):**
 - **Brand facet** — checkbox/multi-select filter + vendor-driven PLP/PDP display. Straightforward Dawn `vendor` usage, no Akeneo bracket-key trick needed.
 - **Gender facet** — likely another Akeneo attribute key, same pattern as size/color detection in `akeneo-option-handling`.
-- **Reviews** (Only Brands, Trustpilot) — new; check whether Original Brands wants the same before building twice.
+- **Reviews** (Trustpilot-style) — new capability, not covered by any SB spec; see Frontend Feature Audit below for the UX shape worth building.
 
-## Frontend feature audit — actual visual review (2026-07-14)
+## Frontend feature audit — design/UX judgment calls (2026-07-14)
 
-The reuse ledger above is about *architecture*. This is about *design/UX quality* — screenshotted homepage/PLP/PDP on both sites and judged each feature on its own merits: worth adopting, or skip as dated.
+The reuse ledger above is about *architecture*. This is about *design/UX quality* from a visual review of the current site — worth adopting, or skip as dated.
 
 **✅ Take it — genuinely good, worth building:**
-- **Inline Trustpilot widget on PDP** (Only Brands): TrustScore + review count sits cleanly in the buy-box flow, not floating over content. Much better than Original Brands' floating Kiyoh rating badge, which overlaps the gallery awkwardly.
-- **Real product reviews with pros/cons** (Only Brands PDP): star rating up top near the title (immediate social proof above the fold), full reviews with "Pluspunten/Minpunten" + a structured submission form. This is the one capability neither SB nor the current ledger has at all — genuinely worth scoping in, not just a nice-to-have.
+- **Inline Trustpilot-style widget on PDP:** TrustScore + review count sits cleanly in the buy-box flow, not floating over content — replaces the site's current floating Kiyoh rating badge, which overlaps the gallery awkwardly.
+- **Real product reviews with pros/cons:** star rating up top near the title (immediate social proof above the fold), full reviews with "Pluspunten/Minpunten" + a structured submission form. A capability neither SB nor the current ledger has at all — genuinely worth scoping in, not just a nice-to-have.
 - **Per-brand fit-guide accordion** ("Hoe vallen FitFlop damesschoenen?") + short "Over [Brand]" blurb on PDP: real answer to a real multi-brand problem (sizing isn't consistent brand-to-brand) that SB never needed as a single-brand store. Worth a generic `sb-brand-fit-guide`-style snippet, Akeneo/metaobject-driven per brand.
-- **Structured specifications table** (Only Brands PDP: Merk/Model/Kleur/Materiaal/Voering/Zool/Technologie/Pasvorm as clean label:value rows): a good complement to marketing copy once Akeneo attribute sets are richer than SB's, surfaces attributes a shopper actually filters/decides on.
-- **Brand watermark on the PDP gallery image** (Original Brands: small brand logo tag overlaid on the product photo): cheap, clear brand attribution in a multi-brand catalog — SB never needed this (single brand) but it matters here.
-- **Circular brand-shortcut row + clean logo trust bar on homepage** (Only Brands): "shop by brand" as photo circles right under the hero, plus a minimal black-and-white logo strip further down — both communicate "curated multi-brand" at a glance, better than Original Brands' plain text nav for the same job.
-- **Homepage "Aanbevolen voor u" carousel with a real CTA per card** (Only Brands): clean, well-spaced, works. Reasonable homepage personalization pattern to keep.
-- Size box-grid picker on PDP (Only Brands, 36–43 as boxes) — already matches what SB built for PLP (`plp-size-facet-grid`); validates extending the same box-grid pattern to PDP everywhere, not just PLP.
+- **Structured specifications table** (Merk/Model/Kleur/Materiaal/Voering/Zool/Technologie/Pasvorm as clean label:value rows): a good complement to marketing copy once Akeneo attribute sets are richer than SB's, surfaces attributes a shopper actually filters/decides on.
+- **Brand watermark on the PDP gallery image**: small brand logo tag overlaid on the product photo — cheap, clear brand attribution in a multi-brand catalog. SB never needed this (single brand) but it matters here.
+- **Circular brand-shortcut row + clean logo trust bar on homepage:** "shop by brand" as photo circles right under the hero, plus a minimal black-and-white logo strip further down — communicates "curated multi-brand" at a glance, better than a plain text nav for the same job.
+- **Homepage "Aanbevolen voor u" carousel with a real CTA per card:** clean, well-spaced homepage personalization pattern worth keeping.
+- **Size box-grid picker on PDP** (boxes, not a dropdown) — extends the same box-grid pattern SB built for PLP (`plp-size-facet-grid`) to PDP too.
 
 **❌ Skip it — dated or actively bad UX, don't replicate:**
-- **Stacked/simultaneous popups** (Original Brands PDP and PLP): cookie-consent banner *and* a birthday-newsletter modal both fire at once, overlapping each other and the product gallery/thumbnails. Don't replicate the "interrupt immediately on load" pattern — if a newsletter popup ships at all, it should be delayed/exit-intent and never stack with the cookie banner.
-- **Floating rating badge overlapping content** (Original Brands): the Kiyoh trust badge floats mid-page over the gallery — same trust signal Only Brands does far better inline. Use the inline pattern, not this one.
-- **Wall-of-SEO-text below the PLP grid** (Original Brands: one long unbroken paragraph block "Sweaty Betty: Dé keuze voor actieve vrouwen..."): keep the *intent* (organic-search copy) but not the execution — Only Brands' footer version (short, per-brand columns) reads far better than one undifferentiated wall of text.
-- **Numbered pagination ("Pagina 1 van 7")** (Original Brands PLP): SB already tested and deliberately dropped numbered pagination for load-more (`plp-grid-config` spec, 2026-07-05) — don't regress on this for the new shops either.
-- **Broken/unstyled "recently viewed" widget** (Only Brands homepage): a product row with tiny unstyled icon-sized images and no card treatment — reads as neglected, not a design choice to carry forward. Also spotted a stray unstyled debug string ("29.00000 4.00000 dames heren") bleeding into the page footer on both the Only Brands homepage and PDP — a live bug, not a pattern.
-- **Plain `<select>` size dropdown on PDP** (Original Brands, for the one PDP checked): worse than SB's existing button-based size picker and worse than Only Brands' own box-grid — no reason to regress to a dropdown.
-- **No size-chart / fit-guide link near the size selector** (Original Brands): SB's `sb-size-chart` "Maattabel" dialog is already a better answer to the exact same question — carry that forward as-is.
+- **Stacked/simultaneous popups:** cookie-consent banner *and* a birthday-newsletter modal both fire at once, overlapping each other and the product gallery/thumbnails. If a newsletter popup ships at all, it should be delayed/exit-intent and never stack with the cookie banner.
+- **Floating rating badge overlapping content:** the Kiyoh trust badge floats mid-page over the gallery — use the inline pattern from the Take-it list above instead.
+- **Wall-of-SEO-text below the PLP grid:** one long unbroken paragraph block ("Sweaty Betty: Dé keuze voor actieve vrouwen..."). Keep the *intent* (organic-search copy) but not the execution — short, per-brand columns in the footer read far better than one undifferentiated wall of text.
+- **Numbered pagination ("Pagina 1 van 7"):** SB already tested and deliberately dropped numbered pagination for load-more (`plp-grid-config` spec, 2026-07-05) — don't regress on this here either.
+- **Plain `<select>` size dropdown on PDP:** worse than SB's existing button-based size picker — no reason to regress to a dropdown.
+- **No size-chart / fit-guide link near the size selector:** SB's `sb-size-chart` "Maattabel" dialog is already a better answer to the exact same question — carry that forward as-is.
 
-## Homepage redesign direction — Original Brands (approved 2026-07-14)
+## Homepage redesign direction — approved 2026-07-14
 
 Original Brands' current homepage is a generic "SOLDEN tot 40% korting" clearance banner + a 3×3 brand-tile grid with wildly inconsistent photography (a Magnum tactical-boot close-up next to a Sweaty Betty yoga shot next to a Juicy Couture street-style photo, all behind an identical gray CTA button) — it reads as "logos we happen to sell," not a considered destination. The problem is real: the brand mix (Sweaty Betty, Odlo, Magnum, Mechanix, Hi-Tec, Holster Australië, Juicy Couture, RH+, Löwenweiss, FitFlop) doesn't share one lifestyle aesthetic, so forcing them into one flat grid/mood is what breaks visual coherence.
 
@@ -111,9 +105,7 @@ Original Brands' current homepage is a generic "SOLDEN tot 40% korting" clearanc
 
 **Tone:** confident and trustworthy, still deal-friendly for the price-conscious Benelux shopper (don't drop discounting entirely), but framed as "smart pick," not clearance-outlet.
 
-(Was also planned to apply, adapted, to Only Brands' homepage — moot now that Only Brands is killed; left here only as the original comparative note.)
-
-**First mockup round (2026-07-14) was rejected on execution, not the idea.** The structure (occasion sections, hero staging all three) landed; the *aesthetic* didn't — it read as "an obviously Claude-made artifact" rather than a real fashion-ecommerce homepage for this specific client. Corrections that matter for any future Original Brands mockup:
+**First mockup round (2026-07-14) was rejected on execution, not the idea.** The structure (occasion sections, hero staging all three) landed; the *aesthetic* didn't — it read as "an obviously Claude-made artifact" rather than a real fashion-ecommerce homepage for this specific client. Corrections that matter for any future mockup:
 - **White background, not an off-white/stone "paper" tone.** Beige/cream neutrals are exactly the kind of thing that makes AI-generated design instantly recognizable as such — for a real client site, use their actual palette, not an invented neutral.
 - **Use the brand's *actual* extracted colors, not invented ones close to them.** Pulled Original Brands' real computed styles via `getComputedStyle` in Chrome DevTools MCP: primary blue is `rgb(143,171,179)` / `#8FABB3` (topbar, help blocks), accent red is `rgb(245,64,45)` / `#F5402D` (matches the flower logomark), ink is `rgb(49,55,50)` / `#313732`. Don't reinvent an adjacent "refined" version of a client's brand color — sample the live site and use the exact value.
 - **Use the real logo SVG** (fetched from the live site, embedded inline, not rebuilt from scratch) — a client wants to recognize their own brand mark, not a new one.
@@ -125,15 +117,12 @@ Original Brands' current homepage is a generic "SOLDEN tot 40% korting" clearanc
 - **A multi-image hero can be a real interactive carousel** (auto-advance + arrows + dots, all real photos from the brand) instead of a static 3-image collage — more scalable (works for 8+ brands, not capped at 3) and closer to standard ecommerce hero patterns.
 - Real assets (product photos, logo) were pulled directly from the live site via `curl` (network access works from Bash in this environment) and embedded as base64 data URIs — the Artifact tool's CSP blocks hotlinked remote `<img src>` at render time, so external images must be inlined, never linked.
 
-## Per-shop notes
+## Brand roster
 
-**Original Brands** — apparel + footwear, sale-heavy merchandising (visible strikethrough pricing, "Solden" nav item), birthday-field newsletter popup. Carries Sweaty Betty itself as one of its brands, alongside FitFlop, Odlo, Juicy Couture, Mechanix, Holster Australië, RH+, others.
+Apparel + footwear, sale-heavy merchandising (visible strikethrough pricing, "Solden" nav item), birthday-field newsletter popup. Carries Sweaty Betty itself as one of its brands, alongside FitFlop, Odlo, Juicy Couture, Mechanix, Holster Australië, RH+, others.
 
-**Only Brands (killed)** — footwear-only (FitFlop, Teva, Xsensible, Timberland, Sorel, Moon Boot, Birkenstock), Magento layer-nav filters were richer (11 shoe-type values, 11 shoe sizes, 11 material values, ~15+ color values with counts) — kept as a reference point for how far SB's facet UI patterns can stress-test to a wider attribute set, since Original Brands' own facet set may still grow toward that.
-
-## Open questions before scoping Original Brands for real
+## Open questions before scoping for real
 
 1. Akeneo attribute set — does it mirror SB's schema (`[color]`, `[bottoms_size]` style keys), or is Original Brands' Akeneo instance/catalog structured differently? Don't assume; check the actual export.
 2. Redirect/URL-consolidation strategy for legacy per-variant product pages (the current Drupal-ish site gives each color/size combo its own URL) — same class of problem SB solved, but the URL scheme differs (Drupal-ish slugs, not Magento `.html`).
-3. Brand identity scope, per client note: likely just a logo + maybe a primary color for Original Brands — confirm before any `header-animated-logo`-style bespoke work is considered (and per the ledger above, probably don't build that here either).
-4. ~~Whether reviews (Trustpilot) become a shared spec across both shops~~ — moot, Only Brands is killed; if Original Brands wants reviews, scope it standalone.
+3. Brand identity scope, per client note: likely just a logo + maybe a primary color — confirm before any `header-animated-logo`-style bespoke work is considered (and per the ledger above, probably don't build that here either).
