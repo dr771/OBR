@@ -1,8 +1,10 @@
-# Mixed-Shops Playbook — Original Brands & Only Brands
+# Mixed-Shops Playbook — Original Brands (Only Brands killed)
 
-**Status:** brainstorm-stage reference doc, not a spec. SB work is paused (2026-07-14) while these two get scoped. Same stack as SB: Shopify + Akeneo. No repos exist yet for either project — this doc lives here because it's built from SB's shipped specs/MEMORY.md and has nowhere else to go yet. Move it into a dedicated folder once either project gets its own repo.
+**Status:** Only Brands is killed (confirmed 2026-08-10) — Original Brands is now the sole active project this doc serves. Original Brands has its own repo as of 2026-08-10 (`C:\Users\rezni\SHOPIFY\OriginalBrands`, Dawn theme scaffolded, connected to `original-brands-dev.myshopify.com`); this doc stays at its root as the architecture/decision reference, no longer a not-a-spec brainstorm doc. SB work remains paused. Same stack as SB: Shopify + Akeneo.
 
-Sites: [originalbrands.nl](https://www.originalbrands.nl/) · [onlybrands.nl](https://www.onlybrands.nl/)
+The Only Brands content below (live-site audit, per-shop notes, some open questions) is kept as **historical context, not an active workstream** — it documents comparative reasoning that shaped several Original Brands decisions (e.g. the Brand/Gender facet gap, several "take it / skip it" frontend calls). Don't scope new Only Brands work off it.
+
+Sites: [originalbrands.nl](https://www.originalbrands.nl/) · ~~[onlybrands.nl](https://www.onlybrands.nl/)~~ (killed)
 
 ## Confirmed facts (from live-site audit, 2026-07-14)
 
@@ -109,9 +111,9 @@ Original Brands' current homepage is a generic "SOLDEN tot 40% korting" clearanc
 
 **Tone:** confident and trustworthy, still deal-friendly for the price-conscious Benelux shopper (don't drop discounting entirely), but framed as "smart pick," not clearance-outlet.
 
-Also applies (adapted) to Only Brands' homepage, which has better bones (real hero photography, circular brand-shortcut row, clean logo trust bar) but a broken "recently viewed" widget and a stray debug string bleeding into the footer — those are bugs to fix, not a positioning problem like Original Brands has.
+(Was also planned to apply, adapted, to Only Brands' homepage — moot now that Only Brands is killed; left here only as the original comparative note.)
 
-**First mockup round (2026-07-14) was rejected on execution, not the idea.** The structure (occasion sections, hero staging all three) landed; the *aesthetic* didn't — it read as "an obviously Claude-made artifact" rather than a real fashion-ecommerce homepage for this specific client. Corrections that matter for any future mockup of either shop:
+**First mockup round (2026-07-14) was rejected on execution, not the idea.** The structure (occasion sections, hero staging all three) landed; the *aesthetic* didn't — it read as "an obviously Claude-made artifact" rather than a real fashion-ecommerce homepage for this specific client. Corrections that matter for any future Original Brands mockup:
 - **White background, not an off-white/stone "paper" tone.** Beige/cream neutrals are exactly the kind of thing that makes AI-generated design instantly recognizable as such — for a real client site, use their actual palette, not an invented neutral.
 - **Use the brand's *actual* extracted colors, not invented ones close to them.** Pulled Original Brands' real computed styles via `getComputedStyle` in Chrome DevTools MCP: primary blue is `rgb(143,171,179)` / `#8FABB3` (topbar, help blocks), accent red is `rgb(245,64,45)` / `#F5402D` (matches the flower logomark), ink is `rgb(49,55,50)` / `#313732`. Don't reinvent an adjacent "refined" version of a client's brand color — sample the live site and use the exact value.
 - **Use the real logo SVG** (fetched from the live site, embedded inline, not rebuilt from scratch) — a client wants to recognize their own brand mark, not a new one.
@@ -127,11 +129,11 @@ Also applies (adapted) to Only Brands' homepage, which has better bones (real he
 
 **Original Brands** — apparel + footwear, sale-heavy merchandising (visible strikethrough pricing, "Solden" nav item), birthday-field newsletter popup. Carries Sweaty Betty itself as one of its brands, alongside FitFlop, Odlo, Juicy Couture, Mechanix, Holster Australië, RH+, others.
 
-**Only Brands** — footwear-only (FitFlop, Teva, Xsensible, Timberland, Sorel, Moon Boot, Birkenstock), Magento layer-nav filters are richer (11 shoe-type values, 11 shoe sizes, 11 material values, ~15+ color values with counts) — good stress test for whether SB's facet UI patterns scale to a wider attribute set before assuming they do.
+**Only Brands (killed)** — footwear-only (FitFlop, Teva, Xsensible, Timberland, Sorel, Moon Boot, Birkenstock), Magento layer-nav filters were richer (11 shoe-type values, 11 shoe sizes, 11 material values, ~15+ color values with counts) — kept as a reference point for how far SB's facet UI patterns can stress-test to a wider attribute set, since Original Brands' own facet set may still grow toward that.
 
-## Open questions before scoping either project for real
+## Open questions before scoping Original Brands for real
 
-1. Akeneo attribute sets per shop — do they mirror SB's schema (`[color]`, `[bottoms_size]` style keys) or is each shop's Akeneo instance/catalog structured differently? Don't assume; check the actual export.
-2. Redirect/URL-consolidation strategy for legacy per-variant product pages (both current sites appear to give each color/size combo its own URL) — same class of problem SB solved, but each platform's URL scheme differs (Drupal-ish slugs vs. Magento `.html`).
-3. Brand identity scope, per your note: likely just a logo + maybe a primary color for Original Brands — confirm with the client before any `header-animated-logo`-style bespoke work is considered (and per the ledger above, probably don't build that for these).
-4. Whether reviews (Trustpilot) become a shared "wishlist-integration"-style spec across both shops, or Only Brands-only.
+1. Akeneo attribute set — does it mirror SB's schema (`[color]`, `[bottoms_size]` style keys), or is Original Brands' Akeneo instance/catalog structured differently? Don't assume; check the actual export.
+2. Redirect/URL-consolidation strategy for legacy per-variant product pages (the current Drupal-ish site gives each color/size combo its own URL) — same class of problem SB solved, but the URL scheme differs (Drupal-ish slugs, not Magento `.html`).
+3. Brand identity scope, per client note: likely just a logo + maybe a primary color for Original Brands — confirm before any `header-animated-logo`-style bespoke work is considered (and per the ledger above, probably don't build that here either).
+4. ~~Whether reviews (Trustpilot) become a shared spec across both shops~~ — moot, Only Brands is killed; if Original Brands wants reviews, scope it standalone.

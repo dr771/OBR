@@ -10,7 +10,7 @@ Shopify theme rebuild for Original Brands (originalbrands.nl) — multi-brand ap
 - **Theme base:** Dawn (cloned fresh 2026-08-10, no upstream git history)
 - **Product data source:** will be Akeneo (not yet connected — no products in the dev store yet)
 - **Reference project:** `C:\Users\rezni\SHOPIFY\SweatyBetty` — same Dawn/Akeneo/OpenSpec stack, further along. Reuse its shipped patterns and lessons, not its SB-specific branding/hacks.
-- **Sibling shop:** Only Brands (onlybrands.nl), same client/stack, currently paused — decisions that apply to both live in the playbook below.
+- **Only Brands (onlybrands.nl)** was a sibling shop for the same client/stack — **killed 2026-08-10**. The playbook below still has comparative research from when both were being scoped together (kept for the reasoning, not as an active second project).
 
 ## Project Docs
 
