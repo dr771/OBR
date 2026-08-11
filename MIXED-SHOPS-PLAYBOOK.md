@@ -69,9 +69,29 @@ SB merges ~30 raw `[color]` option values into families client-side (`sb-facet-c
 
 **Gotcha that cost real time — DRAFT metaobjects (fixed 2026-08-11):** a metaobject-backed filter renders **nothing** on the storefront if its entries are `publishable.status: DRAFT`, because the storefront can't read drafts, so the filter has zero visible values and Shopify omits it entirely. The admin shows it fully configured *with* values and swatches (admin sees drafts), so it looks like an indexing delay or a theme bug. All 12 `filtercolors` entries were DRAFT; set to ACTIVE via `metaobjectUpdate`. **If Nick's sync keeps emitting DRAFT this regresses on every re-sync.** Unrelated red herring: `adminFilterable.eligible: false` on a metafield definition governs the *admin* product-list filter, not storefront filters.
 
+### D6 — Size facet: three coexisting size systems, so SB's letter logic is extended, not replaced — measured 2026-08-11
+
+Read off all 7 synced products. The catalog uses **three** Akeneo size option keys at once, and a single "Maat" facet has to cope with all of them:
+
+| Option key | Values seen | Products |
+|---|---|---|
+| `[shoe_size_eu]` | `35`–`47` (numeric) | 5 — FitFlop ×2, Holster, Loewenweiss ×2 |
+| `[tops_size]` | `XXS XS S M L XL XXL` | 1 — SB sweatshirt |
+| `[bottoms_size]` | `S M L XL` | 1 — SB leggings |
+
+Consequences for the port:
+
+- **SB's letter-size ordering is reusable as-is** for `[tops_size]`/`[bottoms_size]`, and a numeric-ascending branch is *added* for `[shoe_size_eu]`. The earlier note ("EU ordering 36–46 **instead of** SB's XS–XXL logic") was wrong on both counts — OB is apparel *and* footwear, so it needs both.
+- **The EU range is 35–47, not 36–46.** Loewenweiss Hygge alone spans 35–47 and Holster reaches 46. Don't hardcode a 36–46 grid.
+- **Raw option values arrive unsorted** (`36 37 40 39 42 43 38 41`), so ordering is entirely the theme's job — nothing upstream can be relied on. Note `akeneo.available_erp_sizes` *is* lexically sorted, which is correct for 2-digit EU numbers but wrong for letters (it yields `L M S XL`); don't mistake it for a sorted source.
+- Per-key branching goes through `ob-option-meta` (the `[shoe_size_eu]` → size mapping already exists there), never off a visible label — see the `akeneo-option-handling` spec.
+- **Unresolved:** whether shoe and apparel sizes should share one "Maat" facet or split into two. Not decidable from 7 test products; revisit when the real assortment lands.
+
+Aside, noted while measuring: `akeneo.available_erp_sizes` has `access.storefront: NONE`. The Search & Discovery facet works anyway (its filter engine doesn't go through Liquid), but any Liquid that tries to *read* the metafield directly will silently get nothing. MIGRATION-TO-LIVE.md lists it as needing `PUBLIC_READ` — that's only required if a future feature reads it in Liquid.
+
 ### Still open (to work through one by one)
 
-1. **Option-key sprawl across ~30 brands** — SB has a fixed, known set of Akeneo bracket keys (`[color]`, `[bottoms_size]`); a multi-brand catalog likely does not.
+1. **Option-key sprawl across ~30 brands** — SB has a fixed, known set of Akeneo bracket keys (`[color]`, `[bottoms_size]`); a multi-brand catalog likely does not. **Partly measured:** 3 keys across 7 products, see D6.
 2. **Footwear specifics** — widths, half sizes, and a much larger color vocabulary than `sb-color-family`'s current map.
 
 ### Answered
@@ -160,7 +180,7 @@ Original Brands' current homepage is a generic "SOLDEN tot 40% korting" clearanc
 In rough priority order — nothing here is started:
 
 1. **Blocking others / cheap:** Nick's data fixes are queued in `NICK.md` (Black Grey mis-tagged, brown hexcode, English filter labels, and the **DRAFT metaobject status** — that last one re-breaks the colour filter on every re-sync until fixed).
-2. **Port next from the reuse ledger** — the remaining "Reuse as-is" rows are untouched: `plp-size-facet-grid` (needs EU shoe-size ordering 36–46, not SB's XS–XXL/bra logic), `plp-filter-panel-chrome`, `plp-mobile-filter-bar`, `plp-grid-config` (incl. load-more instead of numbered pagination), `plp-loading-feedback`, `plp-scroll-clamp`, `plp-sort-options`, `predictive-search-overlay`, `cart-drawer-line-item-layout`, `wishlist-integration`.
+2. **Port next from the reuse ledger** — the remaining "Reuse as-is" rows are untouched: `plp-size-facet-grid` (**next up**; needs EU shoe-size ordering *in addition to* SB's letter-size logic, not instead of it — see D6 below), `plp-filter-panel-chrome`, `plp-mobile-filter-bar`, `plp-grid-config` (incl. load-more instead of numbered pagination), `plp-loading-feedback`, `plp-scroll-clamp`, `plp-sort-options`, `predictive-search-overlay`, `cart-drawer-line-item-layout`, `wishlist-integration`.
 3. **`pdp-feature-icons`** — **blocked on Nick, not ready** (re-checked against the live dev data 2026-08-11; the earlier "data confirmed ready" note was wrong). The entry shape is as expected (`code`/`label`/`image_asset`, same as `filtercolors`) and the DRAFT status is fixed, but two things block the spec: `custom.activities` is a **single** `metaobject_reference`, not a `list.` like SB's `custom.icons` — so a product can hold exactly one activity — and all 7 products currently point at the same value (`lifestyle`), with `running` unreferenced. Until Nick confirms whether it should be a list and whether the values are real, the capability's core shape (one icon vs. a scrolling row of many) is undecided. See `NICK.md` #5.
 4. **Launch = a store-to-store migration, not a theme publish** (Nick's setup, confirmed 2026-08-11). There are **two separate Shopify shops**: this dev shop, which never goes public under the real domain, and a separate live shop created at launch. So nothing here is customer-facing and no theme push on this store needs treating as a release — work on whichever theme is convenient (the swatch/facet work is on Dawn `148245381229` as of 2026-08-11).
 
