@@ -49,7 +49,7 @@ Client behavior for the card swatches is in `assets/ob-card-swatches.js` (docume
 
 First real build landed. Akeneo sync is live with **7 test products across 4 brands** (FitFlop, Holster, Loewenweiss, Sweaty Betty) — treat this as pipeline test data, **not** the live assortment (the SB items are apparel examples, per owner).
 
-Shipped and verified on the **Development theme `148994719853`** (`?preview_theme_id=148994719853`, storefront password `original`):
+Shipped and verified on the **live Dawn theme `148245381229`** (storefront password `original`), and also present on the Development theme used during the build:
 - PLP card colour swatches — img-swatch chips, tooltips, hover-persist image swap, colour-matched hover-pair second image
 - PDP colour swatches (img-swatch chips)
 - Colour filter (flat hex chips from `filtercolors`), plus Merk / Gender / Maat / Producttype / Prijs facets
@@ -57,6 +57,14 @@ Shipped and verified on the **Development theme `148994719853`** (`?preview_them
 
 Six capabilities are seeded in `openspec/specs/`; the change is archived under `openspec/changes/archive/2026-08-11-port-akeneo-facets-swatches/`.
 
-**Not yet done:** nothing is on the live/MAIN theme (still stock Dawn) — everything above is on the Development theme only. Homepage is untouched and still blocked on mockup approval + the red-vs-blue CTA decision. See "Next up" in MIXED-SHOPS-PLAYBOOK.md.
+**Not yet done:** homepage is untouched, still blocked on mockup approval + the red-vs-blue CTA decision. See "Next up" in MIXED-SHOPS-PLAYBOOK.md.
 
-**Shopify CLI is authenticated on this machine** — use `shopify theme push --theme=148994719853 --only <files>`. Do *not* hand-encode files through Admin GraphQL `themeFilesUpsert`; that corrupted a file earlier in this project.
+**Theme workflow.** Shopify CLI is authenticated on this machine:
+```
+shopify theme push --theme=148245381229 --allow-live --only <files>   # live Dawn
+```
+Always push with `--only <changed files>` — a bare push would overwrite the theme's `settings_data.json`/templates from the local clone.
+
+**Don't park work on a CLI Development theme.** Those are ephemeral (Shopify removes them after ~7 days idle) and tied to whichever machine created them — the existing one is named after the *Windows* box. Push to the real theme.
+
+**Never hand-encode files through Admin GraphQL `themeFilesUpsert`** — that corrupted `card-product.liquid` earlier in this project. Use the CLI.

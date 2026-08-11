@@ -162,7 +162,7 @@ In rough priority order — nothing here is started:
 1. **Blocking others / cheap:** Nick's data fixes are queued in `NICK.md` (Black Grey mis-tagged, brown hexcode, English filter labels, and the **DRAFT metaobject status** — that last one re-breaks the colour filter on every re-sync until fixed).
 2. **Port next from the reuse ledger** — the remaining "Reuse as-is" rows are untouched: `plp-size-facet-grid` (needs EU shoe-size ordering 36–46, not SB's XS–XXL/bra logic), `plp-filter-panel-chrome`, `plp-mobile-filter-bar`, `plp-grid-config` (incl. load-more instead of numbered pagination), `plp-loading-feedback`, `plp-scroll-clamp`, `plp-sort-options`, `predictive-search-overlay`, `cart-drawer-line-item-layout`, `wishlist-integration`.
 3. **`pdp-feature-icons`** — data confirmed ready: `custom.activities` is a metaobject reference with `code`/`label`/`image_asset`, same shape as `filtercolors`. Straightforward port, own change.
-4. **Publish path** — decide when/how the Development theme becomes live; nothing has touched the MAIN theme yet.
+4. **Theme hygiene** — the swatch/facet work is now on the live Dawn theme (`148245381229`, pushed 2026-08-11). The store is still password-protected, so "live" means the dev store's main theme, not a public shop. Worth deciding whether to keep using a CLI Development theme for future work (they're ephemeral — deleted after ~7 days idle) or set up a persistent named staging theme.
 5. **Still gated on the client:** homepage (mockup approval + red-vs-blue CTA), reviews, newsletter popup/promo bar. See Open questions.
 
 ## Brand roster
