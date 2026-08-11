@@ -28,6 +28,14 @@
           render 'ob-option-meta', option_name: option.name
         endcapture
         assign option_kind = option_kind | strip
+        capture option_label
+          render 'ob-option-meta', option_name: option.name, field: 'label'
+        endcapture
+        assign option_label = option_label | strip
+        capture option_size_kind
+          render 'ob-option-meta', option_name: option.name, field: 'size_kind'
+        endcapture
+        assign option_size_kind = option_size_kind | strip
 
         assign swatch_count = option.values | map: 'swatch' | compact | size
         assign picker_type = block.settings.picker_type
@@ -51,7 +59,7 @@
       {%- if picker_type == 'swatch' -%}
         <fieldset class="js product-form__input product-form__input--swatch">
           <legend class="form__label">
-            {{ option.name }}:
+            {{ option_label }}:
             <span data-selected-value>
               {{- option.selected_value -}}
             </span>
@@ -61,23 +69,26 @@
             option: option,
             block: block,
             picker_type: picker_type,
-            option_kind: option_kind
+            option_kind: option_kind,
+            option_size_kind: option_size_kind
           %}
         </fieldset>
       {%- elsif picker_type == 'button' -%}
         <fieldset class="js product-form__input product-form__input--pill">
-          <legend class="form__label">{{ option.name }}</legend>
+          <legend class="form__label">{{ option_label }}</legend>
           {% render 'product-variant-options',
             product: product,
             option: option,
             block: block,
-            picker_type: picker_type
+            picker_type: picker_type,
+            option_kind: option_kind,
+            option_size_kind: option_size_kind
           %}
         </fieldset>
       {%- else -%}
         <div class="product-form__input product-form__input--dropdown">
           <label class="form__label" for="Option-{{ section.id }}-{{ forloop.index0 }}">
-            {{ option.name }}
+            {{ option_label }}
           </label>
           <div class="select">
             {%- if picker_type == 'swatch_dropdown' -%}
@@ -98,7 +109,9 @@
                 product: product,
                 option: option,
                 block: block,
-                picker_type: picker_type
+                picker_type: picker_type,
+                option_kind: option_kind,
+                option_size_kind: option_size_kind
               %}
             </select>
             <span class="svg-wrapper">

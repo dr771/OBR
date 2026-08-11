@@ -68,8 +68,9 @@ Shipped and verified on this shop's **main Dawn theme `148245381229`** (storefro
 - Colour filter (flat hex chips from `filtercolors`), plus Merk / Gender / Maat / Producttype / Prijs facets
 - D1 card image tracks the first *available* variant
 - **Size facet as a 4-column box grid** (`plp-size-facet-grid`), and the collection page switched to the **vertical** filter layout — it had been `horizontal`, under which Dawn does no show-more truncation at all
+- **PDP size picker ordering** (`pdp-size-picker-order`) — EU shoe sizes render numerically, tops/bottoms render in semantic letter order, and raw Akeneo headings are replaced with `Maat`
 
-Seven capabilities are seeded in `openspec/specs/`; changes archived under `openspec/changes/archive/2026-08-11-port-akeneo-facets-swatches/` and `.../2026-08-11-plp-size-facet-grid/`.
+Eight capabilities are seeded in `openspec/specs/`; changes archived under `openspec/changes/archive/2026-08-11-port-akeneo-facets-swatches/`, `.../2026-08-11-plp-size-facet-grid/`, and `.../2026-08-11-pdp-size-picker-order/`.
 
 **OpenSpec CLI:** `npm install -g @fission-ai/openspec` — the npm name `openspec` is an unrelated stub. See the OpenSpec CLI section above.
 

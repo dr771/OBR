@@ -7,6 +7,7 @@
   - block: {Object} block object.
   - picker_type: {String} type of picker to dispay
   - option_kind: {String} 'color' | 'size' | 'generic', from ob-option-meta (optional)
+  - option_size_kind: {String} 'shoe-eu' | 'tops' | 'bottoms' | 'generic' (optional)
 
 
   Usage:
@@ -20,10 +21,16 @@
 {% endcomment %}
 {%- liquid
   assign product_form_id = 'product-form-' | append: section.id
+  capture ordered_value_indexes
+    render 'ob-option-value-order', option: option, size_kind: option_size_kind
+  endcapture
+  assign ordered_value_indexes = ordered_value_indexes | strip | split: ','
 -%}
 
-{%- for value in option.values -%}
+{%- for ordered_value_index in ordered_value_indexes -%}
   {%- liquid
+    assign original_value_index = ordered_value_index | plus: 0
+    assign value = option.values[original_value_index]
     assign swatch_focal_point = null
     if value.swatch.image
       assign image_url = value.swatch.image | image_url: width: 50

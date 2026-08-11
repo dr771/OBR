@@ -1,0 +1,60 @@
+{% comment %}
+  Returns the original zero-based indexes of a ProductOptionValue array in the
+  storefront order for a recognized Akeneo size family. Unknown values are
+  appended in their original relative order; unknown families stay entirely in
+  source order. Keeping indexes lets product-variant-options reuse the original
+  drops and all Dawn metadata unchanged.
+
+  Accepts:
+  - option: {ProductOptionDrop}
+  - size_kind: {String} 'shoe-eu' | 'tops' | 'bottoms' | 'generic'
+
+  Output: comma-separated zero-based indexes, e.g. `0,1,2,6,4,3,7,5`
+{% endcomment %}
+{%- liquid
+  assign emitted_indexes = '|'
+  assign has_output = false
+
+  if size_kind == 'shoe-eu'
+    for numeric_size in (1..100)
+      assign numeric_label = numeric_size | append: ''
+      for value in option.values
+        assign value_label = value | strip
+        if value_label == numeric_label
+          if has_output
+            echo ','
+          endif
+          echo forloop.index0
+          assign emitted_indexes = emitted_indexes | append: forloop.index0 | append: '|'
+          assign has_output = true
+        endif
+      endfor
+    endfor
+  elsif size_kind == 'tops' or size_kind == 'bottoms'
+    assign letter_sizes = '3XS|XXS|XS|S|M|L|XL|XXL|3XL|4XL|5XL|6XL' | split: '|'
+    for letter_size in letter_sizes
+      for value in option.values
+        assign value_label = value | strip | upcase
+        if value_label == letter_size
+          if has_output
+            echo ','
+          endif
+          echo forloop.index0
+          assign emitted_indexes = emitted_indexes | append: forloop.index0 | append: '|'
+          assign has_output = true
+        endif
+      endfor
+    endfor
+  endif
+
+  for value in option.values
+    assign index_marker = forloop.index0 | prepend: '|' | append: '|'
+    unless emitted_indexes contains index_marker
+      if has_output
+        echo ','
+      endif
+      echo forloop.index0
+      assign has_output = true
+    endunless
+  endfor
+-%}

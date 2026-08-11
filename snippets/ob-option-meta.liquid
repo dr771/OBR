@@ -6,19 +6,47 @@
 
   Accepts:
   - option_name: {String} raw option.name, e.g. "[color]", "[shoe_size_eu]"
+  - field: {String} optional: 'kind' | 'size_kind' | 'label'
 
   Usage:
-  {% render 'ob-option-meta', option_name: option.name %}
-  Returns: 'color', 'size', or 'generic'
+  {% render 'ob-option-meta', option_name: option.name, field: 'label' %}
+
+  The default output remains `kind` for backward compatibility with existing callers.
 {% endcomment %}
 {%- liquid
-  assign key = option_name | downcase
+  assign key = option_name | downcase | strip
   assign kind = 'generic'
+  assign size_kind = 'generic'
 
   if key contains 'size' or key contains 'maat'
     assign kind = 'size'
   elsif key contains 'color' or key contains 'colour' or key contains 'kleur'
     assign kind = 'color'
   endif
+
+  if kind == 'size'
+    if key contains 'shoe_size_eu'
+      assign size_kind = 'shoe-eu'
+    elsif key contains 'top'
+      assign size_kind = 'tops'
+    elsif key contains 'bottom'
+      assign size_kind = 'bottoms'
+    endif
+  endif
+
+  if kind == 'color'
+    assign label = 'Kleur'
+  elsif kind == 'size'
+    assign label = 'Maat'
+  else
+    assign label = option_name | remove: '[' | remove: ']' | replace: '_', ' ' | capitalize
+  endif
 -%}
-{{- kind -}}
+{%- case field -%}
+  {%- when 'size_kind' -%}
+    {{- size_kind -}}
+  {%- when 'label' -%}
+    {{- label -}}
+  {%- else -%}
+    {{- kind -}}
+{%- endcase -%}
