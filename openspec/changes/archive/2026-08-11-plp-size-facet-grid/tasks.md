@@ -36,4 +36,4 @@
 - [x] 5.4 Added the "hide filter values with no results" setting to MIGRATION-TO-LIVE.md — it's shop config and does not travel with the theme.
 - [x] 5.5 Recorded an out-of-scope defect spotted during verification: the **PDP** size picker renders raw unsorted option values (`35 36 37 40 39 42 38 41`) and shows the raw Akeneo key `shoe_size_eu` as its heading. Logged in playbook D6 as a candidate change; deliberately not fixed here.
 - [x] 5.2 Note in MIXED-SHOPS-PLAYBOOK.md D6 that shipped code now depends on the facet-supplied ordering.
-- [ ] 5.3 Stop before archiving and hand back for review, per the autopilot rule in CLAUDE.md.
+- [x] 5.3 Stopped before archiving and handed back for review, per the autopilot rule in CLAUDE.md. Approved 2026-08-11.

@@ -67,8 +67,11 @@ Shipped and verified on this shop's **main Dawn theme `148245381229`** (storefro
 - PDP colour swatches (img-swatch chips)
 - Colour filter (flat hex chips from `filtercolors`), plus Merk / Gender / Maat / Producttype / Prijs facets
 - D1 card image tracks the first *available* variant
+- **Size facet as a 4-column box grid** (`plp-size-facet-grid`), and the collection page switched to the **vertical** filter layout — it had been `horizontal`, under which Dawn does no show-more truncation at all
 
-Six capabilities are seeded in `openspec/specs/`; the change is archived under `openspec/changes/archive/2026-08-11-port-akeneo-facets-swatches/`.
+Seven capabilities are seeded in `openspec/specs/`; changes archived under `openspec/changes/archive/2026-08-11-port-akeneo-facets-swatches/` and `.../2026-08-11-plp-size-facet-grid/`.
+
+**OpenSpec CLI:** `npm install -g @fission-ai/openspec` — the npm name `openspec` is an unrelated stub. See the OpenSpec CLI section above.
 
 **Not yet done:** homepage is untouched, still blocked on mockup approval + the red-vs-blue CTA decision. See "Next up" in MIXED-SHOPS-PLAYBOOK.md.
 
