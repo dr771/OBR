@@ -29,6 +29,11 @@ Add a size-specific class alongside `visual_layout_class` and let CSS do `grid-t
 **Raise the show-more threshold to 12 for this facet only.**
 Dawn uses 10 for text facets; 10 boxes in 4 columns leaves a 2-item final row that reads as broken rather than truncated. 12 is the nearest multiple of 4 and gives 3 clean rows. With the current 20 values, 8 stay behind "show more". Alternatives: 8 (too aggressive — hides all letter sizes on a mixed collection, since numerics alone fill 13 slots); 20+ (no truncation at all, which makes the facet dominate the sidebar and diverges from every other facet's behaviour).
 
+**Switch the collection template to the vertical filter layout.**
+Implementation found `templates/collection.json` set to `filter_type: "horizontal"`, which put the facets in dropdown popups and — because Dawn gates show-more on `filter_type == 'vertical'` — disabled truncation entirely, making the threshold above inert. Confirmed with the owner that vertical is the intended layout, so the template is corrected as part of this change rather than the spec being bent around the wrong setting. The setting lives in `templates/collection.json`, which is in git and travels with the theme, so this needs no migration-checklist entry.
+
+Sidebar geometry checked for the 4-column grid: `.facets__form-vertical` is `26rem` wide with `3rem` of wrapper padding, leaving ~23rem; four columns with `0.6rem` gaps give ~5.3rem per box, comfortably clearing the widest current token (`XXL`).
+
 **Fixed 4 columns rather than `auto-fill`.**
 Size tokens are short and uniform, so an auto-fill grid would reflow to a different column count between collections — footwear-only vs mixed — making the sidebar feel unstable. A fixed count is also what the spec's whole-row truncation requirement depends on.
 

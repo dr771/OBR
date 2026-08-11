@@ -6,6 +6,7 @@ Measuring the live facet before porting changed the scope materially, and in OB'
 
 ## What Changes
 
+- The collection template switches to the **vertical** filter layout. It was set to `horizontal`, which put facets in dropdown popups and disabled Dawn's show-more truncation entirely; vertical is the intended layout, confirmed with the owner during implementation.
 - The "Maat" facet renders each value as a clickable box in a 4-column grid on the desktop vertical filter, instead of a checkbox list. Selected values invert their fill; zero-count values stay visibly disabled.
 - Detection is by `filter.param_name contains 'available_erp_sizes'`, matching how the colour facet is already detected in `facets.liquid`. No other facet's rendering changes.
 - Dawn's native AJAX facet filtering and its show-more/show-less truncation are preserved unchanged — the grid re-skins the same `<input type="checkbox">` controls rather than replacing them.
@@ -29,6 +30,7 @@ Explicitly **not** in scope, and each for a measured reason:
 ## Impact
 
 - `snippets/facets.liquid` — one added branch in the desktop value loop (alongside the existing `filtercolors` branch), plus a grid class on the enclosing `<ul>` for the size filter.
+- `templates/collection.json` — `filter_type` set to `vertical`. Affects the layout of *every* facet on the collection page, not just size.
 - `assets/*.css` — grid and box/selected/disabled styling.
 - No JS. No Search & Discovery/admin change, so nothing new for `MIGRATION-TO-LIVE.md`.
 - Depends on the `akeneo.available_erp_sizes` facet existing in Search & Discovery, which the migration checklist already tracks.

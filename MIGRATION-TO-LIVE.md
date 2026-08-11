@@ -30,6 +30,7 @@ These do **not** travel with a theme export, and bare auto-created metafields ar
 ## 3. Apps & admin config
 
 - [ ] **Search & Discovery filters recreated by hand** — these are app config, *not* part of any Akeneo sync, and will not exist on a fresh shop. Currently on dev: **Kleur** (`filtercolors`, variant metafield), **Maat** (`akeneo.available_erp_sizes`, product metafield), **Merk** (`vendor`), **Gender** (`custom.genderid`, product metafield), **Producttype**, **Prijs**. Match labels and order.
+- [ ] **Set "filter values with no results" to hidden** in Search & Discovery, matching dev (set by the owner 2026-08-11). Not cosmetic: with it shown, every facet gains greyed-out zero-count values, so the size grid and colour chips render a different, denser list than anything verified on dev. The theme is correct either way — this is about the live shop matching what was signed off.
 - [ ] Any other apps installed on dev are installed and configured on live.
 
 ## 4. Theme

@@ -3,12 +3,23 @@ Renders the desktop PLP size facet ("Maat") as a compact grid of clickable boxes
 
 ## ADDED Requirements
 
+### Requirement: Collection filters use the vertical layout
+The collection page SHALL present its desktop filters as the vertical sidebar layout rather than the horizontal popup layout.
+
+#### Scenario: Shopper opens a collection on desktop
+- **WHEN** a shopper loads a collection page on desktop
+- **THEN** the filters render as a vertical sidebar beside the product grid, not as a row of dropdown popups above it
+
 ### Requirement: Size facet renders as a box grid
 On the desktop vertical filter, the size facet SHALL render each of its values as a clickable box arranged in a 4-column grid, replacing Dawn's default checkbox-list rendering for that facet only. The facet SHALL be identified by its filter parameter name (the `akeneo.available_erp_sizes` metafield), never by its visible label, so that translating or renaming the facet in Search & Discovery cannot change how it renders.
 
 #### Scenario: Desktop vertical filter shows the size grid
 - **WHEN** a shopper opens the "Maat" facet on the desktop vertical filter
 - **THEN** each size value renders as a box in a 4-column grid, instead of a vertical list of labelled checkboxes
+
+#### Scenario: Grid fits the sidebar without overflow
+- **WHEN** the size grid renders in the vertical sidebar
+- **THEN** all 4 columns fit within the sidebar's width, and no box overflows it or clips its label
 
 #### Scenario: Facet is renamed or translated in the admin
 - **WHEN** a merchant changes the size facet's display label in Search & Discovery
@@ -29,16 +40,18 @@ An active size value's box SHALL render with an inverted fill (dark background, 
 - **WHEN** a shopper deselects a previously active size value
 - **THEN** that value's box returns to the unselected appearance
 
-### Requirement: Unavailable sizes remain visible but non-interactive
-A size value with zero matching products and no active selection SHALL render in a visually disabled state and SHALL NOT be selectable, consistent with Dawn's disabled-value behaviour for other facets. Such values SHALL remain visible rather than being removed, so the grid does not reflow as a shopper narrows the results.
+### Requirement: The grid shows exactly the sizes the facet supplies
+The grid SHALL render exactly the values supplied for the facet, and SHALL NOT synthesise, retain or pad out values that are absent. Whether values with no matching products are supplied at all is a store-level Search & Discovery setting, not a property of this grid; the store is currently configured to hide them, so narrowing the results shrinks the grid rather than greying values out.
 
-#### Scenario: A size with no matching products is shown
-- **WHEN** a size value has zero count and is not currently active
-- **THEN** its box renders visibly disabled and cannot be selected
+When a value with zero matching products and no active selection *is* supplied — which is what flipping that setting produces — its box SHALL render visually disabled and non-selectable, consistent with Dawn's disabled-value behaviour for other facets. The grid SHALL therefore render correctly under either setting, without a code change.
 
-#### Scenario: Narrowing the results does not reflow the grid
-- **WHEN** applying another facet reduces some size values to zero count
-- **THEN** those values stay in place as disabled boxes rather than disappearing from the grid
+#### Scenario: Empty values hidden (current store setting)
+- **WHEN** a shopper applies another facet that reduces which sizes are available, and the store hides filter values with no results
+- **THEN** the grid renders only the still-available sizes, in the supplied order, with no leftover boxes for the sizes that dropped out
+
+#### Scenario: Empty values shown
+- **WHEN** the store is configured to show filter values with no results, and a size value has zero count and is not currently active
+- **THEN** its box renders visibly disabled, cannot be selected, and keeps its position in the grid
 
 ### Requirement: Native filtering behaviour is preserved
 The grid SHALL be built on the same `<input type="checkbox">` controls that Dawn's facet filtering depends on, carrying each value's parameter name, value, active state and disabled state unchanged.

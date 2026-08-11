@@ -1255,3 +1255,79 @@ input.mobile-facets__checkbox {
     padding: 0 1rem 1rem;
   }
 }
+
+/* ==========================================================================
+   OB — size facet box grid (plp-size-facet-grid)
+
+   Applied only to the "Maat" facet, flagged as .ob-size-grid in facets.liquid
+   by param name. Presentation only: value order comes from the platform and is
+   deliberately not re-derived here.
+
+   The 4 below is load-bearing — show_more_number in facets.liquid is set to a
+   multiple of it so truncation lands on a whole row. Change both together.
+   ========================================================================== */
+.ob-size-grid.facets-layout {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+  /* padding-block only — the inline padding belongs to the layout that hosts the
+     list (.facets__list in the horizontal popup, --vertical in the sidebar).
+     Overriding the shorthand here would push the boxes against the popup edge. */
+  padding-block: 1rem;
+}
+
+/* The <li> is a grid cell; let the box fill it so every box matches height. */
+.ob-size-grid .facets__item {
+  align-items: stretch;
+}
+
+/* Undo the list-oriented padding .facet-checkbox brings, and make the label the box. */
+.ob-size-grid .ob-size-box {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 4rem;
+  padding: 0.6rem 0.4rem;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.25);
+  border-radius: var(--inputs-radius, 0);
+  font-size: 1.3rem;
+  line-height: 1.2;
+  text-align: center;
+  word-break: break-word;
+  cursor: pointer;
+  transition: background-color var(--duration-short) ease, border-color var(--duration-short) ease;
+}
+
+/* Keep the native control focusable — Dawn's AJAX filtering reads it — but out of sight. */
+.ob-size-grid .ob-size-box input[type='checkbox'] {
+  position: absolute;
+  width: 0;
+  height: 0;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ob-size-grid .ob-size-box:hover {
+  border-color: rgba(var(--color-foreground), 0.6);
+}
+
+/* Selected: inverted fill. */
+.ob-size-grid .ob-size-box.active {
+  background-color: rgba(var(--color-foreground), 1);
+  border-color: rgba(var(--color-foreground), 1);
+  color: rgb(var(--color-background));
+}
+
+/* Unavailable values stay in place (no reflow) but read as inert.
+   Dawn already supplies opacity + pointer-events via .facets__label.disabled. */
+.ob-size-grid .ob-size-box.disabled {
+  border-style: dashed;
+}
+
+.ob-size-grid .ob-size-box:has(:focus-visible) {
+  outline: 0.2rem solid rgba(var(--color-foreground), 1);
+  outline-offset: 0.2rem;
+}

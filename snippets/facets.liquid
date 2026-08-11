@@ -119,7 +119,22 @@
                 assign total_active_values = total_active_values | plus: filter.active_values.size
                 assign presentation = filter.presentation | default: default_presentation
 
-                if presentation == 'image'
+                # Size facet is identified by its metafield param, never by its (translatable)
+                # label — same approach as the filtercolors branch below. See plp-size-facet-grid.
+                assign is_size_facet = false
+                if filter.param_name contains 'available_erp_sizes'
+                  assign is_size_facet = true
+                endif
+
+                if is_size_facet
+                  # 12 = 3 complete rows of the 4-column grid defined by .ob-size-grid in
+                  # component-facets.css. Keep this a multiple of that column count, or
+                  # show-more truncates mid-row and reads as a layout bug.
+                  # Only takes effect in the vertical filter layout, which the collection
+                  # template is set to — Dawn does not truncate horizontal facets at all.
+                  assign show_more_number = 12
+                  assign visual_layout_class = 'facets-layout facets-layout-list facets-layout-list--' | append: presentation | append: ' ob-size-grid'
+                elsif presentation == 'image'
                   assign show_more_number = 12
                   assign visual_layout_class = 'facets-layout facets-layout-grid facets-layout-grid--' | append: presentation
                 else
@@ -225,7 +240,38 @@
                             {%- endcapture -%}
 
                             <li class="list-menu__item facets__item{% if forloop.index > show_more_number and filter_type == 'vertical' %} show-more-item hidden{% endif %}">
-                              {%- if filter.param_name contains 'filtercolors' -%}
+                              {%- if is_size_facet -%}
+                                {%- comment -%}
+                                  Same native checkbox Dawn's AJAX filtering reads — only restyled.
+                                  The <label> is the box; the input stays focusable but visually hidden.
+                                {%- endcomment -%}
+                                <label for="{{ input_id }}" class="{{ label_class }} ob-size-box">
+                                  <input
+                                    type="checkbox"
+                                    name="{{ value.param_name }}"
+                                    value="{{ value.value }}"
+                                    id="{{ input_id }}"
+                                    {% if value.active %}
+                                      checked
+                                    {% endif %}
+                                    {% if is_disabled %}
+                                      disabled
+                                    {% endif %}
+                                  >
+
+                                  <span class="ob-size-box__label" aria-hidden="true">{{- value.label | escape -}}</span>
+
+                                  <span class="visually-hidden">
+                                    {{- value.label | escape }} (
+                                    {%- if value.count == 1 -%}
+                                      {{- 'products.facets.product_count_simple.one' | t: count: value.count -}}
+                                    {%- else -%}
+                                      {{- 'products.facets.product_count_simple.other' | t: count: value.count -}}
+                                    {%- endif -%}
+                                    )
+                                  </span>
+                                </label>
+                              {%- elsif filter.param_name contains 'filtercolors' -%}
                                 <div class="{{ label_class }}">
                                   <div class="swatch-input-wrapper">
                                     {% render 'ob-facet-swatch-input',
