@@ -412,3 +412,83 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
     margin-left: 0;
   }
 }
+
+/* ==========================================================================
+   OB — cart drawer line-item polish (cart-drawer-line-item-layout)
+   Variant options render as plain "Value / Value" text (no dt labels) via
+   snippets/cart-drawer.liquid. Quantity stepper shrinks to fit its content
+   instead of Dawn's fixed ~14rem width — sharp corners kept (inputs-radius
+   stays 0 sitewide). Remove control (now an X icon) moved to row 1 (level
+   with the title); price moved into row 2 (level with the quantity stepper)
+   and pinned to the row's right edge since the stepper is now content-width.
+   ========================================================================== */
+.cart-drawer .cart-item__quantity-wrapper .quantity {
+  min-height: calc((var(--inputs-border-width) * 2) + 2.2rem);
+  width: fit-content;
+}
+.cart-drawer .cart-item__quantity-wrapper .quantity__button {
+  width: 3rem;
+  font-size: 1.4rem;
+}
+.cart-drawer .cart-item__quantity-wrapper .quantity__input {
+  font-size: 1.3rem;
+}
+.cart-drawer .cart-item__quantity-wrapper .cart-item__price-wrapper {
+  margin-left: auto;
+}
+.cart-drawer .cart-items thead {
+  margin-bottom: 0;
+}
+/* .cart-item__totals is pointer-events:none in Dawn (it only ever held a
+   static price before); now it holds the remove button, so re-enable
+   pointer events on the interactive control itself. */
+.cart-drawer .cart-item__totals cart-remove-button {
+  pointer-events: auto;
+}
+/* Cap so the (now content-width) quantity stepper doesn't stretch wider
+   than needed next to the price. Not gated by document viewport width —
+   the drawer itself is always a fixed-width narrow panel regardless of the
+   page behind it, so this applies the same on desktop, tablet, and mobile. */
+.cart-drawer .quantity-popover-container {
+  width: auto;
+  max-width: 8rem;
+}
+/* Smaller remove-icon glyph — scoped to the cart-remove-button custom
+   element so it never touches the drawer's own close (X) button, which
+   uses a plain <button class="drawer__close"> and shares no ancestor here. */
+.cart-drawer cart-remove-button .svg-wrapper {
+  width: 11px;
+  height: 11px;
+}
+/* Item title slightly smaller than Dawn's default h4 (1.5rem) size. */
+.cart-drawer .cart-item__name {
+  font-size: calc(var(--font-heading-scale) * 1.4rem);
+}
+/* Shrink the remove button's tap-target height from Dawn's 3.5rem default
+   to match the now-smaller icon/row, at every viewport width. */
+.cart-drawer cart-remove-button .button {
+  min-height: 2rem;
+}
+/* Header hairline + tighter heading, pulled up against the line items. */
+.cart-drawer .drawer__header {
+  border-bottom: 1px solid #d0d0d0;
+  margin-bottom: -2rem;
+}
+.cart-drawer .drawer__heading {
+  margin: 0;
+  font-size: calc(var(--font-heading-scale) * 2rem);
+}
+/* Line-item price (current + any struck-through original) — smaller/tighter
+   than Dawn's default 1.6rem/0.1rem letter-spacing. */
+.cart-drawer .cart-item__price-wrapper .price {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+/* Drop Dawn's panel border, widen the right-side gutter (left stays 1.5rem).
+   `.drawer__inner` is shared with the mobile menu drawer, so scope to
+   `.cart-drawer` only. */
+.cart-drawer .drawer__inner {
+  border: 0;
+  padding: 0 2.5rem 0 1.5rem;
+}

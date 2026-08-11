@@ -32,6 +32,7 @@ These do **not** travel with a theme export, and bare auto-created metafields ar
 - [ ] **Search & Discovery filters recreated by hand** — these are app config, *not* part of any Akeneo sync, and will not exist on a fresh shop. Currently on dev: **Kleur** (`filtercolors`, variant metafield), **Maat** (`akeneo.available_erp_sizes`, product metafield), **Merk** (`vendor`), **Gender** (`custom.genderid`, product metafield), **Producttype**, **Prijs**. Match labels and order.
 - [ ] **Set "filter values with no results" to hidden** in Search & Discovery, matching dev (set by the owner 2026-08-11). Not cosmetic: with it shown, every facet gains greyed-out zero-count values, so the size grid and colour chips render a different, denser list than anything verified on dev. The theme is correct either way — this is about the live shop matching what was signed off.
 - [ ] Any other apps installed on dev are installed and configured on live.
+- [ ] **A shipping zone must exist that covers the shop's actual configured Market(s).** Discovered 2026-08-11 while testing `cart-drawer-line-item-layout`: dev launched with Shopify's default "Domestic" zone (US only) while the only configured Market is "EU" (BE/NL/DE/FR/LU) — no zone covered any country a real buyer could select, so **every shippable product on the entire storefront read as sold out** (`available: false`, `/cart/add.js` 422), regardless of stock or inventory settings. Fixed on dev by adding a real "EU" zone with a flat rate to the default delivery profile. Check this on the live shop explicitly — it's a Shopify default a fresh shop can silently start with again, and it looks identical to a data/stock problem until you check Settings → Shipping and delivery. See project memory `ob-dev-store-nothing-addable-to-cart` for the diagnosis and the exact `deliveryProfileUpdate` gotcha if it needs redoing via API (`locationGroupsToUpdate`, not `profileLocationGroups`).
 
 ## 4. Theme
 
@@ -63,4 +64,5 @@ The recurring theme: **a theme copy carries only the theme.** Everything below l
 | Metafield & metaobject *definitions* (+ storefront access) | ❌ | Nick / Akeneo |
 | Metaobject entry ACTIVE/DRAFT status | ❌ | Nick / Akeneo |
 | Search & Discovery filter config | ❌ | by hand in admin |
+| Shipping zones/rates | ❌ | by hand in admin |
 | Theme settings (`settings_data.json`) | ⚠️ only if pushed | us |

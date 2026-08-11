@@ -280,7 +280,7 @@
       }
     },
     "cart": {
-      "title": "Je winkelwagen",
+      "title": "Mijn winkelwagen",
       "caption": "Artikelen in winkelwagen",
       "remove_title": "{{ title }} verwijderen",
       "note": "Speciale instructies voor bestelling",

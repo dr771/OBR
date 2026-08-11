@@ -149,7 +149,7 @@ Verified live with Chrome DevTools on desktop and a true 390px touch viewport: s
 | `pdp-size-picker-order` | **Seeded** (2026-08-11, see D6) | PDP-only ordering: EU integer sizes numeric ascending, tops/bottoms semantic letter order, unknown data preserved in source order; visible label is `Maat` |
 | `pdp-feature-icons` | **Reuse, verify data** | Depends on whether the Akeneo feed carries an equivalent icon/attribute metaobject — confirm before assuming |
 | `predictive-search-overlay` | **Reuse as-is** | Generic search UX |
-| `cart-drawer-line-item-layout` | **Reuse as-is** | Generic |
+| `cart-drawer-line-item-layout` | **Seeded** (2026-08-11) | Ported 1:1 from SB; OB adaptations: preserved OB's `cart-disclosure-indicator` wrapper, CSS lands in `component-cart-drawer.css` (no `custom.css` on OB), dropped an OB-only duplicate per-unit price under the title that SB never had. Also flipped `cart_type` to `drawer` (was `notification`, unreachable) and fixed a store-wide shipping-zone/market mismatch that made every product read as sold out — see Current Status in CLAUDE.md. |
 | `wishlist-integration` | **Reuse as-is** | Site already has a wishlist icon today — validates this is wanted, not a guess |
 | `header-animated-logo` | **Retire (SB-specific)** | Built to match sweatybetty.com's exact wordmark/monogram SVG — not applicable unless a brand asks for the same treatment |
 | `link-underline-style`, `branded-dropdown-controls` | **Reuse pattern, not values** | The *mechanism* (sitewide override) is reusable; the actual style call is per-brand |
@@ -217,7 +217,7 @@ Original Brands' current homepage is a generic "SOLDEN tot 40% korting" clearanc
 
 In rough priority order:
 
-1. **Port next from the remaining ready reuse candidates:** `predictive-search-overlay`, `cart-drawer-line-item-layout`, or `wishlist-integration`.
+1. **Port next from the remaining ready reuse candidates:** `predictive-search-overlay` or `wishlist-integration`. (`cart-drawer-line-item-layout` done 2026-08-11.)
 2. **Waiting on Nick:** `NICK.md` holds the open data items (Black Grey mis-tagged, brown hexcode, English display labels, and #5 — the `activities` list/placeholder question that blocks item 3). The DRAFT-metaobject item is **withdrawn** — it was a Shopify platform default, not a sync defect; it lives in MIGRATION-TO-LIVE.md now.
 3. **`pdp-feature-icons`** — **blocked on Nick, not ready** (re-checked against the live dev data 2026-08-11; the earlier "data confirmed ready" note was wrong). The entry shape is as expected (`code`/`label`/`image_asset`, same as `filtercolors`) and the DRAFT status is fixed, but two things block the spec: `custom.activities` is a **single** `metaobject_reference`, not a `list.` like SB's `custom.icons` — so a product can hold exactly one activity — and all 7 products currently point at the same value (`lifestyle`), with `running` unreferenced. Until Nick confirms whether it should be a list and whether the values are real, the capability's core shape (one icon vs. a scrolling row of many) is undecided. See `NICK.md` #5.
 4. **Launch = a store-to-store migration, not a theme publish** (Nick's setup, confirmed 2026-08-11). There are **two separate Shopify shops**: this dev shop, which never goes public under the real domain, and a separate live shop created at launch. So nothing here is customer-facing and no theme push on this store needs treating as a release — work on whichever theme is convenient (the swatch/facet work is on Dawn `148245381229` as of 2026-08-11).
