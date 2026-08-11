@@ -155,6 +155,16 @@ Original Brands' current homepage is a generic "SOLDEN tot 40% korting" clearanc
 
 **Red as the dominant CTA color — a real decision to make, not a conflict (raised by Melissa, marketing analysis 2026-08-10 — not yet discussed with Carita).** Melissa's competitor analysis independently converges on the same "white background, real extracted brand colors, no invented neutral" direction already locked in above (2026-07-14 corrections), but goes further: questions whether red should stay OB's dominant *action* color, or get rescaled to a smaller accent role, given red's clearance/urgency connotation. Checked against `mockup/index.html`'s actual color tokens (`mockup/index.html:11-49`): red (`--color-secondary`, `#f7391e`) currently drives every CTA button (`--color-cta-bg`), the promo banner's full background, the logo's accent stroke, the "Solden" nav link, and sale-price text — it's the site's primary interactive color in practice, despite being named "secondary" in the tokens. Blue (`--color-primary`, `#8fabb3`) is scoped to smaller utility roles (top bar, icon accents, active-nav underline). So this isn't a wording nitpick — "red as accent only" would mean recoloring every button, the promo banner, and the logo mark. Worth a deliberate yes/no from Carita, not an assumed default either way.
 
+## Next up (as of 2026-08-11)
+
+In rough priority order — nothing here is started:
+
+1. **Blocking others / cheap:** Nick's data fixes are queued in `NICK.md` (Black Grey mis-tagged, brown hexcode, English filter labels, and the **DRAFT metaobject status** — that last one re-breaks the colour filter on every re-sync until fixed).
+2. **Port next from the reuse ledger** — the remaining "Reuse as-is" rows are untouched: `plp-size-facet-grid` (needs EU shoe-size ordering 36–46, not SB's XS–XXL/bra logic), `plp-filter-panel-chrome`, `plp-mobile-filter-bar`, `plp-grid-config` (incl. load-more instead of numbered pagination), `plp-loading-feedback`, `plp-scroll-clamp`, `plp-sort-options`, `predictive-search-overlay`, `cart-drawer-line-item-layout`, `wishlist-integration`.
+3. **`pdp-feature-icons`** — data confirmed ready: `custom.activities` is a metaobject reference with `code`/`label`/`image_asset`, same shape as `filtercolors`. Straightforward port, own change.
+4. **Publish path** — decide when/how the Development theme becomes live; nothing has touched the MAIN theme yet.
+5. **Still gated on the client:** homepage (mockup approval + red-vs-blue CTA), reviews, newsletter popup/promo bar. See Open questions.
+
 ## Brand roster
 
 Apparel + footwear, sale-heavy merchandising (visible strikethrough pricing, "Solden" nav item), birthday-field newsletter popup. Carries Sweaty Betty itself as one of its brands, alongside FitFlop, Odlo, Juicy Couture, Mechanix, Holster Australië, RH+, others.

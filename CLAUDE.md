@@ -45,6 +45,18 @@ Client behavior for the card swatches is in `assets/ob-card-swatches.js` (docume
 - **"Autopilot" workflow:** once intent is confirmed (via `/opsx:explore` + discussion), "autopilot" means running `/opsx:propose`/`/opsx:ff` → `/opsx:apply` unattended, then **stopping before `/opsx:archive`** to let the user review/correct the actual code — the archived spec should reflect the final corrected code, not a pre-review draft. Only archive after explicit approval. Only skip the pre-archive stop if the user explicitly says the autopilot run should include archive.
 - **"Update the docs" (end of a task):** check whether the task changed behavior for anything in `openspec/specs/` — if so, sync that spec too (a quick `/opsx:propose` → apply → archive cycle for a real requirement change, a direct edit for wording-only fixes). Also check whether MIXED-SHOPS-PLAYBOOK.md needs a new decision recorded (architecture/scoping calls go there, not into Claude memory — it's committed and readable by Codex too, see AGENTS.md).
 
-## Current Status
+## Current Status (2026-08-11)
 
-Pre-build: Dawn theme scaffolded and connected to the dev store (2026-08-10), no sections/templates customized yet, no Akeneo connection, no products. Next real step is porting capabilities from SB's reuse ledger in MIXED-SHOPS-PLAYBOOK.md, starting wherever the client's priority points.
+First real build landed. Akeneo sync is live with **7 test products across 4 brands** (FitFlop, Holster, Loewenweiss, Sweaty Betty) — treat this as pipeline test data, **not** the live assortment (the SB items are apparel examples, per owner).
+
+Shipped and verified on the **Development theme `148994719853`** (`?preview_theme_id=148994719853`, storefront password `original`):
+- PLP card colour swatches — img-swatch chips, tooltips, hover-persist image swap, colour-matched hover-pair second image
+- PDP colour swatches (img-swatch chips)
+- Colour filter (flat hex chips from `filtercolors`), plus Merk / Gender / Maat / Producttype / Prijs facets
+- D1 card image tracks the first *available* variant
+
+Six capabilities are seeded in `openspec/specs/`; the change is archived under `openspec/changes/archive/2026-08-11-port-akeneo-facets-swatches/`.
+
+**Not yet done:** nothing is on the live/MAIN theme (still stock Dawn) — everything above is on the Development theme only. Homepage is untouched and still blocked on mockup approval + the red-vs-blue CTA decision. See "Next up" in MIXED-SHOPS-PLAYBOOK.md.
+
+**Shopify CLI is authenticated on this machine** — use `shopify theme push --theme=148994719853 --only <files>`. Do *not* hand-encode files through Admin GraphQL `themeFilesUpsert`; that corrupted a file earlier in this project.
