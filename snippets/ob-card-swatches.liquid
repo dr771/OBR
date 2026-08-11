@@ -51,7 +51,7 @@
   assign media_codes = media_codes | split: '@@'
 -%}
 {%- if color_option and color_option.values.size > 1 -%}
-  <div class="ob-card-swatches">
+  <div class="ob-card-swatches" data-ob-card-swatches>
     {%- for value in color_option.values -%}
       {%- liquid
         assign swatch_variant = null
@@ -102,27 +102,14 @@
         endif
 
         assign value_name_escaped = value.name | escape
-        comment
-          `value.product_url` is only populated on a PDP's own
-          options_with_values — on a card it renders empty, which resolves to
-          the current page (dead chip). Build the variant URL explicitly, and
-          pick the separator: card_product.url may already carry query params
-          (e.g. Shopify's pr_* recommendation tracking).
-        endcomment
-        assign swatch_url = card_product.url
-        if swatch_variant
-          assign url_joiner = '?'
-          if card_product.url contains '?'
-            assign url_joiner = '&'
-          endif
-          assign swatch_url = card_product.url | append: url_joiner | append: 'variant=' | append: swatch_variant.id
-        endif
       -%}
-      <a
-        href="{{ swatch_url }}"
+      <button
+        type="button"
         class="ob-card-swatch{% if value.selected %} ob-card-swatch--active{% endif %}{% if swatch_variant.featured_image == nil %} ob-card-swatch--unavailable{% endif %}"
-        aria-label="{{ value_name_escaped }}"
+        aria-label="Kleur: {{ value_name_escaped }}"
+        aria-pressed="{% if value.selected %}true{% else %}false{% endif %}"
         data-ob-swatch-name="{{ value_name_escaped }}"
+        {% if swatch_variant %}data-ob-variant-id="{{ swatch_variant.id }}"{% endif %}
         {% if swatch_variant.featured_image %}
           data-ob-swap-src="{{ swatch_variant.featured_image | image_url: width: 533 }}"
           data-ob-swap-srcset="{{ swatch_variant.featured_image | image_url: width: 360 }} 360w, {{ swatch_variant.featured_image | image_url: width: 533 }} 533w, {{ swatch_variant.featured_image | image_url: width: 720 }} 720w"
@@ -139,7 +126,7 @@
             | image_tag: loading: 'lazy', alt: value_name_escaped, sizes: '32px', widths: '32,64'
           }}
         {%- endif -%}
-      </a>
+      </button>
     {%- endfor -%}
   </div>
 {%- endif -%}

@@ -64,7 +64,7 @@ Client behavior for the card swatches is in `assets/ob-card-swatches.js` (docume
 First real build landed. Akeneo sync is live with **7 test products across 4 brands** (FitFlop, Holster, Loewenweiss, Sweaty Betty) — treat this as pipeline test data, **not** the live assortment (the SB items are apparel examples, per owner).
 
 Shipped and verified on this shop's **main Dawn theme `148245381229`** (storefront password `original`), and also present on the Development theme used during the build. Note: this whole *shop* is the dev environment and never goes public under the real domain — see "Next up" item 4 — so pushing here is not a release and needs no special care.
-- PLP card colour swatches — img-swatch chips, tooltips, hover-persist image swap, colour-matched hover-pair second image
+- PLP card colour swatches — non-navigating pressed-state buttons select in place, retarget the card's PDP link, persist the selected first image, and reveal that color's matched second shot only over the image area (`plp-card-swatch-selection`)
 - PDP colour swatches (img-swatch chips)
 - Colour filter (flat hex chips from `filtercolors`), plus Merk / Gender / Maat / Producttype / Prijs facets
 - D1 card image tracks the first *available* variant
@@ -72,7 +72,7 @@ Shipped and verified on this shop's **main Dawn theme `148245381229`** (storefro
 - **PDP size picker ordering** (`pdp-size-picker-order`) — EU shoe sizes render numerically, tops/bottoms render in semantic letter order, and raw Akeneo headings are replaced with `Maat`
 - **PDP per-color media galleries** (`pdp-color-media-gallery`) — main gallery, mobile counter, and expanded modal show only the selected color's photography; verified with both single-segment and normalized multi-segment codes
 
-Nine capabilities are seeded in `openspec/specs/`; changes archived under `openspec/changes/archive/2026-08-11-port-akeneo-facets-swatches/`, `.../2026-08-11-plp-size-facet-grid/`, `.../2026-08-11-pdp-size-picker-order/`, and `.../2026-08-11-pdp-color-media-gallery/`.
+Nine capabilities are seeded in `openspec/specs/`; changes archived under `openspec/changes/archive/2026-08-11-port-akeneo-facets-swatches/`, `.../2026-08-11-plp-size-facet-grid/`, `.../2026-08-11-pdp-size-picker-order/`, `.../2026-08-11-pdp-color-media-gallery/`, and `.../2026-08-11-plp-card-swatch-selection/`.
 
 **OpenSpec CLI:** `npm install -g @fission-ai/openspec` — the npm name `openspec` is an unrelated stub. See the OpenSpec CLI section above.
 

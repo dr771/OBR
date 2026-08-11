@@ -34,6 +34,12 @@
   position: relative;
   /* tooltip must escape the chip's own clipped box */
   overflow: visible;
+  appearance: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  line-height: 0;
+  cursor: pointer;
 }
 
 /*
@@ -103,6 +109,11 @@
   border-width: 0.2rem;
 }
 
+.ob-card-swatch:focus-visible {
+  outline: 0.2rem solid rgb(var(--color-foreground));
+  outline-offset: 0.2rem;
+}
+
 .ob-card-swatch--unavailable,
 .ob-swatch-input__chip--unavailable {
   border-style: dashed;
@@ -140,6 +151,43 @@
 
 .ob-swatch-input__label--disabled {
   opacity: 0.4;
+}
+
+/*
+  Dawn reveals its second image on hover anywhere in the card. The selected
+  color pair should behave like SB instead: primary shot over chips/text,
+  second shot only while the pointer is geometrically inside .card__media.
+  JS mirrors that hit area as .ob-media-hover because Dawn's stretched heading
+  link prevents .card__media:hover from matching reliably.
+*/
+@media screen and (min-width: 990px) {
+  .card:hover .card__media .media.media--hover-effect > img:first-child:only-child,
+  .card-wrapper:hover .card__media .media.media--hover-effect > img:first-child:only-child {
+    transform: none;
+  }
+
+  .card-wrapper:hover .card__media .media.media--hover-effect > img:first-child:not(:only-child) {
+    opacity: 1;
+  }
+
+  .card-wrapper:hover .card__media .media.media--hover-effect > img + img {
+    opacity: 0;
+    transform: none;
+  }
+
+  .card-wrapper.ob-media-hover .card__media .media.media--hover-effect > img:first-child:not(:only-child) {
+    opacity: 0;
+  }
+
+  .card-wrapper.ob-media-hover .card__media .media.media--hover-effect > img + img {
+    opacity: 1;
+  }
+}
+
+/* Disable Dawn's generic opacity transition after the lazy pair exists. */
+.card__media .media.media--hover-effect > img:first-child:not(:only-child),
+.media > .ob-card-img2 {
+  transition: none;
 }
 
 /*

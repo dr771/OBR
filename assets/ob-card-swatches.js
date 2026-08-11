@@ -1,20 +1,21 @@
 /*
   PLP card color swatches — hover-persist image swap (plp-card-swatches).
 
-  Hovering or focusing a chip swaps the card's primary image to that color and
-  marks the chip active; the swap persists after the pointer leaves (so a
-  shopper can sweep the row to compare colorways).
+  Hovering, focusing, or clicking a chip selects that color in place: the
+  primary image and pressed state change, and the card's normal PDP link is
+  retargeted to the matching variant. Chips themselves never navigate.
 
-  Progressive enhancement only: the chips are real <a> links to their variant,
-  so with JS off they still navigate. Document-level delegation is used
-  deliberately — Dawn's facets JS replaces #ProductGridContainer wholesale on
-  every filter/sort change, which would detach any per-element listeners.
+  Document-level delegation is deliberate — Dawn's facets JS replaces
+  #ProductGridContainer wholesale on every filter/sort change, which would
+  detach per-element listeners.
 
   Uses `mouseover` rather than `mouseenter` because only the former bubbles,
   which delegation depends on.
 */
 (function () {
   'use strict';
+
+  var hoverMediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
   /*
     Materialize the active color's SECOND shot as an extra <img> after the
@@ -24,7 +25,7 @@
     Client-side only, on first hover: a touch device never fires hover, so it
     never downloads the extra image.
   */
-  function ensureHoverImage(card) {
+  function ensureHoverImage(card, allowCreate) {
     var media = card.querySelector('.card__media .media');
     if (!media) return;
 
@@ -43,7 +44,8 @@
     }
 
     if (!img2) {
-      var img1 = media.querySelector('img');
+      if (!allowCreate || !hoverMediaQuery.matches) return;
+      var img1 = media.querySelector('img:not(.ob-card-img2)');
       if (!img1) return;
       img2 = document.createElement('img');
       img2.className = 'ob-card-img2 motion-reduce';
@@ -68,7 +70,7 @@
 
     var src = swatch.dataset.obSwapSrc;
     if (src) {
-      var img = card.querySelector('.card__media img');
+      var img = card.querySelector('.card__media img:not(.ob-card-img2)');
       if (img && img.getAttribute('src') !== src) {
         img.setAttribute('src', src);
         img.setAttribute('srcset', swatch.dataset.obSwapSrcset || '');
@@ -76,10 +78,22 @@
     }
 
     card.querySelectorAll('.ob-card-swatch').forEach(function (el) {
-      el.classList.toggle('ob-card-swatch--active', el === swatch);
+      var active = el === swatch;
+      el.classList.toggle('ob-card-swatch--active', active);
+      el.setAttribute('aria-pressed', String(active));
     });
 
-    ensureHoverImage(card);
+    if (swatch.dataset.obVariantId) {
+      card.querySelectorAll('.card__heading a').forEach(function (link) {
+        var url = new URL(link.href, document.baseURI);
+        url.searchParams.set('variant', swatch.dataset.obVariantId);
+        link.href = url.href;
+      });
+    }
+
+    // Selection updates a pair that was already created by desktop image
+    // hover, but never creates one on touch-only input.
+    ensureHoverImage(card, false);
   }
 
   document.addEventListener('mouseover', function (event) {
@@ -87,12 +101,7 @@
     var swatch = event.target.closest('.ob-card-swatch');
     if (swatch) {
       selectSwatch(swatch);
-      return;
     }
-    // Hovering anywhere else in a card: lazily put the current color's pair in
-    // place. Cheap to repeat — the dataset.obFor guard makes it a no-op once set.
-    var card = event.target.closest('.card-wrapper');
-    if (card && card.querySelector('.ob-card-swatches')) ensureHoverImage(card);
   });
 
   document.addEventListener(
@@ -104,4 +113,61 @@
     },
     true
   );
+
+  // Dawn's stretched heading link owns hit testing over the card image, so
+  // `.card__media:hover` is unreliable. Mirror geometric image-area hover as
+  // a wrapper class, matching the shipped SB behavior.
+  var mediaHoverCard = null;
+
+  function clearMediaHover() {
+    if (mediaHoverCard) {
+      mediaHoverCard.classList.remove('ob-media-hover');
+      mediaHoverCard = null;
+    }
+  }
+
+  document.addEventListener('mousemove', function (event) {
+    if (!hoverMediaQuery.matches) {
+      clearMediaHover();
+      return;
+    }
+
+    var card = event.target.closest && event.target.closest('.card-wrapper');
+    if (!card || !card.querySelector('[data-ob-card-swatches]')) {
+      clearMediaHover();
+      return;
+    }
+
+    var media = card.querySelector('.card__media');
+    if (!media) {
+      clearMediaHover();
+      return;
+    }
+
+    var rect = media.getBoundingClientRect();
+    var inside =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+
+    if (!inside) {
+      if (mediaHoverCard === card) clearMediaHover();
+      return;
+    }
+
+    if (mediaHoverCard === card) return;
+    clearMediaHover();
+    ensureHoverImage(card, true);
+    card.classList.add('ob-media-hover');
+    mediaHoverCard = card;
+  });
+
+  document.addEventListener('mouseleave', clearMediaHover);
+
+  document.addEventListener('click', function (event) {
+    if (!event.target.closest) return;
+    var swatch = event.target.closest('.ob-card-swatch');
+    if (swatch) selectSwatch(swatch);
+  });
 })();
