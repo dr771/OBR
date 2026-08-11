@@ -1,0 +1,57 @@
+{% comment %}
+  Renders the color filter facet chip as a flat hex-color circle, sourced from
+  the filtercolors metaobject's hexcode field (fallback image_asset if no hex).
+
+  Per plp-color-filter: this is the *filter* chip (an abstract color family
+  spanning many products), deliberately not an image-swatch like the PLP
+  card/PDP chips (ob-card-swatches / ob-swatch-input) — those represent one
+  specific purchasable variant, this represents a group.
+
+  filtercolors' hexcode field is a plain text field, not Shopify's native
+  Color field type (confirmed via metaobjectDefinitions), so Shopify does not
+  auto-populate value.swatch for this filter — this snippet resolves the hex
+  itself by matching the filter value against shop.metaobjects.filtercolors.
+
+  NOT YET VERIFIED LIVE: authored before the Kleur filter had propagated in
+  Search & Discovery. Matches by value.value (assumed metaobject GID) first,
+  falls back to matching by label text, since the exact filter value shape
+  couldn't be confirmed against a live filter at authoring time.
+
+  Accepts:
+  - value: {Object} a color filter's value object (from facets.liquid)
+
+  Usage:
+  {% render 'ob-facet-color-chip', value: value %}
+{% endcomment %}
+{%- liquid
+  assign matched_hex = null
+  assign matched_image = null
+  for entry in shop.metaobjects.filtercolors.values
+    assign is_match = false
+    if entry.id == value.value
+      assign is_match = true
+    elsif entry.label == value.label
+      assign is_match = true
+    endif
+    if is_match
+      assign matched_hex = entry.hexcode
+      assign matched_image = entry.image_asset
+      break
+    endif
+  endfor
+-%}
+<span
+  class="ob-facet-color-chip{% if matched_hex == blank and matched_image == blank %} ob-facet-color-chip--unavailable{% endif %}"
+  {% if matched_hex != blank %}
+    style="--ob-facet-color-chip-bg: {{ matched_hex }};"
+  {% endif %}
+>
+  {%- if matched_hex == blank and matched_image != blank -%}
+    {%- assign chip_alt = value.label | escape -%}
+    {{
+      matched_image
+      | image_url: width: 40
+      | image_tag: loading: 'lazy', alt: chip_alt, sizes: '20px', widths: '20,40'
+    }}
+  {%- endif -%}
+</span>

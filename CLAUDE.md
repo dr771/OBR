@@ -27,6 +27,18 @@ shopify theme dev --store=original-brands-dev.myshopify.com --store-password=ori
 
 Non-interactive shells (agent sessions) need `--store-password` explicit — the CLI can't prompt for it. See project memory `shopify-cli-windows-ops` for more CLI/Windows gotchas (port conflicts, `--force` on mutating commands).
 
+## Centralized `ob-*` snippets
+
+Akeneo/metafield interpretation lives in these, never inline in a template (mirrors SB's `sb-*` convention; enforced by the `akeneo-option-handling` spec):
+
+- `ob-option-meta` — option kind from the bracketed Akeneo key (`[color]` → color, `[shoe_size_eu]` → size). Never branch on a visible/translated label.
+- `ob-media-color-code` — a media/image filename's Akeneo color code. **Codes can span multiple segments** (`192_953`); don't port SB's single-segment version.
+- `ob-card-swatches` — PLP card swatch row (chips, tooltips, hover swap + hover-pair data).
+- `ob-swatch-input` — one PDP color chip (image swatch from the variant's own photo).
+- `ob-facet-color-chip` / `ob-facet-swatch-input` — color *filter* chip: flat hex from the `filtercolors` metaobject, deliberately not an image swatch.
+
+Client behavior for the card swatches is in `assets/ob-card-swatches.js` (document-level delegation — Dawn replaces the grid wholesale on every facet change).
+
 ## Hard Rules
 
 - **Spec-covered changes:** For any bug report or behavior-change request, run `openspec list --specs` first, before touching code — don't rely on recognizing the capability from how the request happens to be phrased. If the touched area matches a listed capability, read its spec before editing. If the change would alter a documented SHALL/MUST requirement (not just an unspecified implementation detail), route it through `/opsx:propose` → apply → archive instead of editing the code directly. Early on, `openspec/specs/` will mostly be empty — as capabilities get built (many by porting from SB's reuse ledger), seed a spec for each one rather than skipping this because "there's nothing there yet."

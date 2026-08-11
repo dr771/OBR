@@ -1,0 +1,24 @@
+{% comment %}
+  Detects an Akeneo-origin option's kind from its stable bracketed key, never from
+  the humanized/translated display label. Per akeneo-option-handling: size detection
+  takes precedence over type/color so size keys containing other substrings still
+  resolve as `size`.
+
+  Accepts:
+  - option_name: {String} raw option.name, e.g. "[color]", "[shoe_size_eu]"
+
+  Usage:
+  {% render 'ob-option-meta', option_name: option.name %}
+  Returns: 'color', 'size', or 'generic'
+{% endcomment %}
+{%- liquid
+  assign key = option_name | downcase
+  assign kind = 'generic'
+
+  if key contains 'size' or key contains 'maat'
+    assign kind = 'size'
+  elsif key contains 'color' or key contains 'colour' or key contains 'kleur'
+    assign kind = 'color'
+  endif
+-%}
+{{- kind -}}

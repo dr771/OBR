@@ -225,7 +225,24 @@
                             {%- endcapture -%}
 
                             <li class="list-menu__item facets__item{% if forloop.index > show_more_number and filter_type == 'vertical' %} show-more-item hidden{% endif %}">
-                              {%- if presentation == 'swatch' -%}
+                              {%- if filter.param_name contains 'filtercolors' -%}
+                                <div class="{{ label_class }}">
+                                  <div class="swatch-input-wrapper">
+                                    {% render 'ob-facet-swatch-input',
+                                      id: input_id,
+                                      type: 'checkbox',
+                                      name: value.param_name,
+                                      value: value.value,
+                                      value_obj: value,
+                                      product_form_id: 'FacetFiltersForm',
+                                      checked: value.active,
+                                      disabled: is_disabled
+                                    %}
+                                  </div>
+
+                                  {{ text_value }}
+                                </div>
+                              {%- elsif presentation == 'swatch' -%}
                                 <div class="{{ label_class }}">
                                   <div class="swatch-input-wrapper">
                                     {% render 'swatch-input',
@@ -594,7 +611,24 @@
                               {%- endcapture -%}
 
                               <li class="mobile-facets__item list-menu__item">
-                                {% if presentation == 'swatch' %}
+                                {% if filter.param_name contains 'filtercolors' %}
+                                  <div class="{{ label_class }}">
+                                    <div class="swatch-input-wrapper">
+                                      {% render 'ob-facet-swatch-input',
+                                        id: input_id,
+                                        type: 'checkbox',
+                                        name: value.param_name,
+                                        value: value.value,
+                                        value_obj: value,
+                                        product_form_id: 'FacetFiltersFormMobile',
+                                        checked: value.active,
+                                        disabled: is_disabled
+                                      %}
+                                    </div>
+
+                                    {{ text_value }}
+                                  </div>
+                                {% elsif presentation == 'swatch' %}
                                   <div class="{{ label_class }}">
                                     <div class="swatch-input-wrapper">
                                       {% render 'swatch-input',

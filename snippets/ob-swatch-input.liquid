@@ -1,0 +1,68 @@
+{% comment %}
+  Renders one PDP color-option radio input as an img-swatch chip: the color's
+  own first matching variant's featured image, cropped square. Per
+  pdp-color-swatches (D2) — no metaobject-image or curated-map tier exists in
+  this project's feed, so this is the only source, mirroring ob-card-swatches.
+
+  Accepts:
+  - option: {Object} the product option (used to match value -> variant by position)
+  - value: {Object} the option value being rendered
+  - product: {Object} product object
+  - input_id: {String}
+  - input_name: {String}
+  - product_form_id: {String}
+  - option_disabled: {Boolean}
+  - input_dataset: {String} pre-captured data-* attributes (product-variant-options.liquid's input_dataset)
+
+  Usage:
+  {% render 'ob-swatch-input', option: option, value: value, product: product, input_id: input_id, input_name: input_name, product_form_id: product_form_id, option_disabled: option_disabled, input_dataset: input_dataset %}
+{% endcomment %}
+{%- liquid
+  assign swatch_variant = null
+  for variant in product.variants
+    case option.position
+      when 1
+        if variant.option1 == value.name
+          assign swatch_variant = variant
+        endif
+      when 2
+        if variant.option2 == value.name
+          assign swatch_variant = variant
+        endif
+      when 3
+        if variant.option3 == value.name
+          assign swatch_variant = variant
+        endif
+    endcase
+    if swatch_variant
+      break
+    endif
+  endfor
+-%}
+<div class="ob-swatch-input-wrapper">
+  <input
+    type="radio"
+    id="{{ input_id }}"
+    name="{{ input_name | escape }}"
+    value="{{ value | escape }}"
+    form="{{ product_form_id }}"
+    class="ob-swatch-input__radio{% if option_disabled %} disabled{% endif %}"
+    {% if value.selected %}
+      checked
+    {% endif %}
+    {{ input_dataset }}
+  >
+  {%- assign value_name_escaped = value.name | escape -%}
+  <label for="{{ input_id }}" class="ob-swatch-input__label{% if option_disabled %} ob-swatch-input__label--disabled{% endif %}">
+    <span class="ob-swatch-input__chip{% if swatch_variant.featured_image == nil %} ob-swatch-input__chip--unavailable{% endif %}">
+      {%- if swatch_variant.featured_image -%}
+        {{
+          swatch_variant.featured_image
+          | image_url: width: 100, height: 100, crop: 'center'
+          | image_tag: loading: 'lazy', alt: value_name_escaped, sizes: '40px', widths: '50,100'
+        }}
+      {%- endif -%}
+    </span>
+    <span class="visually-hidden">{{ value_name_escaped }}</span>
+  </label>
+</div>

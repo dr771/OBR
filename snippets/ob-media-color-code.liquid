@@ -1,0 +1,53 @@
+{% comment %}
+  Echoes the Akeneo color code parsed from a media/image filename, or nothing.
+
+  Akeneo sync filename convention (alt text is empty, so the filename is the
+  only color carrier): {sha1}_{product_code}_{color_code}__{shot}[_{uuid}].ext
+    5671d2d0..._2800BC_192_953__01.jpg  -> 192_953   (Loewenweiss, 2-segment)
+    a9f5f34c..._X03_339__01.jpg         -> 339       (FitFlop)
+    848bcd3c..._SB8985_001__01.jpg      -> 001       (Sweaty Betty)
+
+  The double underscore before the shot number produces an empty part, which
+  marks a convention-conforming filename and terminates the color code.
+  Anything else (videos, models, manually uploaded images) echoes nothing and
+  is treated as color-neutral.
+
+  NOTE vs. the reuse-source project: SB's equivalent assumes the code is
+  exactly one part (`parts[2]`, guarded by `parts[3] == blank`). That breaks on
+  OB's two-segment Loewenweiss codes (`192_953`), so this version scans for the
+  empty part instead and joins everything between the product code and it.
+
+  Accepts (one of):
+  - media: {Object} product media object
+  - image_src: {String} an image src, when you have an image rather than media
+
+  Usage (capture the output to branch on it):
+    {%- capture code -%}{%- render 'ob-media-color-code', media: media -%}{%- endcapture -%}
+{% endcomment %}
+{%- liquid
+  assign src = image_src | default: media.preview_image.src
+  assign fname = src | split: '/' | last | split: '?' | first
+  assign parts = fname | split: '_'
+
+  assign stop_idx = 0
+  for part in parts
+    if part == blank and forloop.index0 > 2
+      assign stop_idx = forloop.index0
+      break
+    endif
+  endfor
+
+  if stop_idx > 2
+    assign code = ''
+    for part in parts
+      if forloop.index0 > 1 and forloop.index0 < stop_idx
+        if code == blank
+          assign code = part
+        else
+          assign code = code | append: '_' | append: part
+        endif
+      endif
+    endfor
+    echo code
+  endif
+-%}

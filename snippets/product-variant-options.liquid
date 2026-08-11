@@ -6,6 +6,7 @@
   - option: {Object} current product_option object.
   - block: {Object} block object.
   - picker_type: {String} type of picker to dispay
+  - option_kind: {String} 'color' | 'size' | 'generic', from ob-option-meta (optional)
 
 
   Usage:
@@ -13,7 +14,8 @@
     product: product,
     option: option,
     block: block
-    picker_type: picker_type
+    picker_type: picker_type,
+    option_kind: option_kind
   %}
 {% endcomment %}
 {%- liquid
@@ -61,7 +63,19 @@
 
   {% assign escaped_value = value | escape %}
 
-  {%- if picker_type == 'swatch' -%}
+  {%- if picker_type == 'swatch' and option_kind == 'color' -%}
+    {%
+      render 'ob-swatch-input',
+      option: option,
+      value: value,
+      product: product,
+      input_id: input_id,
+      input_name: input_name,
+      product_form_id: product_form_id,
+      option_disabled: option_disabled,
+      input_dataset: input_dataset
+    %}
+  {%- elsif picker_type == 'swatch' -%}
     {%- capture help_text -%}
       <span class="visually-hidden">{{ escaped_value }}</span>
       {{ label_unavailable }}

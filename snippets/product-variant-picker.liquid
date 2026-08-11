@@ -9,6 +9,7 @@
   {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
 {% endcomment %}
 {%- unless product.has_only_default_variant -%}
+  {{ 'component-ob-swatches.css' | asset_url | stylesheet_tag }}
   <variant-selects
     id="variant-selects-{{ section.id }}"
     data-section="{{ section.id }}"
@@ -23,10 +24,23 @@
   >
     {%- for option in product.options_with_values -%}
       {%- liquid
+        capture option_kind
+          render 'ob-option-meta', option_name: option.name
+        endcapture
+        assign option_kind = option_kind | strip
+
         assign swatch_count = option.values | map: 'swatch' | compact | size
         assign picker_type = block.settings.picker_type
 
-        if swatch_count > 0 and block.settings.swatch_shape != 'none'
+        comment
+          Per pdp-color-swatches (D2): a color option always renders as
+          img-swatch chips (the color's own variant photo), regardless of
+          whether Shopify's native swatch linking is set up — this project's
+          feed doesn't use native swatch linking at all.
+        endcomment
+        if option_kind == 'color'
+          assign picker_type = 'swatch'
+        elsif swatch_count > 0 and block.settings.swatch_shape != 'none'
           if block.settings.picker_type == 'dropdown'
             assign picker_type = 'swatch_dropdown'
           else
@@ -46,7 +60,8 @@
             product: product,
             option: option,
             block: block,
-            picker_type: picker_type
+            picker_type: picker_type,
+            option_kind: option_kind
           %}
         </fieldset>
       {%- elsif picker_type == 'button' -%}

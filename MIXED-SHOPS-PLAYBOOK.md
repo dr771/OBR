@@ -32,6 +32,8 @@ Nick (Akeneo side) asked which mapping to build the first OB sync on:
 
 **Insurance regardless:** have Akeneo emit stable keys as metafields from day one. Costs nothing now, turns a future color-level split from archaeology into a data migration.
 
+**Dev-store catalog is test data, not the live assortment (owner, 2026-08-11).** The 7 products synced so far are Akeneo pipeline tests. In particular the two **Sweaty Betty items are apparel examples** (chosen to exercise the non-footwear path) and probably won't be in the live shop — so don't read the dev catalog as evidence about the final brand mix or assortment. It *is* valid evidence for data-shape questions (option keys, metafield naming, filename conventions), which is what the 2026-08-11 verification work relied on.
+
 **Confirmed against the first 3 synced products (2026-08-10):** Nick's Akeneo naming, not the placeholder names originally sketched above — follow his convention, don't rename on the theme side. Actual keys landing in Shopify:
 - Product: `custom.itemid` (model code, e.g. `A3Z`, `HST480`)
 - Variant: `custom.colorid` (e.g. `FF_090`, `HLR_BE`), `custom.sizeid` (e.g. `36`)
@@ -49,23 +51,44 @@ So once color 1 sells out, the grid tile still shows color 1 while the click lan
 
 **Decision:** derive the card image from the first *available* variant's color code instead of `featured_media`, so PLP and PDP are always in sync. Theme-side fix, no Akeneo change needed. Applies to SB too (same bug there — see `SweatyBetty/todo.txt`). A *chooseable* hero color would need an Akeneo field — not scoped.
 
+### D2 — Color swatches: img-swatches on PLP grid + PDP, no curated swatch-color map — decided with Nick 2026-08-11
+
+SB's swatch chain tries three tiers in order, per color: a per-color swatch metaobject image → a curated Amplience PSWATCH crop map (`sb-color-swatch-url`, ~130 hand-maintained `color name → CDN url` entries, regenerated from a CSV) → the variant's own product photo, cropped (the one tier that needs no curation, since every variant already has an image).
+
+**Decided:** OB skips the curated-map tier entirely on both `plp-card-swatches` (grid) and `pdp-color-swatches` (PDP) — swatches are always the variant's own product photo, cropped square ("img-swatches"), same as SB's fallback tier. Reason: there's no Amplience-style curated color-crop asset in the OB Akeneo feed, and hand-maintaining a color-name → crop-URL map the way SB does doesn't scale to a ~30-brand catalog with brand-specific color vocabularies.
+
+**Filter facet stays separate from D2 — confirmed with owner 2026-08-11:** grid/PDP swatches represent one specific purchasable variant, so a real photo is accurate (a leopard-print "Brown" shows the print). A filter *value* represents an abstract group spanning many products ("Rood" catches every red-ish item in the catalog) — no single product photo can correctly represent that group, so the facet uses flat color-family chips instead of img-swatches. `custom.filtercolors` (the metaobject reference already landing on variants, see naming confirmation above) is confirmed as the source for this — Nick built it specifically for color-family/swatch filtering, don't reimplement SB's word-matching `sb-color-family.liquid` approach on top of it.
+
+**`filtercolors` metaobject fields — confirmed 2026-08-11** (queried live via GraphQL against a synced variant, e.g. `SB1059478__001__S` → `Black Grey`): the metaobject type `filtercolors` carries `code` (machine key, e.g. `black`), `label` (Dutch display label, e.g. `zwart`), `hexcode` (literal hex, e.g. `#000000`), and `image_asset` (a `file_reference` swatch image). **Chip design decided:** render the facet chip from `hexcode` directly (fallback to `image_asset` if a future design wants a photo swatch instead of a flat color chip) — no OB-side family→hex map needed, since the metaobject already supplies hex per color code.
+
+### D3 — Color filtering: native variant-metafield filter, no family-merge port — confirmed live 2026-08-11
+
+SB merges ~30 raw `[color]` option values into families client-side (`sb-facet-color-merge.liquid`: a visible master checkbox carrying no `name`, wrapping hidden per-value `filter.v.option.[color]` checkboxes, synced by JS). **OB does not need any of that.** Nick's `custom.filtercolors` metaobject already delivers pre-grouped families, so a single native Search & Discovery filter on that variant metafield does the same job with no JS.
+
+**Verified live:** with `filter.v.m.custom.filtercolors` active, Shopify narrows `selected_or_first_available_variant` to a *matching* variant, so each PLP card automatically shows the filtered color's photo — the "filter blue → see blue products" behavior SB gets from `filter.v.option`. Confirmed on FitFlop (→Midnight Navy), Loewenweiss Diva (→Blue), Hygge (→Blue-Fluo Green), each with the right swatch chip marked active. D1's card-image logic is compatible with this, not in conflict — the filter narrows what that drop resolves to.
+
+**Gotcha that cost real time — DRAFT metaobjects (fixed 2026-08-11):** a metaobject-backed filter renders **nothing** on the storefront if its entries are `publishable.status: DRAFT`, because the storefront can't read drafts, so the filter has zero visible values and Shopify omits it entirely. The admin shows it fully configured *with* values and swatches (admin sees drafts), so it looks like an indexing delay or a theme bug. All 12 `filtercolors` entries were DRAFT; set to ACTIVE via `metaobjectUpdate`. **If Nick's sync keeps emitting DRAFT this regresses on every re-sync.** Unrelated red herring: `adminFilterable.eligible: false` on a metafield definition governs the *admin* product-list filter, not storefront filters.
+
 ### Still open (to work through one by one)
 
-2. **Image filename convention** — the whole per-color gallery + card-swatch mechanism depends on Akeneo delivering `{sha1}_{product_code}_{color_code}__{shot}` filenames (`sb-media-color-code.liquid`). Does that hold for *all* OB brands? Biggest single reuse risk.
-3. **Option-key sprawl across ~30 brands** — SB has a fixed, known set of Akeneo bracket keys (`[color]`, `[bottoms_size]`); a multi-brand catalog likely does not.
-4. **Footwear specifics** — widths, half sizes, and a much larger color vocabulary than `sb-color-family`'s current map.
+1. **Option-key sprawl across ~30 brands** — SB has a fixed, known set of Akeneo bracket keys (`[color]`, `[bottoms_size]`); a multi-brand catalog likely does not.
+2. **Footwear specifics** — widths, half sizes, and a much larger color vocabulary than `sb-color-family`'s current map.
+
+### Answered
+
+- **Image filename convention** (was the "biggest single reuse risk") — **holds across all 4 synced brands**, confirmed 2026-08-11: `{sha1}_{product_code}_{color_code}__{shot}[_{uuid}]`. **One real trap:** the color code is *not* always a single underscore-delimited segment — Loewenweiss uses two (`192_953`, `54_352`). SB's `sb-media-color-code` hard-codes the single-segment assumption (`parts[2]`, guarded by `parts[3] == blank`) and silently yields *nothing* for those, with no error. OB's `ob-media-color-code` scans for the `__` shot marker instead. Don't port SB's version verbatim.
 
 ## Reuse ledger (SB's shipped `openspec/specs/`)
 
 | Capability (spec) | Verdict | Note |
 |---|---|---|
-| `akeneo-option-handling` | **Reuse as-is** | Bracket-key detection (`[color]`, `[size]`) is Akeneo-universal, not SB-specific |
-| `plp-color-filter` + `plp-card-swatches` | **Reuse as-is** | Color-family merge, swatch chips, hover-pair swap — matches this site's card pattern |
+| `akeneo-option-handling` | **Seeded** (`openspec/specs/`, 2026-08-11) | Bracket-key detection ported as-is; `[shoe_size_eu]` confirmed live. Added an OB-only requirement: media color codes may span multiple segments (see Answered above) |
+| `plp-color-filter` + `plp-card-swatches` | **Seeded** (2026-08-11, see D2/D3) | Card swatch chip drops the curated color-crop map tier (D2); color-family merge **not ported** — native metaobject filter replaces it (D3); hover swap + hover-pair + tooltips ported |
 | `plp-size-facet-grid` | **Reuse, adapt** | Box-grid pattern holds; footwear brands (FitFlop, Hi-Tec, Magnum, etc.) need EU shoe-size ordering (36–46), not SB's XS–XXL/bra-size logic |
 | `plp-filter-panel-chrome` | **Reuse as-is** | Open-by-default accordions, "Shop by ..." labels — matches the site's native pattern |
 | `plp-mobile-filter-bar` | **Reuse as-is** | Nothing brand-specific in the mechanism |
 | `plp-grid-config`, `plp-loading-feedback`, `plp-scroll-clamp`, `plp-sort-options` | **Reuse as-is** | Pure UX/perf plumbing, no brand coupling |
-| `pdp-color-swatches` | **Reuse as-is** | Same variant-swatch-via-metaobject approach applies |
+| `pdp-color-swatches` | **Seeded** (2026-08-11, see D2) | Same swatch-input markup/behavior; drops the curated color-crop map tier, falls straight to the variant image |
 | `pdp-feature-icons` | **Reuse, verify data** | Depends on whether the Akeneo feed carries an equivalent icon/attribute metaobject — confirm before assuming |
 | `predictive-search-overlay` | **Reuse as-is** | Generic search UX |
 | `cart-drawer-line-item-layout` | **Reuse as-is** | Generic |
@@ -75,8 +98,8 @@ So once color 1 sells out, the grid tile still shows color 1 while the click lan
 | Boost (archived) | **Retired, don't reopen** | Only real "didn't work" data point so far: native beat Boost by ~40–50% LCP for SB (`archive/NO-BOOST-TEST.md`) — treat native-first as the default starting point here too, skip re-litigating Boost vs. native from scratch |
 
 **New capabilities to design (not covered by any SB spec):**
-- **Brand facet** — checkbox/multi-select filter + vendor-driven PLP/PDP display. Straightforward Dawn `vendor` usage, no Akeneo bracket-key trick needed.
-- **Gender facet** — likely another Akeneo attribute key, same pattern as size/color detection in `akeneo-option-handling`.
+- ~~**Brand facet**~~ — **done 2026-08-11** (`plp-brand-facet` seeded). Needed *zero* theme code: Dawn's `facets.liquid` renders any enabled `list`-type filter generically, so it was purely a Search & Discovery config on `vendor`.
+- ~~**Gender facet**~~ — **done 2026-08-11** (`plp-gender-facet` seeded). Same story: admin-only config on the `custom.genderid` product metafield.
 - **Reviews** (Trustpilot-style) — new capability, not covered by any SB spec; see Frontend Feature Audit below for the UX shape worth building.
 - **Newsletter popup + post-signup discount reveal** (suggested by Melissa, marketing analysis 2026-08-10) — show the discount code only *after* signup rather than in the popup itself, to maximize signup conversion and grow the newsletter database; exact %/€ still open (see Open questions). Must not stack with the cookie-consent banner — same instruction already in the Frontend Feature Audit skip-it list below.
 - **Promo bar** (suggested by Melissa) — persistent thin banner (typically above/below the header) for running promos, shipping USPs, new collections; independent of the newsletter popup.

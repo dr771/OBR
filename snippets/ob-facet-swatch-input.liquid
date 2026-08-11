@@ -1,0 +1,41 @@
+{% comment %}
+  Same input/label wiring as Dawn's swatch-input.liquid, but renders
+  ob-facet-color-chip (flat hex circle) instead of the native swatch object —
+  used for the color filter facet, whose filtercolors metaobject isn't a
+  native Shopify Color field (see ob-facet-color-chip).
+
+  Accepts: same as swatch-input.liquid, minus `swatch`/`shape` (chip is fixed
+  round), plus `value_obj`: {Object} the filter value object (for the hex/label lookup)
+
+  Usage:
+   {% render 'ob-facet-swatch-input',
+      id: input_id,
+      name: input_name,
+      value: input_value,
+      value_obj: value,
+      product_form_id: product_form_id,
+      checked: checked
+    %}
+{% endcomment %}
+
+<input
+  type="{{ type | default: 'radio' }}"
+  id="{{ id }}"
+  name="{{ name }}"
+  value="{{ value }}"
+  form="{{ product_form_id }}"
+  class="swatch-input__input{% if visually_disabled %} visually-disabled{% endif %}"
+  {% if checked %}
+    checked
+  {% endif %}
+  {% if disabled %}
+    disabled
+  {% endif %}
+  {% if additional_props %}
+    {{ additional_props }}
+  {% endif %}
+>
+<label for="{{ id }}" title="{{ value }}" class="swatch-input__label">
+  {% render 'ob-facet-color-chip', value: value_obj %}
+  {{ help_text }}
+</label>

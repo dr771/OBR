@@ -1,0 +1,145 @@
+{% comment %}
+  Renders the PLP product card's color swatch row.
+
+  Per plp-card-swatches (D2): OB's Akeneo feed carries no per-color curated
+  swatch-image metaobject and no curated color-crop map (unlike the reuse-source
+  project) — every chip is always that color's own first variant's product photo,
+  cropped square. No fallback chain to try before it; a color with no resolvable
+  image renders a neutral/unavailable chip.
+
+  Accepts:
+  - card_product: {Object} Product Liquid object
+
+  Usage:
+  {% render 'ob-card-swatches', card_product: card_product %}
+{% endcomment %}
+{%- liquid
+  assign color_option = null
+  for option in card_product.options_with_values
+    capture kind
+      render 'ob-option-meta', option_name: option.name
+    endcapture
+    assign kind = kind | strip
+    if kind == 'color'
+      assign color_option = option
+      break
+    endif
+  endfor
+
+  comment
+    Parse every media item's color code ONCE per card, index-aligned with
+    card_product.media. Resolving it per color x per media instead would mean
+    ~400 render calls on a product like the 44-media / 8-color FitFlop Lulu.
+    Blank codes become '-' so the joined string can't collapse and misalign
+    the indexes.
+  endcomment
+  assign media_codes = ''
+  for media in card_product.media
+    capture media_code
+      render 'ob-media-color-code', media: media
+    endcapture
+    assign media_code = media_code | strip
+    if media_code == blank
+      assign media_code = '-'
+    endif
+    if forloop.first
+      assign media_codes = media_code
+    else
+      assign media_codes = media_codes | append: '@@' | append: media_code
+    endif
+  endfor
+  assign media_codes = media_codes | split: '@@'
+-%}
+{%- if color_option and color_option.values.size > 1 -%}
+  <div class="ob-card-swatches">
+    {%- for value in color_option.values -%}
+      {%- liquid
+        assign swatch_variant = null
+        for variant in card_product.variants
+          case color_option.position
+            when 1
+              if variant.option1 == value.name
+                assign swatch_variant = variant
+              endif
+            when 2
+              if variant.option2 == value.name
+                assign swatch_variant = variant
+              endif
+            when 3
+              if variant.option3 == value.name
+                assign swatch_variant = variant
+              endif
+          endcase
+          if swatch_variant
+            break
+          endif
+        endfor
+      -%}
+      {%- liquid
+        comment
+          This color's SECOND shot, for the hover pair: the next media whose
+          filename code matches the color's own first image. Colors with only
+          one shot get no pair and fall back to Dawn's single-image behavior.
+        endcomment
+        assign swap2_media = null
+        if swatch_variant.featured_image
+          capture color_code
+            render 'ob-media-color-code', image_src: swatch_variant.featured_image.src
+          endcapture
+          assign color_code = color_code | strip
+          if color_code != blank
+            assign matches = 0
+            for media in card_product.media
+              if media_codes[forloop.index0] == color_code
+                assign matches = matches | plus: 1
+                if matches == 2
+                  assign swap2_media = media
+                  break
+                endif
+              endif
+            endfor
+          endif
+        endif
+
+        assign value_name_escaped = value.name | escape
+        comment
+          `value.product_url` is only populated on a PDP's own
+          options_with_values — on a card it renders empty, which resolves to
+          the current page (dead chip). Build the variant URL explicitly, and
+          pick the separator: card_product.url may already carry query params
+          (e.g. Shopify's pr_* recommendation tracking).
+        endcomment
+        assign swatch_url = card_product.url
+        if swatch_variant
+          assign url_joiner = '?'
+          if card_product.url contains '?'
+            assign url_joiner = '&'
+          endif
+          assign swatch_url = card_product.url | append: url_joiner | append: 'variant=' | append: swatch_variant.id
+        endif
+      -%}
+      <a
+        href="{{ swatch_url }}"
+        class="ob-card-swatch{% if value.selected %} ob-card-swatch--active{% endif %}{% if swatch_variant.featured_image == nil %} ob-card-swatch--unavailable{% endif %}"
+        aria-label="{{ value_name_escaped }}"
+        data-ob-swatch-name="{{ value_name_escaped }}"
+        {% if swatch_variant.featured_image %}
+          data-ob-swap-src="{{ swatch_variant.featured_image | image_url: width: 533 }}"
+          data-ob-swap-srcset="{{ swatch_variant.featured_image | image_url: width: 360 }} 360w, {{ swatch_variant.featured_image | image_url: width: 533 }} 533w, {{ swatch_variant.featured_image | image_url: width: 720 }} 720w"
+        {% endif %}
+        {% if swap2_media %}
+          data-ob-swap2-src="{{ swap2_media | image_url: width: 533 }}"
+          data-ob-swap2-srcset="{{ swap2_media | image_url: width: 360 }} 360w, {{ swap2_media | image_url: width: 533 }} 533w, {{ swap2_media | image_url: width: 720 }} 720w"
+        {% endif %}
+      >
+        {%- if swatch_variant.featured_image -%}
+          {{
+            swatch_variant.featured_image
+            | image_url: width: 64, height: 64, crop: 'center'
+            | image_tag: loading: 'lazy', alt: value_name_escaped, sizes: '32px', widths: '32,64'
+          }}
+        {%- endif -%}
+      </a>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
