@@ -9,6 +9,28 @@
   {% render 'product-media-modal' %}
 {% endcomment %}
 
+{%- liquid
+  capture ob_current_color
+    render 'ob-variant-color-code', product: product
+  endcapture
+  assign ob_current_color = ob_current_color | strip
+  assign ob_color_filter = false
+  if ob_current_color != blank
+    assign ob_color_filter = true
+  endif
+
+  assign ob_featured_media = product.selected_or_first_available_variant.featured_media
+  if ob_color_filter and ob_featured_media != null
+    capture ob_featured_media_code
+      render 'ob-media-color-code', media: ob_featured_media
+    endcapture
+    assign ob_featured_media_code = ob_featured_media_code | strip
+    if ob_featured_media_code != blank and ob_featured_media_code != ob_current_color
+      assign ob_featured_media = null
+    endif
+  endif
+-%}
+
 <product-modal id="ProductModal-{{ section.id }}" class="product-media-modal media-modal">
   <div
     class="product-media-modal__dialog color-{{ section.settings.color_scheme }} gradient"
@@ -33,21 +55,30 @@
       tabindex="0"
     >
       {%- liquid
-        if product.selected_or_first_available_variant.featured_media != null
-          assign media = product.selected_or_first_available_variant.featured_media
+        if ob_featured_media != null
+          assign media = ob_featured_media
           render 'product-media', media: media, loop: section.settings.enable_video_looping, variant_image: section.settings.hide_variants
         endif
       -%}
 
       {%- for media in product.media -%}
+        {%- if ob_color_filter -%}
+          {%- capture ob_media_code -%}{%- render 'ob-media-color-code', media: media -%}{%- endcapture -%}
+          {%- assign ob_media_code = ob_media_code | strip -%}
+          {%- if ob_media_code != blank and ob_media_code != ob_current_color -%}
+            {%- continue -%}
+          {%- endif -%}
+        {%- endif -%}
         {%- liquid
-          if section.settings.hide_variants and variant_images contains media.src or variant_images contains media.id
+          if ob_color_filter
+            assign variant_image = false
+          elsif section.settings.hide_variants and variant_images contains media.src or variant_images contains media.id
             assign variant_image = true
           else
             assign variant_image = false
           endif
 
-          unless media.id == product.selected_or_first_available_variant.featured_media.id
+          unless media.id == ob_featured_media.id
             render 'product-media', media: media, loop: section.settings.enable_video_looping, variant_image: variant_image
           endunless
         -%}

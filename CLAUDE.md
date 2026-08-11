@@ -44,6 +44,7 @@ openspec list --specs          # sanity check, run from the repo root
 Akeneo/metafield interpretation lives in these, never inline in a template (mirrors SB's `sb-*` convention; enforced by the `akeneo-option-handling` spec):
 
 - `ob-option-meta` — option kind from the bracketed Akeneo key (`[color]` → color, `[shoe_size_eu]` → size). Never branch on a visible/translated label.
+- `ob-variant-color-code` — a selected variant SKU's Akeneo color code, normalized for media matching (`192-953` in SKU → `192_953` in filenames).
 - `ob-media-color-code` — a media/image filename's Akeneo color code. **Codes can span multiple segments** (`192_953`); don't port SB's single-segment version.
 - `ob-card-swatches` — PLP card swatch row (chips, tooltips, hover swap + hover-pair data).
 - `ob-swatch-input` — one PDP color chip (image swatch from the variant's own photo).
@@ -69,8 +70,9 @@ Shipped and verified on this shop's **main Dawn theme `148245381229`** (storefro
 - D1 card image tracks the first *available* variant
 - **Size facet as a 4-column box grid** (`plp-size-facet-grid`), and the collection page switched to the **vertical** filter layout — it had been `horizontal`, under which Dawn does no show-more truncation at all
 - **PDP size picker ordering** (`pdp-size-picker-order`) — EU shoe sizes render numerically, tops/bottoms render in semantic letter order, and raw Akeneo headings are replaced with `Maat`
+- **PDP per-color media galleries** (`pdp-color-media-gallery`) — main gallery, mobile counter, and expanded modal show only the selected color's photography; verified with both single-segment and normalized multi-segment codes
 
-Eight capabilities are seeded in `openspec/specs/`; changes archived under `openspec/changes/archive/2026-08-11-port-akeneo-facets-swatches/`, `.../2026-08-11-plp-size-facet-grid/`, and `.../2026-08-11-pdp-size-picker-order/`.
+Nine capabilities are seeded in `openspec/specs/`; changes archived under `openspec/changes/archive/2026-08-11-port-akeneo-facets-swatches/`, `.../2026-08-11-plp-size-facet-grid/`, `.../2026-08-11-pdp-size-picker-order/`, and `.../2026-08-11-pdp-color-media-gallery/`.
 
 **OpenSpec CLI:** `npm install -g @fission-ai/openspec` — the npm name `openspec` is an unrelated stub. See the OpenSpec CLI section above.
 

@@ -12,17 +12,53 @@
 {% endcomment %}
 
 {%- liquid
-  if section.settings.hide_variants and variant_images.size == product.media.size
-    assign single_media_visible = true
+  # OB: selected-color media identity is server-rendered from Akeneo's SKU and
+  # filename conventions. Dawn's section refresh diffs these filtered list
+  # items when the shopper changes color; no custom gallery JS is needed.
+  capture ob_current_color
+    render 'ob-variant-color-code', product: product
+  endcapture
+  assign ob_current_color = ob_current_color | strip
+  assign ob_color_filter = false
+  if ob_current_color != blank
+    assign ob_color_filter = true
   endif
+
+  unless ob_color_filter
+    if section.settings.hide_variants and variant_images.size == product.media.size
+      assign single_media_visible = true
+    endif
+  endunless
 
   if limit == 1
     assign single_media_visible = true
   endif
 
   assign media_count = product.media.size
-  if section.settings.hide_variants and media_count > 1 and variant_images.size > 0
+  if ob_color_filter
+    assign media_count = 0
+    for ob_media in product.media
+      capture ob_media_code
+        render 'ob-media-color-code', media: ob_media
+      endcapture
+      assign ob_media_code = ob_media_code | strip
+      if ob_media_code == blank or ob_media_code == ob_current_color
+        assign media_count = media_count | plus: 1
+      endif
+    endfor
+  elsif section.settings.hide_variants and media_count > 1 and variant_images.size > 0
     assign media_count = media_count | minus: variant_images.size | plus: 1
+  endif
+
+  assign featured_media = product.selected_or_first_available_variant.featured_media
+  if ob_color_filter and featured_media != null
+    capture ob_featured_media_code
+      render 'ob-media-color-code', media: featured_media
+    endcapture
+    assign ob_featured_media_code = ob_featured_media_code | strip
+    if ob_featured_media_code != blank and ob_featured_media_code != ob_current_color
+      assign featured_media = null
+    endif
   endif
 
   if media_count == 1 or single_media_visible
@@ -61,8 +97,7 @@
       class="product__media-list contains-media grid grid--peek list-unstyled slider slider--mobile"
       role="list"
     >
-      {%- if product.selected_or_first_available_variant.featured_media != null -%}
-        {%- assign featured_media = product.selected_or_first_available_variant.featured_media -%}
+      {%- if featured_media != null -%}
         <li
           id="Slide-{{ section.id }}-{{ featured_media.id }}"
           class="product__media-item grid__item slider__slide is-active{% if single_media_visible %} product__media-item--single{% endif %}{% if featured_media.media_type != 'image' %} product__media-item--full{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
@@ -86,18 +121,24 @@
         </li>
       {%- endif -%}
       {%- for media in product.media -%}
-        {% if media_position >= limit
-          or media_position >= 1
-          and section.settings.hide_variants
-          and variant_images contains media.src
-        %}
+        {% if media_position >= limit %}
           {% continue %}
         {% endif %}
 
-        {%- unless media.id == product.selected_or_first_available_variant.featured_media.id -%}
+        {%- if ob_color_filter -%}
+          {%- capture ob_media_code -%}{%- render 'ob-media-color-code', media: media -%}{%- endcapture -%}
+          {%- assign ob_media_code = ob_media_code | strip -%}
+          {%- if ob_media_code != blank and ob_media_code != ob_current_color -%}
+            {%- continue -%}
+          {%- endif -%}
+        {%- elsif media_position >= 1 and section.settings.hide_variants and variant_images contains media.src -%}
+          {%- continue -%}
+        {%- endif -%}
+
+        {%- unless media.id == featured_media.id -%}
           <li
             id="Slide-{{ section.id }}-{{ media.id }}"
-            class="product__media-item grid__item slider__slide{% if single_media_visible %} product__media-item--single{% endif %}{% if product.selected_or_first_available_variant.featured_media == nil and forloop.index == 1 %} is-active{% endif %}{% if media.media_type != 'image' %} product__media-item--full{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
+            class="product__media-item grid__item slider__slide{% if single_media_visible %} product__media-item--single{% endif %}{% if featured_media == nil and media_position == blank %} is-active{% endif %}{% if media.media_type != 'image' %} product__media-item--full{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
             data-media-id="{{ section.id }}-{{ media.id }}"
           >
             {%- liquid
@@ -251,9 +292,18 @@
             </button>
           </li>
         {%- endif -%}
+        {%- assign ob_thumbnail_position = 0 -%}
         {%- for media in product.media -%}
-          {%- unless media.id == product.selected_or_first_available_variant.featured_media.id -%}
+          {%- if ob_color_filter -%}
+            {%- capture ob_media_code -%}{%- render 'ob-media-color-code', media: media -%}{%- endcapture -%}
+            {%- assign ob_media_code = ob_media_code | strip -%}
+            {%- if ob_media_code != blank and ob_media_code != ob_current_color -%}
+              {%- continue -%}
+            {%- endif -%}
+          {%- endif -%}
+          {%- unless media.id == featured_media.id -%}
             {%- liquid
+              assign ob_thumbnail_position = ob_thumbnail_position | plus: 1
               capture media_index
                 if media.media_type == 'model'
                   increment model_index
@@ -290,9 +340,9 @@
               <button
                 class="thumbnail global-media-settings global-media-settings--no-shadow"
                 aria-label="{%- if media.media_type == 'image' -%}{{ 'products.product.media.load_image' | t: index: media_index }}{%- elsif media.media_type == 'model' -%}{{ 'products.product.media.load_model' | t: index: media_index }}{%- elsif media.media_type == 'video' or media.media_type == 'external_video' -%}{{ 'products.product.media.load_video' | t: index: media_index }}{%- endif -%}"
-                {% if media == product.selected_or_first_available_variant.featured_media
-                  or product.selected_or_first_available_variant.featured_media == null
-                  and forloop.index == 1
+                {% if media == featured_media
+                  or featured_media == null
+                  and ob_thumbnail_position == 1
                 %}
                   aria-current="true"
                 {% endif %}

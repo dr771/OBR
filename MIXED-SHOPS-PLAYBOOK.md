@@ -93,6 +93,14 @@ Consequences for the port:
 
 Aside, noted while measuring: `akeneo.available_erp_sizes` has `access.storefront: NONE`. The Search & Discovery facet works anyway (its filter engine doesn't go through Liquid), but any Liquid that tries to *read* the metafield directly will silently get nothing. MIGRATION-TO-LIVE.md lists it as needing `PUBLIC_READ` — that's only required if a future feature reads it in Liquid.
 
+### D7 — PDP media gallery follows the selected color — implemented and archived 2026-08-11
+
+Ported SB's server-rendered per-color gallery concept and extended it to every PDP media surface: the main gallery, mobile counter/navigation, and expanded media modal all receive the same selected-color set. Media without a parseable Akeneo filename code remains shared across colors. Dawn's existing `product-info.js` section refresh removes/inserts/reorders the filtered `<li data-media-id>` elements when a swatch changes, so no custom gallery JavaScript was added and only the selected color's featured image remains eager; later images stay lazy.
+
+**OB-only normalization discovered during live verification:** Loewenweiss Hygge's selected variant SKU carries `192-953`, while its media filenames carry `192_953`. `ob-variant-color-code` therefore normalizes internal SKU hyphens to underscores before comparing against `ob-media-color-code`; treating the raw strings as identical produced a zero-image gallery and is not safe. Verified on Diva Grey→Blue (three images each) and Hygge Burgundy-Ice Grey→Turquoise-Mint (four images each), including correct variant URL/form IDs, modal parity, desktop stacked layout, 390px mobile `1/4` counter, no horizontal overflow, and a clean console.
+
+Dawn's Product-template **Hide other variants' media** setting was switched OFF in the Theme Editor and the single boolean was mirrored to `templates/product.json`. The custom filter deliberately supersedes that branch and computes its own finite media count, so it remains correct if the toggle is accidentally re-enabled. The whole remote template was not copied locally because it contains unrelated editor serialization differences.
+
 ### Still open (to work through one by one)
 
 1. **Option-key sprawl across ~30 brands** — SB has a fixed, known set of Akeneo bracket keys (`[color]`, `[bottoms_size]`); a multi-brand catalog likely does not. **Partly measured:** 3 keys across 7 products, see D6.
@@ -100,7 +108,7 @@ Aside, noted while measuring: `akeneo.available_erp_sizes` has `access.storefron
 
 ### Answered
 
-- **Image filename convention** (was the "biggest single reuse risk") — **holds across all 4 synced brands**, confirmed 2026-08-11: `{sha1}_{product_code}_{color_code}__{shot}[_{uuid}]`. **One real trap:** the color code is *not* always a single underscore-delimited segment — Loewenweiss uses two (`192_953`, `54_352`). SB's `sb-media-color-code` hard-codes the single-segment assumption (`parts[2]`, guarded by `parts[3] == blank`) and silently yields *nothing* for those, with no error. OB's `ob-media-color-code` scans for the `__` shot marker instead. Don't port SB's version verbatim.
+- **Image filename convention** (was the "biggest single reuse risk") — **holds across all 4 synced brands**, confirmed 2026-08-11: `{sha1}_{product_code}_{color_code}__{shot}[_{uuid}]`. **Two real traps:** the filename code is not always one underscore-delimited segment (Loewenweiss uses `192_953`, `54_352`), and the corresponding SKU can use hyphens (`192-953`) where the filename uses underscores. SB's parser silently fails the first case; a raw SKU↔filename comparison fails the second. OB uses `ob-media-color-code` plus `ob-variant-color-code` to parse and normalize both sides centrally.
 
 ## Reuse ledger (SB's shipped `openspec/specs/`)
 
@@ -113,6 +121,7 @@ Aside, noted while measuring: `akeneo.available_erp_sizes` has `access.storefron
 | `plp-mobile-filter-bar` | **Reuse as-is** | Nothing brand-specific in the mechanism |
 | `plp-grid-config`, `plp-loading-feedback`, `plp-scroll-clamp`, `plp-sort-options` | **Reuse as-is** | Pure UX/perf plumbing, no brand coupling |
 | `pdp-color-swatches` | **Seeded** (2026-08-11, see D2) | Same swatch-input markup/behavior; drops the curated color-crop map tier, falls straight to the variant image |
+| `pdp-color-media-gallery` | **Seeded** (2026-08-11, see D7) | Ports SB's server-rendered gallery filter, extends it to the expanded modal, and normalizes OB's hyphenated SKU codes to underscored filename codes; no custom JS |
 | `pdp-size-picker-order` | **Seeded** (2026-08-11, see D6) | PDP-only ordering: EU integer sizes numeric ascending, tops/bottoms semantic letter order, unknown data preserved in source order; visible label is `Maat` |
 | `pdp-feature-icons` | **Reuse, verify data** | Depends on whether the Akeneo feed carries an equivalent icon/attribute metaobject — confirm before assuming |
 | `predictive-search-overlay` | **Reuse as-is** | Generic search UX |

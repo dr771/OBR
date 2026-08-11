@@ -1,0 +1,41 @@
+{% comment %}
+  Echoes a variant's Akeneo color code from its SKU, or nothing.
+
+  Akeneo SKU convention: {item}__{color_code}__{size}
+    7100FL__903__35       -> 903
+    2800BC__192-953__35   -> 192_953 (normalized to filename convention)
+
+  The product must have a recognized color option. This prevents a conforming-
+  looking SKU on a product without color variants from activating media filters.
+
+  Accepts:
+  - product: {ProductDrop}
+  - variant: {VariantDrop} optional; defaults to selected_or_first_available_variant
+
+  Usage:
+    {% capture color_code %}
+      {% render 'ob-variant-color-code', product: product, variant: variant %}
+    {% endcapture %}
+{% endcomment %}
+{%- liquid
+  assign target_variant = variant | default: product.selected_or_first_available_variant
+  assign has_color_option = false
+
+  for option in product.options_with_values
+    capture option_kind
+      render 'ob-option-meta', option_name: option.name
+    endcapture
+    assign option_kind = option_kind | strip
+    if option_kind == 'color'
+      assign has_color_option = true
+      break
+    endif
+  endfor
+
+  if has_color_option and target_variant.sku != blank
+    assign sku_parts = target_variant.sku | split: '__'
+    if sku_parts.size >= 3 and sku_parts[0] != blank and sku_parts[1] != blank and sku_parts[2] != blank
+      echo sku_parts[1] | strip | replace: '-', '_'
+    endif
+  endif
+-%}
