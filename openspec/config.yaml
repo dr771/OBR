@@ -6,7 +6,7 @@ context: |
   custom Drupal-ish CMS to Shopify. Not a marketplace — single operator, 1 item + color/size variants per
   product (SB-style: one product per model, color x size as variants — see MIXED-SHOPS-PLAYBOOK.md
   "Product-model decision").
-  Reuse source: SweatyBetty (C:\Users\rezni\SHOPIFY\SweatyBetty), same Dawn/Akeneo/OpenSpec setup, further
+  Reuse source: SweatyBetty (sibling directory of this repo, ../SweatyBetty), same Dawn/Akeneo/OpenSpec setup, further
   along. Before writing a new spec, check MIXED-SHOPS-PLAYBOOK.md's "Reuse ledger" table — most PLP/PDP
   capabilities (color filter, card swatches, size facet grid, filter panel chrome, wishlist integration,
   predictive search, cart drawer) are marked "Reuse as-is" or "Reuse, adapt" against SB's already-shipped

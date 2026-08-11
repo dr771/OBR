@@ -1,6 +1,6 @@
 # Original Brands — Playbook
 
-Shopify + Akeneo migration for Original Brands (originalbrands.nl), multi-brand apparel + footwear retailer replacing a custom Drupal-ish CMS. Repo: `C:\Users\rezni\SHOPIFY\OriginalBrands` — Dawn theme, connected to `original-brands-dev.myshopify.com`. Reuse source: SweatyBetty (`C:\Users\rezni\SHOPIFY\SweatyBetty`), same stack, further along — check the reuse ledger below before re-deriving architecture.
+Shopify + Akeneo migration for Original Brands (originalbrands.nl), multi-brand apparel + footwear retailer replacing a custom Drupal-ish CMS. Dawn theme, connected to `original-brands-dev.myshopify.com`. Reuse source: SweatyBetty (sibling directory, `../SweatyBetty`), same stack, further along — check the reuse ledger below before re-deriving architecture.
 
 ## Confirmed facts (site audit, 2026-07-14)
 

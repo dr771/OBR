@@ -8,8 +8,8 @@ Shopify theme rebuild for Original Brands (originalbrands.nl) — multi-brand ap
 
 - **Store:** original-brands-dev.myshopify.com (storefront password: `original`)
 - **Theme base:** Dawn (cloned fresh 2026-08-10, no upstream git history)
-- **Product data source:** will be Akeneo (not yet connected — no products in the dev store yet)
-- **Reference project:** `C:\Users\rezni\SHOPIFY\SweatyBetty` — same Dawn/Akeneo/OpenSpec stack, further along. Reuse its shipped patterns and lessons, not its SB-specific branding/hacks.
+- **Product data source:** Akeneo, synced by Nick (connected — see Current Status for what's in the store)
+- **Reference project:** SweatyBetty — same Dawn/Akeneo/OpenSpec stack, further along. Sibling directory of this repo (`../SweatyBetty`). Reuse its shipped patterns and lessons, not its SB-specific branding/hacks.
 
 ## Project Docs
 
@@ -28,6 +28,15 @@ shopify theme dev --store=original-brands-dev.myshopify.com --store-password=ori
 ```
 
 Non-interactive shells (agent sessions) need `--store-password` explicit — the CLI can't prompt for it. See project memory `shopify-cli-windows-ops` for more CLI/Windows gotchas (port conflicts, `--force` on mutating commands).
+
+## OpenSpec CLI
+
+The Hard Rules below assume `openspec` is on PATH. The npm package is **`@fission-ai/openspec`** — *not* `openspec` (that name is an unrelated 2019 stub at v0.0.0, and `openspec-cli` / `@openspec/cli` don't exist). On a fresh machine:
+
+```
+npm install -g @fission-ai/openspec
+openspec list --specs          # sanity check, run from the repo root
+```
 
 ## Centralized `ob-*` snippets
 
