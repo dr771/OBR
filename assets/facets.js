@@ -3,12 +3,10 @@ class FacetFiltersForm extends HTMLElement {
     super();
     this.onActiveFilterClick = this.onActiveFilterClick.bind(this);
 
-    this.debouncedOnSubmit = debounce((event) => {
-      this.onSubmitHandler(event);
-    }, 800);
+    this.submitTimeout = null;
 
     const facetForm = this.querySelector('form');
-    facetForm.addEventListener('input', this.debouncedOnSubmit.bind(this));
+    facetForm.addEventListener('input', this.onInput.bind(this));
 
     const facetWrapper = this.querySelector('#FacetsWrapperDesktop');
     if (facetWrapper) facetWrapper.addEventListener('keyup', onKeyUpEscape);
@@ -29,7 +27,32 @@ class FacetFiltersForm extends HTMLElement {
     });
   }
 
+  onInput(event) {
+    FacetFiltersForm.showGridLoading();
+    clearTimeout(this.submitTimeout);
+
+    const delay = event.target.closest('price-range') ? 800 : 250;
+    this.submitTimeout = setTimeout(() => this.onSubmitHandler(event), delay);
+  }
+
+  static showGridLoading() {
+    const collection = document.querySelector('#ProductGridContainer .collection');
+    if (!collection) return;
+
+    collection.classList.add('ob-grid-loading');
+    collection.setAttribute('aria-busy', 'true');
+  }
+
+  static hideGridLoading() {
+    const collection = document.querySelector('#ProductGridContainer .collection');
+    if (!collection) return;
+
+    collection.classList.remove('ob-grid-loading');
+    collection.removeAttribute('aria-busy');
+  }
+
   static renderPage(searchParams, event, updateURLHash = true) {
+    FacetFiltersForm.showGridLoading();
     FacetFiltersForm.searchParamsPrev = searchParams;
     const sections = FacetFiltersForm.getSections();
     const updateEvent = FacetFiltersForm.startUpdateEvent(searchParams);
@@ -39,7 +62,6 @@ class FacetFiltersForm extends HTMLElement {
       '.facets-container .loading__spinner, facet-filters-form .loading__spinner',
     );
     loadingSpinners.forEach((spinner) => spinner.classList.remove('hidden'));
-    document.getElementById('ProductGridContainer').querySelector('.collection').classList.add('loading');
     if (countContainer) {
       countContainer.classList.add('loading');
     }
@@ -120,6 +142,7 @@ class FacetFiltersForm extends HTMLElement {
       })
       .catch((error) => {
         console.error(error);
+        FacetFiltersForm.hideGridLoading();
         updateEvent?.reject(error);
       });
   }
@@ -147,6 +170,11 @@ class FacetFiltersForm extends HTMLElement {
       .forEach((element) => {
         element.classList.add('scroll-trigger--cancel');
       });
+
+    const maxScrollY = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
+    if (window.scrollY > maxScrollY) {
+      window.scrollTo({ top: maxScrollY, left: window.scrollX });
+    }
   }
 
   static renderProductCount(html, updateEvent) {

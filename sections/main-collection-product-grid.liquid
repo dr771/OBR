@@ -1,6 +1,8 @@
 {{ 'template-collection.css' | asset_url | stylesheet_tag }}
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-ob-plp.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ob-plp.js' | asset_url }}" defer="defer"></script>
 
 {% if section.settings.image_shape == 'blob' %}
   {{ 'mask-blobs.css' | asset_url | stylesheet_tag }}
@@ -59,16 +61,7 @@
                     id="SortBy"
                     aria-describedby="a11y-refresh-page-message"
                   >
-                    {%- for option in collection.sort_options -%}
-                      <option
-                        value="{{ option.value | escape }}"
-                        {% if option.value == sort_by %}
-                          selected="selected"
-                        {% endif %}
-                      >
-                        {{ option.name | escape }}
-                      </option>
-                    {%- endfor -%}
+                    {% render 'ob-plp-sort-options', collection: collection, sort_by: sort_by %}
                   </select>
                   <span class="svg-wrapper">
                     {{- 'icon-caret.svg' | inline_asset_content -}}
@@ -187,8 +180,22 @@
                 {%- endfor -%}
               </ul>
 
-              {%- if paginate.pages > 1 -%}
-                {% render 'pagination', paginate: paginate, anchor: '' %}
+              {%- if paginate.next -%}
+                {%- assign products_shown = paginate.current_offset | plus: collection.products.size -%}
+                <div class="ob-load-more">
+                  <p class="ob-load-more__count caption-large">
+                    {{ products_shown }} van {{ paginate.items }} producten
+                  </p>
+                  <button
+                    type="button"
+                    class="button button--secondary ob-load-more__button"
+                    data-ob-load-more
+                    data-ob-next-url="{{ paginate.next.url | escape }}"
+                    data-ob-section-id="{{ section.id }}"
+                  >
+                    Toon meer
+                  </button>
+                </div>
               {%- endif -%}
             </div>
           {%- endif -%}
@@ -211,8 +218,8 @@
       "id": "products_per_page",
       "min": 8,
       "max": 36,
-      "step": 4,
-      "default": 16,
+      "step": 2,
+      "default": 18,
       "label": "t:sections.main-collection-product-grid.settings.products_per_page.label"
     },
     {

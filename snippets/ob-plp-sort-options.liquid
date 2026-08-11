@@ -1,0 +1,50 @@
+{% comment %}
+  Renders the approved collection sort options in their fixed order.
+  An unsupported current value remains as a hidden selected option so the
+  native select continues to describe the collection's actual state.
+
+  Accepts:
+  - collection: collection-like object
+  - sort_by: current effective sort value
+{% endcomment %}
+
+{%- liquid
+  assign approved_values = 'best-selling,price-ascending,price-descending,manual' | split: ','
+  assign current_is_approved = false
+
+  for approved_value in approved_values
+    if approved_value == sort_by
+      assign current_is_approved = true
+      break
+    endif
+  endfor
+-%}
+
+{%- unless current_is_approved -%}
+  {%- for option in collection.sort_options -%}
+    {%- if option.value == sort_by -%}
+      <option value="{{ option.value | escape }}" selected="selected" hidden>{{ option.name | escape }}</option>
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endunless -%}
+
+{%- for approved_value in approved_values -%}
+  {%- for option in collection.sort_options -%}
+    {%- if option.value == approved_value -%}
+      <option
+        value="{{ option.value | escape }}"
+        {% if option.value == sort_by %}
+          selected="selected"
+        {% endif %}
+      >
+        {%- if option.value == 'best-selling' -%}
+          Bestsellers
+        {%- else -%}
+          {{ option.name | escape }}
+        {%- endif -%}
+      </option>
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}

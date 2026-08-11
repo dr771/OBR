@@ -1,0 +1,89 @@
+.ob-load-more {
+  display: grid;
+  justify-items: center;
+  gap: 1.2rem;
+  margin-top: 4rem;
+  text-align: center;
+}
+
+.ob-load-more__count {
+  margin: 0;
+}
+
+.ob-load-more__button {
+  min-width: 16rem;
+}
+
+.ob-load-more__button[aria-busy='true'] {
+  cursor: wait;
+}
+
+.ob-grid-loading {
+  pointer-events: none;
+}
+
+.ob-grid-loading .card__media img,
+.ob-grid-loading .card__heading a,
+.ob-grid-loading .price-item {
+  visibility: hidden;
+}
+
+.ob-grid-loading .card__media,
+.ob-grid-loading .card__heading a,
+.ob-grid-loading .price-item {
+  position: relative;
+  background: rgb(var(--color-foreground) / 0.08);
+}
+
+.ob-grid-loading .card__media {
+  overflow: hidden;
+}
+
+.ob-grid-loading .card__media::after,
+.ob-grid-loading .card__heading a::after,
+.ob-grid-loading .price-item::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  visibility: visible;
+  background: linear-gradient(
+    90deg,
+    rgb(var(--color-foreground) / 0.08) 0%,
+    rgb(var(--color-background) / 0.65) 50%,
+    rgb(var(--color-foreground) / 0.08) 100%
+  );
+  transform: translateX(-100%);
+  animation: ob-skeleton-shimmer 1.25s ease-in-out infinite;
+}
+
+.ob-grid-loading .price-item {
+  display: inline-block;
+  color: transparent;
+  border-radius: 0.2rem;
+}
+
+.ob-grid-loading .card__heading a {
+  display: block;
+  color: transparent;
+  border-radius: 0.2rem;
+}
+
+.ob-grid-loading .badge,
+.ob-grid-loading .caption-with-letter-spacing,
+.ob-grid-loading .rating-wrapper {
+  visibility: hidden;
+}
+
+@keyframes ob-skeleton-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-grid-loading .card__media::after,
+  .ob-grid-loading .card__heading a::after,
+  .ob-grid-loading .price-item::after {
+    animation: none;
+  }
+}

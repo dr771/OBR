@@ -49,8 +49,9 @@ Akeneo/metafield interpretation lives in these, never inline in a template (mirr
 - `ob-card-swatches` — PLP card swatch row (chips, tooltips, hover swap + hover-pair data).
 - `ob-swatch-input` — one PDP color chip (image swatch from the variant's own photo).
 - `ob-facet-color-chip` / `ob-facet-swatch-input` — color *filter* chip: flat hex from the `filtercolors` metaobject, deliberately not an image swatch.
+- `ob-plp-sort-options` — the four approved collection sort choices in fixed order, with a hidden selected fallback when Shopify's current/default sort is outside the whitelist. Search sorting deliberately stays native.
 
-Client behavior for the card swatches is in `assets/ob-card-swatches.js` (document-level delegation — Dawn replaces the grid wholesale on every facet change).
+Client behavior for the card swatches is in `assets/ob-card-swatches.js` (document-level delegation — Dawn replaces the grid wholesale on every facet change). Collection load-more behavior is delegated from `assets/ob-plp.js`; facet loading feedback and corrective scroll clamping remain in Dawn's `assets/facets.js` response path.
 
 ## Hard Rules
 
@@ -66,13 +67,14 @@ First real build landed. Akeneo sync is live with **7 test products across 4 bra
 Shipped and verified on this shop's **main Dawn theme `148245381229`** (storefront password `original`), and also present on the Development theme used during the build. Note: this whole *shop* is the dev environment and never goes public under the real domain — see "Next up" item 4 — so pushing here is not a release and needs no special care.
 - PLP card colour swatches — non-navigating pressed-state buttons select in place, retarget the card's PDP link, persist the selected first image, and reveal that color's matched second shot only over the image area (`plp-card-swatch-selection`)
 - PDP colour swatches (img-swatch chips)
-- Colour filter (flat hex chips from `filtercolors`), plus Merk / Gender / Maat / Producttype / Prijs facets
+- Colour filter (flat hex chips from `filtercolors`) presented as a five-column 2.8rem chip grid with hover/focus labels on desktop and the current mobile drawer; touch does not retain the tooltip. Merk / Gender / Maat / Producttype / Prijs facets remain available alongside it.
 - D1 card image tracks the first *available* variant
 - **Size facet as a 4-column box grid** (`plp-size-facet-grid`), and the collection page switched to the **vertical** filter layout — it had been `horizontal`, under which Dawn does no show-more truncation at all
 - **PDP size picker ordering** (`pdp-size-picker-order`) — EU shoe sizes render numerically, tops/bottoms render in semantic letter order, and raw Akeneo headings are replaced with `Maat`
 - **PDP per-color media galleries** (`pdp-color-media-gallery`) — main gallery, mobile counter, and expanded modal show only the selected color's photography; verified with both single-segment and normalized multi-segment codes
+- **PLP grid UX bundle** — 18-item pages with native “Toon meer” append behavior, immediate geometry-stable skeleton feedback, corrective-only scroll clamping, and four collection sort choices; search sorting stays native. Because the test assortment has only 7 products, load-more success/failure/reset was verified against a synthetic real section response and must be retested naturally once a collection exceeds 18 products.
 
-Nine capabilities are seeded in `openspec/specs/`; changes archived under `openspec/changes/archive/2026-08-11-port-akeneo-facets-swatches/`, `.../2026-08-11-plp-size-facet-grid/`, `.../2026-08-11-pdp-size-picker-order/`, `.../2026-08-11-pdp-color-media-gallery/`, and `.../2026-08-11-plp-card-swatch-selection/`.
+Thirteen capabilities are seeded in `openspec/specs/`. Archived changes are under `openspec/changes/archive/2026-08-11-port-akeneo-facets-swatches/`, `.../2026-08-11-plp-size-facet-grid/`, `.../2026-08-11-pdp-size-picker-order/`, `.../2026-08-11-pdp-color-media-gallery/`, `.../2026-08-11-plp-card-swatch-selection/`, `.../2026-08-11-port-plp-grid-ux-bundle/`, and `.../2026-08-11-plp-color-filter-grid/`.
 
 **OpenSpec CLI:** `npm install -g @fission-ai/openspec` — the npm name `openspec` is an unrelated stub. See the OpenSpec CLI section above.
 

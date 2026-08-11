@@ -35,7 +35,8 @@
     {{ additional_props }}
   {% endif %}
 >
-<label for="{{ id }}" title="{{ value }}" class="swatch-input__label">
+<label for="{{ id }}" class="swatch-input__label">
   {% render 'ob-facet-color-chip', value: value_obj %}
+  <span class="visually-hidden">{{ value_obj.label | escape }} ({{ value_obj.count }})</span>
   {{ help_text }}
 </label>

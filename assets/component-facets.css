@@ -1331,3 +1331,111 @@ input.mobile-facets__checkbox {
   outline: 0.2rem solid rgba(var(--color-foreground), 1);
   outline-offset: 0.2rem;
 }
+
+/* ==========================================================================
+   OB — color facet swatch grid (plp-color-filter)
+
+   filtercolors already supplies one native checkbox per abstract color family;
+   this is presentation only. Keep the five-column count aligned with the
+   desktop show-more threshold (10 = two complete rows).
+   ========================================================================== */
+.ob-color-grid.facets-layout {
+  display: grid;
+  grid-template-columns: repeat(5, 2.8rem);
+  gap: 1.2rem;
+  width: fit-content;
+  padding-block: 1rem;
+  overflow: visible;
+}
+
+.ob-color-grid .facets__item,
+.ob-color-grid .mobile-facets__item {
+  align-items: center;
+  overflow: visible;
+}
+
+.ob-color-grid .ob-color-facet-option {
+  position: relative;
+  display: block;
+  flex-grow: 0;
+  width: 2.8rem;
+  padding: 0;
+}
+
+.ob-color-grid .swatch-input-wrapper,
+.ob-color-grid .swatch-input__label,
+.ob-color-grid .ob-facet-color-chip {
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
+.ob-color-grid .ob-color-facet-option::before,
+.ob-color-grid .ob-color-facet-option::after {
+  position: absolute;
+  left: 50%;
+  z-index: 5;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+}
+
+.ob-color-grid .ob-color-facet-option::before {
+  bottom: calc(100% + 0.8rem);
+  padding: 0.4rem 0.8rem;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.12);
+  border-radius: 0.4rem;
+  background: rgb(var(--color-background));
+  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.14);
+  color: rgb(var(--color-foreground));
+  content: attr(data-ob-swatch-name);
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.ob-color-grid .ob-color-facet-option::after {
+  bottom: calc(100% + 0.4rem);
+  width: 0.8rem;
+  height: 0.8rem;
+  border-right: 0.1rem solid rgba(var(--color-foreground), 0.12);
+  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.12);
+  background: rgb(var(--color-background));
+  content: '';
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.ob-color-grid .ob-color-facet-option:hover::before,
+.ob-color-grid .ob-color-facet-option:hover::after,
+.ob-color-grid .ob-color-facet-option:has(:focus-visible)::before,
+.ob-color-grid .ob-color-facet-option:has(:focus-visible)::after {
+  visibility: visible;
+  opacity: 1;
+}
+
+.ob-color-grid .ob-color-facet-option.disabled .ob-facet-color-chip {
+  opacity: 0.35;
+}
+
+@media (hover: none) {
+  .ob-color-grid .ob-color-facet-option:hover::before,
+  .ob-color-grid .ob-color-facet-option:hover::after {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  .ob-color-grid .ob-color-facet-option:has(:focus-visible)::before,
+  .ob-color-grid .ob-color-facet-option:has(:focus-visible)::after {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-color-grid .ob-color-facet-option::before,
+  .ob-color-grid .ob-color-facet-option::after {
+    transition: none;
+  }
+}

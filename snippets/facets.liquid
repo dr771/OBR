@@ -15,6 +15,7 @@
 {{ 'component-show-more.css' | asset_url | stylesheet_tag }}
 {{ 'component-swatch-input.css' | asset_url | stylesheet_tag }}
 {{ 'component-swatch.css' | asset_url | stylesheet_tag }}
+{{ 'component-ob-swatches.css' | asset_url | stylesheet_tag }}
 
 {%- liquid
   assign sort_by = results.sort_by | default: results.default_sort_by
@@ -82,7 +83,11 @@
                     <facet-remove>
                       <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
                         <span class="active-facets__button-inner button button--tertiary">
-                          {{ filter.label | escape }}: {{ value.label | escape }}
+                          {%- if filter.param_name contains 'filtercolors' -%}
+                            {{ value.label | escape }}
+                          {%- else -%}
+                            {{ filter.label | escape }}: {{ value.label | escape }}
+                          {%- endif -%}
                           <span class="svg-wrapper">
                             {{- 'icon-close-small.svg' | inline_asset_content -}}
                           </span>
@@ -124,6 +129,11 @@
                 assign is_size_facet = false
                 if filter.param_name contains 'available_erp_sizes'
                   assign is_size_facet = true
+                endif
+
+                assign is_color_facet = false
+                if filter.param_name contains 'filtercolors'
+                  assign is_color_facet = true
                 endif
 
                 if is_size_facet
@@ -209,7 +219,7 @@
                           endif
                         -%}
                         <ul
-                          class="{{ visual_layout_class }}{% if filter_type == 'vertical' %} facets__list--vertical{% else %} facets__list{% endif %} list-unstyled"
+                          class="{{ visual_layout_class }}{% if filter_type == 'vertical' %} facets__list--vertical{% else %} facets__list{% endif %} list-unstyled{% if is_color_facet %} ob-color-grid{% endif %}"
                           role="list"
                         >
                           {%- for value in sorted_values -%}
@@ -271,8 +281,11 @@
                                     )
                                   </span>
                                 </label>
-                              {%- elsif filter.param_name contains 'filtercolors' -%}
-                                <div class="{{ label_class }}">
+                              {%- elsif is_color_facet -%}
+                                <div
+                                  class="{{ label_class }} ob-color-facet-option"
+                                  data-ob-swatch-name="{{ value.label | escape }} ({{ value.count }})"
+                                >
                                   <div class="swatch-input-wrapper">
                                     {% render 'ob-facet-swatch-input',
                                       id: input_id,
@@ -285,8 +298,6 @@
                                       disabled: is_disabled
                                     %}
                                   </div>
-
-                                  {{ text_value }}
                                 </div>
                               {%- elsif presentation == 'swatch' -%}
                                 <div class="{{ label_class }}">
@@ -411,7 +422,11 @@
                   <facet-remove>
                     <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
                       <span class="active-facets__button-inner button button--tertiary">
-                        {{ filter.label | escape }}: {{ value.label | escape }}
+                        {%- if filter.param_name contains 'filtercolors' -%}
+                          {{ value.label | escape }}
+                        {%- else -%}
+                          {{ filter.label | escape }}: {{ value.label | escape }}
+                        {%- endif -%}
                         <span class="svg-wrapper">
                           {{- 'icon-close-small.svg' | inline_asset_content -}}
                         </span>
@@ -467,16 +482,20 @@
                     id="SortBy"
                     aria-describedby="a11y-refresh-page-message"
                   >
-                    {%- for option in results.sort_options -%}
-                      <option
-                        value="{{ option.value | escape }}"
-                        {% if option.value == sort_by %}
-                          selected="selected"
-                        {% endif %}
-                      >
-                        {{ option.name | escape }}
-                      </option>
-                    {%- endfor -%}
+                    {%- if request.page_type == 'collection' -%}
+                      {% render 'ob-plp-sort-options', collection: results, sort_by: sort_by %}
+                    {%- else -%}
+                      {%- for option in results.sort_options -%}
+                        <option
+                          value="{{ option.value | escape }}"
+                          {% if option.value == sort_by %}
+                            selected="selected"
+                          {% endif %}
+                        >
+                          {{ option.name | escape }}
+                        </option>
+                      {%- endfor -%}
+                    {%- endif -%}
                   </select>
                   <span class="svg-wrapper">
                     {{- 'icon-caret.svg' | inline_asset_content -}}
@@ -579,6 +598,10 @@
                 {%- for filter in results.filters -%}
                   {% liquid
                     assign presentation = filter.presentation | default: default_presentation
+                    assign is_color_facet = false
+                    if filter.param_name contains 'filtercolors'
+                      assign is_color_facet = true
+                    endif
                     if presentation == 'image'
                       assign visual_layout_class = 'facets-layout facets-layout-grid facets-layout-grid--' | append: presentation
                     else
@@ -618,7 +641,10 @@
                               </span>
                             {%- endif -%}
                           </button>
-                          <ul class="{{ visual_layout_class }} mobile-facets__list list-unstyled" role="list">
+                          <ul
+                            class="{{ visual_layout_class }} mobile-facets__list list-unstyled{% if is_color_facet %} ob-color-grid{% endif %}"
+                            role="list"
+                          >
                             {%- liquid
                               assign sorted_values = filter.values
                               # Keep the selected values grouped together when operator is AND
@@ -657,8 +683,11 @@
                               {%- endcapture -%}
 
                               <li class="mobile-facets__item list-menu__item">
-                                {% if filter.param_name contains 'filtercolors' %}
-                                  <div class="{{ label_class }}">
+                                {% if is_color_facet %}
+                                  <div
+                                    class="{{ label_class }} ob-color-facet-option"
+                                    data-ob-swatch-name="{{ value.label | escape }} ({{ value.count }})"
+                                  >
                                     <div class="swatch-input-wrapper">
                                       {% render 'ob-facet-swatch-input',
                                         id: input_id,
@@ -671,8 +700,6 @@
                                         disabled: is_disabled
                                       %}
                                     </div>
-
-                                    {{ text_value }}
                                   </div>
                                 {% elsif presentation == 'swatch' %}
                                   <div class="{{ label_class }}">
@@ -817,16 +844,20 @@
                           id="SortBy-mobile"
                           aria-describedby="a11y-refresh-page-message"
                         >
-                          {%- for option in results.sort_options -%}
-                            <option
-                              value="{{ option.value | escape }}"
-                              {% if option.value == sort_by %}
-                                selected="selected"
-                              {% endif %}
-                            >
-                              {{ option.name | escape }}
-                            </option>
-                          {%- endfor -%}
+                          {%- if request.page_type == 'collection' -%}
+                            {% render 'ob-plp-sort-options', collection: results, sort_by: sort_by %}
+                          {%- else -%}
+                            {%- for option in results.sort_options -%}
+                              <option
+                                value="{{ option.value | escape }}"
+                                {% if option.value == sort_by %}
+                                  selected="selected"
+                                {% endif %}
+                              >
+                                {{ option.name | escape }}
+                              </option>
+                            {%- endfor -%}
+                          {%- endif -%}
                         </select>
                         <span class="svg-wrapper">
                           {{- 'icon-caret.svg' | inline_asset_content -}}
@@ -873,7 +904,11 @@
         <facet-remove>
           <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
             <span class="active-facets__button-inner button button--tertiary">
-              {{ filter.label | escape }}: {{ value.label | escape }}
+              {%- if filter.param_name contains 'filtercolors' -%}
+                {{ value.label | escape }}
+              {%- else -%}
+                {{ filter.label | escape }}: {{ value.label | escape }}
+              {%- endif -%}
               <span class="svg-wrapper">
                 {{- 'icon-close-small.svg' | inline_asset_content -}}
               </span>
@@ -924,16 +959,20 @@
                 id="SortBy"
                 aria-describedby="a11y-refresh-page-message"
               >
-                {%- for option in results.sort_options -%}
-                  <option
-                    value="{{ option.value | escape }}"
-                    {% if option.value == sort_by %}
-                      selected="selected"
-                    {% endif %}
-                  >
-                    {{ option.name | escape }}
-                  </option>
-                {%- endfor -%}
+                {%- if request.page_type == 'collection' -%}
+                  {% render 'ob-plp-sort-options', collection: results, sort_by: sort_by %}
+                {%- else -%}
+                  {%- for option in results.sort_options -%}
+                    <option
+                      value="{{ option.value | escape }}"
+                      {% if option.value == sort_by %}
+                        selected="selected"
+                      {% endif %}
+                    >
+                      {{ option.name | escape }}
+                    </option>
+                  {%- endfor -%}
+                {%- endif -%}
               </select>
               <span class="svg-wrapper">
                 {{- 'icon-caret.svg' | inline_asset_content -}}
@@ -986,7 +1025,11 @@
               <facet-remove>
                 <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
                   <span class="active-facets__button-inner button button--tertiary">
-                    {{ filter.label | escape }}: {{ value.label | escape }}
+                    {%- if filter.param_name contains 'filtercolors' -%}
+                      {{ value.label | escape }}
+                    {%- else -%}
+                      {{ filter.label | escape }}: {{ value.label | escape }}
+                    {%- endif -%}
                     <span class="svg-wrapper">
                       {{- 'icon-close-small.svg' | inline_asset_content -}}
                     </span>
