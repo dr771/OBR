@@ -171,6 +171,8 @@ class FacetFiltersForm extends HTMLElement {
         element.classList.add('scroll-trigger--cancel');
       });
 
+    window.OBFilters?.reclampPanel?.();
+
     const maxScrollY = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
     if (window.scrollY > maxScrollY) {
       window.scrollTo({ top: maxScrollY, left: window.scrollX });
@@ -301,7 +303,9 @@ class FacetFiltersForm extends HTMLElement {
       document.querySelector(selector).innerHTML = html.querySelector(selector).innerHTML;
     });
 
-    document.getElementById('FacetFiltersFormMobile').closest('menu-drawer').bindEvents();
+    const mobileForm = document.getElementById('FacetFiltersFormMobile');
+    const mobileDrawer = mobileForm && mobileForm.closest('menu-drawer');
+    if (mobileDrawer) mobileDrawer.bindEvents();
   }
 
   static renderCounts(source, target) {

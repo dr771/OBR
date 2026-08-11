@@ -1,0 +1,191 @@
+{% comment %}
+  Mobile collection/search filter bar. Replaces Dawn's menu drawer for the
+  vertical and horizontal layouts while retaining FacetFiltersFormMobile so
+  facets.js keeps its native serialization and AJAX rendering contracts.
+{% endcomment %}
+
+{%- if enable_filtering or enable_sorting -%}
+  <facet-filters-form class="facets ob-mobile-bar medium-hide large-up-hide">
+    <form id="FacetFiltersFormMobile" class="ob-mobile-bar__form">
+      {%- if results.terms -%}
+        <input type="hidden" name="q" value="{{ results.terms | escape }}">
+        <input name="options[prefix]" type="hidden" value="last">
+      {%- endif -%}
+      {%- if results.current_vendor or results.current_type -%}
+        <input type="hidden" name="q" value="{{ results.current_vendor }}{{ results.current_type }}">
+      {%- endif -%}
+
+      <div class="ob-mobile-bar__toolbar">
+        {%- if enable_sorting -%}
+          <div id="Details-Mobile-SortBy-{{ section.id }}" class="ob-mobile-bar__sort js-filter" data-index="bar-sort">
+            <label for="SortBy-mobile" class="visually-hidden">{{ 'products.facets.sort_by_label' | t }}</label>
+            <div class="select">
+              <select
+                name="sort_by"
+                class="select__select"
+                id="SortBy-mobile"
+                aria-describedby="a11y-refresh-page-message"
+              >
+                {%- if request.page_type == 'collection' -%}
+                  {% render 'ob-plp-sort-options', collection: results, sort_by: sort_by %}
+                {%- else -%}
+                  {%- for option in results.sort_options -%}
+                    <option value="{{ option.value | escape }}"{% if option.value == sort_by %} selected="selected"{% endif %}>
+                      {{ option.name | escape }}
+                    </option>
+                  {%- endfor -%}
+                {%- endif -%}
+              </select>
+              <span class="svg-wrapper">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- if enable_filtering -%}
+          <button
+            type="button"
+            class="ob-mobile-bar__toggle"
+            aria-expanded="true"
+            aria-controls="ObMobileBarPanel-{{ section.id }}"
+            data-ob-bar-toggle
+          >
+            {{ 'products.facets.filter_bar_toggle' | t }}
+            <span class="ob-mobile-bar__toggle-icon ob-mobile-bar__toggle-icon--open svg-wrapper">
+              {{- 'icon-filter.svg' | inline_asset_content -}}
+            </span>
+            <span class="ob-mobile-bar__toggle-icon ob-mobile-bar__toggle-icon--close svg-wrapper">
+              {{- 'icon-close.svg' | inline_asset_content -}}
+            </span>
+          </button>
+        {%- endif -%}
+      </div>
+
+      {%- if enable_filtering -%}
+        <div id="ObMobileBarPanel-{{ section.id }}" class="ob-mobile-bar__panel" data-ob-bar-panel>
+          {%- assign bar_kinds = 'type,size,color' | split: ',' -%}
+          {%- for bar_kind in bar_kinds -%}
+            {%- for filter in results.filters -%}
+              {%- liquid
+                assign filter_kind = 'generic'
+                if filter.param_name contains 'product_type'
+                  assign filter_kind = 'type'
+                elsif filter.param_name contains 'available_erp_sizes'
+                  assign filter_kind = 'size'
+                elsif filter.param_name contains 'filtercolors'
+                  assign filter_kind = 'color'
+                endif
+              -%}
+              {%- if filter_kind == bar_kind -%}
+                <div
+                  id="Details-Bar-{{ filter.param_name | escape }}-{{ section.id }}"
+                  class="js-filter ob-mobile-bar__filter"
+                  data-index="bar-{{ bar_kind }}"
+                >
+                  <h2 class="ob-mobile-bar__row-heading caption-large text-body">
+                    {%- if filter_kind == 'type' -%}
+                      {{- 'products.facets.type_label' | t -}}
+                    {%- else -%}
+                      {%- render 'ob-option-meta', option_name: filter.param_name, field: 'label' -%}
+                    {%- endif -%}
+                  </h2>
+                  <ul class="ob-mobile-bar__row ob-mobile-bar__row--{{ filter_kind }} list-unstyled" role="list">
+                    {%- assign sorted_values = filter.values -%}
+                    {%- if filter.operator == 'AND' -%}
+                      {%- assign active_filter_values = filter.values | where: 'active', true -%}
+                      {%- assign inactive_filter_values = filter.values | where: 'active', false -%}
+                      {%- assign sorted_values = active_filter_values | concat: inactive_filter_values -%}
+                    {%- endif -%}
+                    {%- for value in sorted_values -%}
+                      {%- liquid
+                        assign input_id = 'Filter-' | append: filter.param_name | escape | append: '-bar-' | append: forloop.index
+                        assign is_disabled = false
+                        if value.count == 0 and value.active == false
+                          assign is_disabled = true
+                        endif
+                      -%}
+                      <li>
+                        {%- if filter_kind == 'color' -%}
+                          <div
+                            class="facets__label{% if is_disabled %} disabled{% endif %}{% if value.active %} active{% endif %} ob-color-facet-option"
+                            data-ob-swatch-name="{{ value.label | escape }} ({{ value.count }})"
+                          >
+                            <div class="swatch-input-wrapper">
+                              {% render 'ob-facet-swatch-input',
+                                id: input_id,
+                                type: 'checkbox',
+                                name: value.param_name,
+                                value: value.value,
+                                value_obj: value,
+                                product_form_id: 'FacetFiltersFormMobile',
+                                checked: value.active,
+                                disabled: is_disabled
+                              %}
+                            </div>
+                          </div>
+                        {%- else -%}
+                          <label
+                            for="{{ input_id }}"
+                            class="ob-mobile-bar__box{% if value.active %} active{% endif %}{% if is_disabled %} disabled{% endif %}"
+                          >
+                            <input
+                              type="checkbox"
+                              name="{{ value.param_name }}"
+                              value="{{ value.value }}"
+                              id="{{ input_id }}"
+                              {% if value.active %}checked{% endif %}
+                              {% if is_disabled %}disabled{% endif %}
+                            >
+                            <span aria-hidden="true">{{ value.label | escape }}</span>
+                            <span class="visually-hidden">
+                              {{- value.label | escape }} ({{ 'products.facets.product_count_simple' | t: count: value.count }})
+                            </span>
+                          </label>
+                        {%- endif -%}
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endfor -%}
+
+          {%- for filter in results.filters -%}
+            {%- liquid
+              assign has_bar_row = false
+              if filter.param_name contains 'product_type' or filter.param_name contains 'available_erp_sizes' or filter.param_name contains 'filtercolors'
+                assign has_bar_row = true
+              endif
+            -%}
+            {%- unless has_bar_row -%}
+              {%- if filter.type == 'price_range' -%}
+                {%- if filter.min_value.value -%}
+                  <input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | money_without_currency }}">
+                {%- endif -%}
+                {%- if filter.max_value.value -%}
+                  <input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | money_without_currency }}">
+                {%- endif -%}
+              {%- else -%}
+                {%- for value in filter.active_values -%}
+                  <input type="hidden" name="{{ value.param_name }}" value="{{ value.value | escape }}">
+                {%- endfor -%}
+              {%- endif -%}
+            {%- endunless -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </form>
+  </facet-filters-form>
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('ob-plp-filter-bar') !== 'closed') return;
+        var panel = document.getElementById('ObMobileBarPanel-{{ section.id }}');
+        var toggle = document.querySelector('[data-ob-bar-toggle][aria-controls="ObMobileBarPanel-{{ section.id }}"]');
+        if (panel) panel.hidden = true;
+        if (toggle) toggle.setAttribute('aria-expanded', 'false');
+      } catch (error) {
+        /* Storage blocked: retain the server-rendered open default. */
+      }
+    })();
+  </script>
+{%- endif -%}

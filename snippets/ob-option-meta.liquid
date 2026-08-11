@@ -6,7 +6,7 @@
 
   Accepts:
   - option_name: {String} raw option.name, e.g. "[color]", "[shoe_size_eu]"
-  - field: {String} optional: 'kind' | 'size_kind' | 'label'
+  - field: {String} optional: 'kind' | 'size_kind' | 'label' | 'facet_label'
 
   Usage:
   {% render 'ob-option-meta', option_name: option.name, field: 'label' %}
@@ -47,6 +47,8 @@
     {{- size_kind -}}
   {%- when 'label' -%}
     {{- label -}}
+  {%- when 'facet_label' -%}
+    {{- 'products.facets.shop_by_label' | t }} {{ label -}}
   {%- else -%}
     {{- kind -}}
 {%- endcase -%}

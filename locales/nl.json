@@ -191,6 +191,10 @@
       "from": "Van",
       "filter_and_sort": "Filteren en sorteren",
       "filter_by_label": "Filter:",
+      "shop_by_label": "Shop op",
+      "show_filters": "Toon filters",
+      "filter_bar_toggle": "Verfijn op",
+      "type_label": "Type",
       "filter_button": "Filter",
       "filters_selected": {
         "one": "{{ count }} geselecteerd",

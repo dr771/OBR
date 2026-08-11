@@ -192,6 +192,10 @@
       "from": "From",
       "filter_and_sort": "Filter and sort",
       "filter_by_label": "Filter:",
+      "shop_by_label": "Shop by",
+      "show_filters": "Show filters",
+      "filter_bar_toggle": "Refine by",
+      "type_label": "Type",
       "filter_button": "Filter",
       "filters_selected": {
         "one": "{{ count }} selected",
