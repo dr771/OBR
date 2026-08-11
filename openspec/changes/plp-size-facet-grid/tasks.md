@@ -28,11 +28,12 @@
 - [x] 4.6 Below the threshold (11 values) no show-more control renders and nothing is hidden.
 - [x] 4.7 Kleur, Merk, Gender, Producttype, Prijs all still render; all `ob-size-box` occurrences are inside the size grid, none leaked.
 - [x] 4.8 Vertical layout confirmed live (`facets__form-vertical` present, horizontal form absent).
-- [ ] 4.9 **Not verified — needs a browser.** Focus ring visibility, keyboard toggle, and the rendered look of the inverted/hover states. Chrome remote debugging was not running this session, and these are visual/interactive properties that HTML inspection cannot confirm. The markup and CSS are in place; they have not been seen.
+- [x] 4.9 Verified in-browser via DevTools MCP: grid measures 4 columns × 56.5px with 6px gaps in a 244px sidebar, no label overflows; focus ring renders (`:focus-visible` matches, `outline: solid 2px`); Space toggles the box, adds `filter.p.m.akeneo.available_erp_sizes=35` to the URL, narrows results to 4 products, and the selected box computes to `bg rgb(18,18,18)` / `color rgb(255,255,255)` / matching border. Screenshot confirms the 12-box grid, the "+ Meer weergeven" control and the untouched colour facet above it.
 
 ## 5. Close out
 
 - [x] 5.1 Spec corrected twice against measured reality: the truncation requirement was written for the vertical layout (fixed by 2.1 rather than by bending the spec), and the "unavailable sizes stay visible" requirement was wrong — empty filter values are hidden by a Search & Discovery setting, so the grid shrinks instead. The spec now covers both settings so the theme needs no change if it's flipped.
 - [x] 5.4 Added the "hide filter values with no results" setting to MIGRATION-TO-LIVE.md — it's shop config and does not travel with the theme.
+- [x] 5.5 Recorded an out-of-scope defect spotted during verification: the **PDP** size picker renders raw unsorted option values (`35 36 37 40 39 42 38 41`) and shows the raw Akeneo key `shoe_size_eu` as its heading. Logged in playbook D6 as a candidate change; deliberately not fixed here.
 - [x] 5.2 Note in MIXED-SHOPS-PLAYBOOK.md D6 that shipped code now depends on the facet-supplied ordering.
 - [ ] 5.3 Stop before archiving and hand back for review, per the autopilot rule in CLAUDE.md.
