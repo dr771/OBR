@@ -10,6 +10,7 @@ Shopify theme rebuild for Original Brands (originalbrands.nl) — multi-brand ap
 - **Theme base:** Dawn (cloned fresh 2026-08-10, no upstream git history)
 - **Product data source:** Akeneo, synced by Nick (connected — see Current Status for what's in the store)
 - **Reference project:** SweatyBetty — same Dawn/Akeneo/OpenSpec stack, further along. Sibling directory of this repo (`../SweatyBetty`). Reuse its shipped patterns and lessons, not its SB-specific branding/hacks.
+- **Two machines:** this repo is worked on from **both** a macOS box (`~/Projects/OriginalBrands`) and a Windows box (`C:\Users\rezni\SHOPIFY\OriginalBrands`). Neither is "the old one". Prefer machine-neutral references in docs — `../SweatyBetty` resolves correctly on both, absolute paths don't. Pull before starting; the other machine may be ahead.
 
 ## Project Docs
 
