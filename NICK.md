@@ -6,22 +6,26 @@ Ordered by impact.
 
 ---
 
-## 1. Metaobject entries are created as DRAFT — breaks any feature built on them
+## 1. Metaobject entries arrive DRAFT — RESOLVED, no action for Nick
 
-Affects **every metaobject type the sync creates**, not just one. Confirmed on both:
+**Corrected attribution (2026-08-11, per Nick).** This is **not an Akeneo sync bug**. It's a Shopify platform default: any metaobject definition with the `publishable` capability enabled makes *new API-created entries* DRAFT unless the creating request explicitly sets `capabilities.publishable.status: ACTIVE`. Nick hit and fixed this on the SweatyBetty project already; it was recorded there in July and I failed to check that before writing it up here as a defect. Both OB definitions have `capabilities.publishable.enabled: true`, which is what exposes the default.
 
-| Type | Entries | Status as synced |
-|---|---|---|
-| `filtercolors` | 12 | all DRAFT |
-| `activities` | 2 (`lifestyle`, `running`) | all DRAFT |
+Keeping the entry because the *symptom* is worth knowing — it is genuinely hard to diagnose — not because anything is owed by the sync side.
 
-**Effect:** the storefront can't read draft metaobjects. For `filtercolors` this meant the "Kleur" filter had **zero visible values and Shopify dropped it from the storefront completely** — no colour filter at all. For `activities` it means the PDP feature-icon row would render empty. In both cases it looks fully configured and correct in the admin (admin *can* see drafts, swatches and all), which makes this very easy to misdiagnose as an indexing delay or a theme bug.
+| Type | Entries | Status as first seen | Now |
+|---|---|---|---|
+| `filtercolors` | 12 | all DRAFT | ACTIVE |
+| `activities` | 2 (`lifestyle`, `running`) | all DRAFT | ACTIVE |
 
-**Status:** flipped all 12 `filtercolors` (2026-08-11) and both `activities` (2026-08-11) to ACTIVE manually via `metaobjectUpdate`, so both work right now. **This will regress on every re-sync** — and on any *new* metaobject type added later — unless the sync emits entries as ACTIVE.
+**Symptom:** the storefront can't read draft metaobjects. For `filtercolors` the "Kleur" filter had **zero visible values, so Shopify dropped it from the storefront entirely**. For `activities` the PDP icon row would render empty. In both cases the admin shows everything correctly configured (admin *can* see drafts), so it reads as an indexing delay or a theme bug.
 
-**Fix:** create/update metaobject entries with `capabilities: { publishable: { status: ACTIVE } }`. Worth fixing once in whatever shared code path emits metaobjects, rather than per type.
+**Status:** all 14 entries set ACTIVE via `metaobjectUpdate` on 2026-08-11 — verified holding, `filtercolors` did not regress across the syncs since.
 
-**Verify** (swap the type, or check each type the sync creates):
+**Two ways to keep it fixed**, if it ever recurs on OB:
+1. The creating request sets `capabilities: { publishable: { status: ACTIVE } }` — the SB fix, presumably already carried by this connector.
+2. Disable the `publishable` capability on the definition, so entries can't be DRAFT at all. Structurally safer for sync-managed reference data, but **not applied here**: if the connector explicitly sends a publish status, removing the capability could break its writes. Worth agreeing with Nick before touching.
+
+**Verify** (per type, after any new metaobject type appears):
 ```graphql
 { metaobjects(type: "filtercolors", first: 50) { edges { node {
   handle capabilities { publishable { status } } } } } }
@@ -82,9 +86,7 @@ Two questions rather than a definite bug:
 
 > Hi Nick,
 >
-> While wiring up the colour swatches, filters and PDP icons on the dev store I ran into a few things on the Akeneo/sync side — full detail with GraphQL snippets is in `NICK.md`, but the short version:
->
-> **1. The big one:** metaobject entries are created as **DRAFT**. The storefront can't read draft metaobjects, so the colour filter didn't appear on the storefront *at all* — even though it looks completely fine in the admin. This isn't specific to colours: `activities` came through as DRAFT too, which would have left the PDP icon row empty. I've set the existing entries to ACTIVE by hand (12 `filtercolors` + 2 `activities`) so both work now, but it'll break again on your next sync — and on any new metaobject type — unless they're emitted as ACTIVE. Probably one fix in whatever shared code path writes metaobjects.
+> While wiring up the colour swatches, filters and PDP icons on the dev store I ran into a few things on the data side — full detail with GraphQL snippets is in `NICK.md`, but the short version. (The DRAFT-metaobject one I'd flagged earlier is **withdrawn** — you're right that it's the Shopify publishable-capability default, not the sync. Sorry for the noise; the entries are all ACTIVE now and have stayed that way.)
 >
 > **2.** "Black Grey" is tagged as **blue + grey** instead of black + grey, so that product turns up under the Blue filter showing a black item. Might be worth checking other two-word colour names too.
 >
@@ -94,6 +96,6 @@ Two questions rather than a definite bug:
 >
 > **5. Two questions on `activities`**, which I need answered before I build the PDP icon row: all 7 products currently point at the same single value, *Lifestyle* — including the footwear — and nothing references *Running*. Is that real data yet, or a placeholder? And should the field be a **list**? Right now it's a single `metaobject_reference`, so a product physically can't carry both *Running* and *Lifestyle*.
 >
-> No rush on 2–4, but 1 is worth doing before the next sync run, and 5 is blocking me.
+> No rush on 2–4, but 5 is blocking me.
 >
 > Thanks!

@@ -11,7 +11,7 @@ Status legend: `[ ]` todo · `[x]` done · `[~]` in progress/partially known
 ## 1. Catalog data — Nick / Akeneo
 
 - [ ] Point the Akeneo sync at the live shop and run a full product push (products, variants, media, metafields).
-- [ ] **Metaobject entries must be `ACTIVE`, not `DRAFT` — check every type, not just colours.** DRAFT entries are invisible to the storefront, which silently removes the *entire* colour filter and empties the PDP icon row, while still looking perfect in the admin. This bit us on dev twice: `filtercolors` and then `activities` (see playbook D3 / `NICK.md` #1). Assume any *new* metaobject type arrives DRAFT until Nick fixes the shared code path. Verify after the first sync, per type:
+- [ ] **Metaobject entries must be `ACTIVE`, not `DRAFT` — check every type, not just colours.** DRAFT entries are invisible to the storefront, which silently removes the *entire* colour filter and empties the PDP icon row, while still looking perfect in the admin. This bit us on dev twice: `filtercolors` and then `activities` (see playbook D3 / `NICK.md` #1). **Cause is a Shopify default, not the sync:** a definition with the `publishable` capability enabled creates new API-made entries as DRAFT unless the request sets `status: ACTIVE`. So a fresh live shop is exposed to it again regardless of who runs the sync — check it on the live shop even though it's "already fixed" on dev. Verify after the first sync, per type:
   ```graphql
   { metaobjects(type: "filtercolors", first: 50) { edges { node {
     handle capabilities { publishable { status } } } } } }
