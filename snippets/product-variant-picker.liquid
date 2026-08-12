@@ -8,8 +8,19 @@
   Usage:
   {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
 {% endcomment %}
+{%- liquid
+  comment
+    PDP option rail variation. Set to false to restore wrapping color swatches
+    and the responsive multi-row size grid without reverting any files.
+  endcomment
+  assign ob_single_row_options = true
+-%}
 {%- unless product.has_only_default_variant -%}
   {{ 'component-ob-swatches.css' | asset_url | stylesheet_tag }}
+  {%- if ob_single_row_options -%}
+    {{ 'component-ob-option-rail.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'ob-pdp-option-rail.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
   <variant-selects
     id="variant-selects-{{ section.id }}"
     data-section="{{ section.id }}"
@@ -48,6 +59,8 @@
         endcomment
         if option_kind == 'color'
           assign picker_type = 'swatch'
+        elsif option_kind == 'size'
+          assign picker_type = 'button'
         elsif swatch_count > 0 and block.settings.swatch_shape != 'none'
           if block.settings.picker_type == 'dropdown'
             assign picker_type = 'swatch_dropdown'
@@ -57,13 +70,17 @@
         endif
       -%}
       {%- if picker_type == 'swatch' -%}
-        <fieldset class="js product-form__input product-form__input--swatch">
+        <fieldset class="js product-form__input product-form__input--swatch{% if option_kind == 'color' and ob_single_row_options %} product-form__input--option-rail{% endif %}">
           <legend class="form__label">
             {{ option_label }}:
             <span data-selected-value>
               {{- option.selected_value -}}
             </span>
           </legend>
+          {%- if option_kind == 'color' and ob_single_row_options -%}
+            <div class="product-form__option-rail-shell">
+              <div class="product-form__option-rail product-form__option-rail--color" data-ob-option-rail>
+          {%- endif -%}
           {% render 'product-variant-options',
             product: product,
             option: option,
@@ -72,10 +89,19 @@
             option_kind: option_kind,
             option_size_kind: option_size_kind
           %}
+          {%- if option_kind == 'color' and ob_single_row_options -%}
+              </div>
+              {% render 'ob-option-rail-controls', previous_label: 'Vorige kleuren tonen', next_label: 'Meer kleuren tonen' %}
+            </div>
+          {%- endif -%}
         </fieldset>
       {%- elsif picker_type == 'button' -%}
-        <fieldset class="js product-form__input product-form__input--pill">
+        <fieldset class="js product-form__input product-form__input--pill{% if option_kind == 'size' %} product-form__input--size-grid{% endif %}">
           <legend class="form__label">{{ option_label }}</legend>
+          {%- if option_kind == 'size' -%}
+            <div{% if ob_single_row_options %} class="product-form__option-rail-shell product-form__option-rail-shell--size"{% endif %}>
+            <div class="product-form__size-grid-options{% if ob_single_row_options %} product-form__option-rail product-form__option-rail--size{% endif %}"{% if ob_single_row_options %} data-ob-option-rail{% endif %}>
+          {%- endif -%}
           {% render 'product-variant-options',
             product: product,
             option: option,
@@ -84,6 +110,13 @@
             option_kind: option_kind,
             option_size_kind: option_size_kind
           %}
+          {%- if option_kind == 'size' -%}
+            </div>
+            {%- if ob_single_row_options -%}
+              {% render 'ob-option-rail-controls', previous_label: 'Vorige maten tonen', next_label: 'Meer maten tonen' %}
+            {%- endif -%}
+            </div>
+          {%- endif -%}
         </fieldset>
       {%- else -%}
         <div class="product-form__input product-form__input--dropdown">

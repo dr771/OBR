@@ -132,6 +132,62 @@ variant-selects {
   box-shadow: 0 0 0 0.3rem rgb(var(--color-background)), 0 0 0 0.5rem rgba(var(--color-foreground), 0.55);
 }
 
+/* OB — PDP size picker box grid (pdp-size-picker-grid) */
+.product-form__input--size-grid {
+  container-name: pdp-size-picker;
+  container-type: inline-size;
+  min-width: 0;
+  width: 100%;
+}
+
+.product-form__input--size-grid .form__label {
+  margin-bottom: 0.8rem;
+}
+
+.product-form__size-grid-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+  width: 100%;
+}
+
+@container pdp-size-picker (min-width: 44rem) {
+  .product-form__size-grid-options {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+}
+
+.product-form__input--size-grid input[type='radio'] + label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 5.6rem;
+  margin: 0;
+  padding: 0.8rem 0.4rem;
+  border-radius: var(--inputs-radius, 0);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+@container pdp-size-picker (min-width: 44rem) {
+  .product-form__input--size-grid input[type='radio'] + label {
+    min-height: 4.8rem;
+  }
+}
+
+.product-form__input--size-grid input[type='radio']:focus-visible + label {
+  outline: 0.2rem solid rgba(var(--color-foreground), 1);
+  outline-offset: 0.2rem;
+  box-shadow: none;
+}
+
+@media screen and (forced-colors: active) {
+  .product-form__input--size-grid input[type='radio']:focus-visible + label {
+    outline-color: Highlight;
+  }
+}
+
 /* Custom styles for Swatch display type */
 .product-form__input--swatch {
   display: flex;

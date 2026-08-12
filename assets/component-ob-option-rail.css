@@ -1,0 +1,188 @@
+/*
+  PDP option rail variation: color and size options in one horizontal row.
+  The entire variation is enabled by `ob_single_row_options` in
+  snippets/product-variant-picker.liquid.
+*/
+
+.product-form__input--option-rail {
+  display: block;
+  min-width: 0;
+}
+
+.product-form__option-rail-shell {
+  position: relative;
+}
+
+.product-form__option-rail {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  padding: 0.4rem 0 0.7rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: inline proximity;
+  scrollbar-color: rgba(var(--color-foreground), 0.28) transparent;
+  scrollbar-width: thin;
+}
+
+.product-form__option-rail::-webkit-scrollbar {
+  height: 0.2rem;
+}
+
+.product-form__option-rail::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.product-form__option-rail::-webkit-scrollbar-thumb {
+  border-radius: 99rem;
+  background: rgba(var(--color-foreground), 0.22);
+}
+
+.product-form__option-rail--color {
+  gap: 0.6rem;
+}
+
+.product-form__option-rail--color .ob-swatch-input-wrapper {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+
+.product-form__option-rail--size {
+  --ob-option-rail-columns: 4;
+  --ob-option-rail-gap: 0.8rem;
+  --ob-option-rail-total-gap: 2.4rem;
+  gap: var(--ob-option-rail-gap);
+  grid-template-columns: none;
+  padding-bottom: 1.6rem;
+}
+
+.product-form__option-rail--size > label {
+  flex: 0 0 5.6rem;
+  scroll-snap-align: start;
+}
+
+@container pdp-size-picker (min-width: 44rem) {
+  .product-form__option-rail--size {
+    --ob-option-rail-columns: 8;
+    --ob-option-rail-total-gap: 5.6rem;
+  }
+
+  .product-form__option-rail--size > label {
+    flex-basis: calc((100% - var(--ob-option-rail-total-gap)) / var(--ob-option-rail-columns));
+  }
+}
+
+.product-form__option-rail-shell::before,
+.product-form__option-rail-shell::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: 0.4rem;
+  bottom: 0.7rem;
+  width: 4.6rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-short) ease;
+}
+
+.product-form__option-rail-shell::before {
+  left: 0;
+  background: linear-gradient(to right, rgb(var(--color-background)), rgba(var(--color-background), 0));
+}
+
+.product-form__option-rail-shell::after {
+  right: 0;
+  background: linear-gradient(to left, rgb(var(--color-background)), rgba(var(--color-background), 0));
+}
+
+.product-form__option-rail-shell.is-overflowing:not(.is-at-start)::before,
+.product-form__option-rail-shell.is-overflowing:not(.is-at-end)::after {
+  opacity: 0.96;
+}
+
+.product-form__option-rail-button {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  bottom: 0.9rem;
+  display: grid;
+  place-items: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  margin-block: auto;
+  padding: 0;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.2);
+  border-radius: 50%;
+  background: rgb(var(--color-background));
+  box-shadow: 0 0.2rem 0.8rem rgba(var(--color-foreground), 0.14);
+  color: rgb(var(--color-foreground));
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--duration-short) ease,
+    border-color var(--duration-short) ease,
+    visibility var(--duration-short) ease;
+}
+
+.product-form__option-rail-button--previous {
+  left: -1.5rem;
+}
+
+.product-form__option-rail-button--next {
+  right: -1.5rem;
+}
+
+.product-form__option-rail-shell--size::before,
+.product-form__option-rail-shell--size::after {
+  bottom: 1.6rem;
+}
+
+.product-form__option-rail-shell--size .product-form__option-rail-button {
+  bottom: 1.3rem;
+}
+
+.product-form__option-rail-shell--size .product-form__option-rail-button--previous {
+  left: -1.4rem;
+}
+
+.product-form__option-rail-shell--size .product-form__option-rail-button--next {
+  right: -1.4rem;
+}
+
+.product-form__option-rail-button .icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.product-form__option-rail-button--previous .icon {
+  transform: rotate(90deg);
+}
+
+.product-form__option-rail-button--next .icon {
+  transform: rotate(-90deg);
+}
+
+.product-form__option-rail-shell.is-overflowing:not(.is-at-start) .product-form__option-rail-button--previous,
+.product-form__option-rail-shell.is-overflowing:not(.is-at-end) .product-form__option-rail-button--next {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.product-form__option-rail-button:hover {
+  border-color: rgba(var(--color-foreground), 0.5);
+}
+
+.product-form__option-rail-button:focus-visible {
+  outline: 0.2rem solid rgb(var(--color-foreground));
+  outline-offset: 0.2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-form__option-rail-button {
+    transition: none;
+  }
+}

@@ -1,0 +1,23 @@
+{% comment %}
+  Shared controls for the temporary PDP single-row option variation.
+
+  Accepts:
+  - previous_label: {String} Accessible label for the previous control.
+  - next_label: {String} Accessible label for the next control.
+{% endcomment %}
+<button
+  type="button"
+  class="product-form__option-rail-button product-form__option-rail-button--previous"
+  data-ob-option-rail-previous
+  aria-label="{{ previous_label | escape }}"
+>
+  {{- 'icon-caret.svg' | inline_asset_content -}}
+</button>
+<button
+  type="button"
+  class="product-form__option-rail-button product-form__option-rail-button--next"
+  data-ob-option-rail-next
+  aria-label="{{ next_label | escape }}"
+>
+  {{- 'icon-caret.svg' | inline_asset_content -}}
+</button>

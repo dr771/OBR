@@ -30,6 +30,12 @@
   background-color: rgba(var(--color-foreground), 0.04);
 }
 
+/* PDP visual test: larger color chips without changing PLP card swatches. */
+.ob-swatch-input__chip {
+  width: 5.4rem;
+  height: 5.4rem;
+}
+
 .ob-card-swatch {
   position: relative;
   /* tooltip must escape the chip's own clipped box */
