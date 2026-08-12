@@ -235,6 +235,8 @@
       "title": "Zoekresultaten",
       "page": "Pagina",
       "products": "Producten",
+      "suggested_products": "Aanbevolen producten",
+      "see_all_results": "Alle resultaten bekijken",
       "search_for": "Zoeken naar '{{ terms }}'",
       "results_with_count_and_term": {
         "one": "{{ count }} resultaat gevonden voor “{{ terms }}”",

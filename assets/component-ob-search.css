@@ -1,0 +1,109 @@
+/* ==========================================================================
+   Header predictive search (predictive-search-overlay spec)
+   Desktop product results use the native listbox DOM order in a two-column
+   visual grid. Mobile keeps Dawn's compact one-column list unchanged.
+   ========================================================================== */
+.predictive-search--header .predictive-search__heading {
+  color: rgb(var(--color-foreground));
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.predictive-search--header
+  #predictive-search-results-products-list
+  .predictive-search__list-item:hover
+  > *,
+.predictive-search--header #predictive-search-results-products-list .predictive-search__item:hover {
+  background-color: transparent;
+}
+
+.predictive-search--header
+  #predictive-search-results-products-list
+  .predictive-search__list-item[aria-selected='true']
+  > *,
+.predictive-search--header
+  #predictive-search-results-products-list
+  .predictive-search__item[aria-selected='true'] {
+  background-color: rgba(var(--color-foreground), 0.04);
+}
+
+@media screen and (min-width: 750px) {
+  .predictive-search--header #predictive-search-results-products-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.6rem 2.4rem;
+    padding: 1rem 2rem;
+  }
+
+  .predictive-search--header
+    #predictive-search-results-products-list
+    .predictive-search__item--link-with-thumbnail {
+    grid-template-columns: 11.5rem minmax(0, 1fr);
+    column-gap: 1.2rem;
+    align-items: start;
+    min-height: 14rem;
+    padding: 0;
+  }
+
+  .predictive-search--header #predictive-search-results-products-list .predictive-search__image {
+    width: 11.5rem;
+    height: 14rem;
+    object-fit: cover;
+    background: rgba(var(--color-foreground), 0.04);
+  }
+
+  .predictive-search--header #predictive-search-results-products-list .predictive-search__item-content {
+    min-width: 0;
+    padding-top: 0.2rem;
+  }
+}
+
+/* When the suggestions/pages column renders next to the product grid (two
+   result groups, products present), the fixed 26.4rem first column would
+   squeeze the two product columns inside Dawn's 74.2rem form cap. Widen the
+   results panel by that same 26.4rem — centered under the (unchanged) search
+   input, capped against the viewport — so product cards keep the proportions
+   of the products-only layout. Panel only: widening .search-modal__form
+   itself would make the input jump as suggestions appear/disappear while
+   typing. No :has() fallback needed — without it the panel keeps Dawn's
+   form width, which is the pre-existing layout. */
+@media screen and (min-width: 990px) {
+  /* Re-anchor the widened panel to .search-modal__content (position:
+     relative, spans the full white search bar) instead of the input-sized
+     predictive-search element: Dawn's default attaches the panel to the
+     input's bottom, ~1rem ABOVE the bar's bottom edge, so a panel wider
+     than the input slices through the bar with its top/side borders.
+     `top: 100%` of the bar = its bottom edge at any header height (also
+     matches predictive-search.js's max-height cap, which is measured from
+     the header's bottom). The form itself is a fixed 74.2rem at ≥990px,
+     hence the absolute 100.6rem (74.2 + 26.4) width here. */
+  .header__search predictive-search:has(
+      .predictive-search__results-groups-wrapper:not(.predictive-search__results-groups-wrapper--no-products)
+        .predictive-search__result-group
+        + .predictive-search__result-group
+    ) {
+    position: static;
+  }
+
+  .predictive-search--header:has(
+      .predictive-search__results-groups-wrapper:not(.predictive-search__results-groups-wrapper--no-products)
+        .predictive-search__result-group
+        + .predictive-search__result-group
+    ) {
+    top: 100%;
+    width: min(100.6rem, calc(100vw - 12rem));
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* Wishlist King's collection hearts use z-index: 9 and otherwise escape
+   above Dawn's sticky header (z-index: 3). Raise the header stacking context
+   only for the open search disclosure; the cart drawer remains above at
+   z-index: 1000 (component-cart-drawer.css), so this bump can't invert that
+   precedence. */
+.section-header.shopify-section-group-header-group:has(.header__search details[open]) {
+  z-index: 10;
+}
