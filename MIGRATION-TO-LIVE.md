@@ -37,8 +37,8 @@ These do **not** travel with a theme export, and bare auto-created metafields ar
 
 ## 4. Theme
 
-- [ ] `git clone` this repo and `shopify theme push` to the live shop. The theme is fully in git — this is the easy part.
-- [ ] Push with `--only <files>` if pushing onto an existing configured theme, so `settings_data.json` and templates aren't clobbered.
+- [ ] `git clone` this repo and push the theme code to the live shop. `.shopifyignore` deliberately excludes `config/settings_data.json`; migrate settings separately after backing up and diffing the target theme's live file.
+- [ ] Push code with `--only <files>` if pushing onto an existing configured theme. The settings file is independently blocked by `.shopifyignore`; pull/diff merchant-editable JSON templates immediately before intentionally pushing any of them.
 - [ ] Re-run the swatch/facet verification on live: PLP chips + tooltips + hover swap, PDP chips, colour filter chips render real hex, filtering swaps card images.
 
 ## 5. URLs & SEO

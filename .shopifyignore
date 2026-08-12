@@ -1,0 +1,3 @@
+# Merchant-owned state. Change theme settings in Shopify Admin, then pull and
+# review config/settings_data.json separately if the repository needs a backup.
+config/settings_data.json
