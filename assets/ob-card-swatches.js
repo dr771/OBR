@@ -29,14 +29,34 @@
     var media = card.querySelector('.card__media .media');
     if (!media) return;
 
-    // A second <img> we didn't create means the section's own
-    // `show_secondary_image` setting is on. That one isn't color-aware, but
-    // it's the merchant's explicit choice — leave it alone.
-    if (media.querySelectorAll('img:not(.ob-card-img2)').length > 1) return;
-
     var active = card.querySelector('.ob-card-swatch--active');
-    var img2 = media.querySelector('.ob-card-img2');
     var src = active && active.dataset.obSwap2Src;
+
+    var others = media.querySelectorAll('img:not(.ob-card-img2)');
+    var img1 = others[0];
+    var dawnImg2 = others[1];
+
+    // A second <img> we didn't create means the section's own
+    // `show_secondary_image` setting is on. It isn't color-aware by default,
+    // so reuse it as the swap target instead of leaving it (or duplicating
+    // it) — the color-matched shot should win everywhere the same way.
+    // Capture its original src/srcset once so colors with no second shot of
+    // their own can still fall back to it.
+    if (dawnImg2) {
+      if (dawnImg2.dataset.obOrigSrc === undefined) {
+        dawnImg2.dataset.obOrigSrc = dawnImg2.getAttribute('src') || '';
+        dawnImg2.dataset.obOrigSrcset = dawnImg2.getAttribute('srcset') || '';
+      }
+      var target = src || dawnImg2.dataset.obOrigSrc;
+      if (dawnImg2.dataset.obFor !== target) {
+        dawnImg2.setAttribute('src', target);
+        dawnImg2.setAttribute('srcset', src ? active.dataset.obSwap2Srcset || '' : dawnImg2.dataset.obOrigSrcset);
+        dawnImg2.dataset.obFor = target;
+      }
+      return;
+    }
+
+    var img2 = media.querySelector('.ob-card-img2');
 
     if (!src) {
       if (img2) img2.remove();
@@ -45,7 +65,6 @@
 
     if (!img2) {
       if (!allowCreate || !hoverMediaQuery.matches) return;
-      var img1 = media.querySelector('img:not(.ob-card-img2)');
       if (!img1) return;
       img2 = document.createElement('img');
       img2.className = 'ob-card-img2 motion-reduce';

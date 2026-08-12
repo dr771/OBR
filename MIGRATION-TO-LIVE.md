@@ -39,11 +39,11 @@ These do **not** travel with a theme export, and bare auto-created metafields ar
 
 - [ ] `git clone` this repo and push the theme code to the live shop. `.shopifyignore` deliberately excludes `config/settings_data.json`; migrate settings separately after backing up and diffing the target theme's live file.
 - [ ] Push code with `--only <files>` if pushing onto an existing configured theme. The settings file is independently blocked by `.shopifyignore`; pull/diff merchant-editable JSON templates immediately before intentionally pushing any of them.
-- [ ] Re-run the swatch/facet verification on live: PLP chips + tooltips + hover swap, PDP chips, colour filter chips render real hex, filtering swaps card images.
+- [ ] Re-run the swatch/facet verification on live: PLP chips + tooltips + hover swap, PDP chips, colour filter chips render real hex, filtering swaps card images. **Check the hover swap on every grid, not just the collection/PLP page** — homepage, PDP related-products, and search results each have their own `show_secondary_image` setting per template (`templates/index.json`, `product.json`, `search.json`), and it's easy for that per-template value to end up different on the live shop than on dev. Per `plp-card-swatches` (fixed 2026-08-12), the color-matched second shot now wins either way, but it's worth eyeballing all four surfaces once live since that per-section setting is exactly what caused the divergence originally.
 
 ## 5. URLs & SEO
 
-- [ ] **Redirect map from the legacy Drupal-ish site.** Still an open question in the playbook: the old site gives each colour/size combo its own URL, which consolidate into one Shopify product. Needs a strategy, not just a file.
+- [ ] **Later phase — redirect map from the legacy Drupal-ish site.** Important before launch, but deliberately deferred until the catalog and destination URLs are mature. The old site gives each colour/size combo its own URL, which consolidate into one Shopify product; this needs a strategy, not just a file.
 - [ ] Canonical/domain settings, sitemap, robots.
 
 ## 6. Go-live

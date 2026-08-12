@@ -67,7 +67,7 @@ Each swatch chip SHALL reveal its color's display name in a CSS-only tooltip on 
 - **THEN** each chip's tooltip renders at a consistent vertical offset relative to its own chip, with no jitter between rows
 
 ### Requirement: Hover reveals a second, color-matched image
-Each swatch chip SHALL carry a reference to that color's second color-coded media item when one exists, identified by matching media filename color codes rather than by global position. On pointer-capable desktop, the second image for the currently selected color SHALL be materialized client-side only and revealed only while the pointer is geometrically over the card image area. When selection changes, both the primary and materialized second image SHALL follow the newly selected color without a fade. Touch-only devices SHALL not fetch the hover-only second image.
+Each swatch chip SHALL carry a reference to that color's second color-coded media item when one exists, identified by matching media filename color codes rather than by global position. On pointer-capable desktop, the second image for the currently selected color SHALL be materialized client-side only and revealed only while the pointer is geometrically over the card image area. When selection changes, both the primary and materialized second image SHALL follow the newly selected color without a fade. Touch-only devices SHALL not fetch the hover-only second image. When the rendering section's own `show_secondary_image` setting is on, the color-matched second shot SHALL take priority over that section's default second image by retargeting the same element, rather than being suppressed by it — this keeps hover behavior identical across every grid regardless of that per-section setting.
 
 #### Scenario: Shopper hovers a card whose active color has a second shot
 - **WHEN** a shopper on a pointer-capable device moves the pointer over the image area of a card whose selected color has a second shot
@@ -90,8 +90,12 @@ Each swatch chip SHALL carry a reference to that color's second color-coded medi
 - **THEN** no hover-only second image is fetched
 
 #### Scenario: The section's own secondary-image setting is enabled
-- **WHEN** the rendering section has Dawn's `show_secondary_image` setting on, so a non-color-aware second image is already server-rendered
-- **THEN** that image is left untouched rather than being replaced or duplicated
+- **WHEN** the rendering section has Dawn's `show_secondary_image` setting on, so a non-color-aware second image is already server-rendered, and the currently selected color has its own second shot
+- **THEN** that server-rendered element is retargeted to the selected color's second shot instead of showing the section's generic default, and no duplicate second `<img>` is created
+
+#### Scenario: The section's own secondary-image setting is enabled and the active color has no second shot
+- **WHEN** the rendering section has Dawn's `show_secondary_image` setting on and the currently selected color has no second shot of its own
+- **THEN** the server-rendered element shows the section's original default second image, matching the color-has-only-one-shot fallback shoppers see everywhere else
 
 ### Requirement: Swatch selection retargets the card's product links
 Each PLP color chip SHALL be a non-navigating button that selects its color within the product card. Selecting a chip SHALL retarget the card's normal product links to that color's matched variant URL, correctly joined whether or not the base product URL already has query parameters.
