@@ -51,6 +51,14 @@
     flex-wrap: wrap;
   }
 
+  .header__icon--wishlist {
+    position: relative;
+  }
+
+  .header__icon--wishlist .icon {
+    fill: currentColor;
+  }
+
   summary.list-menu__item {
     padding-right: 2.7rem;
   }
@@ -277,6 +285,16 @@
           </span>
         </a>
       {%- endif -%}
+
+      <a
+        href="/apps/wishlist"
+        class="header__icon header__icon--wishlist link focus-inset"
+        wk-skip
+      >
+        <span class="svg-wrapper">{{ 'icon-heart.svg' | inline_asset_content }}</span>
+        <span class="visually-hidden">{{ 'general.wishlist.title' | t }}</span>
+        <div class="cart-count-bubble ob-wishlist-bubble" aria-hidden="true"></div>
+      </a>
 
       {%- for block in section.blocks -%}
         {%- case block.type -%}

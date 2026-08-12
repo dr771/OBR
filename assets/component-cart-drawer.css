@@ -492,3 +492,244 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   border: 0;
   padding: 0 2.5rem 0 1.5rem;
 }
+
+/* ==========================================================================
+   OB — wishlist cross-sell (wishlist-integration)
+   Compact horizontal mini-rows for WK's <wishlist-page> cards, styled to
+   match the drawer's own line-item tokens above rather than a generic
+   inserted-widget look. Hidden entirely (title/heading included) until WK
+   has rendered at least one .wk-product-card — covers both an empty
+   wishlist and WK not having booted yet.
+   ========================================================================== */
+.ob-wishlist-cross-sell {
+  display: none;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #d0d0d0;
+}
+
+.ob-wishlist-cross-sell:has(.wk-product-card) {
+  display: block;
+}
+
+.ob-wishlist-cross-sell__title {
+  margin: 0;
+  font-size: calc(var(--font-heading-scale) * 1.4rem);
+  font-weight: 600;
+}
+
+.ob-wishlist-cross-sell__heading {
+  margin: 0.3rem 0 1.2rem;
+  font-size: 1.2rem;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+.ob-wishlist-cross-sell wishlist-page {
+  display: block;
+}
+
+.ob-wishlist-cross-sell .wk-page {
+  padding-top: 0 !important;
+}
+
+/* wishlist-page is WK's full page component (it always renders its own
+   "Mijn favorieten" h1 + login callout + share control via .wk-header,
+   confirmed live — no attribute suppresses it) — hidden here along with the
+   quantity stepper, the technical option-name label ("color"/"shoe_size_eu"
+   — confirmed live: Translate & Adapt strips the brackets but WK still
+   renders the raw key as a label before each dropdown, unbracketed), and
+   the remove control (redundant in a move-to-cart flow; matches SB). */
+.ob-wishlist-cross-sell .wk-header,
+.ob-wishlist-cross-sell .wk-label,
+.ob-wishlist-cross-sell remove-button {
+  display: none !important;
+}
+
+/* WK's own default lays multiple cards out in columns — force a vertical
+   stack of compact rows instead (confirmed live: 2 wishlist items rendered
+   cramped side-by-side without this). */
+.ob-wishlist-cross-sell .wk-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+}
+
+.ob-wishlist-cross-sell .wk-product-card {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.08);
+}
+
+.ob-wishlist-cross-sell .wk-product-card:last-child {
+  border-bottom: 0;
+}
+
+.ob-wishlist-cross-sell .wk-image-link {
+  grid-row: 1 / 3;
+}
+
+.ob-wishlist-cross-sell .wk-image {
+  width: 100%;
+  height: auto;
+}
+
+.ob-wishlist-cross-sell .wk-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  text-align: left;
+}
+
+wishlist-product-card .wk-meta {
+  margin-bottom: 0 !important;
+}
+
+.ob-wishlist-cross-sell .wk-product-title {
+  font-size: calc(var(--font-heading-scale) * 1.4rem);
+  text-align: left;
+}
+
+.ob-wishlist-cross-sell .wk-text-link {
+  text-decoration: none;
+}
+
+.ob-wishlist-cross-sell .wk-price {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  text-align: left;
+  justify-content: flex-start;
+}
+
+/* Dropdowns + CTA share a single row — nowrap, not wrap, so they never fall
+   onto a second line; selects shrink (min-width:0) rather than pushing the
+   row wider. Tight margin-top so the row sits close under the price. */
+.ob-wishlist-cross-sell .wk-form {
+  grid-column: 2;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.2rem;
+}
+
+.ob-wishlist-cross-sell .wk-variants {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  flex: 0 1 auto;
+  min-width: 0;
+  padding: 0 !important;
+}
+
+/* WK lays out the custom option elements, not the nested selects. Reset its
+   control shell so every picker has the CTA's exact 3.2rem outer height. */
+.ob-wishlist-cross-sell .wk-variants > wk-option-select {
+  flex: 0 1 auto;
+  width: var(--ob-wk-option-width, max-content) !important;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.ob-wishlist-cross-sell .wk-option-select {
+  width: var(--ob-wk-option-width, max-content);
+  max-width: 100%;
+}
+
+.ob-wishlist-cross-sell .wk-control {
+  width: var(--ob-wk-option-width, max-content);
+  max-width: 100%;
+  height: 3.2rem !important;
+  min-height: 3.2rem !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+.ob-wishlist-cross-sell .wk-control .wk-content {
+  gap: 0.4rem;
+  padding: 0 0.6rem 0 0.8rem;
+  box-sizing: border-box;
+}
+
+/* Same height as the CTA button (3.2rem) so the whole row lines up. */
+.ob-wishlist-cross-sell .wk-variants select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: 3.2rem;
+  min-height: 3.2rem;
+  font-size: 1.2rem;
+  padding: 0 0.6rem 0 0.8rem;
+  box-sizing: border-box;
+}
+
+/* JS measures the longest option in WK's absolutely-positioned native select
+   and writes --ob-wk-option-width; WK's visible text layer otherwise sizes
+   only from the currently selected value. Size controls stay at the minimum
+   useful width and match every Akeneo size-kind key. */
+.ob-wishlist-cross-sell .wk-variants > wk-option-select:has(select[name*="size" i]) {
+  flex: 0 0 5.5rem;
+  width: 5.5rem !important;
+}
+
+.ob-wishlist-cross-sell .wk-variants > wk-option-select:has(select[name*="size" i]) .wk-option-select,
+.ob-wishlist-cross-sell .wk-variants > wk-option-select:has(select[name*="size" i]) .wk-control {
+  width: 5.5rem;
+}
+
+.ob-wishlist-cross-sell .wk-quantity {
+  display: none;
+}
+
+/* CTA: icon-only cart button (label hidden, icon via CSS mask — no JS icon
+   swapping needed, works for every locale). Matches SB's shipped pattern. */
+.ob-wishlist-cross-sell .wk-cta-button {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  min-height: 3.2rem;
+  padding: 0;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+  border: 0.1rem solid rgb(var(--color-button));
+  border-radius: 0;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.ob-wishlist-cross-sell .wk-cta-button .wk-cta-label {
+  display: none;
+}
+
+.ob-wishlist-cross-sell .wk-cta-button::before {
+  content: '';
+  width: 1.6rem;
+  height: 1.6rem;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='9' cy='21' r='1'/%3E%3Ccircle cx='20' cy='21' r='1'/%3E%3Cpath d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='9' cy='21' r='1'/%3E%3Ccircle cx='20' cy='21' r='1'/%3E%3Cpath d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+.ob-wishlist-cross-sell .wk-cta-button[disabled] {
+  background: transparent;
+  color: rgb(var(--color-foreground));
+  border-color: rgba(var(--color-foreground), 0.4);
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
+.ob-wishlist-cross-sell--page {
+  max-width: 40rem;
+}

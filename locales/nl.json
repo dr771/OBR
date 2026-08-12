@@ -44,6 +44,11 @@
       "item_added": "Artikel toegevoegd aan winkelwagen",
       "view_empty_cart": "Winkelwagen bekijken"
     },
+    "wishlist": {
+      "title": "Favorieten",
+      "add": "Toevoegen aan favorieten",
+      "remove": "Verwijderen uit favorieten"
+    },
     "share": {
       "copy_to_clipboard": "Link kopiëren",
       "share_url": "Link",
@@ -286,6 +291,8 @@
       "note": "Speciale instructies voor bestelling",
       "checkout": "Afrekenen",
       "empty": "Je winkelwagen is leeg",
+      "wishlist_title": "Jouw favorieten",
+      "wishlist_heading": "Producten die je hebt bewaard",
       "product_disclosure": "Productvermelding",
       "product_disclosures": "Productvermeldingen",
       "cart_error": "Er is een fout opgetreden bij het bijwerken van je winkelwagen. Probeer het opnieuw.",

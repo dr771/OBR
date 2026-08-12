@@ -1,0 +1,24 @@
+{% comment %}
+  Cart-page wishlist cross-sell section (wishlist-integration). Standalone
+  section so main-cart-items stays unedited; wired into templates/cart.json
+  between cart-items and cart-footer. Renders the same block as the cart
+  drawer (snippets/ob-wishlist-cross-sell.liquid) and hides itself entirely
+  while the wishlist is empty (component-cart-drawer.css :has() rule on
+  .ob-wishlist-cross-sell).
+{% endcomment %}
+<div class="page-width">
+  {% render 'ob-wishlist-cross-sell', context: 'page' %}
+</div>
+
+{% schema %}
+{
+  "name": "OB Cart Wishlist",
+  "class": "ob-cart-wishlist-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "OB Cart Wishlist"
+    }
+  ]
+}
+{% endschema %}

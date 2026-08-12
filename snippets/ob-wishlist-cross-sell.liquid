@@ -1,0 +1,25 @@
+{% comment %}
+  Wishlist King cross-sell block for the cart drawer and /cart page.
+  Renders WK's <wishlist-page> element in compact mode (dropdown option
+  pickers, add-to-cart CTA). The wrapper is hidden via a :has() rule in
+  component-cart-drawer.css until WK renders at least one product card into
+  it, so an empty wishlist (or WK not yet booted) shows nothing, including
+  title and heading. The add-to-cart intercept lives in assets/ob-wishlist.js.
+
+  Accepts:
+  - context: {String} 'drawer' | 'page' — styling modifier only
+
+  Usage:
+  {% render 'ob-wishlist-cross-sell', context: 'drawer' %}
+{% endcomment %}
+<div class="ob-wishlist-cross-sell ob-wishlist-cross-sell--{{ context | default: 'page' }}">
+  <p class="ob-wishlist-cross-sell__title">{{ 'sections.cart.wishlist_title' | t }}</p>
+  <p class="ob-wishlist-cross-sell__heading">{{ 'sections.cart.wishlist_heading' | t }}</p>
+  <wishlist-page
+    show-product-title
+    show-price
+    cta-button="add-to-cart"
+    product-options="dropdowns"
+    move-to-cart
+  ></wishlist-page>
+</div>

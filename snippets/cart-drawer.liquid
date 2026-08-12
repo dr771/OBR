@@ -59,6 +59,7 @@
               {% render 'card-collection', card_collection: settings.cart_drawer_collection, columns: 1 %}
             </div>
           {%- endif -%}
+          {%- render 'ob-wishlist-cross-sell', context: 'drawer' -%}
         </div>
       {%- endif -%}
       <div class="drawer__header">
@@ -454,6 +455,7 @@
                 </table>
               </div>
             {%- endif -%}
+            {%- render 'ob-wishlist-cross-sell', context: 'drawer' -%}
             <p id="CartDrawer-LiveRegionText" class="visually-hidden" role="status"></p>
             <p id="CartDrawer-LineItemStatus" class="visually-hidden" aria-hidden="true" role="status">
               {{ 'accessibility.loading' | t }}

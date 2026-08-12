@@ -8,6 +8,10 @@
         "padding_bottom": 36
       }
     },
+    "cart-wishlist": {
+      "type": "ob-cart-wishlist",
+      "settings": {}
+    },
     "cart-footer": {
       "type": "main-cart-footer",
       "settings": {
@@ -35,6 +39,7 @@
   },
   "order": [
     "cart-items",
+    "cart-wishlist",
     "cart-footer"
   ]
 }

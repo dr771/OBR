@@ -10,6 +10,63 @@
   Usage:
   {% render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true %}
 {% endcomment %}
+{% style %}
+  /* Gated on :has() so product forms without the button (theme onboarding
+     placeholder) keep Dawn's stacked default layout. */
+  .product-form__buttons:has(.ob-wishlist-btn) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .product-form__buttons:has(.ob-wishlist-btn) .product-form__submit {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+  }
+
+  /* Dynamic checkout (payment button) drops to its own full-width row. */
+  .product-form__buttons:has(.ob-wishlist-btn) .shopify-payment-button {
+    flex-basis: 100%;
+  }
+
+  /* Explicit width/height, not aspect-ratio + stretch — aspect-ratio on a
+     flex item whose height comes from align-items:stretch does not reliably
+     resolve width from height across browsers (confirmed live: produced a
+     tall thin rectangle instead of a square). */
+  .ob-wishlist-btn {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.8rem;
+    min-height: calc(4.5rem + var(--buttons-border-width) * 2);
+    padding: 0;
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+    border: 0.1rem solid rgba(var(--color-foreground), 0.3);
+    border-radius: var(--buttons-radius);
+    cursor: pointer;
+  }
+
+  .ob-wishlist-btn__icon {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+
+  .ob-wishlist-btn__icon--filled {
+    display: none;
+  }
+
+  .ob-wishlist-btn--selected .ob-wishlist-btn__icon--filled {
+    display: block;
+  }
+
+  .ob-wishlist-btn--selected .ob-wishlist-btn__icon--empty {
+    display: none;
+  }
+{% endstyle %}
 <div {{ block.shopify_attributes }}>
   {%- if product != blank -%}
     {%- liquid
@@ -92,6 +149,22 @@
               {%- endif -%}
             </span>
             {%- render 'loading-spinner' -%}
+          </button>
+          <button
+            type="button"
+            class="ob-wishlist-btn"
+            data-product-handle="{{ product.handle }}"
+            data-label-add="{{ 'general.wishlist.add' | t }}"
+            data-label-remove="{{ 'general.wishlist.remove' | t }}"
+            aria-pressed="false"
+            aria-label="{{ 'general.wishlist.add' | t }}"
+          >
+            <svg class="ob-wishlist-btn__icon ob-wishlist-btn__icon--empty" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 20.5C12 20.5 3.5 14 3.5 8.8C3.5 5.9 5.9 3.5 8.8 3.5C10.1 3.5 11.3 4 12 5C12.7 4 13.9 3.5 15.2 3.5C18.1 3.5 20.5 5.9 20.5 8.8C20.5 14 12 20.5 12 20.5Z"/>
+            </svg>
+            <svg class="ob-wishlist-btn__icon ob-wishlist-btn__icon--filled" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 20.5C12 20.5 3.5 14 3.5 8.8C3.5 5.9 5.9 3.5 8.8 3.5C10.1 3.5 11.3 4 12 5C12.7 4 13.9 3.5 15.2 3.5C18.1 3.5 20.5 5.9 20.5 8.8C20.5 14 12 20.5 12 20.5Z"/>
+            </svg>
           </button>
           {%- if show_dynamic_checkout -%}
             {{ form | payment_button }}

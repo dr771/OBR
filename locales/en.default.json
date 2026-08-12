@@ -44,6 +44,11 @@
       "view_empty_cart": "View cart",
       "item_added": "Item added to your cart"
     },
+    "wishlist": {
+      "title": "Wishlist",
+      "add": "Add to wishlist",
+      "remove": "Remove from wishlist"
+    },
     "share": {
       "close": "Close share",
       "copy_to_clipboard": "Copy link",
@@ -296,6 +301,8 @@
       "note": "Order special instructions",
       "checkout": "Check out",
       "empty": "Your cart is empty",
+      "wishlist_title": "Your favorites",
+      "wishlist_heading": "Items you saved for later",
       "product_disclosure": "Product disclosure",
       "product_disclosures": "Product disclosures",
       "cart_error": "There was an error while updating your cart. Please try again.",
