@@ -53,7 +53,11 @@
     {{ input_dataset }}
   >
   {%- assign value_name_escaped = value.name | escape -%}
-  <label for="{{ input_id }}" class="ob-swatch-input__label{% if option_disabled %} ob-swatch-input__label--disabled{% endif %}">
+  <label
+    for="{{ input_id }}"
+    class="ob-swatch-input__label{% if option_disabled %} ob-swatch-input__label--disabled{% endif %}"
+    data-ob-swatch-name="{{ value_name_escaped }}"
+  >
     <span class="ob-swatch-input__chip{% if swatch_variant.featured_image == nil %} ob-swatch-input__chip--unavailable{% endif %}">
       {%- if swatch_variant.featured_image -%}
         {{

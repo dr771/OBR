@@ -17,6 +17,7 @@
 -%}
 {%- unless product.has_only_default_variant -%}
   {{ 'component-ob-swatches.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'ob-swatch-tooltip.js' | asset_url }}" defer="defer"></script>
   {%- if ob_single_row_options -%}
     {{ 'component-ob-option-rail.css' | asset_url | stylesheet_tag }}
     <script src="{{ 'ob-pdp-option-rail.js' | asset_url }}" defer="defer"></script>
@@ -97,7 +98,12 @@
         </fieldset>
       {%- elsif picker_type == 'button' -%}
         <fieldset class="js product-form__input product-form__input--pill{% if option_kind == 'size' %} product-form__input--size-grid{% endif %}">
-          <legend class="form__label">{{ option_label }}</legend>
+          <legend class="form__label">
+            {{ option_label }}:
+            <span data-selected-value>
+              {{- option.selected_value -}}
+            </span>
+          </legend>
           {%- if option_kind == 'size' -%}
             <div{% if ob_single_row_options %} class="product-form__option-rail-shell product-form__option-rail-shell--size"{% endif %}>
             <div class="product-form__size-grid-options{% if ob_single_row_options %} product-form__option-rail product-form__option-rail--size{% endif %}"{% if ob_single_row_options %} data-ob-option-rail{% endif %}>

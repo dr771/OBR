@@ -102,6 +102,56 @@
   visibility: visible;
 }
 
+/*
+  PDP color chips sit inside the horizontal option rail
+  (component-ob-option-rail.css), which sets overflow-y: hidden on the
+  scroll track so only one row is ever visible. A chip-anchored CSS tooltip
+  (the .ob-card-swatch pattern above) would be clipped by that ancestor, so
+  the PDP tooltip is instead one shared node positioned with fixed
+  positioning by ob-swatch-tooltip.js, which escapes the rail's clipping.
+*/
+.ob-swatch-tooltip {
+  position: fixed;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+  z-index: 100;
+  transform: translate(-50%, -100%);
+  box-sizing: border-box;
+  height: 2.4rem;
+  line-height: 2.4rem;
+  white-space: nowrap;
+  padding: 0 0.8rem;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  font-size: 1.2rem;
+  font-weight: 500;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.12);
+  border-radius: 0.4rem;
+  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.14);
+}
+
+.ob-swatch-tooltip::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -0.4rem;
+  width: 0.8rem;
+  height: 0.8rem;
+  background: rgb(var(--color-background));
+  border-right: 0.1rem solid rgba(var(--color-foreground), 0.12);
+  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.12);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.ob-swatch-tooltip--visible {
+  opacity: 1;
+  visibility: visible;
+}
+
 .ob-card-swatch img,
 .ob-swatch-input__chip img {
   display: block;
@@ -139,6 +189,7 @@
 }
 
 .ob-swatch-input__label {
+  position: relative;
   display: inline-block;
   cursor: pointer;
   padding: 0.2rem;
