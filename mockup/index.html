@@ -131,6 +131,38 @@
   .link{font-size:.88rem; font-weight:700; transition:color .15s ease;}
   .link:hover{color:var(--color-cta-bg-hover);}
 
+  /* Demo-only palette picker. Native links keep every variation bookmarkable. */
+  .palette-switcher{
+    position:fixed; inset-block-start:50%; inset-inline-end:.75rem; z-index:20;
+    display:flex; flex-direction:column; gap:.2rem; transform:translateY(-50%);
+  }
+  .palette-swatch{
+    display:grid; place-items:center; min-inline-size:2rem; min-block-size:2rem;
+    border-radius:50%;
+  }
+  .palette-swatch::before{
+    content:""; inline-size:1.45rem; block-size:1.45rem; border:2px solid #fff;
+    border-radius:50%; background:var(--palette-swatch);
+    box-shadow:0 2px 8px rgba(17,23,25,.2), 0 0 0 1px rgba(17,23,25,.24);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .palette-swatch:hover::before{transform:scale(1.1);}
+  .palette-swatch:focus-visible{outline:2px solid var(--ink); outline-offset:3px;}
+  .palette-swatch[aria-current="page"]::before{box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--ink);}
+  .palette-swatch--original{--palette-swatch:#8fabb3;}
+  .palette-swatch--deep-blue{--palette-swatch:#587781;}
+  .palette-swatch--red{--palette-swatch:#d92c15;}
+  .visually-hidden:where(:not(:focus-within, :active)){
+    position:absolute !important; clip-path:inset(50%) !important; overflow:hidden !important;
+    width:1px !important; height:1px !important; margin:-1px !important;
+    padding:0 !important; border:0 !important; white-space:nowrap !important;
+  }
+
+  @media (pointer:coarse){
+    .palette-swatch{min-inline-size:2.5rem; min-block-size:2.5rem;}
+    .palette-swatch::before{inline-size:1.6rem; block-size:1.6rem;}
+  }
+
   .wrap{max-width:1300px; margin:0 auto; padding:0 1.75rem;}
 
   /* ---------------- utility bar ---------------- */
@@ -551,6 +583,18 @@
 </head>
 <body>
 
+<nav class="palette-switcher" aria-label="Kleurvariant">
+  <a class="palette-swatch palette-swatch--original" href="?palette=original" data-palette-link="original">
+    <span class="visually-hidden">Original Brands blauw</span>
+  </a>
+  <a class="palette-swatch palette-swatch--deep-blue" href="?palette=deep-blue" data-palette-link="deep-blue">
+    <span class="visually-hidden">Donkerblauw</span>
+  </a>
+  <a class="palette-swatch palette-swatch--red" href="?palette=red" data-palette-link="red">
+    <span class="visually-hidden">Rood</span>
+  </a>
+</nav>
+
 <div class="utility-bar">
   <div class="wrap">
     <span class="item"><svg viewBox="0 0 24 24"><path d="M3 5h2l2.2 11.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 8H6"/></svg>Gratis levering vanaf &euro;70 in BE &amp; NL</span>
@@ -969,6 +1013,9 @@
 </footer>
 
 <script>
+
+  var activePaletteLink = document.querySelector('[data-palette-link="' + document.documentElement.dataset.palette + '"]');
+  if (activePaletteLink) activePaletteLink.setAttribute('aria-current', 'page');
 
   /* Brand rows: only scroll the ones that actually overflow. Measured after fonts
      load, because the wordmarks are text and their widths change on font swap. */
