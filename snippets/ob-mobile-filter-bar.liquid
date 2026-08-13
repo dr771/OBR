@@ -5,6 +5,12 @@
 {% endcomment %}
 
 {%- if enable_filtering or enable_sorting -%}
+  {%- liquid
+    assign color_filter_input_type = 'checkbox'
+    if settings.ob_color_filter_selection_mode == 'single'
+      assign color_filter_input_type = 'radio'
+    endif
+  -%}
   <facet-filters-form class="facets ob-mobile-bar medium-hide large-up-hide">
     <form id="FacetFiltersFormMobile" class="ob-mobile-bar__form">
       {%- if results.terms -%}
@@ -112,7 +118,7 @@
                             <div class="swatch-input-wrapper">
                               {% render 'ob-facet-swatch-input',
                                 id: input_id,
-                                type: 'checkbox',
+                                type: color_filter_input_type,
                                 name: value.param_name,
                                 value: value.value,
                                 value_obj: value,

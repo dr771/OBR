@@ -1,4 +1,39 @@
 (() => {
+  const COLOR_PARAM = 'filter.v.m.custom.filtercolors';
+
+  const normalizeSingleColorUrl = () => {
+    const container = document.querySelector('.facets-container[data-ob-color-selection="single"]');
+    if (!container) return;
+
+    const url = new URL(window.location.href);
+    const values = url.searchParams.getAll(COLOR_PARAM);
+    if (values.length <= 1) return;
+
+    const retainedValue = values[0];
+    url.searchParams.delete(COLOR_PARAM);
+    url.searchParams.append(COLOR_PARAM, retainedValue);
+
+    const searchParams = url.searchParams.toString();
+    const canonicalPath = `${url.pathname}${searchParams ? `?${searchParams}` : ''}${url.hash}`;
+    history.replaceState({ searchParams }, '', canonicalPath);
+
+    const form = document.querySelector('facet-filters-form');
+    if (form && typeof form.onSubmitForm === 'function') {
+      form.onSubmitForm(searchParams);
+      return;
+    }
+
+    window.location.replace(url.toString());
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', normalizeSingleColorUrl, { once: true });
+  } else {
+    normalizeSingleColorUrl();
+  }
+})();
+
+(() => {
   const SELECTOR = '[data-ob-load-more]';
 
   const normalizeAppendedCard = (card) => {

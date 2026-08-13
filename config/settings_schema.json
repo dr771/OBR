@@ -521,6 +521,23 @@
         "info": "Switches product-card color controls without changing their selection or image-swap behavior."
       },
       {
+        "type": "select",
+        "id": "ob_color_filter_selection_mode",
+        "options": [
+          {
+            "value": "multiple",
+            "label": "Multiple colors"
+          },
+          {
+            "value": "single",
+            "label": "One color"
+          }
+        ],
+        "default": "single",
+        "label": "Color filter selection",
+        "info": "Controls whether shoppers can keep several colors selected. Search & Discovery still controls how multiple values are combined."
+      },
+      {
         "type": "range",
         "id": "card_image_padding",
         "min": 0,

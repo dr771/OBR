@@ -21,6 +21,10 @@
   assign sort_by = results.sort_by | default: results.default_sort_by
   assign total_active_values = 0
   assign default_presentation = 'text'
+  assign color_filter_input_type = 'checkbox'
+  if settings.ob_color_filter_selection_mode == 'single'
+    assign color_filter_input_type = 'radio'
+  endif
   for filter in results.filters
     assign total_active_values = total_active_values | plus: filter.active_values.size
     if filter.type == 'price_range' and filter.min_value.value != null or filter.type == 'price_range' and filter.max_value.value != null
@@ -40,6 +44,7 @@
   data-collection-id="{{ results.id }}"
   data-collection-handle="{{ results.handle }}"
   data-template="{{ template.name }}"
+  data-ob-color-selection="{{ settings.ob_color_filter_selection_mode | default: 'multiple' }}"
 >
   {%- if filter_type == 'vertical' or filter_type == 'horizontal' -%}
     <facet-filters-form class="facets small-hide">
@@ -289,7 +294,7 @@
                                   <div class="swatch-input-wrapper">
                                     {% render 'ob-facet-swatch-input',
                                       id: input_id,
-                                      type: 'checkbox',
+                                      type: color_filter_input_type,
                                       name: value.param_name,
                                       value: value.value,
                                       value_obj: value,
@@ -718,7 +723,7 @@
                                     <div class="swatch-input-wrapper">
                                       {% render 'ob-facet-swatch-input',
                                         id: input_id,
-                                        type: 'checkbox',
+                                        type: color_filter_input_type,
                                         name: value.param_name,
                                         value: value.value,
                                         value_obj: value,

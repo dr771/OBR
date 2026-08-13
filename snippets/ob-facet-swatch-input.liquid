@@ -5,7 +5,8 @@
   native Shopify Color field (see ob-facet-color-chip).
 
   Accepts: same as swatch-input.liquid, minus `swatch`/`shape` (chip is fixed
-  round), plus `value_obj`: {Object} the filter value object (for the hex/label lookup)
+  round), plus `value_obj`: {Object} the filter value object (for the hex/label lookup).
+  `type` is checkbox for multi-select color filtering and radio for single-select.
 
   Usage:
    {% render 'ob-facet-swatch-input',
@@ -19,7 +20,7 @@
 {% endcomment %}
 
 <input
-  type="{{ type | default: 'radio' }}"
+  type="{{ type | default: 'checkbox' }}"
   id="{{ id }}"
   name="{{ name }}"
   value="{{ value }}"

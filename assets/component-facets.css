@@ -1335,9 +1335,10 @@ input.mobile-facets__checkbox {
 /* ==========================================================================
    OB — color facet swatch grid (plp-color-filter)
 
-   filtercolors already supplies one native checkbox per abstract color family;
-   this is presentation only. Keep the five-column count aligned with the
-   desktop show-more threshold (10 = two complete rows).
+   filtercolors supplies one native control per abstract color family: checkbox
+   in multiple mode, radio in single mode. This is presentation only. Keep the
+   five-column count aligned with the desktop show-more threshold (10 = two
+   complete rows).
    ========================================================================== */
 .ob-color-grid.facets-layout {
   display: grid;
@@ -1367,6 +1368,17 @@ input.mobile-facets__checkbox {
 .ob-color-grid .ob-facet-color-chip {
   width: 2.8rem;
   height: 2.8rem;
+}
+
+.ob-color-grid .swatch-input__input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
 }
 
 .ob-color-grid .ob-color-facet-option::before,
