@@ -3,13 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#8fabb3">
 <title>Original Brands — Sterke specialisten voor elk moment van je dag</title>
+<script>
+  /* URL-only palette switcher: ?palette=original | deep-blue | red */
+  (function(){
+    var palettes = ['original', 'deep-blue', 'red'];
+    var requested = new URLSearchParams(window.location.search).get('palette');
+    var palette = palettes.indexOf(requested) !== -1 ? requested : 'original';
+    document.documentElement.dataset.palette = palette;
+  }());
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    /* ---- brand color tokens: change these two and the whole site follows ---- */
+    /* Live Original Brands palette. The URL can rebalance its semantic roles. */
     --color-primary:#8fabb3;      /* brand blue */
     --color-primary-deep:#6b8890; /* hover/active state of primary */
     --color-secondary:#f7391e;    /* brand red/ember */
@@ -17,14 +27,17 @@
     --on-primary:#ffffff;
     --on-secondary:#ffffff;
 
-    /* semantic roles -- point these at primary or secondary to re-balance the palette */
-    --color-cta-bg:var(--color-secondary);
-    --color-cta-bg-hover:var(--color-secondary-deep);
-    --color-cta-text:var(--on-secondary);
+    /* Default: the live site's #8fabb3 leads; red stays a logo/sale signal. */
+    --color-cta-bg:var(--color-primary);
+    --color-cta-bg-hover:var(--color-primary-deep);
+    --color-cta-text:#111719;
+    --color-cta-text-hover:#111719;
     --color-accent:var(--color-primary);       /* icons, tags, active nav underline */
     --color-accent-deep:var(--color-primary-deep);
+    --color-accent-text:#111719;
     --color-utility-bg:var(--color-primary);   /* top bar */
     --color-utility-text:#ffffff;
+    --color-utility-icon:#ffffff;
     --color-badge-bg:var(--color-secondary);   /* sale ribbons */
     --color-badge-text:#ffffff;
 
@@ -46,6 +59,31 @@
     --radius-s:8px;
     --radius-m:14px;
     --radius-l:22px;
+  }
+
+  :root[data-palette="deep-blue"]{
+    --color-primary-deep:#587781;
+    --color-cta-bg:#587781;
+    --color-cta-bg-hover:#426974;
+    --color-cta-text:#ffffff;
+    --color-cta-text-hover:#ffffff;
+    --color-accent:#587781;
+    --color-accent-deep:#426974;
+    --color-accent-text:#ffffff;
+    --color-utility-bg:#587781;
+  }
+
+  :root[data-palette="red"]{
+    --color-cta-bg:var(--color-secondary-deep);
+    --color-cta-bg-hover:#b72412;
+    --color-cta-text:#ffffff;
+    --color-cta-text-hover:#ffffff;
+    --color-accent:var(--color-primary);
+    --color-accent-deep:#587781;
+    --color-accent-text:#111719;
+    --color-utility-bg:#eef2f4;
+    --color-utility-text:#111719;
+    --color-utility-icon:#587781;
   }
 
   *{box-sizing:border-box;}
@@ -70,37 +108,39 @@
     background:var(--color-cta-bg); color:var(--color-cta-text);
     transition:background-color .16s ease, border-color .16s ease, color .16s ease;
   }
-  .btn:hover:not(:disabled){background:var(--color-cta-bg-hover); border-color:var(--color-cta-bg-hover);}
-  .btn:active:not(:disabled){background:var(--color-secondary-deep); border-color:var(--color-secondary-deep);}
+  .btn:hover:not(:disabled),
+  .btn:active:not(:disabled){
+    background:var(--color-cta-bg-hover); border-color:var(--color-cta-bg-hover); color:var(--color-cta-text-hover);
+  }
   .btn.outline{
-    background:var(--paper); color:var(--color-secondary);
-    border-color:var(--color-secondary);
+    background:var(--paper); color:var(--color-cta-bg);
+    border-color:var(--color-cta-bg);
   }
   .btn.outline:hover{
-    background:color-mix(in oklab, var(--color-secondary) 7%, var(--paper));
-    color:var(--color-secondary-deep); border-color:var(--color-secondary-deep);
+    background:color-mix(in oklab, var(--color-cta-bg) 7%, var(--paper));
+    color:var(--color-cta-bg-hover); border-color:var(--color-cta-bg-hover);
   }
   .btn.on-primary{background:var(--paper); color:var(--ink); border-color:var(--paper);}
   .btn.on-primary:hover:not(:disabled){background:var(--offwhite); border-color:var(--offwhite);}
 
   .tag{
     display:inline-flex; align-items:center; font-family:var(--font-soft); font-weight:700;
-    font-size:.7rem; text-transform:uppercase; letter-spacing:.05em; color:#fff;
+    font-size:.7rem; text-transform:uppercase; letter-spacing:.05em; color:var(--color-accent-text);
     background:var(--color-accent); padding:.32rem .65rem; border-radius:99px;
   }
   .link{font-size:.88rem; font-weight:700; transition:color .15s ease;}
-  .link:hover{color:var(--color-secondary);}
+  .link:hover{color:var(--color-cta-bg-hover);}
 
   .wrap{max-width:1300px; margin:0 auto; padding:0 1.75rem;}
 
   /* ---------------- utility bar ---------------- */
-  .utility-bar{background:#eef2f4; color:var(--ink); border:0;}
+  .utility-bar{background:var(--color-utility-bg); color:var(--color-utility-text); border:0;}
   .utility-bar .wrap{
     display:flex; justify-content:center; gap:2.5rem; padding:.55rem 1.75rem;
     font-family:var(--font-soft); font-size:.78rem; font-weight:600; flex-wrap:wrap;
   }
   .utility-bar .item{display:flex; align-items:center; gap:.45rem;}
-  .utility-bar svg{width:15px; height:15px; stroke:var(--color-accent-deep); fill:none; stroke-width:1.8;}
+  .utility-bar svg{width:15px; height:15px; stroke:var(--color-utility-icon); fill:none; stroke-width:1.8;}
 
   /* ---------------- header ---------------- */
   header.site{border-bottom:1px solid var(--line); background:var(--paper);}
@@ -223,9 +263,9 @@
   .occasion-copy{min-width:0; display:flex; flex-direction:column; gap:.4rem; padding-top:.7rem; padding-bottom:.7rem;}
   .occasion-icon{
     width:78px; height:78px; flex:none; border-radius:50%;
-    background:color-mix(in srgb, var(--color-secondary) 4%, #fff);
-    border:1px solid color-mix(in srgb, var(--color-secondary) 36%, transparent);
-    color:var(--color-secondary);
+    background:color-mix(in srgb, var(--color-accent) 4%, #fff);
+    border:1px solid color-mix(in srgb, var(--color-accent) 36%, transparent);
+    color:var(--color-accent-deep);
     display:flex; align-items:center; justify-content:center;
   }
   /* 45px box lands the artwork's ink at ~33x38 css, matching the draft; stroke-width
@@ -418,8 +458,8 @@
   /* ---------------- newsletter ---------------- */
   .newsletter{padding:0 0 3.4rem;}
   .newsletter-box{
-    background:color-mix(in srgb, var(--color-secondary) 6%, #fff); border-radius:var(--radius-m);
-    border:1px solid color-mix(in srgb, var(--color-secondary) 36%, transparent);
+    background:color-mix(in srgb, var(--color-accent) 6%, #fff); border-radius:var(--radius-m);
+    border:1px solid color-mix(in srgb, var(--color-accent) 36%, transparent);
     display:flex; align-items:center; justify-content:space-between; gap:2.5rem; flex-wrap:wrap;
     padding:1.9rem 2.2rem;
   }
@@ -427,8 +467,8 @@
   .nl-icon{
     width:48px; height:48px; flex:none; border-radius:50%;
     background:#fff;
-    color:var(--color-secondary);
-    box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--color-secondary) 28%, #fff);
+    color:var(--color-accent-deep);
+    box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--color-accent) 28%, #fff);
     display:flex; align-items:center; justify-content:center;
   }
   .nl-icon svg{width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.7;}
@@ -441,9 +481,9 @@
     padding:.8rem 1.1rem; font-size:.9rem; font-family:var(--font-body); outline:none;
     transition:border-color .15s ease, box-shadow .15s ease;
   }
-  .newsletter-form input[type="email"]:focus{border-color:var(--color-secondary); box-shadow:0 0 0 3px color-mix(in srgb, var(--color-secondary) 20%, transparent);}
+  .newsletter-form input[type="email"]:focus{border-color:var(--color-accent-deep); box-shadow:0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);}
   .consent{display:flex; align-items:flex-start; gap:.5rem; font-family:var(--font-soft); font-size:.78rem; color:var(--muted);}
-  .consent input{margin-top:3px; accent-color:var(--color-secondary);}
+  .consent input{margin-top:3px; accent-color:var(--color-accent-deep);}
   @media (max-width:900px){.newsletter-form{min-width:0; width:100%;}}
 
   /* ---------------- footer ---------------- */
@@ -480,7 +520,7 @@
     display:flex; align-items:center; justify-content:center; color:var(--ink);
     transition:color .15s ease, transform .15s ease;
   }
-  .socials a:hover{color:var(--color-secondary); transform:translateY(-1px);}
+  .socials a:hover{color:var(--color-cta-bg-hover); transform:translateY(-1px);}
   .socials svg{width:22px; height:22px; fill:currentColor; stroke:none;}
   @media (max-width:900px){
     .footer-base{grid-template-columns:1fr; justify-items:center;}
