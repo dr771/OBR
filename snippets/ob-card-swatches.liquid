@@ -1,11 +1,10 @@
 {% comment %}
   Renders the PLP product card's color swatch row.
 
-  Per plp-card-swatches (D2): OB's Akeneo feed carries no per-color curated
-  swatch-image metaobject and no curated color-crop map (unlike the reuse-source
-  project) — every chip is always that color's own first variant's product photo,
-  cropped square. No fallback chain to try before it; a color with no resolvable
-  image renders a neutral/unavailable chip.
+  The global product-card setting keeps two reversible visual modes in this one
+  renderer: flat/segmented color swatches from the matched variant's Akeneo
+  filtercolors, or the existing cropped variant-photo chips. Color mode falls
+  back per chip to the variant photo when no valid hex value resolves.
 
   Accepts:
   - card_product: {Object} Product Liquid object
@@ -14,6 +13,7 @@
   {% render 'ob-card-swatches', card_product: card_product %}
 {% endcomment %}
 {%- liquid
+  assign swatch_visual_mode = settings.ob_plp_card_swatch_style | default: 'color'
   assign color_option = null
   for option in card_product.options_with_values
     capture kind
@@ -102,13 +102,31 @@
         endif
 
         assign value_name_escaped = value.name | escape
+        assign swatch_fill = blank
+        if swatch_visual_mode == 'color'
+          capture swatch_fill
+            render 'ob-variant-color-swatch-style', variant: swatch_variant
+          endcapture
+          assign swatch_fill = swatch_fill | strip
+        endif
+
+        assign use_image_chip = false
+        if swatch_visual_mode == 'image' or swatch_fill == blank
+          assign use_image_chip = true
+        endif
+
+        assign chip_unavailable = false
+        if swatch_fill == blank and swatch_variant.featured_image == nil
+          assign chip_unavailable = true
+        endif
       -%}
       <button
         type="button"
-        class="ob-card-swatch{% if value.selected %} ob-card-swatch--active{% endif %}{% if swatch_variant.featured_image == nil %} ob-card-swatch--unavailable{% endif %}"
+        class="ob-card-swatch{% if swatch_fill != blank %} ob-card-swatch--color{% else %} ob-card-swatch--image{% endif %}{% if value.selected %} ob-card-swatch--active{% endif %}{% if chip_unavailable %} ob-card-swatch--unavailable{% endif %}"
         aria-label="Kleur: {{ value_name_escaped }}"
         aria-pressed="{% if value.selected %}true{% else %}false{% endif %}"
         data-ob-swatch-name="{{ value_name_escaped }}"
+        {% if swatch_fill != blank %}style="--ob-card-swatch-fill: {{ swatch_fill }};"{% endif %}
         {% if swatch_variant %}data-ob-variant-id="{{ swatch_variant.id }}"{% endif %}
         {% if swatch_variant.featured_image %}
           data-ob-swap-src="{{ swatch_variant.featured_image | image_url: width: 533 }}"
@@ -119,7 +137,7 @@
           data-ob-swap2-srcset="{{ swap2_media | image_url: width: 360 }} 360w, {{ swap2_media | image_url: width: 533 }} 533w, {{ swap2_media | image_url: width: 720 }} 720w"
         {% endif %}
       >
-        {%- if swatch_variant.featured_image -%}
+        {%- if use_image_chip and swatch_variant.featured_image -%}
           {{
             swatch_variant.featured_image
             | image_url: width: 64, height: 64, crop: 'center'

@@ -504,6 +504,23 @@
         "label": "t:settings_schema.cards.settings.style.label"
       },
       {
+        "type": "select",
+        "id": "ob_plp_card_swatch_style",
+        "options": [
+          {
+            "value": "color",
+            "label": "Color swatches"
+          },
+          {
+            "value": "image",
+            "label": "Image chips"
+          }
+        ],
+        "default": "color",
+        "label": "PLP color control style",
+        "info": "Switches product-card color controls without changing their selection or image-swap behavior."
+      },
+      {
         "type": "range",
         "id": "card_image_padding",
         "min": 0,

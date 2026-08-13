@@ -1,0 +1,51 @@
+{% comment %}
+  Returns a safe CSS color/gradient for one variant's Akeneo filter-color
+  references, or blank when no valid value exists.
+
+  `custom.filtercolors` is a list.metaobject_reference. Its `hexcode` field is
+  plain text rather than Shopify's Color type, so accept only #RGB/#RRGGBB
+  before emitting it into an inline custom property. One value becomes a solid
+  fill; multiple values become equal-width segments in source order.
+
+  Accepts:
+  - variant: {Object} Product variant carrying custom.filtercolors
+
+  Usage:
+  {% capture swatch_style %}{% render 'ob-variant-color-swatch-style', variant: variant %}{% endcapture %}
+{% endcomment %}
+{%- liquid
+  assign safe_hexes = ''
+  if variant
+    assign filtercolors = variant.metafields.custom.filtercolors.value
+    for entry in filtercolors
+      assign raw_hex = entry.hexcode.value | default: entry.hexcode | strip | downcase
+      assign first_char = raw_hex | slice: 0, 1
+      assign hex_length = raw_hex | size
+      assign invalid_chars = raw_hex | remove: '#' | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9' | remove: 'a' | remove: 'b' | remove: 'c' | remove: 'd' | remove: 'e' | remove: 'f'
+      if first_char == '#' and invalid_chars == blank
+        if hex_length == 4 or hex_length == 7
+          if safe_hexes == blank
+            assign safe_hexes = raw_hex
+          else
+            assign safe_hexes = safe_hexes | append: ',' | append: raw_hex
+          endif
+        endif
+      endif
+    endfor
+  endif
+
+  assign safe_hex_values = safe_hexes | split: ','
+-%}
+{%- if safe_hexes != blank -%}
+  {%- if safe_hex_values.size == 1 -%}
+    {{- safe_hex_values.first -}}
+  {%- else -%}
+    linear-gradient(90deg,
+    {%- for hex in safe_hex_values -%}
+      {%- assign stop_start = forloop.index0 | times: 100 | divided_by: safe_hex_values.size -%}
+      {%- assign stop_end = forloop.index | times: 100 | divided_by: safe_hex_values.size -%}
+      {{- hex }} {{ stop_start }}%, {{ hex }} {{ stop_end }}%{% unless forloop.last %}, {% endunless %}
+    {%- endfor -%}
+    )
+  {%- endif -%}
+{%- endif -%}

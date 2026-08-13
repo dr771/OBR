@@ -19,6 +19,7 @@ Read these before any major decision:
 - [MIXED-SHOPS-PLAYBOOK.md](MIXED-SHOPS-PLAYBOOK.md) — every scoping decision for Original Brands: reuse ledger against SB's shipped specs, live-site audit, homepage direction, Akeneo→Shopify product-model decision. Read this first, always.
 - [MIGRATION-TO-LIVE.md](MIGRATION-TO-LIVE.md) — launch checklist for the dev→live **store-to-store** migration (two separate shops, per Nick's Akeneo setup).
 - [NICK.md](NICK.md) — open Akeneo/sync data issues to raise with Nick. Don't re-report these as if new.
+- [DESIGN-DIRECTION.md](DESIGN-DIRECTION.md) — measured evidence and reasoning behind the open homepage-direction and red-vs-blue CTA calls. Read before re-arguing either; record the outcome in MIXED-SHOPS-PLAYBOOK.md once decided.
 - `openspec/specs/` — capability specs, seeded on-touch as work starts (empty until the first change is proposed/archived)
 - `mockup/` — the pre-Shopify static homepage mockup, reference only, not the live theme
 

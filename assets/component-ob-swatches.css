@@ -1,8 +1,7 @@
 /*
   Shared chip styling for ob-card-swatches (PLP) and ob-swatch-input (PDP).
-  Per plp-card-swatches/pdp-color-swatches (D2): the chip visual is always the
-  color's own variant photo, cropped square — no color/image fallback tiers to
-  style differently, just one img chip and one unavailable state.
+  PLP cards can switch between Akeneo filter-color swatches and the existing
+  variant-photo chips. PDP color chips remain variant photos.
 */
 
 .ob-card-swatches {
@@ -46,6 +45,11 @@
   font: inherit;
   line-height: 0;
   cursor: pointer;
+}
+
+.ob-card-swatch--color {
+  border-radius: 50%;
+  background: var(--ob-card-swatch-fill);
 }
 
 /*
