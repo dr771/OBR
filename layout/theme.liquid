@@ -69,6 +69,18 @@
       assign body_font_bold = settings.type_body_font | font_modify: 'weight', 'bold'
       assign body_font_italic = settings.type_body_font | font_modify: 'style', 'italic'
       assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
+
+      comment
+        Dawn ships only regular + bold. The PLP card typography ported from the
+        Bolt reference asks for 500 (product title) and 600 (brand label), and a
+        declared weight with no matching face is silently remapped by the browser
+        to the nearest one it has — 500 rendered as 400 and 600 as 700, so the
+        title read too light and the label too heavy against the reference.
+        font_modify returns nil for a weight the font library doesn't carry, so
+        each face is guarded and simply doesn't load for such a font.
+      endcomment
+      assign body_font_medium = settings.type_body_font | font_modify: 'weight', '500'
+      assign body_font_semibold = settings.type_body_font | font_modify: 'weight', '600'
     %}
 
     {% style %}
@@ -76,6 +88,8 @@
       {{ body_font_bold | font_face: font_display: 'swap' }}
       {{ body_font_italic | font_face: font_display: 'swap' }}
       {{ body_font_bold_italic | font_face: font_display: 'swap' }}
+      {%- if body_font_medium -%}{{ body_font_medium | font_face: font_display: 'swap' }}{%- endif -%}
+      {%- if body_font_semibold -%}{{ body_font_semibold | font_face: font_display: 'swap' }}{%- endif -%}
       {{ settings.type_header_font | font_face: font_display: 'swap' }}
 
       {% for scheme in settings.color_schemes -%}

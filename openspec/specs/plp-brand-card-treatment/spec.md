@@ -1,0 +1,50 @@
+# plp-brand-card-treatment Specification
+
+## Purpose
+Lets each brand's product-card photography be corrected independently. Original Brands sells ~30 brands whose photo policies disagree — cut-out packshots on white, shadowed studio shots, full-bleed lifestyle frames — while the grid has to read as one wall of product. Brand comes from Shopify's native `vendor` field (the same signal `plp-brand-facet` uses), so no Akeneo bracket-key detection and no theme-side brand allowlist is involved. Corrections are declarative CSS-variable overrides, never per-brand template branches.
+
+## Requirements
+
+### Requirement: Every product card carries its brand as a styling hook
+Each rendered product card SHALL expose its brand in the markup twice: as a class `ob-brand--<vendor handleized>` on the card wrapper, and as `data-brand="<vendor>"` on the card's custom element for scripting and debugging. The hook SHALL be emitted by the shared card snippet so every card surface — collection grid, search, related products, featured collection, collage, complementary products — carries it identically.
+
+#### Scenario: Product has a vendor
+- **WHEN** a product whose `vendor` is "Hi-Tec" renders on any card surface
+- **THEN** its card wrapper carries `ob-brand ob-brand--hi-tec` and its card element carries `data-brand="Hi-Tec"`
+
+#### Scenario: Product has no vendor
+- **WHEN** a product with an empty `vendor` renders
+- **THEN** neither the class nor the data attribute is emitted, and the card keeps stock rendering
+
+#### Scenario: A new brand's first product syncs
+- **WHEN** a product for a brand never seen before syncs with `vendor` set
+- **THEN** its cards carry that brand's hook automatically, with no theme-side mapping to update
+
+### Requirement: Brand corrections are expressed as variables, not new selectors
+A per-brand correction SHALL be written as custom-property overrides on the brand's own `.ob-brand--*` class — inner padding (all sides or per side), `object-fit`, tile background, and blend mode. Brand blocks SHALL NOT introduce their own `.card__media` descendant selectors, because the card's swatch hover-pair rules already own that subtree and per-brand selectors there become unreasonable to maintain.
+
+#### Scenario: A brand needs inner padding
+- **WHEN** a brand's packshots run edge-to-edge and need breathing room
+- **THEN** its block sets the padding variables only, and both the primary and hover/secondary image inherit the same inset so the pair does not change framing mid-hover
+
+#### Scenario: A brand needs a different fit
+- **WHEN** a brand's correction would otherwise re-crop the photo
+- **THEN** its block sets the fit variable, since padding shrinks the content box and the default `cover` responds by cropping to refill it rather than insetting the product
+
+### Requirement: Per-brand corrections are desktop-scoped until reviewed narrower
+Brand corrections SHALL apply from the 990px breakpoint upward, because their values are judged against the four-up desktop grid where a tile is ~300px wide. Narrower viewports SHALL keep stock framing until a brand's values are re-measured there, since the same absolute padding consumes a far larger share of a two-up phone tile.
+
+#### Scenario: Shopper on a phone
+- **WHEN** a shopper views a corrected brand's card below 990px
+- **THEN** the card renders with stock framing, not the desktop inset
+
+### Requirement: The grid's shared multiply treatment stays the default
+The collection grid's card images SHALL keep their `mix-blend-mode: multiply` against the warm card surface — the mechanism that dissolves white packshot backgrounds into one shared tone — expressed so that a brand block can opt out by variable. Absent any brand override, the multiply SHALL remain in force.
+
+#### Scenario: Brand ships photography on white
+- **WHEN** a brand with white-background packshots renders and sets no blend override
+- **THEN** its images multiply onto the shared warm surface like every other brand
+
+#### Scenario: Brand ships photography on a coloured or dark backdrop
+- **WHEN** such a brand's block sets the blend variable to `normal`
+- **THEN** only that brand's card images stop multiplying, and every other brand is unaffected

@@ -1,0 +1,100 @@
+/*
+  ob-brand-card-media — per-brand product-card image treatment.
+
+  Original Brands sells ~30 brands whose photography policies do not agree:
+  some ship cut-out packshots on pure white, some ship shadowed studio shots,
+  some ship full-bleed lifestyle frames. The grid should read as one wall of
+  product, so each brand gets a small, declarative correction here instead of
+  a template branch.
+
+  Hook (snippets/card-product.liquid, every card surface — collection, search,
+  related, featured, collage, complementary):
+
+      <product-component data-brand="Hi-Tec">
+        <div class="card-wrapper … ob-brand ob-brand--hi-tec">
+
+  The class is `vendor | handleize`, so "Hi-Tec" → `ob-brand--hi-tec`,
+  "Sweaty Betty" → `ob-brand--sweaty-betty`. A product with no vendor gets
+  neither class nor attribute and keeps Dawn's stock rendering.
+
+  WHAT THIS FILE DOES NOT OWN: the collection grid's shared look — the warm
+  `--ob-product-photo-surface` (#efedec) tile and the `mix-blend-mode: multiply`
+  that dissolves white packshot backgrounds into it — lives in
+  component-ob-swatches.css, because the card's colour chips share that exact
+  surface treatment. This file only overrides it per brand.
+
+  Tune a brand by overriding the variables below on its `.ob-brand--*` class —
+  do not write new selectors into `.card__media` per brand, or the swatch
+  hover-pair rules in component-ob-swatches.css become impossible to reason
+  about. Both the primary and the hover/secondary image inherit the same
+  treatment, which is the point: the pair must not visibly change framing.
+*/
+
+.ob-brand {
+  /* `cover` fills the tile and crops (Dawn's default, right for lifestyle
+     photography). `contain` shows the whole frame — required whenever padding
+     is applied, see the note in the per-brand section. */
+  --ob-card-media-fit: cover;
+
+  /* Inner breathing room. Set `--ob-card-media-pad` for an even inset on all
+     four sides; the per-side variables below inherit from it, so a brand that
+     needs only one edge adjusted (FitFlop's low-sitting soles) overrides just
+     that side and leaves the rest alone. */
+  --ob-card-media-pad: 0;
+  --ob-card-media-pad-top: var(--ob-card-media-pad);
+  --ob-card-media-pad-right: var(--ob-card-media-pad);
+  --ob-card-media-pad-bottom: var(--ob-card-media-pad);
+  --ob-card-media-pad-left: var(--ob-card-media-pad);
+
+  /* Tile background behind the image. Left transparent so the grid's warm
+     surface shows through — padding therefore insets the product onto the
+     same surface the rest of the card already uses. Only set this for a brand
+     whose files need a different backdrop to blend against. */
+  --ob-card-media-bg: transparent;
+
+  /*
+    `--ob-card-media-blend` is deliberately NOT given a value here. The grid
+    rule in component-ob-swatches.css reads it as
+    `mix-blend-mode: var(--ob-card-media-blend, multiply)`, so leaving it unset
+    keeps the shipped multiply. A brand block sets it to `normal` to opt out —
+    which is what a brand shooting on a coloured, dark, or lifestyle backdrop
+    needs, since multiply would drag those tones down.
+  */
+}
+
+.ob-brand .card__media .media {
+  background-color: var(--ob-card-media-bg);
+}
+
+.ob-brand .card__media .media img {
+  padding: var(--ob-card-media-pad-top) var(--ob-card-media-pad-right) var(--ob-card-media-pad-bottom)
+    var(--ob-card-media-pad-left);
+  object-fit: var(--ob-card-media-fit);
+}
+
+/*
+  Per-brand overrides.
+
+  Keep one block per brand, alphabetical, each with a one-line reason — the
+  reason is what makes this file maintainable when a brand later re-shoots its
+  catalogue and the correction has to go away.
+
+  Desktop only for now (Dawn's 990px "large-up" breakpoint): these values were
+  judged against the four-up desktop grid, where a tile is ~300px wide. The
+  same absolute padding on a two-up 390px phone eats a far larger share of a
+  ~170px tile, so mobile keeps Dawn's stock framing until it's reviewed at that
+  width and given its own numbers.
+*/
+
+@media screen and (min-width: 990px) {
+  /* Hi-Tec packshots run edge-to-edge; the shoe reads as cramped next to the
+     other brands without a uniform inset. */
+  .ob-brand--hi-tec {
+    --ob-card-media-pad: 18px;
+  }
+
+  /* Holster needs the same correction as Hi-Tec, less of it. */
+  .ob-brand--holster {
+    --ob-card-media-pad: 10px;
+  }
+}

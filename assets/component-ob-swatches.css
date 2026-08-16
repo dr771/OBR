@@ -299,7 +299,14 @@
 }
 
 #ProductGridContainer .product-card-wrapper .card__media .media img {
-  mix-blend-mode: multiply;
+  /*
+    Multiply is what makes mixed-brand photography sit on one surface: a white
+    packshot background multiplies away into --ob-product-photo-surface. Brands
+    that ship photos on a coloured or dark backdrop need to opt out, so the
+    value is a variable a brand block in component-ob-brand-media.css can set
+    to `normal`. Default stays multiply — nothing changes without an override.
+  */
+  mix-blend-mode: var(--ob-card-media-blend, multiply);
 }
 
 /*
@@ -344,6 +351,19 @@
   font-weight: 600;
   line-height: 1.5rem;
   letter-spacing: 0.18rem;
+  /*
+    Reference renders the brand at 45% ink. Dawn's `.light` gets there with
+    `opacity: 0.7` on solid ink, which is both the wrong strength and dims
+    anything the label ever wraps, so the alpha goes on the colour instead.
+  */
+  margin: 0;
+  opacity: 1;
+  color: rgba(var(--color-foreground), 0.45);
+}
+
+/* Brand label sits above the title, 4px clear of it (measured on the reference). */
+#ProductGridContainer .product-card-wrapper .caption-with-letter-spacing + .card__heading {
+  margin-top: 0.4rem;
 }
 
 #ProductGridContainer .product-card-wrapper .price,
