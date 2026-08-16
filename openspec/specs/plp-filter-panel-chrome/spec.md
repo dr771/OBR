@@ -32,11 +32,11 @@ Each desktop vertical facet SHALL show a filled triangle at the left of its titl
 - **THEN** the left-edge triangle rotates between right and down while the disclosure remains keyboard operable
 
 ### Requirement: Sidebar width follows compact facet content
-The desktop form SHALL closely hug its swatch grids without clipping them, use a 2rem gutter before the product grid, and keep each title on one line by allowing its reset link to wrap beneath it when necessary.
+The desktop form SHALL use a 23rem content width, a 4.8rem gutter before the product grid, and keep each title on one line by allowing its reset link to wrap beneath it when necessary.
 
-#### Scenario: Long active facet title shares the narrow sidebar
-- **WHEN** a long facet title and its reset link cannot fit on one row
-- **THEN** the title remains unbroken and the reset link moves to the next row without clipping the facet content
+#### Scenario: Long active facet title shares the desktop sidebar
+- **WHEN** a long facet title and its reset link cannot fit within the 23rem filter column
+- **THEN** the title remains unbroken, the reset link moves to the next row without clipping the facet content, and 4.8rem separates the filter column from the product grid
 
 ### Requirement: A desktop summon control restores an off-screen panel
 On desktop vertical layouts only, a sticky translated summon button SHALL appear whenever the filter form is fully outside the viewport and remain hidden whenever any part of the form is visible. Activating it SHALL relocate the form within the sidebar bounds near the button without changing `window.scrollY`; returning to the sidebar top SHALL restore natural flow, and the cycle SHALL remain repeatable in either scroll direction.
@@ -70,3 +70,4 @@ The summon control and relocation behavior SHALL NOT render on mobile or on a no
 #### Scenario: Mobile bar renders
 - **WHEN** a shopper uses filters on a mobile viewport
 - **THEN** no desktop summon control is present
+

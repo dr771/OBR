@@ -1455,6 +1455,62 @@ input.mobile-facets__checkbox {
 /* ==========================================================================
    OB — coordinated desktop filter chrome + mobile filter bar
    ========================================================================== */
+.facets-container,
+.facets-vertical-sort {
+  --ob-plp-ui-font: var(--font-body-family);
+}
+
+.facets__summary-label,
+.facets__form-vertical .facets__label,
+.facet-filters__label,
+.facet-filters__sort,
+.product-count__text,
+.ob-mobile-bar {
+  font-family: var(--ob-plp-ui-font);
+}
+
+.facets__summary-label {
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 2rem;
+  letter-spacing: normal;
+}
+
+.facets__form-vertical .facets__label {
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 2rem;
+  letter-spacing: normal;
+}
+
+.ob-size-grid .ob-size-box {
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 1.6rem;
+  letter-spacing: normal;
+}
+
+.facet-filters__label {
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 2rem;
+  letter-spacing: normal;
+}
+
+.facet-filters__sort {
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: normal;
+}
+
+.product-count__text {
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 2rem;
+  letter-spacing: normal;
+}
+
 .facets__summary-row {
   display: flex;
   align-items: center;
@@ -1586,7 +1642,10 @@ input.mobile-facets__checkbox {
   padding: 1.2rem 3.2rem 1.2rem 1.6rem;
   border: 0;
   background: transparent;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: normal;
 }
 
 .ob-mobile-bar__sort .select::before,
@@ -1604,7 +1663,10 @@ input.mobile-facets__checkbox {
   background: transparent;
   color: rgb(var(--color-foreground));
   font-family: inherit;
-  font-size: 1.3rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 2.4rem;
+  letter-spacing: normal;
   cursor: pointer;
 }
 
@@ -1626,10 +1688,11 @@ input.mobile-facets__checkbox {
 .ob-mobile-bar__row-heading {
   margin: 1.2rem 0 0.4rem;
   color: rgba(var(--color-foreground), 0.75);
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.1rem;
-  text-transform: uppercase;
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 2rem;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .ob-mobile-bar__row {
@@ -1658,11 +1721,20 @@ input.mobile-facets__checkbox {
   min-height: 3.8rem;
   padding: 0 1.2rem;
   border: 0.1rem solid rgba(var(--color-foreground), 0.25);
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 2rem;
+  letter-spacing: normal;
   cursor: pointer;
 }
 
 .ob-mobile-bar__row--type .ob-mobile-bar__box {
   min-height: 3.2rem;
+}
+
+.ob-mobile-bar__row--size .ob-mobile-bar__box {
+  font-size: 1.2rem;
+  line-height: 1.6rem;
 }
 
 .ob-mobile-bar__box input {
@@ -1750,5 +1822,30 @@ input.mobile-facets__checkbox {
   .facets__triangle,
   .ob-summon-filters {
     transition: none;
+  }
+}
+
+/* Desktop PLP geometry measured from the approved Bolt collection reference. */
+@media screen and (min-width: 990px) {
+  .facets-vertical.page-width {
+    padding-inline: 2.4rem;
+  }
+
+  .facets-vertical .facets-wrapper {
+    width: 23rem;
+    padding-inline-end: 4.8rem;
+  }
+
+  .facets-vertical .facets__form-vertical {
+    width: 23rem;
+  }
+
+  .facets-vertical .facets__price {
+    max-width: 23rem;
+  }
+
+  .facets-vertical #product-grid {
+    --grid-desktop-horizontal-spacing: 2.4rem;
+    --grid-desktop-vertical-spacing: 3.6rem;
   }
 }
