@@ -30,8 +30,8 @@
     /* Default: the live site's #8fabb3 leads; red stays a logo/sale signal. */
     --color-cta-bg:var(--color-primary);
     --color-cta-bg-hover:var(--color-primary-deep);
-    --color-cta-text:#111719;
-    --color-cta-text-hover:#111719;
+    --color-cta-text:#ffffff;
+    --color-cta-text-hover:#ffffff;
     --color-accent:var(--color-primary);       /* icons, tags, active nav underline */
     --color-accent-deep:var(--color-primary-deep);
     --color-accent-text:#111719;
@@ -78,14 +78,14 @@
     --color-primary-deep:#0d91d5;
     --color-cta-bg:#38b6ff;
     --color-cta-bg-hover:#0d91d5;
-    --color-cta-text:#111719;
-    --color-cta-text-hover:#111719;
+    --color-cta-text:#ffffff;
+    --color-cta-text-hover:#ffffff;
     --color-accent:#38b6ff;
     --color-accent-deep:#0d91d5;
     --color-accent-text:#111719;
     --color-utility-bg:#38b6ff;
-    --color-utility-text:#111719;
-    --color-utility-icon:#111719;
+    --color-utility-text:#ffffff;
+    --color-utility-icon:#ffffff;
   }
 
   :root[data-palette="red"]{
@@ -132,8 +132,7 @@
     border-color:var(--color-cta-bg);
   }
   .btn.outline:hover{
-    background:color-mix(in oklab, var(--color-cta-bg) 7%, var(--paper));
-    color:var(--color-cta-bg-hover); border-color:var(--color-cta-bg-hover);
+    background:var(--color-cta-bg-hover); color:#fff; border-color:var(--color-cta-bg-hover);
   }
   .btn.on-primary{background:var(--paper); color:var(--ink); border-color:var(--paper);}
   .btn.on-primary:hover:not(:disabled){background:var(--offwhite); border-color:var(--offwhite);}
@@ -361,6 +360,7 @@
     position:absolute; inset-block:0; inset-inline-end:0; inline-size:2.7rem;
     display:flex; align-items:center; justify-content:center;
     border-inline-start:1px solid color-mix(in oklab, #fff 48%, transparent);
+    color:#fff;
     font-size:0;   /* hides the &rarr; text node -- the mask below draws the arrow. flex
                       (not grid) so the zero-size text node can't form its own row and
                       push the icon off-centre */
