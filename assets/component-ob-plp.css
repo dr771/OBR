@@ -22,52 +22,60 @@
   pointer-events: none;
 }
 
+/*
+  Hide content with opacity/transparent colour, never `visibility: hidden` — the
+  placeholder fill lives on these same elements, and visibility would hide the
+  background along with the content.
+*/
 .ob-grid-loading .card__media img,
-.ob-grid-loading .card__heading a,
-.ob-grid-loading .price-item {
-  visibility: hidden;
+.ob-grid-loading .ob-card-swatch img {
+  opacity: 0;
 }
 
-.ob-grid-loading .card__media,
+/*
+  No `position: relative` on .card__media. Dawn already positions it absolutely
+  inside `.ratio`, and .card__inner is a flex container: putting it back into
+  normal flow makes it a flex item that shrinks to its content — the grey box
+  then covers only about half the card.
+*/
+.ob-grid-loading .card__media::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+}
+
+/*
+  Same travelling-wave skeleton as SB: an oversized gradient moved by
+  background-position. Dawn's colour tokens are comma lists (`18,18,18`), so the
+  slash-alpha form `rgb(var(--token) / a)` would be invalid after substitution
+  and silently drop the whole declaration — the greys are literal instead, tuned
+  to the card's warm photo surface.
+*/
+.ob-grid-loading .card__media::after,
 .ob-grid-loading .card__heading a,
-.ob-grid-loading .price-item {
-  position: relative;
-  background: rgb(var(--color-foreground) / 0.08);
+.ob-grid-loading .price-item,
+.ob-grid-loading .ob-card-swatch {
+  background-image: linear-gradient(90deg, #ded9d6 25%, #faf8f7 37%, #ded9d6 63%);
+  background-size: 400% 100%;
+  animation: ob-skeleton-shimmer 1.4s ease-in-out infinite;
 }
 
 .ob-grid-loading .card__media {
   overflow: hidden;
 }
 
-.ob-grid-loading .card__media::after,
-.ob-grid-loading .card__heading a::after,
-.ob-grid-loading .price-item::after {
-  position: absolute;
-  inset: 0;
-  content: '';
-  visibility: visible;
-  background: linear-gradient(
-    90deg,
-    rgb(var(--color-foreground) / 0.08) 0%,
-    rgb(var(--color-background) / 0.65) 50%,
-    rgb(var(--color-foreground) / 0.08) 100%
-  );
-  transform: translateX(-100%);
-  animation: ob-skeleton-shimmer 1.25s ease-in-out infinite;
-}
-
+.ob-grid-loading .card__heading a,
 .ob-grid-loading .price-item {
   display: inline-block;
   color: transparent;
-  border-radius: 0.2rem;
+  border-radius: 0.3rem;
 }
 
-.ob-grid-loading .card__heading a {
-  display: block;
-  color: transparent;
-  border-radius: 0.2rem;
-}
-
+/*
+  These carry no placeholder fill, so `visibility` is safe here — and necessary:
+  the brand label's own opacity is set at ID specificity (plp-card-meta), so an
+  `opacity: 0` from this file would lose.
+*/
 .ob-grid-loading .badge,
 .ob-grid-loading .caption-with-letter-spacing,
 .ob-grid-loading .rating-wrapper {
@@ -75,15 +83,20 @@
 }
 
 @keyframes ob-skeleton-shimmer {
-  to {
-    transform: translateX(100%);
+  0% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0 50%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ob-grid-loading .card__media::after,
-  .ob-grid-loading .card__heading a::after,
-  .ob-grid-loading .price-item::after {
+  .ob-grid-loading .card__heading a,
+  .ob-grid-loading .price-item,
+  .ob-grid-loading .ob-card-swatch {
     animation: none;
   }
 }

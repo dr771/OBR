@@ -208,8 +208,8 @@
       },
       "max_price": "De hoogste prijs is {{ price }}",
       "product_count": {
-        "one": "{{ product_count }} korting op {{ count }} producten",
-        "other": "{{ product_count }} korting op {{ count }} producten"
+        "one": "{{ product_count }} van {{ count }} product",
+        "other": "{{ product_count }} van {{ count }} producten"
       },
       "product_count_simple": {
         "one": "{{ count }} product",

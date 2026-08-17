@@ -31,7 +31,9 @@ class FacetFiltersForm extends HTMLElement {
     FacetFiltersForm.showGridLoading();
     clearTimeout(this.submitTimeout);
 
-    const delay = event.target.closest('price-range') ? 800 : 250;
+    // Price is free text and needs to settle; discrete controls only need enough
+    // of a window to coalesce a fast double toggle, so keep it short.
+    const delay = event.target.closest('price-range') ? 800 : 120;
     this.submitTimeout = setTimeout(() => this.onSubmitHandler(event), delay);
   }
 
