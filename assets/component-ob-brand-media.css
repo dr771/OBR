@@ -17,8 +17,8 @@
   "Sweaty Betty" → `ob-brand--sweaty-betty`. A product with no vendor gets
   neither class nor attribute and keeps Dawn's stock rendering.
 
-  WHAT THIS FILE DOES NOT OWN: the collection grid's shared look — the warm
-  `--ob-product-photo-surface` (#efedec) tile and the `mix-blend-mode: multiply`
+  WHAT THIS FILE DOES NOT OWN: the collection grid's shared look — the
+  `--ob-product-photo-surface` (#f1f5f9) tile and the `mix-blend-mode: multiply`
   that dissolves white packshot backgrounds into it — lives in
   component-ob-swatches.css, because the card's colour chips share that exact
   surface treatment. This file only overrides it per brand.

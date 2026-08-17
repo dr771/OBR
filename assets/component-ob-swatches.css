@@ -381,16 +381,16 @@
 }
 
 /*
-  Collection cards use a warm product-photo surface. Multiplying the product
-  photography into it turns white source backgrounds #efedec without changing
-  the card's content or PDP media.
+  Collection cards use a cool product-photo surface, a very light tint of the
+  brand primary. Multiplying the product photography into it turns white source
+  backgrounds #f1f5f9 without changing the card's content or PDP media.
 */
 #ProductGridContainer .product-card-wrapper {
   /*
     On the wrapper, not on .card__media, so the colour chips inherit the same
     surface token their tiles use and can derive from it.
   */
-  --ob-product-photo-surface: #efedec;
+  --ob-product-photo-surface: #f1f5f9;
 }
 
 #ProductGridContainer .product-card-wrapper .card__inner.gradient {
