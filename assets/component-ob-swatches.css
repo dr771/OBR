@@ -421,6 +421,15 @@
 /*
   Chips sit directly under the main pic (see card-product.liquid) and share
   its warm surface + multiply treatment instead of a bordered chip look.
+
+  Selection is a difference in *surface* lightness, not a drawn edge: chips
+  rest on the card surface mixed 60% toward white and return to the full
+  surface when active or hovered, so the chosen colour is simply the darkest
+  chip in the row. The photo is untouched — it keeps multiplying onto whichever
+  surface is underneath, so a resting chip reads lighter as a consequence.
+  Dimming the image instead was tried and rejected: it alters the content, and
+  the effect swings from invisible on a dark packshot to washed out on a white
+  one.
 */
 #ProductGridContainer .product-card-wrapper .ob-card-swatches {
   margin-top: 0.8rem;
@@ -428,25 +437,22 @@
 
 #ProductGridContainer .product-card-wrapper .ob-card-swatch {
   /*
-    Transparent rather than `border: 0`, so the selected chip's hairline can
-    appear without insetting its image by a pixel as it turns on.
+    Nothing draws this, but dropping it would shrink each chip's border box by
+    2px and change the rail's five-full-plus-a-peek arithmetic.
   */
   border: 0.1rem solid transparent;
-  background-color: var(--ob-product-photo-surface);
+  background-color: color-mix(in srgb, var(--ob-product-photo-surface) 40%, #fff);
+  transition: background-color var(--duration-short) ease;
 }
 
 #ProductGridContainer .product-card-wrapper .ob-card-swatch img {
   mix-blend-mode: multiply;
 }
 
-/*
-  Selection is a hairline one step darker than the surface the chips multiply
-  onto — enough to find the chosen colour, quiet enough not to read as a
-  control on a row of twelve.
-*/
 #ProductGridContainer .product-card-wrapper .ob-card-swatch--active,
-#ProductGridContainer .product-card-wrapper .ob-card-swatch:hover {
-  border-color: color-mix(in srgb, var(--ob-product-photo-surface) 80%, #000);
+#ProductGridContainer .product-card-wrapper .ob-card-swatch:hover,
+#ProductGridContainer .product-card-wrapper .ob-card-swatch:focus-visible {
+  background-color: var(--ob-product-photo-surface);
 }
 
 #ProductGridContainer .product-card-wrapper .ob-card-swatch:focus-visible {
