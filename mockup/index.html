@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#8fabb3">
+<meta name="theme-color" content="#38b6ff">
 <title>Original Brands — Sterke specialisten voor elk moment van je dag</title>
 <script>
   /* URL-only palette switcher: ?palette=original | bright-blue | deep-blue | red */
@@ -20,14 +20,14 @@
 <style>
   :root{
     /* Live Original Brands palette. The URL can rebalance its semantic roles. */
-    --color-primary:#8fabb3;      /* brand blue */
-    --color-primary-deep:#6b8890; /* hover/active state of primary */
+    --color-primary:#38b6ff;      /* brand blue, owner-confirmed 2026-08-16 */
+    --color-primary-deep:#0d91d5; /* hover/active state of primary */
     --color-secondary:#f7391e;    /* brand red/ember */
     --color-secondary-deep:#d92c15;
     --on-primary:#ffffff;
     --on-secondary:#ffffff;
 
-    /* Default: the live site's #8fabb3 leads; red stays a logo/sale signal. */
+    /* Default: the confirmed #38B6FF leads; red stays a logo/sale signal. */
     --color-cta-bg:var(--color-primary);
     --color-cta-bg-hover:var(--color-primary-deep);
     --color-cta-text:#ffffff;
@@ -73,6 +73,8 @@
     --color-utility-bg:#587781;
   }
 
+  /* Identical to the default :root palette now that #38B6FF is confirmed;
+     kept as an explicit ?palette=bright-blue URL for side-by-side comparison. */
   :root[data-palette="bright-blue"]{
     --color-primary:#38b6ff;
     --color-primary-deep:#0d91d5;

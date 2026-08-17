@@ -19,7 +19,6 @@ Read these before any major decision:
 - [MIXED-SHOPS-PLAYBOOK.md](MIXED-SHOPS-PLAYBOOK.md) — every scoping decision for Original Brands: reuse ledger against SB's shipped specs, live-site audit, homepage direction, Akeneo→Shopify product-model decision. Read this first, always.
 - [MIGRATION-TO-LIVE.md](MIGRATION-TO-LIVE.md) — launch checklist for the dev→live **store-to-store** migration (two separate shops, per Nick's Akeneo setup).
 - [NICK.md](NICK.md) — open Akeneo/sync data issues to raise with Nick. Don't re-report these as if new.
-- [DESIGN-DIRECTION.md](DESIGN-DIRECTION.md) — measured evidence and reasoning behind the open homepage-direction and red-vs-blue CTA calls. Read before re-arguing either; record the outcome in MIXED-SHOPS-PLAYBOOK.md once decided.
 - `openspec/specs/` — capability specs, seeded on-touch as work starts (empty until the first change is proposed/archived)
 - `mockup/` — the pre-Shopify static homepage mockup, reference only, not the live theme
 
@@ -83,6 +82,8 @@ Shipped and verified on this shop's **main Dawn theme `148245381229`** (storefro
 
 - **Per-brand card image treatment** (`plp-brand-card-treatment`, shipped + live-verified 2026-08-16) — every card carries `ob-brand--<vendor handleized>` + `data-brand` from the shared snippet, and each brand's photo correction is a custom-property override (padding per side, `object-fit`, tile background, blend) in `assets/component-ob-brand-media.css`. Shipped desktop-only (≥990px): Hi-Tec 18px, Holster 10px. The grid's shared warm surface + multiply lives in `component-ob-swatches.css` and is now `var(--ob-card-media-blend, multiply)` so a brand can opt out. See playbook D11 for the two traps (padding needs `contain`; don't paint over the existing multiply).
 - **PLP card meta order + reference typography** (`plp-card-meta`, shipped + live-verified 2026-08-16) — brand label moved above the product name in the markup (not flex-reordered, so reading order matches), still gated by each section's `show_vendor`. Label 10px/600/15px/1.8px uppercase at 45% ink via colour alpha (not Dawn's `.light` opacity), name 16px/500/22px, 4px between them — all measured off the Bolt reference, whose card is 300.5px against OB's 301px, so values are 1:1. **`theme.liquid` now loads body 500/600 faces**: Dawn ships only regular + bold, and a declared weight with no face is silently remapped (500→400, 600→700), which computed-style diffing cannot see. Side effect: everything declaring 500/600 store-wide now renders truly, including the card price (was faux-700).
+- **Desktop PLP shell/grid spacing matched to the approved Bolt reference** (`match-desktop-plp-spacing`, shipped + archived 2026-08-16) — at ≥990px: 24px page inset, 230px filter column, 48px filter-to-grid gutter, 24px/36px product-grid gaps, superseding D10's original 200px/20px desktop values. Desktop-only; mobile, card internals, and non-collection grids untouched. See playbook D10.
+- **PLP card color chips moved below the main image** (2026-08-16, not yet spec-backed) — chips now sit under the product photo instead of after the price, share the card's warm surface color, and use `mix-blend-mode: multiply` like the main image instead of a bordered chip look; active/focus uses an outline, unavailable chips use reduced opacity instead of a dashed border. `plp-card-swatches` doesn't document chip position/border/blend yet — worth a spec backfill next time that capability is touched.
 
 Twenty-two capabilities are seeded or built in `openspec/`. Archived changes are under `openspec/changes/archive/2026-08-11-port-akeneo-facets-swatches/`, `.../2026-08-11-plp-size-facet-grid/`, `.../2026-08-11-pdp-size-picker-order/`, `.../2026-08-11-pdp-color-media-gallery/`, `.../2026-08-11-plp-card-swatch-selection/`, `.../2026-08-11-port-plp-grid-ux-bundle/`, `.../2026-08-11-plp-color-filter-grid/`, `.../2026-08-11-port-plp-filter-experience/`, `.../2026-08-11-port-cart-drawer-line-item-layout/`, `.../2026-08-12-wishlist-integration/`, `.../2026-08-12-port-predictive-search-overlay/`, `.../2026-08-12-fix-plp-card-swatch-hover-image/`, `.../2026-08-12-pdp-size-picker-grid/`, and `.../2026-08-12-pdp-option-rails/`.
 
@@ -90,7 +91,7 @@ Twenty-two capabilities are seeded or built in `openspec/`. Archived changes are
 
 **OpenSpec CLI:** `npm install -g @fission-ai/openspec` — the npm name `openspec` is an unrelated stub. See the OpenSpec CLI section above.
 
-**Not yet done:** homepage is untouched, still blocked on mockup approval + the red-vs-blue CTA decision. See "Next up" in MIXED-SHOPS-PLAYBOOK.md.
+**Not yet done:** homepage design meeting (2026-08-16) resolved the CTA color (blue `#38B6FF`, not red) and the reference direction (Bolt approved, superseding "absorb into OBR" — see playbook Homepage section), and `mockup/index.html`'s default palette was flipped to match, but the mockup itself still needs a real rebuild to Bolt's geometry/composition before owner sign-off on the finished homepage. See "Next up" in MIXED-SHOPS-PLAYBOOK.md.
 
 **Theme workflow.** Shopify CLI is authenticated on this machine:
 ```
