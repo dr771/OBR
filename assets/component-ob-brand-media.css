@@ -36,10 +36,15 @@
      is applied, see the note in the per-brand section. */
   --ob-card-media-fit: cover;
 
-  /* Inner breathing room. Set `--ob-card-media-pad` for an even inset on all
-     four sides; the per-side variables below inherit from it, so a brand that
-     needs only one edge adjusted (FitFlop's low-sitting soles) overrides just
-     that side and leaves the rest alone. */
+  /* Inner breathing room, as a PERCENTAGE of the image's own box width. Set
+     `--ob-card-media-pad` for an even inset on all four sides; the per-side
+     variables below inherit from it, so a brand that needs only one edge
+     adjusted (FitFlop's low-sitting soles) overrides just that side and leaves
+     the rest alone.
+
+     Percent, not px, so one value serves both sizes the same correction has to
+     land on: the ~300px card tile and the ~50px colour chip cropped from the
+     same photo. A px value tuned on the tile would swallow a chip whole. */
   --ob-card-media-pad: 0;
   --ob-card-media-pad-top: var(--ob-card-media-pad);
   --ob-card-media-pad-right: var(--ob-card-media-pad);
@@ -66,7 +71,8 @@
   background-color: var(--ob-card-media-bg);
 }
 
-.ob-brand .card__media .media img {
+.ob-brand .card__media .media img,
+.ob-brand .ob-card-swatch img {
   padding: var(--ob-card-media-pad-top) var(--ob-card-media-pad-right) var(--ob-card-media-pad-bottom)
     var(--ob-card-media-pad-left);
   object-fit: var(--ob-card-media-fit);
@@ -88,13 +94,14 @@
 
 @media screen and (min-width: 990px) {
   /* Hi-Tec packshots run edge-to-edge; the shoe reads as cramped next to the
-     other brands without a uniform inset. */
+     other brands without a uniform inset. 6% ≈ the approved 18px on a ~300px
+     desktop tile, and ≈3px on that card's colour chips. */
   .ob-brand--hi-tec {
-    --ob-card-media-pad: 18px;
+    --ob-card-media-pad: 6%;
   }
 
-  /* Holster needs the same correction as Hi-Tec, less of it. */
+  /* Holster needs the same correction as Hi-Tec, less of it (≈10px on the tile). */
   .ob-brand--holster {
-    --ob-card-media-pad: 10px;
+    --ob-card-media-pad: 3.3%;
   }
 }

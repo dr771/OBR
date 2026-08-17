@@ -20,7 +20,7 @@
   <script src="{{ 'ob-swatch-tooltip.js' | asset_url }}" defer="defer"></script>
   {%- if ob_single_row_options -%}
     {{ 'component-ob-option-rail.css' | asset_url | stylesheet_tag }}
-    <script src="{{ 'ob-pdp-option-rail.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'ob-option-rail.js' | asset_url }}" defer="defer"></script>
   {%- endif -%}
   <variant-selects
     id="variant-selects-{{ section.id }}"
@@ -79,7 +79,7 @@
             </span>
           </legend>
           {%- if option_kind == 'color' and ob_single_row_options -%}
-            <div class="product-form__option-rail-shell">
+            <div class="product-form__option-rail-shell" data-ob-option-rail-shell>
               <div class="product-form__option-rail product-form__option-rail--color" data-ob-option-rail>
           {%- endif -%}
           {% render 'product-variant-options',
@@ -105,7 +105,7 @@
             </span>
           </legend>
           {%- if option_kind == 'size' -%}
-            <div{% if ob_single_row_options %} class="product-form__option-rail-shell product-form__option-rail-shell--size"{% endif %}>
+            <div{% if ob_single_row_options %} class="product-form__option-rail-shell product-form__option-rail-shell--size" data-ob-option-rail-shell{% endif %}>
             <div class="product-form__size-grid-options{% if ob_single_row_options %} product-form__option-rail product-form__option-rail--size{% endif %}"{% if ob_single_row_options %} data-ob-option-rail{% endif %}>
           {%- endif -%}
           {% render 'product-variant-options',

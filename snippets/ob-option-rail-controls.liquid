@@ -1,13 +1,20 @@
 {% comment %}
-  Shared controls for the temporary PDP single-row option variation.
+  Shared previous/next controls for a single-row option rail (PDP option
+  pickers, PLP card colour chips). Drop them inside the rail's
+  `[data-ob-option-rail-shell]`; ob-option-rail.js wires them up and each
+  surface's own stylesheet decides where they sit and when they show.
 
   Accepts:
   - previous_label: {String} Accessible label for the previous control.
   - next_label: {String} Accessible label for the next control.
+  - class_root: {String} Base class for both buttons, so a surface can style
+    its own controls without loading another surface's stylesheet.
+    Default: 'product-form__option-rail-button' (the PDP rail).
 {% endcomment %}
+{%- assign rail_button_class = class_root | default: 'product-form__option-rail-button' -%}
 <button
   type="button"
-  class="product-form__option-rail-button product-form__option-rail-button--previous"
+  class="{{ rail_button_class }} {{ rail_button_class }}--previous"
   data-ob-option-rail-previous
   aria-label="{{ previous_label | escape }}"
 >
@@ -15,7 +22,7 @@
 </button>
 <button
   type="button"
-  class="product-form__option-rail-button product-form__option-rail-button--next"
+  class="{{ rail_button_class }} {{ rail_button_class }}--next"
   data-ob-option-rail-next
   aria-label="{{ next_label | escape }}"
 >

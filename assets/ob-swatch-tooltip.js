@@ -1,10 +1,12 @@
 /*
-  PDP color-chip tooltip. A CSS ::before/::after tooltip (the pattern used by
-  the PLP card swatches) gets clipped when the chip sits inside the option
-  rail's horizontally-scrolling track, which sets overflow-y: hidden so only
-  one row is ever visible (see component-ob-option-rail.css). This positions
-  one shared tooltip node with `position: fixed`, which escapes that clip,
-  and works the same whether or not the rail variation is enabled.
+  Shared color-chip tooltip for both surfaces: the PDP option chips
+  (.ob-swatch-input__label) and the PLP card chips (.ob-card-swatch).
+
+  A chip-anchored CSS ::before/::after tooltip gets clipped on both, because
+  each chip row is a horizontally-scrolling rail and a scroll track's
+  overflow-y is never visible. This positions one shared tooltip node with
+  `position: fixed`, which escapes that clip, and works the same whether or not
+  the PDP rail variation is enabled.
 */
 document.addEventListener('DOMContentLoaded', () => {
   let tooltip = null;
@@ -42,24 +44,35 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tooltip) tooltip.classList.remove('ob-swatch-tooltip--visible');
   }
 
+  // PDP chip: a label next to a hidden radio. PLP card chip: a button that is
+  // itself the anchor and the focus target.
+  const anchorSelector = '.ob-swatch-input__label[data-ob-swatch-name], .ob-card-swatch[data-ob-swatch-name]';
+
+  function anchorFrom(target) {
+    if (!target || !target.closest) return null;
+    const anchor = target.closest(anchorSelector);
+    if (anchor) return anchor;
+
+    const radio = target.closest('.ob-swatch-input__radio');
+    const label = radio?.nextElementSibling;
+    return label?.matches('.ob-swatch-input__label[data-ob-swatch-name]') ? label : null;
+  }
+
   document.addEventListener('mouseover', (event) => {
-    const label = event.target.closest('.ob-swatch-input__label[data-ob-swatch-name]');
-    if (label) show(label);
+    const anchor = anchorFrom(event.target);
+    if (anchor) show(anchor);
   });
 
   document.addEventListener('mouseout', (event) => {
-    const label = event.target.closest('.ob-swatch-input__label[data-ob-swatch-name]');
-    if (label && !label.contains(event.relatedTarget)) hide();
+    const anchor = anchorFrom(event.target);
+    if (anchor && !anchor.contains(event.relatedTarget)) hide();
   });
 
   document.addEventListener(
     'focusin',
     (event) => {
-      const radio = event.target.closest('.ob-swatch-input__radio');
-      const label = radio?.nextElementSibling?.matches('.ob-swatch-input__label[data-ob-swatch-name]')
-        ? radio.nextElementSibling
-        : null;
-      if (label) show(label);
+      const anchor = anchorFrom(event.target);
+      if (anchor) show(anchor);
     },
     true
   );
@@ -67,8 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener(
     'focusout',
     (event) => {
-      const radio = event.target.closest('.ob-swatch-input__radio');
-      if (radio) hide();
+      if (anchorFrom(event.target)) hide();
     },
     true
   );

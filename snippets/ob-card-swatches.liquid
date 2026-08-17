@@ -51,7 +51,13 @@
   assign media_codes = media_codes | split: '@@'
 -%}
 {%- if color_option and color_option.values.size > 1 -%}
-  <div class="ob-card-swatches" data-ob-card-swatches>
+  {%- comment -%}
+    The chips ride a single-row rail (see ob-option-rail.js), so a many-colour
+    product can't wrap its card into a taller, ragged tile. Chip size comes from
+    the rail width — five full chips plus a peek at the sixth.
+  {%- endcomment -%}
+  <div class="ob-card-swatches" data-ob-card-swatches data-ob-option-rail-shell>
+    <div class="ob-card-swatches__rail" data-ob-option-rail data-ob-option-rail-step="item">
     {%- for value in color_option.values -%}
       {%- liquid
         assign swatch_variant = null
@@ -138,13 +144,24 @@
         {% endif %}
       >
         {%- if use_image_chip and swatch_variant.featured_image -%}
+          {%- comment -%}
+            A chip is ~50px on the desktop card and ~63px on the wider homepage
+            card, so a 64px source is already below 1x there and visibly soft at
+            2x/3x. Ask for 200 and let srcset pick.
+          {%- endcomment -%}
           {{
             swatch_variant.featured_image
-            | image_url: width: 64, height: 64, crop: 'center'
-            | image_tag: loading: 'lazy', alt: value_name_escaped, sizes: '32px', widths: '32,64'
+            | image_url: width: 200, height: 200, crop: 'center'
+            | image_tag: loading: 'lazy', alt: value_name_escaped, sizes: '64px', widths: '64,100,150,200'
           }}
         {%- endif -%}
       </button>
     {%- endfor -%}
+    </div>
+    {% render 'ob-option-rail-controls',
+      previous_label: 'Vorige kleuren tonen',
+      next_label: 'Meer kleuren tonen',
+      class_root: 'ob-card-swatches__button'
+    %}
   </div>
 {%- endif -%}

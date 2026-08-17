@@ -30,6 +30,13 @@
   {{ 'component-ob-swatches.css' | asset_url | stylesheet_tag }}
   {{ 'component-ob-brand-media.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'ob-card-swatches.js' | asset_url }}" defer="defer"></script>
+  {%- comment -%}
+    The chip row is a scrolling rail, so it needs the shared rail behaviour and
+    the shared tooltip node — a chip-anchored CSS tooltip would be clipped by
+    the rail's own scroll track.
+  {%- endcomment -%}
+  <script src="{{ 'ob-option-rail.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'ob-swatch-tooltip.js' | asset_url }}" defer="defer"></script>
 {%- endunless -%}
 {%- if card_product and card_product != empty -%}
   {%- liquid

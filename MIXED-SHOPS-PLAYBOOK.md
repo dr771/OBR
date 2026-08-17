@@ -140,6 +140,23 @@ Two things the first pass got wrong and are worth not relearning. Padding plus t
 
 Shipped corrections are deliberately desktop-only (≥990px), judged on the four-up grid at ~300px per tile: Hi-Tec 18px, Holster 10px. FitFlop was trialled and reverted to defaults. Mobile keeps stock framing until the values are re-measured on a two-up phone tile.
 
+**Amended 2026-08-17 (D12):** those insets are now percentages of the image's own box — Hi-Tec 6%, Holster 3.3% — because the same correction has to land on the card's colour chips, which are ~6× smaller crops of the same photography. A px value tuned on the tile swallows a chip. One number now drives both.
+
+### D12 — PLP card colour chips are a single-row rail, sized from the card — implemented and archived 2026-08-17
+
+The card chip row wrapped: a 12-colour product turned into three lines of 32px thumbnails, pushing title and price down and making every card in the grid a different height. Decision: port the PDP's rail (D-less, spec `pdp-option-rails`) onto the card, with chip size derived from the rail width so that **five chips are fully visible and the sixth is half-showing at any card width** — the peek *is* the overflow affordance, ahead of the fade and chevrons. ~50px chips on a 301px desktop card, ~27px on a 178px phone card, always one row. Spec: `plp-card-swatches`.
+
+Deltas from the PDP rail, each deliberate: card rails hide the scroll track (a grid renders up to 18 of them), chevrons advance **one chip** rather than a near-full-width group (a page-sized jump replaces the whole row between glances), and chevrons are not rendered at all without hover, where swiping is native and the control would cover the peeking chip. Chip selection is a hairline `color-mix(in srgb, var(--ob-product-photo-surface) 80%, #000)` — derived from the surface the chips multiply onto, so it tracks any future change to that colour — with the border width reserved transparently on every chip so turning it on never insets the image. A blend-drop was tried for selection first and rejected as too loud.
+
+Four traps worth not relearning:
+
+- **A scroll track clips its own tooltips.** `overflow-x: auto` forces `overflow-y` to a non-visible value, so a chip-anchored CSS pseudo-element tooltip cannot escape the rail. Both surfaces now share the fixed-position `ob-swatch-tooltip.js` node — the PDP already had to solve this; the PLP inherited the problem the moment it became a rail.
+- **`scrollIntoView` on a grid scrolls the page.** The PDP's reveal-the-selected-chip call was harmless with one rail; with 18 card rails initialising it drags the viewport to whichever card is being set up. The shared module now measures against the rail's own box and issues a horizontal-only `scrollBy`.
+- **`--x: unset` erases a custom property.** A CSS-wide keyword on a custom property applies to *the property*, so `--ob-card-chip-blend: unset` deleted the variable and the `var(…, multiply)` fallback kept winning. Use the real value.
+- **Chips were requesting less resolution than they render at.** 64px crops for 50px chips read as visibly pixellated at 2×. Both card and PDP chips now ask for a 200px crop across a 64–200 candidate range.
+
+JS is shared (`ob-option-rail.js`, renamed from `ob-pdp-option-rail.js`, keyed on `[data-ob-option-rail-shell]`); CSS is deliberately *not* — each surface styles its own fades and chevrons, so the PDP's shipped chrome never depends on a selector rewrite made for the PLP.
+
 ### Still open (to work through one by one)
 
 1. **Option-key sprawl across ~30 brands** — SB has a fixed, known set of Akeneo bracket keys (`[color]`, `[bottoms_size]`); a multi-brand catalog likely does not. **Partly measured:** 3 keys across 7 products, see D6.
@@ -248,7 +265,8 @@ In rough priority order:
 4. **Launch = a store-to-store migration, not a theme publish** (Nick's setup, confirmed 2026-08-11). There are **two separate Shopify shops**: this dev shop, which never goes public under the real domain, and a separate live shop created at launch. So nothing here is customer-facing and no theme push on this store needs treating as a release — work on whichever theme is convenient (the swatch/facet work is on Dawn `148245381229` as of 2026-08-11).
 
    **The trap to plan for:** a theme copy carries *only* the theme — not the metaobject/metafield definitions, entry ACTIVE status, or Search & Discovery filter config this build depends on. Tracked as a running checklist in **[MIGRATION-TO-LIVE.md](MIGRATION-TO-LIVE.md)**; append to it whenever you find a new shop-side dependency, rather than reconstructing the list at launch.
-5. **PLP/PDP reference and CTA color are decided (2026-08-16); homepage direction is deliberately still open.** Bolt is the approved reference for PLP/PDP typography, spacing/gaps, blue shadows, borders, and border-radii (see Homepage section above); primary color is `#38B6FF`. Homepage composition is explicitly not part of that decision and stays open per the owner — expect it to resolve on its own later, don't force it now. The CTA-text-contrast issue is known but deprioritized, not urgent. Reviews, newsletter popup, and promo bar remain gated on the client. See Open questions.
+5. **Carry the finished PLP card treatment to every other card surface — deferred on purpose (owner, 2026-08-17).** Homepage featured collections, related products, cross-sells and the rest must end up looking *exactly* like the collection grid card, but not until the PLP itself is settled. Today they render the chip rail but keep the older bordered chip look, because the borderless/blended/surface styling is scoped to `#ProductGridContainer` in `component-ob-swatches.css` — lifting that scope is the whole job, and doing it now would mean re-doing it after each PLP revision.
+6. **PLP/PDP reference and CTA color are decided (2026-08-16); homepage direction is deliberately still open.** Bolt is the approved reference for PLP/PDP typography, spacing/gaps, blue shadows, borders, and border-radii (see Homepage section above); primary color is `#38B6FF`. Homepage composition is explicitly not part of that decision and stays open per the owner — expect it to resolve on its own later, don't force it now. The CTA-text-contrast issue is known but deprioritized, not urgent. Reviews, newsletter popup, and promo bar remain gated on the client. See Open questions.
 
 ## Brand roster
 

@@ -1,14 +1,27 @@
-/* PDP single-row option rail navigation. */
+/*
+  Shared single-row rail navigation: overflow detection, edge-cue state, and
+  chevron scrolling. Used by the PDP colour/size option rails
+  (component-ob-option-rail.css) and by the PLP card colour chips
+  (component-ob-swatches.css).
+
+  A rail is `[data-ob-option-rail]` inside a `[data-ob-option-rail-shell]`; the
+  shell carries the `is-overflowing` / `is-at-start` / `is-at-end` classes each
+  surface styles its own fades and chevrons from.
+*/
 (function () {
   'use strict';
 
-  if (window.obPdpOptionRail) return;
-  window.obPdpOptionRail = true;
+  if (window.obOptionRail) return;
+  window.obOptionRail = true;
 
   var edgeTolerance = 2;
 
+  function prefersReducedMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
   function updateRail(rail) {
-    var shell = rail.closest('.product-form__option-rail-shell');
+    var shell = rail.closest('[data-ob-option-rail-shell]');
     if (!shell) return;
 
     var overflow = rail.scrollWidth - rail.clientWidth > edgeTolerance;
@@ -20,23 +33,47 @@
     shell.classList.toggle('is-at-end', !overflow || atEnd);
   }
 
+  /*
+    Horizontal-only reveal. `scrollIntoView` would also scroll the *page* to a
+    rail that sits below the fold, which is fine for the single PDP rail but
+    would yank the viewport around on a grid initialising 18 card rails at once.
+  */
   function revealSelected(rail, behavior) {
-    var selected = rail.querySelector('input[type="radio"]:checked + label');
+    var selected =
+      rail.querySelector('input[type="radio"]:checked + label') || rail.querySelector('.ob-card-swatch--active');
     if (!selected) return;
-    selected.scrollIntoView({ behavior: behavior, block: 'nearest', inline: 'nearest' });
+
+    var railBox = rail.getBoundingClientRect();
+    var itemBox = selected.getBoundingClientRect();
+    var delta = 0;
+
+    if (itemBox.left < railBox.left) {
+      delta = itemBox.left - railBox.left;
+    } else if (itemBox.right > railBox.right) {
+      delta = itemBox.right - railBox.right;
+    }
+
+    if (!delta) return;
+    rail.scrollBy({ left: delta, behavior: prefersReducedMotion() ? 'auto' : behavior });
   }
 
   function scrollRail(rail, direction) {
-    var firstItem = rail.querySelector('.ob-swatch-input-wrapper, label');
+    var firstItem = rail.querySelector('.ob-swatch-input-wrapper, .ob-card-swatch, label');
     var styles = window.getComputedStyle(rail);
     var gap = parseFloat(styles.columnGap || styles.gap) || 0;
     var itemStep = firstItem ? firstItem.getBoundingClientRect().width + gap : 0;
-    var distance = Math.max(itemStep, rail.clientWidth - itemStep);
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    /*
+      `step="item"` advances one choice at a time. On a card that is the point:
+      a page-sized jump replaces the whole chip row between glances and the
+      shopper loses their place. Rails without the attribute keep the
+      near-full-width jump.
+    */
+    var distance =
+      rail.dataset.obOptionRailStep === 'item' ? itemStep : Math.max(itemStep, rail.clientWidth - itemStep);
 
     rail.scrollBy({
       left: direction * distance,
-      behavior: reduceMotion ? 'auto' : 'smooth',
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
     });
   }
 
@@ -59,7 +96,7 @@
       });
     });
 
-    var shell = rail.closest('.product-form__option-rail-shell');
+    var shell = rail.closest('[data-ob-option-rail-shell]');
     var previousButton = shell && shell.querySelector('[data-ob-option-rail-previous]');
     var nextButton = shell && shell.querySelector('[data-ob-option-rail-next]');
 
