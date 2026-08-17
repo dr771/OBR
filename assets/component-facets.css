@@ -546,6 +546,11 @@
   padding: 2rem;
 }
 
+/* Kept in the DOM for future re-enablement — see plp-filter-panel-chrome. */
+.facets__price-max-caption {
+  display: none;
+}
+
 .facets__price .field + .field-currency {
   margin-left: 2rem;
 }
@@ -1130,7 +1135,8 @@ input.mobile-facets__checkbox {
 
   .facets-wrap-vertical {
     border: none;
-    padding-left: 0;
+    padding: 0;
+    margin: 0;
   }
 
   .facets__form-vertical {
@@ -1139,15 +1145,21 @@ input.mobile-facets__checkbox {
     width: 26rem;
   }
 
+  /* Section rhythm measured off the Bolt reference: the <details> owns the
+     20px block padding and the hairline; the summary itself has none. */
   .facets__disclosure-vertical {
-    border-top: 0.1rem solid rgba(var(--color-foreground), 0.1);
+    border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.1);
     margin-right: 0;
+    padding-block: 2rem;
+  }
+
+  .facets__disclosure-vertical + .facets__disclosure-vertical {
+    margin-top: 0.4rem;
   }
 
   .facets-vertical .facets__summary {
-    padding-top: 1.5rem;
+    padding: 0;
     margin-bottom: 0;
-    padding-bottom: 1.5rem;
   }
 
   .facets__heading--vertical {
@@ -1161,7 +1173,8 @@ input.mobile-facets__checkbox {
   }
 
   .facets__display-vertical {
-    padding-bottom: 1.5rem;
+    padding-bottom: 0;
+    margin-top: 1.6rem;
   }
 
   .facets-vertical .facets-wrapper {
@@ -1474,6 +1487,8 @@ input.mobile-facets__checkbox {
   font-weight: 600;
   line-height: 2rem;
   letter-spacing: normal;
+  /* Reference titles are full ink; Dawn's .facets__summary mutes them to 75%. */
+  color: rgb(var(--color-foreground));
 }
 
 .facets__form-vertical .facets__label {
@@ -1514,13 +1529,38 @@ input.mobile-facets__checkbox {
 .facets__summary-row {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.4rem 0.8rem;
 }
 
 .facets__summary-row .facets__summary-label {
   white-space: nowrap;
+}
+
+.facets__summary-row .icon-caret {
+  flex: 0 0 auto;
+  width: 1.6rem;
+  height: 1.6rem;
+  color: rgba(var(--color-foreground), 0.5);
+  /*
+    Dawn pins the caret at `top: calc(50% - 0.2rem)` — half of *its* ~0.4rem
+    caret. At 1.6rem that lands 6px below the title's centre line. The offset
+    must stay half the height above, so these two values move together.
+  */
+  top: calc(50% - 0.8rem);
+}
+
+/* Dawn underlines facet titles and option labels on hover; the reference does not. */
+.facets__form-vertical .facets__summary:hover .facets__summary-label,
+.facets__form-vertical .facets-layout-list .facets__label:hover .facet-checkbox__text-label,
+.facets__form-vertical .facets-layout-list input:focus ~ .facet-checkbox__text-label {
+  text-decoration: none;
+}
+
+/* Per-facet inline reset ("Opnieuw instellen") stays wired but hidden — see plp-filter-panel-chrome. */
+.facets__summary-row .facets__clear-inline-wrapper {
+  display: none;
 }
 
 .facets__clear-inline-wrapper {
@@ -1550,20 +1590,6 @@ input.mobile-facets__checkbox {
 
 .facets-vertical span.active-facets__button-inner {
   border-radius: 0;
-}
-
-.facets__triangle {
-  flex: 0 0 auto;
-  width: 0;
-  height: 0;
-  border-block: 0.45rem solid transparent;
-  border-inline-start: 0.65rem solid rgb(var(--color-foreground));
-  transform-origin: 35% 50%;
-  transition: transform var(--duration-short) ease;
-}
-
-.facets__disclosure-vertical[open] .facets__triangle {
-  transform: rotate(90deg);
 }
 
 @media screen and (min-width: 990px) {
@@ -1819,7 +1845,6 @@ input.mobile-facets__checkbox {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .facets__triangle,
   .ob-summon-filters {
     transition: none;
   }
@@ -1848,4 +1873,234 @@ input.mobile-facets__checkbox {
     --grid-desktop-horizontal-spacing: 2.4rem;
     --grid-desktop-vertical-spacing: 3.6rem;
   }
+
+  /* Dawn indents the whole facet stack 10px; the reference aligns the FILTER
+     heading with the top of the action bar instead. */
+  .facets-vertical .facets-container {
+    padding-top: 0;
+  }
+}
+
+/*
+  FILTER heading (toggles the whole accordion list) + the active-filter pill
+  row relocated into the main column below the sort bar — both measured from
+  the approved Bolt collection reference. See plp-filter-panel-chrome.
+*/
+.ob-filter-panel-heading {
+  margin-bottom: 1.2rem;
+}
+
+.ob-filter-panel-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #38b6ff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.ob-filter-panel-toggle .svg-wrapper {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.ob-filter-panel-toggle__label {
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/*
+  Text facet rows: 20px of text on a 32px pitch (6px block padding), matching
+  the reference's 20px row + 12px gap. Scoped away from the size and colour
+  grids, which own their own geometry (plp-size-facet-grid / plp-color-filter).
+  Dawn pins the checkmark absolutely against the old 10px padding, so it has to
+  be re-centred on the square whenever that padding changes.
+*/
+.facets__list--vertical:not(.ob-size-grid):not(.ob-color-grid) > .facets__item > .facets__label {
+  /* Dawn leaves this flex row at `normal`, so the 16px box top-aligns against
+     the 20px text and sits 2px above its centre line. */
+  align-items: center;
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+  padding-right: 0;
+}
+
+/* Centre on the row rather than a padding-derived offset, so this can't drift
+   again the next time the row's padding changes. */
+.facets__list--vertical:not(.ob-size-grid):not(.ob-color-grid) > .facets__item > .facets__label > .svg-wrapper {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/*
+  Active facet rows read full-ink AND semibold. The reference draws no
+  distinction at all, but the owner wants the selected value to carry weight —
+  the checkbox tick alone was too quiet next to a 75%-ink neighbour.
+  Requires the 500/600 body faces loaded in theme.liquid: without them a
+  declared 600 is silently remapped to 700 (see ob-font-weight-faces).
+*/
+.facets__form-vertical .facets__label.active .facet-checkbox__text {
+  font-weight: 600;
+}
+
+/*
+  Must claim the whole remaining row, not size to its content: with a short
+  result set (2 cards) an `auto` basis collapses the column, dragging the
+  action bar and the active-filter row in with it.
+*/
+.facets-vertical-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+/*
+  Action bar: count left, sort right, closed by a hairline with 28px of air
+  before the active-filter row — all measured off the Bolt reference.
+*/
+.facets-vertical-main .facets-vertical-sort {
+  width: 100%;
+  padding-bottom: 2rem;
+  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.1);
+  margin-bottom: 2.8rem;
+}
+
+.facets-vertical-main .facets-vertical-form {
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.6rem;
+  width: 100%;
+}
+
+.facets-vertical-main .product-count-vertical {
+  order: -1;
+  margin-left: 0;
+}
+
+.facets-vertical-main .active-facets-desktop {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin: 0 0 2.4rem;
+}
+
+/* Present with zero active filters — see ob-active-filters-desktop.liquid for why. */
+.facets-vertical-main .active-facets-desktop:empty {
+  display: none;
+  margin: 0;
+}
+
+.facets-vertical-main .active-facets-desktop .active-facets__button,
+.facets-vertical-main .active-facets-desktop .active-facets__button-wrapper,
+.facets-vertical-main .active-facets-desktop facet-remove {
+  margin: 0;
+  padding: 0;
+}
+
+/* Wrappers must not contribute a text line box, or the row measures taller
+   than the 30px pill it contains. */
+.facets-vertical-main .active-facets-desktop > facet-remove {
+  display: flex;
+  align-items: center;
+  line-height: 1.6rem;
+}
+
+/*
+  Dawn's `.facets-vertical .active-facets facet-remove:last-of-type` carries a
+  10px bottom margin, and `:last-of-type` gives it enough specificity to beat a
+  plain three-class reset. `align-items: center` centres the *margin* box, so
+  that 10px pushed the clear-all link 5px above the pills' centre line.
+*/
+.facets-vertical-main .active-facets.active-facets-desktop > facet-remove:last-of-type {
+  margin: 0;
+}
+
+.ob-active-filters__kicker {
+  margin-right: 0.4rem;
+  color: rgba(var(--color-foreground), 0.4);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.ob-active-filters__pill {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+  Dawn's own pill uses box-shadow as its border (span.active-facets__button-inner,
+  including a heavier :hover/:focus-visible box-shadow) — swap to a real border so
+  our own hover treatment doesn't fight it, since the proto's pill isn't Dawn's ring style.
+*/
+.facets-vertical-main .ob-active-filters__pill-inner.active-facets__button-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem 0.6rem 1.2rem;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.15);
+  border-radius: 999rem;
+  box-shadow: none;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.6rem;
+  /* Dawn's .button base tracks its label; the reference pill does not. */
+  letter-spacing: normal;
+  white-space: nowrap;
+}
+
+.facets-vertical-main .ob-active-filters__pill:hover .ob-active-filters__pill-inner {
+  border-color: rgba(var(--color-foreground), 0.35);
+  box-shadow: none;
+}
+
+/*
+  Dawn's .svg-wrapper is a fixed 20x20 box, which would set the pill's flex row
+  height and make it 34px instead of the reference's 30px. The close glyph is
+  12px there; spacing comes from the row's own 6px gap, not icon margins.
+*/
+.facets-vertical-main .ob-active-filters__pill-inner .svg-wrapper {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin: 0;
+  color: rgba(var(--color-foreground), 0.4);
+}
+
+.ob-active-filters__pill--color .ob-facet-color-chip {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-width: 0.1rem;
+}
+
+.ob-active-filters__clear-all.active-facets__button-remove {
+  margin: 0 0 0 0.4rem;
+  padding: 0;
+  color: rgba(var(--color-foreground), 0.5);
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.6rem;
+  letter-spacing: normal;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+/* Action-bar typography, measured off the reference: muted label, full-ink value. */
+.facets-vertical-main .facet-filters__label {
+  color: rgba(var(--color-foreground), 0.6);
+}
+
+.facets-vertical-main .facet-filters__sort {
+  color: rgb(var(--color-foreground));
 }

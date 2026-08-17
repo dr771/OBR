@@ -1,14 +1,9 @@
-# plp-filter-panel-chrome Specification
+## RENAMED Requirements
 
-## Purpose
-Defines the desktop vertical PLP filter panel's compact, reusable chrome and the control that restores access after the panel scrolls away.
-## Requirements
-### Requirement: Desktop facet accordions are open by default
-Every facet in the desktop vertical filter SHALL render expanded on initial page load, while remaining a native disclosure that the shopper can collapse and reopen.
+- FROM: `### Requirement: Facet carets are left-aligned filled triangles`
+- TO: `### Requirement: Facet carets sit at the right edge of each title`
 
-#### Scenario: Collection loads on desktop
-- **WHEN** a shopper opens a collection with vertical filters
-- **THEN** every facet's values are visible without first opening an accordion
+## MODIFIED Requirements
 
 ### Requirement: Desktop headings use centralized “Shop by” copy
 A blue “FILTER” heading (icon + label, reusing the theme's existing filter icon) SHALL render at the top of the desktop vertical sidebar, above the accordions, and every facet title SHALL prepend the translated `Shop by` phrase to the facet's display label. Facet titles SHALL omit selected-value counts and AND-operator help text.
@@ -47,45 +42,7 @@ Each desktop vertical facet SHALL show a muted chevron at the right edge of its 
 - **WHEN** the shopper collapses and reopens a facet
 - **THEN** the right-edge chevron rotates between its collapsed and expanded orientation while the disclosure remains keyboard operable
 
-### Requirement: Sidebar width follows compact facet content
-The desktop form SHALL use a 23rem content width, a 4.8rem gutter before the product grid, and keep each title on one line by allowing its reset link to wrap beneath it when necessary.
-
-#### Scenario: Long active facet title shares the desktop sidebar
-- **WHEN** a long facet title and its reset link cannot fit within the 23rem filter column
-- **THEN** the title remains unbroken, the reset link moves to the next row without clipping the facet content, and 4.8rem separates the filter column from the product grid
-
-### Requirement: A desktop summon control restores an off-screen panel
-On desktop vertical layouts only, a sticky translated summon button SHALL appear whenever the filter form is fully outside the viewport and remain hidden whenever any part of the form is visible. Activating it SHALL relocate the form within the sidebar bounds near the button without changing `window.scrollY`; returning to the sidebar top SHALL restore natural flow, and the cycle SHALL remain repeatable in either scroll direction.
-
-#### Scenario: Panel has scrolled out of view
-- **WHEN** the desktop filter form is fully outside the viewport
-- **THEN** a full-sidebar-width summon button appears at a stable offset below the header
-
-#### Scenario: Shopper summons the panel
-- **WHEN** the shopper activates the visible summon button
-- **THEN** the form reappears within the sidebar bounds, the button hides, and the page scroll position does not change
-
-#### Scenario: Shopper returns to the sidebar top
-- **WHEN** a relocated form's original sidebar top enters the viewport
-- **THEN** the form returns to natural flow and no empty gap remains
-
-### Requirement: Relocated panel is re-clamped after facet swaps
-When a facet or sort update replaces the product grid while the panel is relocated, the form SHALL be re-clamped to the sidebar's new bounds before the existing document scroll clamp runs. Load-more appends SHALL NOT reposition the panel.
-
-#### Scenario: Filtering substantially shortens the grid
-- **WHEN** a relocated panel no longer fits at its parked offset after a facet update
-- **THEN** it returns to natural flow and the shopper's scroll position is clamped within the real document
-
-#### Scenario: Load more appends products
-- **WHEN** products are appended without replacing the grid container child
-- **THEN** the relocated panel stays at its current position
-
-### Requirement: Summon behavior is desktop-vertical-only
-The summon control and relocation behavior SHALL NOT render on mobile or on a non-vertical desktop filter layout.
-
-#### Scenario: Mobile bar renders
-- **WHEN** a shopper uses filters on a mobile viewport
-- **THEN** no desktop summon control is present
+## ADDED Requirements
 
 ### Requirement: Desktop accordion sections keep proto-matched vertical rhythm
 Each accordion section in the desktop vertical filter SHALL use consistent top and bottom padding with a single hairline bottom border as its only separator from the next section; no additional margin SHALL appear between adjacent sections.
@@ -100,4 +57,3 @@ The price facet's “highest price” caption SHALL remain rendered in the DOM f
 #### Scenario: Shopper opens the Prijs facet
 - **WHEN** the shopper expands the Prijs accordion
 - **THEN** the min/max price inputs are visible and no “De hoogste prijs is €X,00” caption is shown
-

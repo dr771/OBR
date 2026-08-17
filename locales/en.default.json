@@ -191,6 +191,7 @@
     },
     "facets": {
       "filter_and_operator_subtitle": "Match all",
+      "active_filters": "Active",
       "apply": "Apply",
       "clear": "Clear",
       "clear_all": "Remove all",

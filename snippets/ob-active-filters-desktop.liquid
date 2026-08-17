@@ -1,0 +1,95 @@
+{% comment %}
+  Desktop vertical active-filter pill row: renders in the main content column
+  below the sort bar (not inside the filter sidebar) per plp-filter-panel-chrome.
+
+  Root element keeps the class active-facets-desktop — assets/facets.js's
+  renderActiveFacets() finds and refreshes it after an AJAX filter update via
+  a page-wide `document.querySelector('.active-facets-desktop')`, regardless
+  of where in the DOM it lives, so that class name must stay exactly as-is.
+
+  Color-value pills reuse ob-facet-color-chip (not value.swatch.color, which
+  Shopify never populates for this project's filtercolors metaobject — see
+  ob-facet-color-chip.liquid).
+
+  Accepts:
+  - results: {Object} Collection or Search object
+
+  Usage:
+  {% render 'ob-active-filters-desktop', results: collection %}
+{% endcomment %}
+
+{%- liquid
+  assign total_active_values = 0
+  for filter in results.filters
+    assign total_active_values = total_active_values | plus: filter.active_values.size
+    if filter.type == 'price_range' and filter.min_value.value != null or filter.type == 'price_range' and filter.max_value.value != null
+      assign total_active_values = total_active_values | plus: 1
+    endif
+  endfor
+  if results.url
+    assign results_url = results.url
+  else
+    assign terms = results.terms | escape
+    assign sort_by = results.sort_by | default: results.default_sort_by
+    assign results_url = '?q=' | append: terms | append: '&options%5Bprefix%5D=last&sort_by=' | append: sort_by
+  endif
+-%}
+{%- comment -%}
+  The wrapper renders unconditionally, even with zero active filters — Dawn's
+  own renderActiveFacets() (assets/facets.js) always does
+  `document.querySelector('.active-facets-desktop').innerHTML = ...` on every
+  AJAX filter update, so the element must already exist in the DOM before the
+  first filter is ever applied, or that call throws on a null result.
+{%- endcomment -%}
+<div class="active-facets active-facets-desktop ob-active-filters small-hide">
+  {%- if total_active_values > 0 -%}
+    <span class="ob-active-filters__kicker">{{ 'products.facets.active_filters' | t }}</span>
+    {%- for filter in results.filters -%}
+      {%- assign is_color_filter = false -%}
+      {%- if filter.param_name contains 'filtercolors' -%}
+        {%- assign is_color_filter = true -%}
+      {%- endif -%}
+      {%- for value in filter.active_values -%}
+        <facet-remove>
+          <a
+            href="{{ value.url_to_remove }}"
+            class="active-facets__button active-facets__button--light ob-active-filters__pill{% if is_color_filter %} ob-active-filters__pill--color{% endif %}"
+          >
+            <span class="active-facets__button-inner button button--tertiary ob-active-filters__pill-inner">
+              {%- if is_color_filter -%}
+                {% render 'ob-facet-color-chip', value: value %}
+              {%- endif -%}
+              {{ value.label | escape }}
+              <span class="svg-wrapper">
+                {{- 'icon-close-small.svg' | inline_asset_content -}}
+              </span>
+              <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
+            </span>
+          </a>
+        </facet-remove>
+      {%- endfor -%}
+      {%- if filter.type == 'price_range' -%}
+        {%- assign min = filter.min_value.value -%}
+        {%- assign max = filter.max_value.value -%}
+        {%- if min != null or max != null -%}
+          <facet-remove>
+            <a href="{{ filter.url_to_remove }}" class="active-facets__button active-facets__button--light ob-active-filters__pill">
+              <span class="active-facets__button-inner button button--tertiary ob-active-filters__pill-inner">
+                {{ min | default: 0 | money }} - {{ max | default: filter.range_max | money }}
+                <span class="svg-wrapper">
+                  {{- 'icon-close-small.svg' | inline_asset_content -}}
+                </span>
+                <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
+              </span>
+            </a>
+          </facet-remove>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    <facet-remove class="active-facets__button-wrapper ob-active-filters__clear-all-wrapper">
+      <a href="{{ results_url }}" class="active-facets__button-remove ob-active-filters__clear-all link">
+        {{ 'products.facets.clear_all' | t }}
+      </a>
+    </facet-remove>
+  {%- endif -%}
+</div>

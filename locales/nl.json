@@ -190,6 +190,7 @@
       "label": "Mediagalerij"
     },
     "facets": {
+      "active_filters": "Actief",
       "apply": "Toepassen",
       "clear": "Wissen",
       "clear_all": "Alles verwijderen",
