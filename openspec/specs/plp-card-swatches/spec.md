@@ -1,7 +1,7 @@
 # plp-card-swatches Specification
 
 ## Purpose
-Renders the PLP product card's color swatch row: one chip per color, each showing that color's own variant photo (this project's feed has no curated swatch-crop asset). Hovering a chip swaps the card image to that color and reveals its name; hovering the card reveals a second, color-matched shot. Also governs which color the card's base image represents, and where each chip links.
+Renders the product card's color swatch row on every surface that renders `card-product.liquid` — the PLP grid, search results, homepage featured collections, related products, and collage blocks alike: one chip per color, each showing that color's own variant photo (this project's feed has no curated swatch-crop asset). Hovering a chip swaps the card image to that color and reveals its name; hovering the card reveals a second, color-matched shot. Also governs which color the card's base image represents, and where each chip links.
 ## Requirements
 ### Requirement: Swatch chip visual is always the color's own variant photo
 Each PLP card swatch chip SHALL render the color's first variant's own product photo, cropped square. Unlike the reuse-source project, this project's Akeneo feed carries no per-color curated swatch-image metaobject and no curated color-crop map, so there is no preference chain to try before it — the variant photo is the only source. If a color has no resolvable image at all, the chip renders in a neutral/unavailable style rather than a broken or empty background.
@@ -208,4 +208,24 @@ Each swatch chip SHALL reveal its color's display name on hover or keyboard focu
 #### Scenario: Tooltip on a chip inside the scrolling rail
 - **WHEN** a shopper hovers any chip in the rail, including the partially visible one at the trailing edge
 - **THEN** the tooltip is fully visible above the rail rather than clipped by the rail's scroll track
+
+### Requirement: Card visual treatment applies to every surface rendering the product card
+
+The swatch-row visual treatment defined by this capability — borderless/blended chips, the surface-lightness selection cue with hairline border, the single-row rail with fades/chevrons, and the shared tooltip — SHALL apply identically wherever `card-product.liquid` renders, not only within the collection/search grid. A shopper SHALL NOT be able to tell, from the swatch row alone, whether a card is rendering inside the PLP grid, a homepage featured collection, a related-products rail, or a collage block.
+
+#### Scenario: Card renders inside a homepage featured collection
+- **WHEN** a product card with multiple colors renders inside a "Featured collection" section on the homepage
+- **THEN** its swatch row shows the same borderless/blended chips, surface-lightness selection cue, and single-row rail behavior as a card in the collection grid
+
+#### Scenario: Card renders inside related products
+- **WHEN** a product card renders inside the PDP's related-products section
+- **THEN** its swatch row matches the collection-grid treatment, including rail overflow fades/chevrons when the product has more colors than fit
+
+#### Scenario: Card renders inside a collage block
+- **WHEN** a product card renders inside a homepage collage block
+- **THEN** its swatch row matches the collection-grid treatment
+
+#### Scenario: Card renders inside the collection grid or search results
+- **WHEN** a product card renders inside the collection page or search results grid
+- **THEN** behavior is unchanged from before this requirement was added
 

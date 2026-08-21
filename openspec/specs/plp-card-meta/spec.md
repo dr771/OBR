@@ -1,7 +1,7 @@
 # plp-card-meta Specification
 
 ## Purpose
-Governs the text block under a PLP product card's image — brand label, product name, price — and the typography they render in. Values are measured from the approved Bolt reference collection page rather than chosen, since the card is the most repeated element on the site and the reference is what the design was signed off against.
+Governs the text block under a product card's image — brand label, product name, price — and the typography they render in, identically wherever `card-product.liquid` renders (the PLP grid, search results, homepage featured collections, related products, and collage blocks alike). Values are measured from the approved Bolt reference collection page rather than chosen, since the card is the most repeated element on the site and the reference is what the design was signed off against.
 
 ## Requirements
 
@@ -37,3 +37,15 @@ The theme SHALL load a font face for every weight the card typography declares. 
 #### Scenario: Body font does not carry a declared weight
 - **WHEN** a merchant selects a body font whose library entry lacks one of those weights
 - **THEN** no face is emitted for it and the page still renders, rather than the theme erroring on a nil font
+
+### Requirement: Card meta typography applies to every surface rendering the product card
+
+The Bolt-matched brand-label, product-name, and price typography defined by this capability SHALL apply identically wherever `card-product.liquid` renders, not only within the collection/search grid, so the card reads as the same repeated element across the whole site.
+
+#### Scenario: Card renders inside a homepage featured collection
+- **WHEN** a product card renders inside a "Featured collection" section on the homepage
+- **THEN** its brand label, product name, and price render with the same typography as a card in the collection grid
+
+#### Scenario: Card renders inside related products or a collage block
+- **WHEN** a product card renders inside the PDP's related-products section or a homepage collage block
+- **THEN** its brand label, product name, and price render with the same typography as a card in the collection grid

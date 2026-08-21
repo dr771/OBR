@@ -1,7 +1,7 @@
 # plp-brand-card-treatment Specification
 
 ## Purpose
-Lets each brand's product-card photography be corrected independently. Original Brands sells ~30 brands whose photo policies disagree — cut-out packshots on white, shadowed studio shots, full-bleed lifestyle frames — while the grid has to read as one wall of product. Brand comes from Shopify's native `vendor` field (the same signal `plp-brand-facet` uses), so no Akeneo bracket-key detection and no theme-side brand allowlist is involved. Corrections are declarative CSS-variable overrides, never per-brand template branches.
+Lets each brand's product-card photography be corrected independently, identically wherever that brand's card renders — the PLP grid, search results, homepage featured collections, related products, and collage blocks alike. Original Brands sells ~30 brands whose photo policies disagree — cut-out packshots on white, shadowed studio shots, full-bleed lifestyle frames — while the grid has to read as one wall of product. Brand comes from Shopify's native `vendor` field (the same signal `plp-brand-facet` uses), so no Akeneo bracket-key detection and no theme-side brand allowlist is involved. Corrections are declarative CSS-variable overrides, never per-brand template branches.
 ## Requirements
 ### Requirement: Every product card carries its brand as a styling hook
 Each rendered product card SHALL expose its brand in the markup twice: as a class `ob-brand--<vendor handleized>` on the card wrapper, and as `data-brand="<vendor>"` on the card's custom element for scripting and debugging. The hook SHALL be emitted by the shared card snippet so every card surface — collection grid, search, related products, featured collection, collage, complementary products — carries it identically.
@@ -56,4 +56,16 @@ The collection grid's card images SHALL keep their `mix-blend-mode: multiply` ag
 #### Scenario: Brand ships photography on a coloured or dark backdrop
 - **WHEN** such a brand's block sets the blend variable to `normal`
 - **THEN** only that brand's card images stop multiplying, and every other brand is unaffected
+
+### Requirement: Brand photo corrections apply to every surface rendering the product card
+
+A brand's photo-correction custom-property overrides (padding, `object-fit`, tile background, blend mode) SHALL apply identically wherever that brand's product card renders — the collection grid, homepage featured collections, related products, and collage blocks alike — since the correction is declared on the brand class (`.ob-brand--<vendor handle>`), not on a grid-container-scoped selector.
+
+#### Scenario: A corrected brand's card renders on the homepage
+- **WHEN** a Hi-Tec or Holster product card renders inside a homepage featured collection or collage block
+- **THEN** its photo shows the same brand-specific padding and treatment as the identical card in the collection grid
+
+#### Scenario: A corrected brand's card renders in related products
+- **WHEN** a Hi-Tec or Holster product card renders inside the PDP's related-products section
+- **THEN** its photo shows the same brand-specific correction as the collection grid
 

@@ -385,7 +385,7 @@
   brand primary. Multiplying the product photography into it turns white source
   backgrounds #f1f5f9 without changing the card's content or PDP media.
 */
-#ProductGridContainer .product-card-wrapper {
+.card-wrapper.product-card-wrapper {
   /*
     On the wrapper, not on .card__media, so the colour chips inherit the same
     surface token their tiles use and can derive from it.
@@ -393,21 +393,28 @@
   --ob-product-photo-surface: #f1f5f9;
 }
 
-#ProductGridContainer .product-card-wrapper .card__inner.gradient {
+.card-wrapper.product-card-wrapper .card__inner.gradient {
   background: transparent;
 }
 
-#ProductGridContainer .product-card-wrapper .card__media {
+.card-wrapper.product-card-wrapper .card__inner .card__media {
+  /*
+    Dawn's own `.card .card__inner .card__media` rule sets border-radius at
+    three class selectors deep. Losing the #ProductGridContainer id (which
+    used to win this outright) means this selector has to match that depth
+    itself, not just re-add `.product-card-wrapper` — a two-class selector
+    still loses to Dawn's three.
+  */
   background-color: var(--ob-product-photo-surface);
   border-radius: 1.6rem;
   isolation: isolate;
 }
 
-#ProductGridContainer .product-card-wrapper .card__media .media {
+.card-wrapper.product-card-wrapper .card__inner .card__media .media {
   border-radius: inherit;
 }
 
-#ProductGridContainer .product-card-wrapper .card__media .media img {
+.card-wrapper.product-card-wrapper .card__media .media img {
   /*
     Multiply is what makes mixed-brand photography sit on one surface: a white
     packshot background multiplies away into --ob-product-photo-surface. Brands
@@ -432,11 +439,11 @@
   washed out on a white one. Active/hover/focus-visible additionally draw a
   hairline border on top of the surface cue; resting chips stay borderless.
 */
-#ProductGridContainer .product-card-wrapper .ob-card-swatches {
+.card-wrapper.product-card-wrapper .ob-card-swatches {
   margin-top: 0.8rem;
 }
 
-#ProductGridContainer .product-card-wrapper .ob-card-swatch {
+.card-wrapper.product-card-wrapper .ob-card-swatch {
   /*
     Nothing draws this, but dropping it would shrink each chip's border box by
     2px and change the rail's five-full-plus-a-peek arithmetic.
@@ -446,28 +453,28 @@
   transition: background-color var(--duration-short) ease;
 }
 
-#ProductGridContainer .product-card-wrapper .ob-card-swatch img {
+.card-wrapper.product-card-wrapper .ob-card-swatch img {
   mix-blend-mode: multiply;
 }
 
-#ProductGridContainer .product-card-wrapper .ob-card-swatch--active,
-#ProductGridContainer .product-card-wrapper .ob-card-swatch:hover,
-#ProductGridContainer .product-card-wrapper .ob-card-swatch:focus-visible {
+.card-wrapper.product-card-wrapper .ob-card-swatch--active,
+.card-wrapper.product-card-wrapper .ob-card-swatch:hover,
+.card-wrapper.product-card-wrapper .ob-card-swatch:focus-visible {
   background-color: var(--ob-product-photo-surface);
   border-color: #66666612;
 }
 
-#ProductGridContainer .product-card-wrapper .ob-card-swatch:focus-visible {
+.card-wrapper.product-card-wrapper .ob-card-swatch:focus-visible {
   outline: 0.2rem solid rgb(var(--color-foreground));
   outline-offset: -0.2rem;
 }
 
-#ProductGridContainer .product-card-wrapper .ob-card-swatch--unavailable {
+.card-wrapper.product-card-wrapper .ob-card-swatch--unavailable {
   opacity: 0.35;
 }
 
 /* Product-card text follows the measured Bolt PLP typography. */
-#ProductGridContainer .product-card-wrapper .card__heading.h5 {
+.card-wrapper.product-card-wrapper .card__heading.h5 {
   font-family: var(--font-body-family);
   font-size: 1.6rem;
   font-weight: 500;
@@ -475,7 +482,7 @@
   letter-spacing: normal;
 }
 
-#ProductGridContainer .product-card-wrapper .caption-with-letter-spacing {
+.card-wrapper.product-card-wrapper .caption-with-letter-spacing {
   font-family: var(--font-body-family);
   font-size: 1rem;
   font-weight: 600;
@@ -492,12 +499,12 @@
 }
 
 /* Brand label sits above the title, 4px clear of it (measured on the reference). */
-#ProductGridContainer .product-card-wrapper .caption-with-letter-spacing + .card__heading {
+.card-wrapper.product-card-wrapper .caption-with-letter-spacing + .card__heading {
   margin-top: 0.4rem;
 }
 
-#ProductGridContainer .product-card-wrapper .price,
-#ProductGridContainer .product-card-wrapper .price-item {
+.card-wrapper.product-card-wrapper .price,
+.card-wrapper.product-card-wrapper .price-item {
   font-family: var(--font-body-family);
   font-size: 1.4rem;
   font-weight: 600;
@@ -505,7 +512,7 @@
   letter-spacing: normal;
 }
 
-#ProductGridContainer .product-card-wrapper .badge {
+.card-wrapper.product-card-wrapper .badge {
   font-family: var(--font-body-family);
   font-size: 1rem;
   font-weight: 700;
@@ -515,7 +522,7 @@
 }
 
 /* Wishlist King's collection heart matches the approved Bolt card control. */
-#ProductGridContainer .product-card-wrapper wk-button.wk-floating {
+.card-wrapper.product-card-wrapper wk-button.wk-floating {
   width: 3.6rem;
   height: 3.6rem;
   top: 1.2rem !important;
@@ -525,7 +532,7 @@
   transform: none !important;
 }
 
-#ProductGridContainer .product-card-wrapper wk-button.wk-floating .wk-button {
+.card-wrapper.product-card-wrapper wk-button.wk-floating .wk-button {
   display: grid;
   place-items: center;
   width: 100% !important;
@@ -543,18 +550,18 @@
   transition: background-color 0.15s ease;
 }
 
-#ProductGridContainer .product-card-wrapper wk-button.wk-floating .wk-button:hover {
+.card-wrapper.product-card-wrapper wk-button.wk-floating .wk-button:hover {
   background-color: #fff;
 }
 
-#ProductGridContainer .product-card-wrapper wk-button.wk-floating .wk-button:hover:not(.wk-selected) {
+.card-wrapper.product-card-wrapper wk-button.wk-floating .wk-button:hover:not(.wk-selected) {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2338b6ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5C2 10.8 3.51 12.54 5 14l7 7Z'/%3E%3C/svg%3E");
 }
 
-#ProductGridContainer .product-card-wrapper wk-button.wk-floating .wk-icon {
+.card-wrapper.product-card-wrapper wk-button.wk-floating .wk-icon {
   display: none;
 }
 
-#ProductGridContainer .product-card-wrapper wk-button.wk-floating .wk-button.wk-selected {
+.card-wrapper.product-card-wrapper wk-button.wk-floating .wk-button.wk-selected {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%2338b6ff' stroke='%2338b6ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5C2 10.8 3.51 12.54 5 14l7 7Z'/%3E%3C/svg%3E");
 }
