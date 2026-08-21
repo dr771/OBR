@@ -117,6 +117,8 @@
     "product": {
       "add_to_cart": "Aan winkelwagen toevoegen",
       "description": "Beschrijving",
+      "details_heading": "Productdetails",
+      "materials_maintenance_heading": "Materiaal & onderhoud",
       "on_sale": "Aanbieding",
       "quantity": {
         "label": "Aantal",

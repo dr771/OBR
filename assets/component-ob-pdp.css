@@ -526,13 +526,17 @@
   margin-top: 0.4rem;
 }
 
-.ob-pdp .product__accordion .summary__title,
 .ob-pdp .product__accordion summary {
   padding: 1.6rem 0;
+}
+
+.ob-pdp .product__accordion .accordion__title {
+  max-width: none;
+  font-family: var(--font-body-family);
   font-size: 1.4rem;
   font-weight: 600;
   line-height: 2rem;
-  letter-spacing: 0;
+  letter-spacing: normal;
   color: var(--ob-pdp-ink);
 }
 
