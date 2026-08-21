@@ -23,3 +23,5 @@ Thumbs.db
 .shopify
 node_modules
 *.zip
+# Scratch measurement artifacts from proto-conversion work
+.tmp-pdp/

@@ -226,18 +226,6 @@
       id="GalleryThumbnails-{{ section.id }}"
       class="thumbnail-slider slider-mobile-gutter quick-add-hidden{% unless section.settings.gallery_layout contains 'thumbnail' %} medium-hide large-up-hide{% endunless %}{% if section.settings.mobile_thumbnails != 'show' %} small-hide{% endif %}{% if media_count <= 3 %} thumbnail-slider--no-slide{% endif %}"
     >
-      <button
-        type="button"
-        class="slider-button slider-button--prev{% if media_count <= 3 %} small-hide{% endif %}{% if media_count <= 4 %} medium-hide large-up-hide{% endif %}"
-        name="previous"
-        aria-label="{{ 'general.slider.previous_slide' | t }}"
-        aria-controls="GalleryThumbnails-{{ section.id }}"
-        data-step="3"
-      >
-        <span class="svg-wrapper">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
-        </span>
-      </button>
       <ul
         id="Slider-Thumbnails-{{ section.id }}"
         class="thumbnail-list list-unstyled slider slider--mobile{% if section.settings.gallery_layout == 'thumbnail_slider' %} slider--tablet-up{% endif %}"
@@ -365,18 +353,52 @@
           {%- endunless -%}
         {%- endfor -%}
       </ul>
-      <button
-        type="button"
-        class="slider-button slider-button--next{% if media_count <= 3 %} small-hide{% endif %}{% if media_count <= 4 %} medium-hide large-up-hide{% endif %}"
-        name="next"
-        aria-label="{{ 'general.slider.next_slide' | t }}"
-        aria-controls="GalleryThumbnails-{{ section.id }}"
-        data-step="3"
-      >
-        <span class="svg-wrapper">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
+      {%- comment -%}
+        OB: the reference puts the image counter and BOTH rail chevrons on one row
+        beneath the thumbnails instead of flanking the rail. The buttons keep their
+        name/data-step/aria-controls, so SliderComponent (which finds them with a
+        plain querySelector) still drives the rail from their new position.
+
+        The counter deliberately avoids Dawn's .slider-counter--current/--total
+        classes: inside a slider-component those are overwritten with *page*
+        numbers, which for a 4-up rail of 7 images would read "1 of 4". It is
+        driven instead by ob-pdp-gallery.js from the active thumbnail.
+      {%- endcomment -%}
+      <div class="ob-pdp__gallery-nav">
+        <span
+          class="ob-pdp__gallery-count"
+          data-ob-gallery-count
+          data-ob-gallery-total="{{ media_count }}"
+        >
+          {{- 'products.product.media.image_counter' | t: index: 1, total: media_count -}}
         </span>
-      </button>
+        <div class="ob-pdp__gallery-chevrons">
+          <button
+            type="button"
+            class="slider-button slider-button--prev"
+            name="previous"
+            aria-label="{{ 'general.slider.previous_slide' | t }}"
+            aria-controls="GalleryThumbnails-{{ section.id }}"
+            data-step="3"
+          >
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </button>
+          <button
+            type="button"
+            class="slider-button slider-button--next"
+            name="next"
+            aria-label="{{ 'general.slider.next_slide' | t }}"
+            aria-controls="GalleryThumbnails-{{ section.id }}"
+            data-step="3"
+          >
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </button>
+        </div>
+      </div>
     </slider-component>
   {%- endif -%}
 </media-gallery>

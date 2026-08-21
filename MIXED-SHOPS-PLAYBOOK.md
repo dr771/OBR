@@ -191,6 +191,35 @@ Verified live at desktop width (collection and search pages, multiple simultaneo
 
 - **Image filename convention** (was the "biggest single reuse risk") — **holds across all 4 synced brands**, confirmed 2026-08-11: `{sha1}_{product_code}_{color_code}__{shot}[_{uuid}]`. **Two real traps:** the filename code is not always one underscore-delimited segment (Loewenweiss uses `192_953`, `54_352`), and the corresponding SKU can use hyphens (`192-953`) where the filename uses underscores. SB's parser silently fails the first case; a raw SKU↔filename comparison fails the second. OB uses `ob-media-color-code` plus `ob-variant-color-code` to parse and normalize both sides centrally.
 
+### D14 — The PDP is deliberately narrower than the PLP — implemented 2026-08-21
+
+The Bolt reference caps its **PDP** at `max-w-7xl` (1280px, 24px inset) while its **PLP** uses `max-w-[1600px]`. Verified directly in the proto rather than assumed, so the narrower product page is a design decision, not a porting slip — and it means OB's PLP (a 2.4rem inset with no cap, per `plp-grid-config`/D10) and its PDP legitimately disagree about content width.
+
+Implemented as a CSS cap scoped to the product section (`.ob-pdp .page-width`), **not** by lowering `settings.page_width` — that setting is protected deployment state shared by every template, and lowering it would silently narrow the PLP too. Desktop columns are `minmax(0, 1.12fr) minmax(40rem, 0.88fr)` at a 5.6rem gutter, giving 658.5 / 517.4 at a 1440px viewport, matching the reference exactly.
+
+Three traps this cost, all invisible in a screenshot and all found with a winning-rule dump rather than by eye:
+- Dawn's `.product--medium:not(.product--no-media) .product__media-wrapper` is **0,3,0** (the `:not()` counts as a class), so a tidy `.ob-pdp .product__media-wrapper` lost and both columns stayed capped at 55%/45% *of their own grid track*. The grid was right all along; the items in it weren't.
+- Dawn sizes the media box with a **percentage `padding-top` ratio hack**. Setting `aspect-ratio` does not remove it — it is a property you never declared, so it survives and adds ~356px of padding inside a 358px frame.
+- Dawn sets an explicit `grid-template-columns: repeat(5, 1fr)` on the thumbnail list, and `grid-auto-columns` only sizes *implicit* tracks — so the first five thumbnails kept Dawn's tracks, the rail fit its container exactly, and the chevrons had nothing to scroll.
+
+### D15 — Proto claims are checked against the real policy before shipping — decided 2026-08-21
+
+The reference's PDP trust strip reads `30 dagen gratis retour`. The published policy on originalbrands.nl withholds **€5.95** in return costs, so shipping that line would have been a false claim on every product page. Replaced with `Voor 12u besteld, volgende werkdag geleverd`, taken verbatim from the live site's own USP bar, alongside `Gratis levering vanaf € 70 in BE & NL`.
+
+The general rule: **pixel-perfect conversion is obedient about geometry, not about assertions.** A proto's placeholder copy is a design device; any claim about price, delivery, returns or guarantees gets verified against the merchant's actual published terms before it ships. Both statements are `usp` blocks so a merchant can correct them without a deployment.
+
+### D16 — Gallery frame: keep the hairline, drop the inset, square the aspect — decided 2026-08-21
+
+Three corrections to the Bolt reference's photo treatment, all forced by OB's actual asset pipeline rather than by taste. The **3.2rem rounded hairline frame stays** — that reads correctly and was never the problem.
+
+- **Image inset dropped** (reference: 40px main / 8px thumb). Akeneo photography ships with its own backdrop and whitespace baked in, so the inset doubled up against the supplied one.
+- **Frame aspect `1.06/1` → `1/1`.** Every Akeneo image across all six synced brands is exactly 1:1 (verified via `/products/<handle>.js` across Odlo, FitFlop, Holster, Hi-Tec, Loewenweiss and Sweaty Betty). At 1.06 the square photo letterboxed, and the 3.2rem radius then clipped the white bars into a corner that read as a cropping bug — not as spare space.
+- **Dawn's second border removed.** `global-media-settings` puts a *square* `1px solid rgba(18,18,18,0.05)` on `.product-media-container`, one pixel outside the rounded frame. Two concentric borders, one rounded and one not, show up as a stray right-angle in the corner and are very easy to misread as "the frame border is wrong" — the rounded one is fine; the outer one is the intruder. Check for a second border before removing the one you can name.
+
+The wishlist control beside add-to-cart became a 5.6rem circle with the PDP hairline, matching the button's height and radius language (was 48x56, square, Dawn's translucent black).
+
+General rule: **a reference's photo treatment is calibrated to the reference's photography.** Insets, frame aspects and backdrops are the first things to re-derive when the real pipeline supplies differently-shaped assets — measure the catalogue's actual image ratios before porting a frame aspect. Geometry ports cleanly; photo treatment often does not.
+
 ## Reuse ledger (SB's shipped `openspec/specs/`)
 
 | Capability (spec) | Verdict | Note |

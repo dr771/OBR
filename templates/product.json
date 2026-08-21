@@ -41,6 +41,20 @@
           "settings": {
             "share_label": "Share"
           }
+        },
+        "usp_delivery": {
+          "type": "usp",
+          "settings": {
+            "text": "Gratis levering vanaf € 70 in BE & NL",
+            "icon": "truck"
+          }
+        },
+        "usp_dispatch": {
+          "type": "usp",
+          "settings": {
+            "text": "Voor 12u besteld, volgende werkdag geleverd",
+            "icon": "clock"
+          }
         }
       },
       "block_order": [
@@ -50,7 +64,9 @@
         "variant_picker",
         "buy_buttons",
         "description",
-        "share"
+        "share",
+        "usp_delivery",
+        "usp_dispatch"
       ],
       "settings": {
         "enable_sticky_info": true,
@@ -58,7 +74,7 @@
         "media_size": "medium",
         "constrain_to_viewport": true,
         "media_fit": "contain",
-        "gallery_layout": "stacked",
+        "gallery_layout": "thumbnail_slider",
         "mobile_thumbnails": "hide",
         "media_position": "left",
         "image_zoom": "lightbox",

@@ -71,11 +71,13 @@
         endif
       -%}
       {%- if picker_type == 'swatch' -%}
-        <fieldset class="js product-form__input product-form__input--swatch{% if option_kind == 'color' and ob_single_row_options %} product-form__input--option-rail{% endif %}">
-          <legend class="form__label">
-            {{ option_label }}:
-            <span data-selected-value>
-              {{- option.selected_value -}}
+        <fieldset class="js product-form__input product-form__input--swatch product-form__input--ob-block{% if option_kind == 'color' and ob_single_row_options %} product-form__input--option-rail{% endif %}">
+          <legend class="form__label product-form__ob-label-row">
+            <span>
+              {{ option_label }}:
+              <span class="ob-option-value" data-selected-value>
+                {{- option.selected_value -}}
+              </span>
             </span>
           </legend>
           {%- if option_kind == 'color' and ob_single_row_options -%}
@@ -97,12 +99,17 @@
           {%- endif -%}
         </fieldset>
       {%- elsif picker_type == 'button' -%}
-        <fieldset class="js product-form__input product-form__input--pill{% if option_kind == 'size' %} product-form__input--size-grid{% endif %}">
-          <legend class="form__label">
-            {{ option_label }}:
-            <span data-selected-value>
-              {{- option.selected_value -}}
+        <fieldset class="js product-form__input product-form__input--pill product-form__input--ob-block{% if option_kind == 'size' %} product-form__input--size-grid{% endif %}">
+          <legend class="form__label product-form__ob-label-row">
+            <span>
+              {{ option_label }}:
+              <span class="ob-option-value" data-selected-value>
+                {{- option.selected_value -}}
+              </span>
             </span>
+            {%- if option_kind == 'size' -%}
+              {%- render 'ob-size-chart', option: option, surface: 'trigger' -%}
+            {%- endif -%}
           </legend>
           {%- if option_kind == 'size' -%}
             <div{% if ob_single_row_options %} class="product-form__option-rail-shell product-form__option-rail-shell--size" data-ob-option-rail-shell{% endif %}>
@@ -124,6 +131,13 @@
             </div>
           {%- endif -%}
         </fieldset>
+        {%- comment -%}
+          The dialog must sit outside the fieldset; the trigger inside the legend
+          above targets it by the same derived id.
+        {%- endcomment -%}
+        {%- if option_kind == 'size' -%}
+          {%- render 'ob-size-chart', option: option, surface: 'dialog' -%}
+        {%- endif -%}
       {%- else -%}
         <div class="product-form__input product-form__input--dropdown">
           <label class="form__label" for="Option-{{ section.id }}-{{ forloop.index0 }}">

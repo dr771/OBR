@@ -1,0 +1,40 @@
+{% comment %}
+  OB: PDP trust strip — short delivery/service promises under the buy row.
+
+  Statements come from repeatable `usp` blocks on main-product rather than from
+  hard-coded copy, because these are merchandising claims that change and must
+  be legally accurate per market. The reference's own second line ("30 dagen
+  gratis retour") is deliberately NOT the default: the published policy
+  withholds €5.95 in return costs, so shipping it would be a false claim.
+
+  Renders nothing at all — including its rules — when no block has text, so an
+  unconfigured PDP shows no empty band.
+
+  Accepts:
+  - blocks: {Array} section.blocks
+
+  Usage:
+  {% render 'ob-usp-strip', blocks: section.blocks %}
+{% endcomment %}
+
+{%- liquid
+  assign ob_usp_count = 0
+  for block in blocks
+    if block.type == 'usp' and block.settings.text != blank
+      assign ob_usp_count = ob_usp_count | plus: 1
+    endif
+  endfor
+-%}
+
+{%- if ob_usp_count > 0 -%}
+  <div class="ob-usp">
+    {%- for block in blocks -%}
+      {%- if block.type == 'usp' and block.settings.text != blank -%}
+        <div class="ob-usp__item" {{ block.shopify_attributes }}>
+          {%- render 'ob-icon', icon: block.settings.icon, class: 'ob-usp__icon' -%}
+          <span>{{ block.settings.text }}</span>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}

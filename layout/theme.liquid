@@ -81,6 +81,14 @@
       endcomment
       assign body_font_medium = settings.type_body_font | font_modify: 'weight', '500'
       assign body_font_semibold = settings.type_body_font | font_modify: 'weight', '600'
+
+      comment
+        Same trap on the heading side: only the header font's configured weight
+        loads, so the PDP title's 600 (measured off the Bolt reference) rendered
+        as the theme's 400 while getComputedStyle still reported 600. Guarded the
+        same way, so a header font without a 600 face simply doesn't load one.
+      endcomment
+      assign header_font_semibold = settings.type_header_font | font_modify: 'weight', '600'
     %}
 
     {% style %}
@@ -91,6 +99,7 @@
       {%- if body_font_medium -%}{{ body_font_medium | font_face: font_display: 'swap' }}{%- endif -%}
       {%- if body_font_semibold -%}{{ body_font_semibold | font_face: font_display: 'swap' }}{%- endif -%}
       {{ settings.type_header_font | font_face: font_display: 'swap' }}
+      {%- if header_font_semibold -%}{{ header_font_semibold | font_face: font_display: 'swap' }}{%- endif -%}
 
       {% for scheme in settings.color_schemes -%}
         {% assign scheme_classes = scheme_classes | append: ', .color-' | append: scheme.id %}

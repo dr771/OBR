@@ -1,0 +1,46 @@
+{% comment %}
+  OB: PDP breadcrumb trail, matched to the Bolt reference.
+
+  Ancestry comes from Shopify's own routing rather than a metafield: when a
+  shopper reaches a product through a collection the `collection` object is
+  populated, which is the trail they actually walked. Falling back to the
+  product's first collection keeps a direct/deep link from rendering a stub
+  trail, and a product in no collection still gets Home > product.
+
+  Separators are decorative and marked aria-hidden, so a screen reader reads
+  "Home, Dagelijks Comfort, Slippers" rather than interleaved chevrons.
+
+  Accepts:
+  - product: {Object} product object (optional; falls back to the global)
+
+  Usage:
+  {% render 'ob-breadcrumb', product: product %}
+{% endcomment %}
+
+{%- liquid
+  assign ob_product = product | default: product
+  assign ob_collection = collection
+  if ob_collection == blank or ob_collection.handle == blank
+    assign ob_collection = ob_product.collections.first
+  endif
+-%}
+
+<nav class="ob-breadcrumb" aria-label="{{ 'general.breadcrumb.label' | t }}">
+  <ol class="ob-breadcrumb__list">
+    <li class="ob-breadcrumb__item">
+      <a class="ob-breadcrumb__link" href="{{ routes.root_url }}">{{ 'general.breadcrumb.home' | t }}</a>
+      {%- render 'ob-icon', icon: 'chevron-right', class: 'ob-breadcrumb__sep' -%}
+    </li>
+
+    {%- if ob_collection != blank and ob_collection.handle != blank -%}
+      <li class="ob-breadcrumb__item">
+        <a class="ob-breadcrumb__link" href="{{ ob_collection.url }}">{{ ob_collection.title }}</a>
+        {%- render 'ob-icon', icon: 'chevron-right', class: 'ob-breadcrumb__sep' -%}
+      </li>
+    {%- endif -%}
+
+    <li class="ob-breadcrumb__item">
+      <span class="ob-breadcrumb__current" aria-current="page">{{ ob_product.title | escape }}</span>
+    </li>
+  </ol>
+</nav>

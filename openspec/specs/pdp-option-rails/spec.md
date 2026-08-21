@@ -41,11 +41,17 @@ Rail chevrons SHALL be buttons with localized accessible labels identifying thei
 - **THEN** the selected size is scrolled into the visible portion of its rail
 
 ### Requirement: Color and size targets retain their compact visual hierarchy
-Color chips SHALL be 5.4rem square. Recognized size labels SHALL be 5.6rem square in narrow product-information columns and retain the responsive desktop sizing defined by `pdp-size-picker-grid`. Theme foreground, background, and duration variables SHALL drive rail chrome rather than brand-specific values.
+Color chips SHALL be 4.8rem square with a 0.8rem radius and a 0.4rem inset around their image. An unselected chip SHALL carry a hairline border; the selected chip SHALL carry a full-ink border reinforced by a 1px ring. Recognized size labels SHALL retain the responsive sizing defined by `pdp-size-picker-grid`. Theme foreground, background, and duration variables SHALL drive rail chrome rather than brand-specific values.
 
 #### Scenario: Shopper views the picker on tablet width
+
 - **WHEN** a product has both recognized color and size options in a narrow/tablet product-information column
-- **THEN** color chips are 5.4rem square and size boxes are 5.6rem square, so color choices do not read smaller than size choices
+- **THEN** color chips are 4.8rem square, so color choices do not read smaller than size choices
+
+#### Scenario: Shopper selects a color
+
+- **WHEN** a shopper selects a color chip
+- **THEN** that chip alone carries the full-ink border and ring, while every other chip keeps its hairline border
 
 ### Requirement: The complete rail variation can be disabled at picker scope
 The single-row rail variation SHALL be controlled by one picker-scoped switch. When disabled, it SHALL load neither rail controls nor rail JavaScript and SHALL restore wrapping color swatches and the responsive multi-row size grid.
@@ -53,4 +59,3 @@ The single-row rail variation SHALL be controlled by one picker-scoped switch. W
 #### Scenario: Maintainer disables the variation
 - **WHEN** the picker-scoped rail switch is set to false
 - **THEN** color options wrap using their prior presentation, recognized sizes use the `pdp-size-picker-grid` grid, and no rail chevrons are rendered
-

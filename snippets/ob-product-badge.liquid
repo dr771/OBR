@@ -1,0 +1,31 @@
+{% comment %}
+  OB: bestseller badge.
+
+  Driven by a product metafield rather than by tags — Akeneo owns the tag
+  namespace, so merchandising flags set in Shopify would be overwritten on the
+  next sync. Both PDP placements read this one snippet so they cannot disagree
+  about whether a product is a bestseller.
+
+  Fails open: an unset field, or no field definition at all, renders nothing —
+  no element, so no reserved gap in the flex rows that host it.
+
+  Shop-side dependency: the `custom.bestseller` boolean metafield definition
+  (see MIGRATION-TO-LIVE.md).
+
+  Accepts:
+  - product: {Object} product object
+  - placement: {String} 'gallery' | 'price'
+
+  Usage:
+  {% render 'ob-product-badge', product: product, placement: 'price' %}
+{% endcomment %}
+
+{%- liquid
+  assign ob_is_bestseller = product.metafields.custom.bestseller.value
+-%}
+
+{%- if ob_is_bestseller -%}
+  <span class="ob-badge ob-badge--{{ placement | default: 'price' }}">
+    {{- 'products.product.bestseller' | t -}}
+  </span>
+{%- endif -%}

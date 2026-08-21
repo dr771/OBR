@@ -60,6 +60,10 @@
       "next_slide": "Naar rechts schuiven",
       "previous_slide": "Naar links schuiven",
       "name": "Schuifregelaar"
+    },
+    "breadcrumb": {
+      "label": "Kruimelpad",
+      "home": "Home"
     }
   },
   "newsletter": {
@@ -158,7 +162,8 @@
         "load_image": "Afbeelding {{ index }} laden in gallery-weergave",
         "load_model": "3D-model {{ index }} laden in gallery-weergave",
         "load_video": "Video {{ index }} afspelen in gallery-weergave",
-        "image_available": "Afbeelding {{ index }} is nu beschikbaar in gallery-weergave"
+        "image_available": "Afbeelding {{ index }} is nu beschikbaar in gallery-weergave",
+        "image_counter": "Afbeelding {{ index }} van {{ total }}"
       },
       "nested_label": "{{ title }} voor {{ parent_title }}",
       "view_full_details": "Alle details bekijken",
@@ -184,7 +189,9 @@
       "product_variants": "Productvarianten",
       "taxes_included": "Belastingen inbegrepen.",
       "duties_included": "Douanerechten inbegrepen.",
-      "duties_and_taxes_included": "Douanerechten en belastingen inbegrepen."
+      "duties_and_taxes_included": "Douanerechten en belastingen inbegrepen.",
+      "size_guide": "Maatadvies",
+      "bestseller": "Bestseller"
     },
     "modal": {
       "label": "Mediagalerij"

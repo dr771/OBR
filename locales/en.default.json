@@ -60,6 +60,10 @@
       "next_slide": "Slide right",
       "previous_slide": "Slide left",
       "name": "Slider"
+    },
+    "breadcrumb": {
+      "label": "Breadcrumb",
+      "home": "Home"
     }
   },
   "newsletter": {
@@ -132,7 +136,8 @@
         "image_available": "Image {{ index }} is now available in gallery view",
         "open_media": "Open media {{ index }} in modal",
         "play_model": "Play 3D Viewer",
-        "play_video": "Play video"
+        "play_video": "Play video",
+        "image_counter": "Image {{ index }} of {{ total }}"
       },
       "nested_label": "{{ title }} for {{ parent_title }}",
       "quantity": {
@@ -184,7 +189,9 @@
       "taxes_included": "Taxes included.",
       "duties_included": "Duties included.",
       "duties_and_taxes_included": "Duties and taxes included.",
-      "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout."
+      "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
+      "size_guide": "Size guide",
+      "bestseller": "Bestseller"
     },
     "modal": {
       "label": "Media gallery"
@@ -286,7 +293,6 @@
       "announcement": "Announcement",
       "announcement_bar": "Announcement bar"
     },
-
     "header": {
       "announcement": "Announcement",
       "menu": "Menu",

@@ -1,0 +1,65 @@
+{% comment %}
+  OB: PDP size-guide entry point ("Maatadvies"), mirroring SweatyBetty's
+  sb-size-chart trigger/dialog split (see ../SweatyBetty/snippets/sb-size-chart.liquid).
+
+  The trigger must sit inside the size option's legend while the dialog must
+  live outside the fieldset, so the caller renders this twice with `surface`
+  and both computes the same derived id.
+
+  Measurement tables are NOT built yet. Until a table exists for a size family
+  the trigger is withheld entirely rather than opening an empty dialog — a
+  trigger that opens nothing reads as broken, which is worse than no trigger.
+  Fill `ob_size_chart_available` (and the table markup) when the real data
+  arrives; placement and styling are already final.
+
+  Accepts:
+  - option: {Object} the size product_option (kind-detected by the caller)
+  - surface: {String} 'trigger' | 'dialog'
+
+  Usage (size options only, from product-variant-picker.liquid):
+  {% render 'ob-size-chart', option: option, surface: 'trigger' %}
+  {% render 'ob-size-chart', option: option, surface: 'dialog' %}
+{% endcomment %}
+
+{%- liquid
+  capture ob_size_kind
+    render 'ob-option-meta', option_name: option.name, field: 'size_kind'
+  endcapture
+  assign ob_size_kind = ob_size_kind | strip
+
+  assign ob_dialog_id = 'ob-size-chart-' | append: section.id | append: '-' | append: option.position
+
+  comment
+    No size family has a measurement table yet. Flip a family to true here (and
+    add its table below) as the data lands; the trigger appears for exactly the
+    families that can answer it.
+  endcomment
+  assign ob_size_chart_available = false
+-%}
+
+{%- if ob_size_chart_available -%}
+  {%- unless surface == 'dialog' -%}
+    <button
+      type="button"
+      class="ob-size-chart__open"
+      data-ob-size-chart-open="{{ ob_dialog_id }}"
+    >
+      {%- render 'ob-icon', icon: 'ruler' -%}
+      {{ 'products.product.size_guide' | t }}
+    </button>
+  {%- endunless -%}
+
+  {%- unless surface == 'trigger' -%}
+    <dialog
+      id="{{ ob_dialog_id }}"
+      class="ob-size-chart"
+      closedby="any"
+      aria-labelledby="{{ ob_dialog_id }}-title"
+    >
+      <h2 id="{{ ob_dialog_id }}-title" class="ob-size-chart__title">
+        {{ 'products.product.size_guide' | t }}
+      </h2>
+      {%- comment -%} Table markup lands here with the real data. {%- endcomment -%}
+    </dialog>
+  {%- endunless -%}
+{%- endif -%}

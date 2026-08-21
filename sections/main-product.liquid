@@ -1,6 +1,6 @@
 <product-info
   id="MainProduct-{{ section.id }}"
-  class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}"
+  class="ob-pdp section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}"
   data-section="{{ section.id }}"
   data-product-id="{{ product.id }}"
   data-update-url="true"
@@ -10,6 +10,7 @@
   {% endif %}
 >
   {{ 'section-main-product.css' | asset_url | stylesheet_tag }}
+  {{ 'component-ob-pdp.css' | asset_url | stylesheet_tag }}
   {{ 'component-accordion.css' | asset_url | stylesheet_tag }}
   {{ 'component-price.css' | asset_url | stylesheet_tag }}
   {{ 'component-slider.css' | asset_url | stylesheet_tag }}
@@ -40,6 +41,7 @@
   {%- endstyle -%}
 
   <script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'ob-pdp-gallery.js' | asset_url }}" defer="defer"></script>
   <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
   {%- if product.quantity_price_breaks_configured? -%}
     <script src="{{ 'show-more.js' | asset_url }}" defer="defer"></script>
@@ -74,9 +76,11 @@
 
   {% assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' %}
   <product-component view-event-payload="{{ product | standard_event_data: 'view', context: 'page' | escape }}">
+    {%- render 'ob-breadcrumb', product: product -%}
     <div class="page-width">
       <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
         <div class="grid__item product__media-wrapper">
+          {%- render 'ob-product-badge', product: product, placement: 'gallery' -%}
           {% render 'product-media-gallery', variant_images: variant_images %}
         </div>
         <div class="product__info-wrapper grid__item{% if settings.page_width > 1400 and section.settings.media_size == "small" %} product__info-wrapper--extra-padding{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
@@ -107,13 +111,16 @@
                     </a>
                   </div>
                 {%- when 'price' -%}
-                  <div id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
-                    {%- render 'price',
-                      product: product,
-                      use_variant: true,
-                      show_badges: true,
-                      price_class: 'price--large'
-                    -%}
+                  <div class="ob-pdp__price-row">
+                    <div id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
+                      {%- render 'price',
+                        product: product,
+                        use_variant: true,
+                        show_badges: true,
+                        price_class: 'price--large'
+                      -%}
+                    </div>
+                    {%- render 'ob-product-badge', product: product, placement: 'price' -%}
                   </div>
                   {%- if product.quantity_price_breaks_configured? -%}
                     <div class="volume-pricing-note" id="Volume-Note-{{ section.id }}">
@@ -499,6 +506,12 @@
                     section_id: section.id,
                     show_pickup_availability: true
                   -%}
+                  {%- comment -%}
+                    The trust strip belongs directly under the buy controls, so it
+                    renders from the buy_buttons block rather than as a block of its
+                    own — that keeps it pinned there regardless of block order.
+                  {%- endcomment -%}
+                  {%- render 'ob-usp-strip', blocks: section.blocks -%}
                 {%- when 'rating' -%}
                   {%- if product.metafields.reviews.rating.value != blank -%}
                     <div class="rating-wrapper">
@@ -761,6 +774,31 @@
   "blocks": [
     {
       "type": "@app"
+    },
+    {
+      "type": "usp",
+      "name": "Trust statement",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "default": "Gratis levering vanaf € 70 in BE & NL",
+          "label": "Text",
+          "info": "Shown under the add-to-cart button. Keep it short and factually accurate — these are published claims."
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "options": [
+            { "value": "truck", "label": "Delivery" },
+            { "value": "clock", "label": "Dispatch time" },
+            { "value": "shield-check", "label": "Guarantee" },
+            { "value": "check", "label": "Check" }
+          ],
+          "default": "truck",
+          "label": "Icon"
+        }
+      ]
     },
     {
       "type": "text",

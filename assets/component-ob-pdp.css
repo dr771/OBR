@@ -1,0 +1,850 @@
+/*
+  PDP chrome matched to the approved Bolt reference
+  (https://original-brands.bolt.host/#product/hygge).
+
+  Every value here was read off that page with getComputedStyle at a 1440px
+  viewport, not estimated from a screenshot. The raw dumps live in the change's
+  working notes; the tokens below are the reference's own palette and scale.
+
+  Scoped to `.ob-pdp` (set on the product section) so nothing here can reach the
+  PLP, whose card treatment deliberately shares component-ob-swatches.css.
+*/
+
+.ob-pdp {
+  /* ink */
+  --ob-pdp-ink: #0f172a;
+  --ob-pdp-ink-light: #334155;
+  --ob-pdp-ink-muted: #64748b;
+
+  /* hairlines and surfaces */
+  --ob-pdp-line: #e2e8f0;
+  --ob-pdp-line-strong: #cbd5e1;
+  --ob-pdp-surface: #ffffff;
+
+  /* accent — the confirmed CTA blue and its tints */
+  --ob-pdp-accent: #38b6ff;
+  --ob-pdp-accent-icon: #1e9fe6;
+  --ob-pdp-accent-tint: #eff9ff;
+  --ob-pdp-accent-ink: #0d80c4;
+
+  /* shell */
+  --ob-pdp-max-width: 128rem;
+  --ob-pdp-inset: 2.4rem;
+  --ob-pdp-gutter: 5.6rem;
+}
+
+/* ------------------------------------------------------------------ shell */
+
+/*
+  The reference caps its PDP at 1280 while its own PLP runs to 1600, so this is
+  a deliberate per-template width, not a theme-wide one. Applied here rather
+  than via settings.page_width, which is protected state shared by every
+  template (and would silently narrow the PLP against plp-grid-config).
+*/
+.ob-pdp .page-width {
+  max-width: var(--ob-pdp-max-width);
+  padding-inline: var(--ob-pdp-inset);
+}
+
+@media screen and (min-width: 990px) {
+  .ob-pdp .product {
+    display: grid;
+    grid-template-columns: minmax(0, 1.12fr) minmax(40rem, 0.88fr);
+    gap: var(--ob-pdp-gutter);
+    align-items: start;
+  }
+
+  /*
+    Dawn sizes these columns itself via .product--medium etc.; the grid above
+    owns the split now, so the inherited widths and the info column's own
+    left padding would double up.
+  */
+  .ob-pdp .product__media-wrapper,
+  .ob-pdp .product__info-wrapper {
+    max-width: none;
+    width: auto;
+    padding-left: 0;
+  }
+
+  .ob-pdp .product__info-wrapper {
+    padding-top: 0.8rem;
+  }
+}
+
+/* -------------------------------------------------------------- breadcrumb */
+
+.ob-breadcrumb {
+  max-width: var(--ob-pdp-max-width);
+  margin-inline: auto;
+  padding: 2.8rem var(--ob-pdp-inset) 1.6rem;
+}
+
+.ob-breadcrumb__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 1.2rem;
+  line-height: 1.6rem;
+  letter-spacing: 0;
+  color: var(--ob-pdp-ink-muted);
+}
+
+.ob-breadcrumb__item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.ob-breadcrumb__link {
+  color: var(--ob-pdp-ink-muted);
+  text-decoration: none;
+  transition: color var(--duration-short) ease;
+}
+
+.ob-breadcrumb__link:hover,
+.ob-breadcrumb__link:focus-visible {
+  color: var(--ob-pdp-ink);
+}
+
+.ob-breadcrumb__current {
+  color: var(--ob-pdp-ink);
+}
+
+.ob-breadcrumb__sep {
+  display: block;
+  width: 1.4rem;
+  height: 1.4rem;
+  color: var(--ob-pdp-ink-muted);
+  flex: none;
+}
+
+/* ----------------------------------------------------------------- gallery */
+
+.ob-pdp .product__media-wrapper {
+  /* Positioning context for the gallery badge. */
+  position: relative;
+}
+
+.ob-pdp .product__media-wrapper .product__media-item {
+  padding: 0;
+}
+
+/*
+  The reference frames the photo rather than bleeding it: a fixed 1.06/1 white
+  card, so portrait and landscape media share one height and the column below
+  never shifts between slides.
+*/
+.ob-pdp .product__media-wrapper .product__media,
+.ob-pdp .product__media-wrapper .media {
+  /*
+    The reference uses 1.06/1, but every Akeneo image across all six synced
+    brands is exactly 1:1. At 1.06 the square photo letterboxed inside the
+    frame, and the 3.2rem radius then clipped the resulting white bars into a
+    corner that read as a cropping bug. Square frame, square photo, no bars.
+  */
+  aspect-ratio: 1 / 1;
+  border: 0.1rem solid var(--ob-pdp-line);
+  border-radius: 3.2rem;
+  background: var(--ob-pdp-surface);
+  overflow: hidden;
+}
+
+.ob-pdp .product__media-wrapper .product__media img,
+.ob-pdp .product__media-wrapper .media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 2.4rem;
+}
+
+/*
+  The reference switches the image inset at its own `sm` breakpoint (640px),
+  not at Dawn's 750px — using Dawn's would leave a 110px band rendering the
+  wrong inset.
+*/
+@media screen and (min-width: 640px) {
+  .ob-pdp .product__media-wrapper .product__media img,
+  .ob-pdp .product__media-wrapper .media img {
+    padding: 4rem;
+  }
+}
+
+/* thumbnails ------------------------------------------------------------- */
+
+.ob-pdp .thumbnail-slider {
+  display: block;
+  position: relative;
+  margin-top: 1.6rem;
+}
+
+.ob-pdp .thumbnail-list {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 3 * 1.2rem) / 4);
+  gap: 1.2rem;
+  padding: 0;
+  margin: 0;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.ob-pdp .thumbnail-list::-webkit-scrollbar {
+  display: none;
+}
+
+.ob-pdp .thumbnail-list__item {
+  width: auto;
+  margin: 0;
+  scroll-snap-align: start;
+}
+
+.ob-pdp .thumbnail {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  border: 0.1rem solid var(--ob-pdp-line);
+  border-radius: 1.2rem;
+  background: var(--ob-pdp-surface);
+  overflow: hidden;
+  box-shadow: none;
+  transition: border-color var(--duration-short) ease;
+}
+
+.ob-pdp .thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 0.8rem;
+}
+
+.ob-pdp .thumbnail[aria-current='true'] {
+  border-color: var(--ob-pdp-ink);
+  box-shadow: 0 0 0 0.1rem var(--ob-pdp-ink);
+}
+
+.ob-pdp .thumbnail:hover {
+  border-color: var(--ob-pdp-ink);
+}
+
+.ob-pdp .thumbnail:focus-visible {
+  outline: 0.2rem solid var(--ob-pdp-ink);
+  outline-offset: 0.2rem;
+}
+
+/* counter row ------------------------------------------------------------ */
+
+/*
+  The reference puts the counter and BOTH chevrons on one row under the
+  thumbnails. Dawn renders the rail's prev/next as flanking siblings, so the
+  markup moves them into this row; they keep their own data-step wiring.
+*/
+.ob-pdp__gallery-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  margin-top: 1.6rem;
+}
+
+.ob-pdp__gallery-count {
+  font-size: 1.2rem;
+  line-height: 1.6rem;
+  letter-spacing: 0;
+  color: var(--ob-pdp-ink-muted);
+}
+
+.ob-pdp__gallery-chevrons {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.ob-pdp__gallery-chevrons .slider-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  padding: 0.8rem;
+  border: 0.1rem solid var(--ob-pdp-line-strong);
+  border-radius: 99rem;
+  background: var(--ob-pdp-surface);
+  color: var(--ob-pdp-ink-muted);
+  transition: border-color var(--duration-short) ease, color var(--duration-short) ease;
+}
+
+.ob-pdp__gallery-chevrons .slider-button:hover:not([disabled]) {
+  border-color: var(--ob-pdp-ink);
+  color: var(--ob-pdp-ink);
+}
+
+.ob-pdp__gallery-chevrons .slider-button:focus-visible {
+  outline: 0.2rem solid var(--ob-pdp-ink);
+  outline-offset: 0.2rem;
+}
+
+.ob-pdp__gallery-chevrons .slider-button .svg-wrapper,
+.ob-pdp__gallery-chevrons .slider-button svg {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+/*
+  A single-image colour has nothing to navigate. The test has to sit on the
+  slider shell, not on the nav row: the thumbnails are the nav's *siblings*,
+  so `.ob-pdp__gallery-nav:not(:has(...))` would match unconditionally and
+  hide the row even when there are seven images.
+*/
+.ob-pdp .thumbnail-slider:not(:has(.thumbnail-list__item + .thumbnail-list__item)) .ob-pdp__gallery-nav {
+  display: none;
+}
+
+/* ------------------------------------------------------- information column */
+
+.ob-pdp .product__text.caption-with-letter-spacing {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.65rem;
+  letter-spacing: 0.275rem;
+  text-transform: uppercase;
+  color: var(--ob-pdp-ink-muted);
+}
+
+/*
+  The reference title is text-4xl below its `sm` breakpoint and text-5xl above
+  it (both at leading-[1.05]). Shipping the desktop 48px at 390px overflowed a
+  long product name.
+*/
+.ob-pdp .product__title > h1,
+.ob-pdp .product__title > .h1 {
+  margin: 1.2rem 0 0;
+  font-size: 3.6rem;
+  font-weight: 600;
+  line-height: 3.78rem;
+  letter-spacing: -0.036rem;
+  color: var(--ob-pdp-ink);
+  overflow-wrap: anywhere;
+}
+
+@media screen and (min-width: 640px) {
+  .ob-pdp .product__title > h1,
+  .ob-pdp .product__title > .h1 {
+    font-size: 4.8rem;
+    line-height: 4.8rem;
+    letter-spacing: -0.048rem;
+  }
+}
+
+.ob-pdp .price {
+  margin-top: 2rem;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 2.8rem;
+  letter-spacing: 0;
+  color: var(--ob-pdp-ink);
+}
+
+.ob-pdp .price--large .price-item {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 2.8rem;
+  letter-spacing: 0;
+}
+
+/* option blocks ---------------------------------------------------------- */
+
+.ob-pdp .product-form__input--ob-block {
+  margin: 2.8rem 0 0;
+  padding-top: 2.4rem;
+  border-top: 0.1rem solid var(--ob-pdp-line);
+}
+
+.ob-pdp .product-form__ob-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+}
+
+.ob-pdp .form__label,
+.ob-pdp .product-form__ob-label-row .form__label {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 2rem;
+  letter-spacing: 0;
+  color: var(--ob-pdp-ink);
+}
+
+.ob-pdp .form__label .ob-option-value {
+  color: var(--ob-pdp-ink-muted);
+}
+
+/* buy row ---------------------------------------------------------------- */
+
+.ob-pdp .product-form__buttons {
+  margin-top: 3.2rem;
+}
+
+.ob-pdp .product-form__submit {
+  min-height: 5.6rem;
+  height: 5.6rem;
+  padding: 0 2rem;
+  border-radius: 99rem;
+  background: var(--ob-pdp-ink);
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 2rem;
+  letter-spacing: 0;
+  color: #fff;
+}
+
+.ob-pdp .product-form__submit::after,
+.ob-pdp .product-form__submit::before {
+  border-radius: 99rem;
+}
+
+/* usp strip -------------------------------------------------------------- */
+
+.ob-usp {
+  display: grid;
+  gap: 1.2rem;
+  margin-top: 2rem;
+  padding: 2rem 0;
+  border-top: 0.1rem solid var(--ob-pdp-line);
+  border-bottom: 0.1rem solid var(--ob-pdp-line);
+  font-size: 1.4rem;
+  line-height: 2rem;
+  letter-spacing: 0;
+  color: var(--ob-pdp-ink-light);
+}
+
+@media screen and (min-width: 750px) {
+  .ob-usp {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.ob-usp__item {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.ob-usp__icon {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  color: var(--ob-pdp-accent-icon);
+}
+
+/* size guide trigger ------------------------------------------------------ */
+
+.ob-size-chart__open {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.6rem;
+  letter-spacing: 0;
+  color: var(--ob-pdp-ink-muted);
+  text-decoration: underline;
+  text-underline-offset: 0.4rem;
+  cursor: pointer;
+  transition: color var(--duration-short) ease;
+}
+
+.ob-size-chart__open:hover,
+.ob-size-chart__open:focus-visible {
+  color: var(--ob-pdp-ink);
+}
+
+.ob-size-chart__open svg {
+  display: block;
+  width: 1.4rem;
+  height: 1.4rem;
+  flex: none;
+}
+
+/* badges ------------------------------------------------------------------ */
+
+.ob-badge {
+  display: inline-block;
+  border-radius: 99rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.6rem;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.ob-badge--gallery {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  z-index: 2;
+  padding: 0.6rem 1.2rem;
+  background: var(--ob-pdp-accent);
+  color: #fff;
+}
+
+.ob-badge--price {
+  padding: 0.4rem 1rem;
+  background: var(--ob-pdp-accent-tint);
+  color: var(--ob-pdp-accent-ink);
+}
+
+.ob-pdp__price-row {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+
+.ob-pdp__price-row .price {
+  margin-top: 0;
+}
+
+/* detail accordions ------------------------------------------------------- */
+
+.ob-pdp .product__accordion {
+  margin: 0;
+  border: 0;
+  border-bottom: 0.1rem solid var(--ob-pdp-line);
+}
+
+.ob-pdp .product__accordion + .product__accordion {
+  margin-top: 0.4rem;
+}
+
+.ob-pdp .product__accordion .summary__title,
+.ob-pdp .product__accordion summary {
+  padding: 1.6rem 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 2rem;
+  letter-spacing: 0;
+  color: var(--ob-pdp-ink);
+}
+
+.ob-pdp .product__accordion .accordion__content {
+  padding: 0 0 1.6rem;
+  font-size: 1.4rem;
+  line-height: 2.275rem;
+  letter-spacing: 0;
+  color: var(--ob-pdp-ink-muted);
+}
+
+.ob-pdp .product__accordion .icon-caret {
+  width: 1.6rem;
+  height: 1.6rem;
+  color: var(--ob-pdp-ink-muted);
+}
+
+/* --------------------------------------------------------- option pickers */
+
+/*
+  Chip geometry only — the rail itself, its overflow cues and its rollback
+  switch stay with pdp-option-rails. The reference's chip is 48 outer = 38
+  image + 2x4 padding + 2x1 border, so the padding lives on the bordered box
+  and the image fills its content area.
+
+  These sit here rather than in component-ob-swatches.css because that file is
+  deliberately shared with every PLP card surface; a bare `.ob-swatch-input__chip`
+  edit there would follow the rail JS onto the collection grid.
+*/
+.ob-pdp .ob-swatch-input__chip {
+  width: 4.8rem;
+  height: 4.8rem;
+  padding: 0.4rem;
+  border: 0.1rem solid var(--ob-pdp-line-strong);
+  border-radius: 0.8rem;
+  background-color: var(--ob-pdp-surface);
+}
+
+.ob-pdp .ob-swatch-input__chip img {
+  border-radius: 0.6rem;
+}
+
+.ob-pdp .ob-swatch-input__label {
+  padding: 0;
+}
+
+.ob-pdp .ob-swatch-input__label:hover .ob-swatch-input__chip {
+  border-color: var(--ob-pdp-ink);
+}
+
+/*
+  Beats the shared `:checked + label .chip` rule (0,5,0) on class count rather
+  than on source order, so it holds whichever stylesheet loads last.
+*/
+.ob-pdp .ob-swatch-input__radio:checked + .ob-swatch-input__label .ob-swatch-input__chip {
+  border-width: 0.1rem;
+  border-color: var(--ob-pdp-ink);
+  box-shadow: 0 0 0 0.1rem var(--ob-pdp-ink);
+}
+
+.ob-pdp .ob-swatch-input__radio:focus-visible + .ob-swatch-input__label {
+  outline: 0.2rem solid var(--ob-pdp-ink);
+  outline-offset: 0.2rem;
+}
+
+/* size boxes -------------------------------------------------------------- */
+
+/*
+  One height at every width now (the reference uses 44px throughout), replacing
+  the old 5.6rem / 4.8rem container-query pair. Higher specificity than that
+  pair, so it wins regardless of stylesheet order.
+*/
+.ob-pdp .product-form__input--size-grid input[type='radio'] + label {
+  min-height: 4.4rem;
+  height: 4.4rem;
+  padding: 0.8rem 0.4rem;
+  border: 0.1rem solid var(--ob-pdp-line-strong);
+  border-radius: 0;
+  background: var(--ob-pdp-surface);
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 2rem;
+  letter-spacing: 0;
+  color: var(--ob-pdp-ink);
+  transition: border-color var(--duration-short) ease;
+}
+
+@container pdp-size-picker (min-width: 44rem) {
+  .ob-pdp .product-form__input--size-grid input[type='radio'] + label {
+    min-height: 4.4rem;
+    height: 4.4rem;
+  }
+}
+
+.ob-pdp .product-form__input--size-grid input[type='radio']:not(:checked) + label:hover {
+  border-color: var(--ob-pdp-ink);
+}
+
+.ob-pdp .product-form__input--size-grid input[type='radio']:checked + label {
+  border-color: var(--ob-pdp-ink);
+  background: var(--ob-pdp-ink);
+  color: #fff;
+}
+
+.ob-pdp .product-form__input--size-grid input[type='radio']:focus-visible + label {
+  outline: 0.2rem solid var(--ob-pdp-ink);
+  outline-offset: 0.2rem;
+}
+
+/*
+  Availability must stay readable against the new inverted selected state, so
+  it keeps Dawn's strike-through and adds a muted surface rather than relying
+  on colour alone.
+*/
+.ob-pdp .product-form__input--size-grid input[type='radio'].disabled + label,
+.ob-pdp .product-form__input--size-grid input[type='radio'][disabled] + label {
+  color: var(--ob-pdp-ink-muted);
+  border-color: var(--ob-pdp-line);
+}
+
+/* ------------------------------------------------- Dawn specificity fixes */
+
+/*
+  Everything below exists because a Dawn rule outranked the block above it.
+  Each selector is shaped to match Dawn's own ancestor depth rather than
+  reaching for !important, and each was confirmed with a winning-rule dump
+  rather than inferred from a screenshot.
+*/
+
+@media screen and (min-width: 990px) {
+  /*
+    Dawn: `.product--medium:not(.product--no-media) .product__media-wrapper`
+    (0,3,0) — the :not() counts as a class, so a plain `.ob-pdp .wrapper`
+    (0,2,0) lost and the columns stayed capped at 55%/45% of their own grid
+    track. The grid tracks were always correct; the items inside them weren't.
+  */
+  .ob-pdp .product:not(.product--no-media) .product__media-wrapper,
+  .ob-pdp .product:not(.product--no-media) .product__info-wrapper {
+    max-width: none;
+    width: auto;
+  }
+}
+
+/*
+  Dawn sizes the media box with a percentage padding-top ratio hack. Setting
+  aspect-ratio doesn't remove it — it's a property we never declared, so it
+  survived and added ~356px of padding inside a 358px frame.
+*/
+.ob-pdp .product-media-container .media,
+.ob-pdp .product-media-container.constrain-height .media {
+  padding-top: 0;
+  width: 100%;
+}
+
+/*
+  Dawn: `.thumbnail-slider .thumbnail-list.slider--tablet-up` (0,3,0) sets
+  display:flex and 0.5rem padding on the same element the grid is wanted on.
+*/
+.ob-pdp .thumbnail-slider .thumbnail-list.slider {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 3 * 1.2rem) / 4);
+  gap: 1.2rem;
+  padding: 0;
+}
+
+/* Dawn caps every option block at 44rem; the reference runs them full width. */
+.ob-pdp .product-form__input--ob-block {
+  max-width: none;
+}
+
+/*
+  A <legend> shrink-wraps its content, so the label row had no width to space
+  its trailing size-guide trigger against.
+*/
+.ob-pdp .product-form__ob-label-row {
+  width: 100%;
+  padding-right: 0;
+  margin-bottom: 0;
+}
+
+/* Dawn's generic info-container child margin fights the measured rhythm. */
+.ob-pdp .ob-pdp__price-row,
+.ob-pdp .ob-usp {
+  margin-bottom: 0;
+}
+
+/*
+  Dawn nests an inline-block `.price__container` inside a block `.price`, so a
+  baseline strut added 5px under the number: the row's align-items:center then
+  centred a 33px box whose visible 28px sat 2.5px high, and the price read as
+  misaligned against the badge beside it. Flex removes the strut.
+*/
+.ob-pdp .price {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/*
+  The reference insets the gallery badge 20px from the frame's padding box,
+  which is 21px from its border box. The badge is positioned against the media
+  wrapper, which sits 1px outside the frame's border — hence 2.2rem, not 2rem.
+
+  z-index 3, not 2: `media-gallery.product__column-sticky` is a sibling with
+  `position: sticky; z-index: 2`, so at an equal level it painted over the badge
+  by DOM order. Desktop-only symptom — the sticky column is off on mobile, where
+  the badge was visible all along.
+*/
+.ob-badge--gallery {
+  top: 2.2rem;
+  left: 2.2rem;
+  z-index: 3;
+}
+
+/*
+  Dawn also sets an explicit `grid-template-columns: repeat(5, 1fr)` on the
+  thumbnail list. grid-auto-columns only sizes *implicit* tracks, so the first
+  five thumbnails kept Dawn's 55px tracks and only the sixth and seventh took
+  the intended width — the rail then fit its container exactly and there was
+  nothing for the chevrons to scroll. Clearing the template makes every track
+  implicit.
+
+  Dawn's `.thumbnail-list.slider--tablet-up .thumbnail-list__item.slider__slide`
+  (0,4,0) also pins a percentage item width, which resolved against the wrong
+  track and collapsed each item to 3px.
+*/
+.ob-pdp .thumbnail-slider .thumbnail-list.slider {
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 3 * 1.2rem) / 4);
+}
+
+.ob-pdp .thumbnail-slider .thumbnail-list.slider .thumbnail-list__item.slider__slide {
+  width: auto;
+  max-width: none;
+}
+
+/*
+  Dawn gives `.price__container` a 5px bottom margin to clear the sale badge.
+  align-items:center centres a flex item by its MARGIN box, so that margin
+  didn't add space below the price — it lifted the number 2.5px above the
+  badge's centre line, reading as a vertical-centering bug in the row.
+*/
+.ob-pdp .price > * {
+  margin-bottom: 0;
+}
+
+/*
+  Below the desktop breakpoint the reference drops to a single column, but
+  Dawn's `grid--2-col-tablet` keeps media and info side by side from 750px —
+  at 820px that left a 384px image beside a cramped info column. Stack them,
+  media first, matching the reference.
+*/
+@media screen and (max-width: 989px) {
+  .ob-pdp .product.grid--2-col-tablet > .grid__item {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0;
+  }
+}
+
+/* ------------------------------------------- owner overrides (2026-08-21) */
+
+/*
+  Deliberate deviations from the reference, requested after live review. The
+  reference frames its photo with a hairline and insets it (40px main, 8px
+  thumb), which suits its packshots-on-white; OB's Akeneo photography often
+  carries its own grey backdrop, so the inset doubled up and the hairline read
+  as a stray box around it.
+*/
+/*
+  Dawn's `global-media-settings` puts a SQUARE 1px border on
+  .product-media-container, one pixel outside the rounded frame — two borders,
+  one rounded and one not, reading as a stray right-angle box in the corner.
+  The rounded frame border stays; this outer one goes.
+*/
+.ob-pdp .product__media-wrapper .product-media-container {
+  border: 0;
+}
+
+.ob-pdp .product__media-wrapper .product__media img,
+.ob-pdp .product__media-wrapper .media img,
+.ob-pdp .thumbnail img {
+  padding: 0;
+}
+
+/* The 640px step existed only to scale that inset; with no inset it is moot. */
+@media screen and (min-width: 640px) {
+  .ob-pdp .product__media-wrapper .product__media img,
+  .ob-pdp .product__media-wrapper .media img {
+    padding: 0;
+  }
+}
+
+/*
+  Wishlist control matches the add-to-cart button beside it: same 5.6rem height,
+  square so the pill radius reads as a circle, and the PDP hairline rather than
+  Dawn's translucent black. Scoped to .ob-pdp so the header and cart-drawer
+  wishlist buttons keep their own treatment.
+*/
+.ob-pdp .product-form__buttons .ob-wishlist-btn {
+  width: 5.6rem;
+  height: 5.6rem;
+  flex: 0 0 5.6rem;
+  border: 0.1rem solid var(--ob-pdp-line-strong);
+  border-radius: 99rem;
+  color: var(--ob-pdp-ink);
+  transition: border-color var(--duration-short) ease;
+}
+
+.ob-pdp .product-form__buttons .ob-wishlist-btn:hover,
+.ob-pdp .product-form__buttons .ob-wishlist-btn:focus-visible {
+  border-color: var(--ob-pdp-ink);
+}
