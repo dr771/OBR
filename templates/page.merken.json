@@ -1,0 +1,46 @@
+{
+  "sections": {
+    "brands": {
+      "type": "collection-list",
+      "blocks": {
+        "fitflop": { "type": "featured_collection", "settings": { "collection": "fitflop" } },
+        "hi_tec": { "type": "featured_collection", "settings": { "collection": "hi-tec" } },
+        "holster": { "type": "featured_collection", "settings": { "collection": "holster" } },
+        "irasuto_studios": { "type": "featured_collection", "settings": { "collection": "irasuto-studios" } },
+        "juicy_couture": { "type": "featured_collection", "settings": { "collection": "juicy-couture" } },
+        "loewenweiss": { "type": "featured_collection", "settings": { "collection": "loewenweiss" } },
+        "nike_swim": { "type": "featured_collection", "settings": { "collection": "nike-swim" } },
+        "odlo": { "type": "featured_collection", "settings": { "collection": "odlo" } },
+        "pas_de_monaco": { "type": "featured_collection", "settings": { "collection": "pas-de-monaco" } },
+        "sneaker_lab": { "type": "featured_collection", "settings": { "collection": "sneaker-lab" } },
+        "sweaty_betty": { "type": "featured_collection", "settings": { "collection": "sweaty-betty" } }
+      },
+      "block_order": [
+        "fitflop",
+        "hi_tec",
+        "holster",
+        "irasuto_studios",
+        "juicy_couture",
+        "loewenweiss",
+        "nike_swim",
+        "odlo",
+        "pas_de_monaco",
+        "sneaker_lab",
+        "sweaty_betty"
+      ],
+      "settings": {
+        "title": "Merken",
+        "heading_size": "h1",
+        "image_ratio": "square",
+        "columns_desktop": 3,
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "color_scheme": "scheme-1",
+        "show_view_all": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": ["brands"]
+}

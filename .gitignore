@@ -1,5 +1,11 @@
 # local AI-tool / editor config -- not part of the site
 .agents/
+!.agents/
+.agents/*
+!.agents/skills/
+.agents/skills/*
+!.agents/skills/ob-collection-maintenance/
+!.agents/skills/ob-collection-maintenance/SKILL.md
 .claude/*
 .vscode/
 skills-lock.json
