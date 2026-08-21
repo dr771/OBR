@@ -422,14 +422,15 @@
   Chips sit directly under the main pic (see card-product.liquid) and share
   its warm surface + multiply treatment instead of a bordered chip look.
 
-  Selection is a difference in *surface* lightness, not a drawn edge: chips
-  rest on the card surface mixed 60% toward white and return to the full
-  surface when active or hovered, so the chosen colour is simply the darkest
-  chip in the row. The photo is untouched — it keeps multiplying onto whichever
-  surface is underneath, so a resting chip reads lighter as a consequence.
-  Dimming the image instead was tried and rejected: it alters the content, and
-  the effect swings from invisible on a dark packshot to washed out on a white
-  one.
+  Selection is primarily a difference in *surface* lightness, not a drawn
+  edge: chips rest on the card surface mixed 60% toward white and return to
+  the full surface when active or hovered, so the chosen colour is simply the
+  darkest chip in the row. The photo is untouched — it keeps multiplying onto
+  whichever surface is underneath, so a resting chip reads lighter as a
+  consequence. Dimming the image instead was tried and rejected: it alters
+  the content, and the effect swings from invisible on a dark packshot to
+  washed out on a white one. Active/hover/focus-visible additionally draw a
+  hairline border on top of the surface cue; resting chips stay borderless.
 */
 #ProductGridContainer .product-card-wrapper .ob-card-swatches {
   margin-top: 0.8rem;
@@ -453,6 +454,7 @@
 #ProductGridContainer .product-card-wrapper .ob-card-swatch:hover,
 #ProductGridContainer .product-card-wrapper .ob-card-swatch:focus-visible {
   background-color: var(--ob-product-photo-surface);
+  border-color: #66666612;
 }
 
 #ProductGridContainer .product-card-wrapper .ob-card-swatch:focus-visible {
