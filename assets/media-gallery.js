@@ -7,12 +7,24 @@ if (!customElements.get('media-gallery')) {
         this.elements = {
           liveRegion: this.querySelector('[id^="GalleryStatus"]'),
           viewer: this.querySelector('[id^="GalleryViewer"]'),
-          thumbnails: this.querySelector('[id^="GalleryThumbnails"]'),
+          thumbnails: null,
         };
         this.mql = window.matchMedia('(min-width: 750px)');
+        this.bindThumbnails();
+      }
+
+      // OB: the color-filtered gallery swaps the whole thumbnail rail on every
+      // colour change, so binding can't be a one-shot in the constructor -
+      // product-info.js calls this again after it replaces the rail.
+      bindThumbnails() {
+        this.elements.thumbnails = this.querySelector('[id^="GalleryThumbnails"]');
         if (!this.elements.thumbnails) return;
 
-        this.elements.viewer.addEventListener('slideChanged', debounce(this.onSlideChanged.bind(this), 500));
+        if (!this.slideChangedBound) {
+          this.elements.viewer.addEventListener('slideChanged', debounce(this.onSlideChanged.bind(this), 500));
+          this.slideChangedBound = true;
+        }
+
         this.elements.thumbnails.querySelectorAll('[data-target]').forEach((mediaToSwitch) => {
           mediaToSwitch
             .querySelector('button')
@@ -22,7 +34,7 @@ if (!customElements.get('media-gallery')) {
       }
 
       onSlideChanged(event) {
-        const thumbnail = this.elements.thumbnails.querySelector(
+        const thumbnail = this.elements.thumbnails?.querySelector(
           `[data-target="${event.detail.currentElement.dataset.mediaId}"]`
         );
         this.setActiveThumbnail(thumbnail);
@@ -43,8 +55,8 @@ if (!customElements.get('media-gallery')) {
         if (prepend) {
           activeMedia.parentElement.firstChild !== activeMedia && activeMedia.parentElement.prepend(activeMedia);
 
-          if (this.elements.thumbnails) {
-            const activeThumbnail = this.elements.thumbnails.querySelector(`[data-target="${mediaId}"]`);
+          const activeThumbnail = this.elements.thumbnails?.querySelector(`[data-target="${mediaId}"]`);
+          if (activeThumbnail) {
             activeThumbnail.parentElement.firstChild !== activeThumbnail && activeThumbnail.parentElement.prepend(activeThumbnail);
           }
 
@@ -66,6 +78,7 @@ if (!customElements.get('media-gallery')) {
 
         if (!this.elements.thumbnails) return;
         const activeThumbnail = this.elements.thumbnails.querySelector(`[data-target="${mediaId}"]`);
+        if (!activeThumbnail) return;
         this.setActiveThumbnail(activeThumbnail);
         this.announceLiveRegion(activeMedia, activeThumbnail.dataset.mediaPosition);
       }

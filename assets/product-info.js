@@ -258,8 +258,8 @@ if (!customElements.get('product-info')) {
       updateMedia(html, variantFeaturedMediaId) {
         if (!variantFeaturedMediaId) return;
 
-        const mediaGallerySource = this.querySelector('media-gallery ul');
-        const mediaGalleryDestination = html.querySelector(`media-gallery ul`);
+        const mediaGallerySource = this.querySelector('media-gallery [id^="Slider-Gallery"]');
+        const mediaGalleryDestination = html.querySelector('media-gallery [id^="Slider-Gallery"]');
 
         const refreshSourceData = () => {
           if (this.hasAttribute('data-zoom-on-hover')) enableZoomOnHover(2);
@@ -314,6 +314,12 @@ if (!customElements.get('product-info')) {
           });
         }
 
+        // OB: the selected colour changes which media exist, so the thumbnail
+        // rail and the slider counter have to follow the main list. Dawn only
+        // ever diffs the first <ul>, which leaves both behind. Must run before
+        // setActiveMedia, which prepends the active thumbnail.
+        this.updateGalleryChrome(html);
+
         // set featured media as active in the media gallery
         this.querySelector(`media-gallery`)?.setActiveMedia?.(
           `${this.dataset.section}-${variantFeaturedMediaId}`,
@@ -324,6 +330,41 @@ if (!customElements.get('product-info')) {
         const modalContent = this.productModal?.querySelector(`.product-media-modal__content`);
         const newModalContent = html.querySelector(`product-modal .product-media-modal__content`);
         if (modalContent && newModalContent) modalContent.innerHTML = newModalContent.innerHTML;
+      }
+
+      // OB: replaces the thumbnail rail with the incoming colour's and syncs the
+      // slider counter total. The rail is swapped wholesale rather than diffed
+      // because every item changes at once; media-gallery rebinds its handlers.
+      updateGalleryChrome(html) {
+        const gallery = this.querySelector('media-gallery');
+        const newGallery = html.querySelector('media-gallery');
+        if (!gallery || !newGallery) return;
+
+        const sliderButtons = gallery.querySelector('[id^="GalleryViewer"] .slider-buttons');
+        const newSliderButtons = newGallery.querySelector('[id^="GalleryViewer"] .slider-buttons');
+        if (sliderButtons && newSliderButtons) {
+          sliderButtons.className = newSliderButtons.className;
+          const total = sliderButtons.querySelector('.slider-counter--total');
+          const newTotal = newSliderButtons.querySelector('.slider-counter--total');
+          if (total && newTotal) total.textContent = newTotal.textContent;
+        }
+
+        const thumbnails = gallery.querySelector('[id^="GalleryThumbnails"]');
+        const newThumbnails = newGallery.querySelector('[id^="GalleryThumbnails"]');
+
+        if (!newThumbnails) {
+          thumbnails?.remove();
+        } else {
+          // importNode leaves `html` intact for the variantChange subscribers.
+          const replacement = document.importNode(newThumbnails, true);
+          if (thumbnails) {
+            thumbnails.replaceWith(replacement);
+          } else {
+            gallery.appendChild(replacement);
+          }
+        }
+
+        gallery.bindThumbnails?.();
       }
 
       setQuantityBoundries() {
