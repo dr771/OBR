@@ -35,12 +35,12 @@ The trigger SHALL render its localized label at 1.2rem on a 1.6rem line at mediu
 - **THEN** a visible focus indicator appears without removing the underline
 
 ### Requirement: Trigger degrades safely until measurement tables exist
-Until size tables are supplied, the trigger SHALL NOT present an empty or broken surface to shoppers. It SHALL either be withheld from render or open a panel that states the guide is not yet available, and SHALL never open a blank panel.
+The trigger SHALL always render for a recognized size option, so its placement and treatment are final ahead of the data. Until size tables are supplied it SHALL open a panel stating that the guide is not yet available, and SHALL never open a blank panel.
 
 #### Scenario: No size table is configured for the product's size family
 
 - **WHEN** a shopper activates the trigger for a size family with no configured table
-- **THEN** no blank panel opens, and the shopper is either not offered the trigger or is told the guide is not yet available
+- **THEN** a panel opens carrying the size-guide heading, a dismiss control, and a message that the guide is coming — never an empty panel
 
 #### Scenario: Size table is later supplied
 

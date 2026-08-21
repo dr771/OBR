@@ -707,11 +707,28 @@
 /*
   A <legend> shrink-wraps its content, so the label row had no width to space
   its trailing size-guide trigger against.
+
+  It is also ANCHORED OVER its fieldset's top border and ignores the fieldset's
+  padding-top — so the block's hairline rule was drawn but painted over by the
+  label, and the measured 2.4rem inset above the label never appeared. Both
+  properties still computed correctly, so a per-element style diff called this a
+  match; only the border-to-label distance (0px instead of 25px) exposed it.
+
+  Floating the legend takes it out of that special anchoring and back into
+  normal flow. The following children then need `clear` so they don't slide
+  under the float — and because clearance absorbs their own margin-top, the
+  label-to-control gap has to be set as the legend's margin-bottom instead.
 */
-.ob-pdp .product-form__ob-label-row {
+.ob-pdp .product-form__input--ob-block > legend.product-form__ob-label-row {
+  float: left;
   width: 100%;
   padding-right: 0;
-  margin-bottom: 0;
+  margin: 0 0 0.8rem;
+}
+
+.ob-pdp .product-form__input--ob-block > *:not(legend) {
+  clear: both;
+  margin-top: 0;
 }
 
 /* Dawn's generic info-container child margin fights the measured rhythm. */
@@ -847,4 +864,64 @@
 .ob-pdp .product-form__buttons .ob-wishlist-btn:hover,
 .ob-pdp .product-form__buttons .ob-wishlist-btn:focus-visible {
   border-color: var(--ob-pdp-ink);
+}
+
+/* size guide dialog ------------------------------------------------------- */
+
+.ob-size-chart {
+  width: min(56rem, calc(100vw - 4rem));
+  padding: 2.4rem;
+  border: 0;
+  border-radius: 1.6rem;
+  background: var(--ob-pdp-surface);
+  color: var(--ob-pdp-ink);
+}
+
+.ob-size-chart::backdrop {
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.ob-size-chart__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  margin-bottom: 1.6rem;
+}
+
+.ob-size-chart__title {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 2.4rem;
+  letter-spacing: 0;
+}
+
+.ob-size-chart__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  padding: 0;
+  border: 0.1rem solid var(--ob-pdp-line-strong);
+  border-radius: 99rem;
+  background: var(--ob-pdp-surface);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--ob-pdp-ink-muted);
+  cursor: pointer;
+}
+
+.ob-size-chart__close:hover,
+.ob-size-chart__close:focus-visible {
+  border-color: var(--ob-pdp-ink);
+  color: var(--ob-pdp-ink);
+}
+
+.ob-size-chart__placeholder {
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 2.275rem;
+  color: var(--ob-pdp-ink-muted);
 }

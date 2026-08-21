@@ -191,7 +191,8 @@
       "duties_and_taxes_included": "Duties and taxes included.",
       "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
       "size_guide": "Size guide",
-      "bestseller": "Bestseller"
+      "bestseller": "Bestseller",
+      "size_guide_pending": "The size guide for this product group is coming soon."
     },
     "modal": {
       "label": "Media gallery"

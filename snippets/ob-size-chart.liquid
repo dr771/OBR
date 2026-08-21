@@ -6,11 +6,10 @@
   live outside the fieldset, so the caller renders this twice with `surface`
   and both computes the same derived id.
 
-  Measurement tables are NOT built yet. Until a table exists for a size family
-  the trigger is withheld entirely rather than opening an empty dialog — a
-  trigger that opens nothing reads as broken, which is worse than no trigger.
-  Fill `ob_size_chart_available` (and the table markup) when the real data
-  arrives; placement and styling are already final.
+  Measurement tables are NOT built yet. The trigger ships anyway — placement and
+  styling are final — and opens a dialog that says the guide is coming, rather
+  than a blank panel. Replace the placeholder body with the real per-family
+  table when the data arrives; nothing else here needs to change.
 
   Accepts:
   - option: {Object} the size product_option (kind-detected by the caller)
@@ -30,36 +29,51 @@
   assign ob_dialog_id = 'ob-size-chart-' | append: section.id | append: '-' | append: option.position
 
   comment
-    No size family has a measurement table yet. Flip a family to true here (and
-    add its table below) as the data lands; the trigger appears for exactly the
-    families that can answer it.
+    No size family has a measurement table yet, so every family currently falls
+    through to the placeholder body below. Add per-family tables as the data
+    lands; `ob_size_kind` already routes them.
   endcomment
-  assign ob_size_chart_available = false
+  assign ob_size_chart_has_table = false
 -%}
 
-{%- if ob_size_chart_available -%}
-  {%- unless surface == 'dialog' -%}
-    <button
-      type="button"
-      class="ob-size-chart__open"
-      data-ob-size-chart-open="{{ ob_dialog_id }}"
-    >
-      {%- render 'ob-icon', icon: 'ruler' -%}
-      {{ 'products.product.size_guide' | t }}
-    </button>
-  {%- endunless -%}
+{%- unless surface == 'dialog' -%}
+  <button
+    type="button"
+    class="ob-size-chart__open"
+    data-ob-size-chart-open="{{ ob_dialog_id }}"
+  >
+    {%- render 'ob-icon', icon: 'ruler' -%}
+    {{ 'products.product.size_guide' | t }}
+  </button>
+{%- endunless -%}
 
-  {%- unless surface == 'trigger' -%}
-    <dialog
-      id="{{ ob_dialog_id }}"
-      class="ob-size-chart"
-      closedby="any"
-      aria-labelledby="{{ ob_dialog_id }}-title"
-    >
+{%- unless surface == 'trigger' -%}
+  <dialog
+    id="{{ ob_dialog_id }}"
+    class="ob-size-chart"
+    closedby="any"
+    aria-labelledby="{{ ob_dialog_id }}-title"
+  >
+    <div class="ob-size-chart__head">
       <h2 id="{{ ob_dialog_id }}-title" class="ob-size-chart__title">
         {{ 'products.product.size_guide' | t }}
       </h2>
-      {%- comment -%} Table markup lands here with the real data. {%- endcomment -%}
-    </dialog>
-  {%- endunless -%}
-{%- endif -%}
+      <button
+        type="button"
+        class="ob-size-chart__close"
+        data-ob-size-chart-close
+        aria-label="{{ 'accessibility.close' | t }}"
+      >
+        &times;
+      </button>
+    </div>
+
+    {%- if ob_size_chart_has_table -%}
+      {%- comment -%} Per-family table markup lands here, routed by ob_size_kind. {%- endcomment -%}
+    {%- else -%}
+      <p class="ob-size-chart__placeholder">
+        {{ 'products.product.size_guide_pending' | t }}
+      </p>
+    {%- endif -%}
+  </dialog>
+{%- endunless -%}
