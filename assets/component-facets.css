@@ -1850,10 +1850,10 @@ input.mobile-facets__checkbox {
   }
 }
 
-/* Desktop PLP geometry measured from the approved Bolt collection reference. */
+/* Desktop PLP geometry aligned with the active theme's header content edge. */
 @media screen and (min-width: 990px) {
   .facets-vertical.page-width {
-    padding-inline: 2.4rem;
+    padding-inline: 5rem;
   }
 
   .facets-vertical .facets-wrapper {

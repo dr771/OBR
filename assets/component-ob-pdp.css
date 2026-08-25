@@ -36,7 +36,7 @@
   --ob-pdp-accent-ink: #0d80c4;
 
   /* shell */
-  --ob-pdp-max-width: 128rem;
+  --ob-pdp-max-width: var(--page-width);
   --ob-pdp-inset: 2.4rem;
   --ob-pdp-gutter: 5.6rem;
 }
@@ -44,10 +44,9 @@
 /* ------------------------------------------------------------------ shell */
 
 /*
-  The reference caps its PDP at 1280 while its own PLP runs to 1600, so this is
-  a deliberate per-template width, not a theme-wide one. Applied here rather
-  than via settings.page_width, which is protected state shared by every
-  template (and would silently narrow the PLP against plp-grid-config).
+  Follow Dawn's configured page width so the PDP stays synchronized with the
+  header and PLP. The desktop inset matches the visible header-logo edge; the
+  narrower inset remains below the desktop breakpoint.
 */
 .ob-pdp .page-width {
   max-width: var(--ob-pdp-max-width);
@@ -55,11 +54,28 @@
 }
 
 @media screen and (min-width: 990px) {
+  .ob-pdp {
+    --ob-pdp-inset: 5rem;
+  }
+
   .ob-pdp .product {
     display: grid;
     grid-template-columns: minmax(0, 1.12fr) minmax(40rem, 0.88fr);
     gap: var(--ob-pdp-gutter);
     align-items: start;
+  }
+
+  /* Map Dawn's merchant-facing media-size choices onto the custom PDP grid. */
+  .ob-pdp .product.product--small {
+    grid-template-columns: minmax(0, 2fr) minmax(40rem, 3fr);
+  }
+
+  .ob-pdp .product.product--medium {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ob-pdp .product.product--large {
+    grid-template-columns: minmax(0, 3fr) minmax(40rem, 2fr);
   }
 
   /*
@@ -173,7 +189,7 @@
 .ob-pdp .product__media-wrapper .media img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  /* Dawn's Original/Fill setting owns object-fit through media-fit-* classes. */
   padding: 2.4rem;
   mix-blend-mode: multiply;
 }

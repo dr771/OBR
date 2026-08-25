@@ -1,0 +1,6 @@
+/* Standalone Swish wishlist page alignment. Cart/drawer cross-sells are excluded. */
+@media screen and (min-width: 990px) {
+  #MainContent > wishlist-page > .wk-page {
+    padding-inline: 5rem;
+  }
+}
