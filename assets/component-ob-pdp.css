@@ -20,6 +20,14 @@
   --ob-pdp-line: #e2e8f0;
   --ob-pdp-line-strong: #cbd5e1;
   --ob-pdp-surface: #ffffff;
+  /*
+    Same tint as the PLP's --ob-product-photo-surface (component-ob-swatches.css)
+    — deliberately not --ob-pdp-surface, which is pure white: mixing white with
+    white produces no visible blend at all. A distinct value, not a shared
+    variable, since the two surfaces are independent design contexts that
+    happen to want the same formula.
+  */
+  --ob-pdp-photo-surface: #f1f5f9;
 
   /* accent — the confirmed CTA blue and its tints */
   --ob-pdp-accent: #38b6ff;
@@ -147,10 +155,18 @@
     corner that read as a cropping bug. Square frame, square photo, no bars.
   */
   aspect-ratio: 1 / 1;
-  border: 0.1rem solid var(--ob-pdp-line);
+  /* Chip-style border — transparent/reserved at rest, hairline on hover/focus. */
+  border: 0.1rem solid transparent;
   border-radius: 3.2rem;
-  background: var(--ob-pdp-surface);
+  /* Same surface tint + blend as the PLP card/chip treatment. */
+  background: var(--ob-pdp-photo-surface);
   overflow: hidden;
+  transition: border-color var(--duration-short) ease;
+}
+
+.ob-pdp .product__media-wrapper .product__modal-opener:hover .product__media,
+.ob-pdp .product__media-wrapper .product__modal-opener:focus-within .product__media {
+  border-color: #66666612;
 }
 
 .ob-pdp .product__media-wrapper .product__media img,
@@ -159,6 +175,7 @@
   height: 100%;
   object-fit: contain;
   padding: 2.4rem;
+  mix-blend-mode: multiply;
 }
 
 /*
@@ -206,12 +223,18 @@
 .ob-pdp .thumbnail {
   aspect-ratio: 1 / 1;
   width: 100%;
-  border: 0.1rem solid var(--ob-pdp-line);
+  /* Chip-style border — transparent/reserved at rest, hairline on hover/active/focus. */
+  border: 0.1rem solid transparent;
   border-radius: 1.2rem;
-  background: var(--ob-pdp-surface);
+  /*
+    Same two-tier surface treatment as the chips — lighter color-mix at rest,
+    full tint only on hover/current/focus, so an inactive thumbnail visibly
+    reads lighter than the active one.
+  */
+  background: color-mix(in srgb, var(--ob-pdp-photo-surface) 40%, #fff);
   overflow: hidden;
   box-shadow: none;
-  transition: border-color var(--duration-short) ease;
+  transition: background-color var(--duration-short) ease, border-color var(--duration-short) ease;
 }
 
 .ob-pdp .thumbnail img {
@@ -219,18 +242,34 @@
   height: 100%;
   object-fit: contain;
   padding: 0.8rem;
+  mix-blend-mode: multiply;
 }
 
-.ob-pdp .thumbnail[aria-current='true'] {
-  border-color: var(--ob-pdp-ink);
-  box-shadow: 0 0 0 0.1rem var(--ob-pdp-ink);
-}
-
+/*
+  Dawn draws its active/focus states as box-shadow rings, not borders — one
+  rule per pseudo-state (plain [aria-current], :focus, :focus-visible, and the
+  click case :focus:not(:focus-visible), which DOES match here since buttons
+  don't get :focus-visible from a mouse click). Each one has to be named
+  explicitly with the [aria-current='true'] attribute included so this beats
+  Dawn's matching rule on specificity regardless of stylesheet order — a bare
+  `.ob-pdp .thumbnail:hover` etc. only ties Dawn's selectors and can lose.
+*/
+.ob-pdp .thumbnail[aria-current='true'],
+.ob-pdp .thumbnail[aria-current='true']:focus,
+.ob-pdp .thumbnail[aria-current='true']:focus-visible,
+.ob-pdp .thumbnail[aria-current='true']:focus:not(:focus-visible),
 .ob-pdp .thumbnail:hover {
-  border-color: var(--ob-pdp-ink);
+  background-color: var(--ob-pdp-photo-surface);
+  border-color: #66666612;
+  box-shadow: none;
+  /* Dawn's base .thumbnail:hover dims to 0.7 — chips don't dim, so neither should this. */
+  opacity: 1;
 }
 
 .ob-pdp .thumbnail:focus-visible {
+  background-color: var(--ob-pdp-photo-surface);
+  border-color: #66666612;
+  box-shadow: none;
   outline: 0.2rem solid var(--ob-pdp-ink);
   outline-offset: 0.2rem;
 }
@@ -299,6 +338,17 @@
   hide the row even when there are seven images.
 */
 .ob-pdp .thumbnail-slider:not(:has(.thumbnail-list__item + .thumbnail-list__item)) .ob-pdp__gallery-nav {
+  display: none;
+}
+
+/*
+  More than one thumbnail but still nothing to scroll to (e.g. exactly 4 on
+  desktop's 4-up rail): hide just the chevrons, keep the counter. Keyed on
+  SliderComponent's own `disabled` state rather than a thumbnail-count
+  breakpoint, since the rail is 4-up on desktop but 3-up on mobile — the same
+  product can overflow at one breakpoint and not the other.
+*/
+.ob-pdp__gallery-chevrons:has(.slider-button--prev[disabled]):has(.slider-button--next[disabled]) {
   display: none;
 }
 
@@ -567,34 +617,40 @@
   edit there would follow the rail JS onto the collection grid.
 */
 .ob-pdp .ob-swatch-input__chip {
-  width: 4.8rem;
-  height: 4.8rem;
-  padding: 0.4rem;
-  border: 0.1rem solid var(--ob-pdp-line-strong);
+  width: 5rem;
+  height: 5rem;
+  border: 0.1rem solid transparent;
   border-radius: 0.8rem;
-  background-color: var(--ob-pdp-surface);
+  background-color: color-mix(in srgb, var(--ob-pdp-photo-surface) 40%, #fff);
+  transition: background-color var(--duration-short) ease;
 }
 
 .ob-pdp .ob-swatch-input__chip img {
-  border-radius: 0.6rem;
+  mix-blend-mode: multiply;
 }
 
 .ob-pdp .ob-swatch-input__label {
   padding: 0;
 }
 
-.ob-pdp .ob-swatch-input__label:hover .ob-swatch-input__chip {
-  border-color: var(--ob-pdp-ink);
-}
-
 /*
   Beats the shared `:checked + label .chip` rule (0,5,0) on class count rather
-  than on source order, so it holds whichever stylesheet loads last.
+  than on source order, so it holds whichever stylesheet loads last. Grouped
+  so hover/selected/focus all read as the same surface-lightness cue, matching
+  the PLP card swatch treatment 1:1 — no ink-colored border or ring.
 */
-.ob-pdp .ob-swatch-input__radio:checked + .ob-swatch-input__label .ob-swatch-input__chip {
+.ob-pdp .ob-swatch-input__label:hover .ob-swatch-input__chip,
+.ob-pdp .ob-swatch-input__radio:checked + .ob-swatch-input__label .ob-swatch-input__chip,
+.ob-pdp .ob-swatch-input__radio:focus-visible + .ob-swatch-input__label .ob-swatch-input__chip {
+  background-color: var(--ob-pdp-photo-surface);
+  border-color: #66666612;
+  /*
+    The shared component-ob-swatches.css :checked rule (0,0,4,0) sets
+    border-width: 0.2rem; this rule only beats it on border-color via higher
+    specificity (0,0,5,0), so border-width has to be reset here explicitly or
+    the selected chip renders a visibly thicker border than every other state.
+  */
   border-width: 0.1rem;
-  border-color: var(--ob-pdp-ink);
-  box-shadow: 0 0 0 0.1rem var(--ob-pdp-ink);
 }
 
 .ob-pdp .ob-swatch-input__radio:focus-visible + .ob-swatch-input__label {
