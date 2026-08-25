@@ -13,18 +13,10 @@
   border-top: 0;
 }
 
-.ob-footer .page-width {
-  max-width: 128rem;
-  padding-left: 1.6rem;
-  padding-right: 1.6rem;
-}
-
-@media screen and (min-width: 40rem) {
-  .ob-footer .page-width {
-    padding-left: 2.4rem;
-    padding-right: 2.4rem;
-  }
-}
+/* Container width/padding deliberately NOT overridden here — the footer uses the
+   same settings.page_width-driven .page-width as every other section, so it stays
+   visually consistent with the rest of the site instead of matching the proto's
+   isolated 1280px container in a vacuum. */
 
 /* Column grid: 2 cols base, 4 at md (768px), 5 at lg (1024px); brand column always spans 2 */
 .ob-footer .footer__blocks-wrapper {
