@@ -62,4 +62,3 @@ At viewport widths of 990px and above, each top-level desktop navigation label S
 #### Scenario: Mobile and submenu navigation
 - **WHEN** the navigation renders in the drawer or a desktop submenu
 - **THEN** this desktop main-menu state styling does not change its existing behavior
-
