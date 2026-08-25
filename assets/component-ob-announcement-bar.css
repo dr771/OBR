@@ -1,0 +1,73 @@
+/* OB: header announcement bar — optional per-message icon, and a
+   breakpoint-aware slide count (1 message visible on mobile, 2 on tablet,
+   every configured message static with no scrolling on desktop). Dawn's
+   own multi-block markup and slider JS (SliderComponent/SlideshowComponent
+   in global.js) are reused unmodified — this file only changes how many
+   `.grid__item` slides are visible per viewport and neutralizes scrolling
+   at desktop; the button-scroll math already adapts to slide width. */
+
+.announcement-bar__icon {
+  width: 1.4rem;
+  height: 1.4rem;
+  flex-shrink: 0;
+  margin-right: 0.8rem;
+  color: #38b6ff;
+}
+
+.announcement-bar__message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body-family);
+  font-weight: 500;
+}
+
+/* Tablet: 2 messages visible at a time */
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .announcement-bar-slider .grid--1-col.slider--everywhere {
+    column-gap: 3.2rem;
+  }
+
+  .announcement-bar-slider .grid--1-col .grid__item {
+    width: calc(50% - 1.6rem);
+    max-width: calc(50% - 1.6rem);
+  }
+}
+
+/* Desktop: every configured message shown at once, no scrolling */
+@media screen and (min-width: 990px) {
+  .announcement-bar-slider {
+    width: 100%;
+  }
+
+  .announcement-bar-slider .grid--1-col.slider--everywhere {
+    overflow: visible;
+    scroll-snap-type: none;
+    flex-wrap: nowrap;
+    justify-content: center;
+    column-gap: 3.2rem;
+  }
+
+  .announcement-bar-slider .grid--1-col .grid__item {
+    width: auto;
+    max-width: none;
+    flex-shrink: 0;
+  }
+
+  .announcement-bar-slider .slider-button {
+    display: none;
+  }
+
+  /* Auto-rotate (if enabled) still fires its JS timer at this breakpoint —
+     harmless since nothing scrolls, but the fade-transition classes it
+     applies default every non-"current" slide to opacity: 0. All slides
+     must stay fully visible in the static desktop row. */
+  .announcement-bar-slider .announcement-bar-slider--fade-in-next .announcement-bar__message,
+  .announcement-bar-slider .announcement-bar-slider--fade-in-previous .announcement-bar__message,
+  .announcement-bar-slider .announcement-bar-slider--fade-out-next .announcement-bar__message,
+  .announcement-bar-slider .announcement-bar-slider--fade-out-previous .announcement-bar__message {
+    opacity: 1;
+    animation: none;
+    transform: none;
+  }
+}

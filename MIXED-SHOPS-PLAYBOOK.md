@@ -220,6 +220,14 @@ The wishlist control beside add-to-cart became a 5.6rem circle with the PDP hair
 
 General rule: **a reference's photo treatment is calibrated to the reference's photography.** Insets, frame aspects and backdrops are the first things to re-derive when the real pipeline supplies differently-shaped assets — measure the catalogue's actual image ratios before porting a frame aspect. Geometry ports cleanly; photo treatment often does not.
 
+### D17 — Header announcement bar keeps Dawn's scroller instead of the reference's simpler 2-state layout — decided 2026-08-25
+
+The Bolt reference's top trust bar isn't a carousel at all: pure CSS hide/show, exactly 1 message under ~640px and all 3 from ~640px up, never scrolling. Measured live via `getComputedStyle` before building anything, because the request ("Dawn puts them in a scroller, not bad, but should show all 3 on desktop without scrolling") assumed the reference had an intermediate tablet-shows-2 state that it doesn't — it jumps straight from 1 to 3.
+
+Owner's explicit call, given that gap: **keep Dawn's existing scroller behavior** (prev/next buttons, one-slide-at-a-time paging) on mobile and tablet rather than adopting the reference's plain hide/show, with a genuinely new tablet tier (2 messages visible, not in the reference at all) and match the reference only at desktop (all messages static, no scroll, no buttons, no autoplay motion). This is a deliberate, permanent departure from the reference's own markup pattern, not a temporary gap — do not "fix" it toward the reference's simpler version without asking first.
+
+Also decided: the reference's exact bar color (`#0F172A`) has no matching theme color scheme. Rather than adding a new one, the section stays on the theme's existing dark `scheme-3` — already live before this decision was made. General rule reaffirmed from D15/D16: **a reference's own implementation choices are not automatically the target** — geometry and visual treatment get matched; interaction patterns and exact colors get evaluated against what already exists in the theme, and the owner decides when they diverge.
+
 ## Reuse ledger (SB's shipped `openspec/specs/`)
 
 | Capability (spec) | Verdict | Note |

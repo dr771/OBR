@@ -1,5 +1,6 @@
 {{ 'component-slideshow.css' | asset_url | stylesheet_tag }}
 {{ 'component-slider.css' | asset_url | stylesheet_tag }}
+{{ 'component-ob-announcement-bar.css' | asset_url | stylesheet_tag }}
 
 {%- liquid
   assign social_icons = true
@@ -40,6 +41,9 @@
             >
           {%- endif -%}
           <p class="announcement-bar__message h5">
+            {%- if section.blocks.first.settings.icon != blank and section.blocks.first.settings.icon != 'none' -%}
+              {%- render 'ob-icon', icon: section.blocks.first.settings.icon, class: 'announcement-bar__icon' -%}
+            {%- endif -%}
             <span>{{ section.blocks.first.settings.text | escape }}</span>
             {%- if section.blocks.first.settings.link != blank -%}
               {{- 'icon-arrow.svg' | inline_asset_content -}}
@@ -100,6 +104,9 @@
                       >
                     {%- endif -%}
                     <p class="announcement-bar__message h5">
+                      {%- if block.settings.icon != blank and block.settings.icon != 'none' -%}
+                        {%- render 'ob-icon', icon: block.settings.icon, class: 'announcement-bar__icon' -%}
+                      {%- endif -%}
                       <span>{{ block.settings.text | escape }}</span>
                       {%- if block.settings.link != blank -%}
                         {{- 'icon-arrow.svg' | inline_asset_content -}}
@@ -244,6 +251,21 @@
           "type": "url",
           "id": "link",
           "label": "t:sections.announcement-bar.blocks.announcement.settings.link.label"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "none",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "truck", "label": "Truck" },
+            { "value": "refresh-cw", "label": "Refresh" },
+            { "value": "shield-check", "label": "Shield check" },
+            { "value": "clock", "label": "Clock" },
+            { "value": "check", "label": "Check" },
+            { "value": "ruler", "label": "Ruler" }
+          ]
         }
       ]
     }
