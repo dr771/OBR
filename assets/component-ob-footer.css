@@ -24,7 +24,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 4rem;
   border-bottom: 1px solid rgb(203, 213, 225);
-  padding-bottom: 5.6rem;
+  padding-bottom: 2.8rem;
 }
 
 @media screen and (min-width: 48rem) {
@@ -153,6 +153,13 @@
   padding-bottom: 2.8rem;
 }
 
+/* Only the localization/newsletter wrapper (not the copyright wrapper below it) —
+   halves the gap above the copyright row without touching the copyright row's own
+   bottom spacing toward the locale/currency bar. */
+.ob-footer .footer__content-bottom-wrapper:first-of-type {
+  padding-bottom: 1.4rem;
+}
+
 .ob-footer .footer__copyright,
 .ob-footer .footer__copyright a,
 .ob-footer .copyright__content {
@@ -161,9 +168,54 @@
   color: rgb(100, 116, 139);
 }
 
+.ob-footer .footer__copyright {
+  margin-top: 0.75rem;
+}
+
 .ob-footer .footer__localization .caption-large {
   font-size: 1.2rem;
   font-weight: 500;
   letter-spacing: normal;
   color: rgb(100, 116, 139);
+}
+
+/* Language switch (left) + newsletter box (right) share one row instead of stacking centered */
+@media screen and (min-width: 750px) {
+  .ob-footer .footer__content-bottom-wrapper {
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    row-gap: 2.4rem;
+  }
+
+  .ob-footer .footer__content-bottom-wrapper .footer__column {
+    width: auto;
+  }
+}
+
+/* Brand column: payment badges sit where social icons would, below the tagline, no label.
+   Badge chrome pixel-matched to the Bolt proto's own payment badges (rounded-md border
+   border-sand-300 bg-white px-2 py-1 text-[10px] font-semibold text-ink-light, gap-1.5). */
+.ob-footer .footer__payment--brand {
+  margin-top: 2.4rem;
+}
+
+.ob-footer .list-payment--badge {
+  justify-content: flex-start;
+  margin: 0;
+  padding-top: 0;
+  gap: 0.6rem;
+}
+
+.ob-footer .list-payment__item--badge {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid rgb(203, 213, 225);
+  border-radius: 0.6rem;
+  background-color: rgb(255, 255, 255);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.6rem;
+  letter-spacing: normal;
+  color: rgb(51, 65, 85);
+  white-space: nowrap;
 }
