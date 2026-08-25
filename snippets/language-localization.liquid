@@ -8,12 +8,22 @@
 <div class="disclosure">
   <button
     type="button"
-    class="disclosure__button localization-form__select localization-selector link link--text caption-large"
+    class="disclosure__button localization-form__select localization-selector{% if compact_label %} localization-selector--compact{% endif %} link link--text caption-large"
     aria-expanded="false"
     aria-controls="{{ localPosition }}List"
-    aria-describedby="{{ localPosition }}Label"
+    {% if compact_label %}
+      aria-label="{{ 'localization.language_label' | t }}: {{ localization.language.endonym_name | capitalize | escape }}"
+    {% else %}
+      aria-describedby="{{ localPosition }}Label"
+    {% endif %}
   >
-    <span>{{ localization.language.endonym_name | capitalize }}</span>
+    <span>
+      {% if compact_label %}
+        {{ localization.language.iso_code | upcase }}
+      {% else %}
+        {{ localization.language.endonym_name | capitalize }}
+      {% endif %}
+    </span>
     {{ 'icon-caret.svg' | inline_asset_content }}
   </button>
   <div class="disclosure__list-wrapper language-selector" hidden>

@@ -51,12 +51,147 @@
     flex-wrap: wrap;
   }
 
+  @media screen and (min-width: 990px) {
+    .header--middle-left:not(.drawer-menu) .list-menu--inline {
+      flex-wrap: nowrap;
+    }
+
+    .header--middle-left:not(.drawer-menu) .header__menu-item {
+      white-space: nowrap;
+    }
+
+    .header__inline-menu > .list-menu--inline > li > :is(
+      .header__menu-item,
+      header-menu > details > .header__menu-item
+    ) {
+      color: rgba(var(--color-foreground), 0.75);
+      transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .header__inline-menu > .list-menu--inline > li > :is(
+      .header__menu-item,
+      header-menu > details > .header__menu-item
+    ) > span {
+      position: relative;
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .header__inline-menu > .list-menu--inline > li > :is(
+      .header__menu-item,
+      header-menu > details > .header__menu-item
+    ) > span::after {
+      position: absolute;
+      inset-inline-start: 0;
+      inset-block-end: -0.6rem;
+      inline-size: 0;
+      block-size: 0.2rem;
+      background-color: #38b6ff;
+      content: '';
+      transition: inline-size 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .header__inline-menu > .list-menu--inline > li > :is(
+      .header__menu-item,
+      header-menu > details > .header__menu-item
+    ):is(:hover, :focus-visible) {
+      color: #0f172a;
+    }
+
+    .header__inline-menu > .list-menu--inline > li > :is(
+      .header__menu-item,
+      header-menu > details > .header__menu-item
+    ):is(:hover, :focus-visible) > span,
+    .header__inline-menu > .list-menu--inline > li > :is(
+      .header__menu-item,
+      header-menu > details > .header__menu-item
+    ) > .header__active-menu-item {
+      color: #0f172a;
+      text-decoration: none;
+    }
+
+    .header__inline-menu > .list-menu--inline > li > :is(
+      .header__menu-item,
+      header-menu > details > .header__menu-item
+    ):is(:hover, :focus-visible) > span::after,
+    .header__inline-menu > .list-menu--inline > li > :is(
+      .header__menu-item[aria-current='page'],
+      header-menu > details > .header__menu-item
+    ) > .header__active-menu-item::after,
+    .header__inline-menu > .list-menu--inline > li > header-menu > details[open] > .header__menu-item > span::after {
+      inline-size: 100%;
+    }
+
+    .header__inline-menu > .list-menu--inline > li > header-menu > details[open] > .header__menu-item {
+      color: #0f172a;
+      text-decoration: none;
+    }
+
+    .js .header-localization:not(.menu-drawer__localization) .localization-form__select.localization-selector--compact {
+      padding-inline: 0.8rem 1.6rem;
+    }
+
+    .header-localization:not(.menu-drawer__localization) .localization-selector--compact .icon-caret {
+      right: 2rem;
+    }
+  }
+
+  @media screen and (min-width: 1500px) {
+    .header--middle-left:not(.drawer-menu) {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+
+    .header--middle-left:not(.drawer-menu) .header__inline-menu {
+      justify-self: center;
+      margin-left: 0;
+      min-width: 0;
+    }
+  }
+
+  @media screen and (min-width: 990px) and (max-width: 1499px) {
+    .header--middle-left:not(.drawer-menu) {
+      grid-template-areas:
+        '. heading icons'
+        'navigation navigation navigation';
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      row-gap: 1.05rem;
+    }
+
+    .header--middle-left:not(.drawer-menu) .header__heading,
+    .header--middle-left:not(.drawer-menu) .header__heading-link {
+      justify-self: center;
+      margin-inline-start: 0;
+      text-align: center;
+    }
+
+    .header--middle-left:not(.drawer-menu) .header__inline-menu {
+      justify-self: stretch;
+      margin-left: 0;
+      width: 100%;
+    }
+
+    .header--middle-left:not(.drawer-menu) .header__inline-menu > .list-menu--inline {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
   .header__icon--wishlist {
     position: relative;
   }
 
   .header__icon--wishlist .icon {
     fill: currentColor;
+  }
+
+  .header__icons {
+    --ob-header-badge-background: #38b6ff;
+    --ob-header-badge-foreground: #ffffff;
+  }
+
+  .header__icons :is(.cart-count-bubble, .ob-wishlist-bubble) {
+    background-color: var(--ob-header-badge-background);
+    color: var(--ob-header-badge-foreground);
   }
 
   summary.list-menu__item {
@@ -249,7 +384,7 @@
             {%- form 'localization', id: 'HeaderLanguageForm', class: 'localization-form' -%}
               <div>
                 <h2 class="visually-hidden" id="HeaderLanguageLabel">{{ 'localization.language_label' | t }}</h2>
-                {%- render 'language-localization', localPosition: 'HeaderLanguage' -%}
+                {%- render 'language-localization', localPosition: 'HeaderLanguage', compact_label: true -%}
               </div>
             {%- endform -%}
           </localization-form>
@@ -257,7 +392,7 @@
       </div>
       {% render 'header-search', input_id: 'Search-In-Modal' %}
 
-      {%- if shop.customer_accounts_enabled -%}
+      {%- if shop.customer_accounts_enabled and section.settings.show_account_icon -%}
         <a
           href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
           class="header__icon header__icon--account link focus-inset{% if section.settings.menu != blank %} small-hide{% endif %}"
@@ -620,6 +755,13 @@
       "default": true,
       "label": "t:sections.header.settings.enable_language_selector.label",
       "info": "t:sections.header.settings.enable_language_selector.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account_icon",
+      "default": false,
+      "label": "Show customer account icon",
+      "info": "Displays the customer account icon in the desktop header."
     },
     {
       "type": "checkbox",

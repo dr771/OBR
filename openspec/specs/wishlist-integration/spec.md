@@ -26,7 +26,7 @@ The theme SHALL overlay WK-rendered option labels and CTA texts that contain raw
 - **THEN** the visible CTA reads "Selecteer kleur"
 
 ### Requirement: Header wishlist heart with count badge
-The header SHALL render a heart icon link to `/apps/wishlist` in the icon row between the account and cart icons, on all viewports, styled like Dawn's `header__icon` controls, with a localized accessible label. The link SHALL carry `wk-skip` so WK does not inject its own component into it. A count badge (visually consistent with Dawn's cart bubble) SHALL show the wishlist item count, driven by WK's reactive wishlist state (including optimistic updates), hidden entirely at count 0 and before WK boots.
+The header SHALL render a heart icon link to `/apps/wishlist` in the icon row immediately before the cart icon, on all viewports, styled like Dawn's `header__icon` controls, with a localized accessible label. When the optional account icon is rendered, the heart SHALL follow it and remain before cart. The link SHALL carry `wk-skip` so WK does not inject its own component into it. A count badge (visually consistent with Dawn's cart bubble) SHALL show the wishlist item count, driven by WK's reactive wishlist state (including optimistic updates), hidden entirely at count 0 and before WK boots.
 
 #### Scenario: Badge reflects wishlist count
 - **WHEN** WK has booted and the wishlist contains 3 items
@@ -35,6 +35,10 @@ The header SHALL render a heart icon link to `/apps/wishlist` in the icon row be
 #### Scenario: WK not yet loaded
 - **WHEN** the page is in the pre-boot window of the WK lazy-init (or WK fails to load)
 - **THEN** the heart link still renders and navigates to `/apps/wishlist`, with no badge shown
+
+#### Scenario: Optional account icon is absent
+- **WHEN** the customer-account icon is disabled
+- **THEN** the heart remains immediately before the cart icon without an empty account-control gap
 
 ### Requirement: PDP wishlist button beside add-to-cart
 The PDP buy-buttons block SHALL render a square heart toggle button beside the add-to-cart button, carrying the product handle and the selected variant id. Clicking it SHALL add the product to the wishlist via WK's public add API when not saved, and remove it via WK's public remove API when already saved. Selected state SHALL derive reactively from WK's per-product state and MUST survive Dawn's `product-info.js` innerHTML replacement on variant change. Since the store runs WK in PRODUCT mode, the saved state is per product, not per variant. All behavior MUST be fail-open when WK is unavailable (button renders; click is a no-op).
