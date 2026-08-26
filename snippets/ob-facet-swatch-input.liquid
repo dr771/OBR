@@ -7,6 +7,8 @@
   Accepts: same as swatch-input.liquid, minus `swatch`/`shape` (chip is fixed
   round), plus `value_obj`: {Object} the filter value object (for the hex/label lookup).
   `type` is checkbox for multi-select color filtering and radio for single-select.
+  `label_text`: {String} optional pre-resolved, already-escaped display label
+  (from ob-facet-value-label); falls back to `value_obj.label` when absent.
 
   Usage:
    {% render 'ob-facet-swatch-input',
@@ -18,6 +20,12 @@
       checked: checked
     %}
 {% endcomment %}
+{%- liquid
+  assign ob_swatch_label = label_text
+  if ob_swatch_label == blank
+    assign ob_swatch_label = value_obj.label | escape
+  endif
+-%}
 
 <input
   type="{{ type | default: 'checkbox' }}"
@@ -38,6 +46,6 @@
 >
 <label for="{{ id }}" class="swatch-input__label">
   {% render 'ob-facet-color-chip', value: value_obj %}
-  <span class="visually-hidden">{{ value_obj.label | escape }} ({{ value_obj.count }})</span>
+  <span class="visually-hidden">{{ ob_swatch_label }} ({{ value_obj.count }})</span>
   {{ help_text }}
 </label>

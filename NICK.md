@@ -65,7 +65,17 @@ The Dutch values are present and correct in each entry's `label` field — they'
 
 **Effect:** English colour names on a Dutch storefront. (Lower impact on `activities`, where the theme reads the `label` field directly — but the admin and any native filter built on it still show English.)
 
-**Fix:** set both metaobject definitions' display name to the `label` field.
+**Status (2026-08-26): RESOLVED on dev, but the obvious fix was not sufficient — read this before redoing it.**
+
+Three separate things were wrong, and only doing all three made the storefront show Dutch:
+
+1. `displayNameKey` was set to `label` on both definitions (the fix originally written above). **This alone changed nothing on the storefront.**
+2. The Search & Discovery filters themselves map a *field* to the displayed label, independently of `displayNameKey` — both **Kleur** and **Activities** were mapped to `code`. Repointed to `label` in *Manage values → Label*. The app's Values screen then showed Dutch correctly, but the **storefront still did not** — Shopify's storefront filter index kept serving the old text (and for `hiking` served `"Hiking"`, which matches neither `code` nor `label`). Forcing a product reindex changed nothing.
+3. So the theme now resolves the label from the metaobject itself instead of trusting the filter index (`snippets/ob-facet-value-label.liquid`).
+
+**New sync requirement — action for Nick.** Step 3 cannot read the field named `label`: **`label` is a reserved property on Shopify's metaobject Liquid drop**, so `entry.label` returns the entry's *handle*, never the field. Verified live: for the `pink` entry, `hexcode` → `#FFC0CB` and `code` → `pink` read correctly, while `label` → `pink` where the stored value is `roze`.
+
+A duplicate field **`display_label`** was therefore added to both `filtercolors` and `activities`, and all 23 existing entries were backfilled from `label`. **The sync must populate `display_label` alongside `label` on any new or updated entry** — otherwise new colours/activities silently fall back to Shopify's (English) index label. Renaming `label` itself would have been cleaner but would break the connector, so the duplicate was chosen deliberately.
 
 ---
 
@@ -82,6 +92,32 @@ Two questions rather than a definite bug:
 
 ---
 
+## 6. Shopify's taxonomy `category` is empty on almost every product
+
+Found 2026-08-26. The storefront "Categorie" filter is built on Shopify's **standard product taxonomy** field (`filter.p.t.category`). That field is set on exactly **1 of 26 products** (Hi-Tec Silver Shadow OG → `Apparel & Accessories > Shoes > Sneakers`); every other product has `category: null`.
+
+The real category data *does* arrive, but in a metafield: `custom.shopify_originalbrands_category`, with 9 distinct values —
+
+`Sandal, Slipper, Legging, Shirt, Sneaker, Outdoor, Headware, Ondergoed, Kousen`
+
+**Effect:** the Categorie filter shows a single value ("Sneakers") instead of 9, so it is effectively useless to shoppers.
+
+**Two possible fixes, needs a decision:** either the sync populates Shopify's native taxonomy `category` per product, or we point the filter at `custom.shopify_originalbrands_category` and leave the taxonomy field alone. The metafield is the faster route and is already correct; the taxonomy field is the more "native" one and also feeds Shopify's own categorisation features.
+
+## 7. Category / gender / product-type values are English (and mixed-language)
+
+Found 2026-08-26. Unlike colours and activities, these are **plain text on the product**, with no metaobject and therefore no `label` field to translate — so the theme cannot fix them the way it fixes Kleur/Activities:
+
+| Filter | Source | Values |
+|---|---|---|
+| Gender | `custom.genderid` (`single_line_text_field`) | `Men`, `Women`, `Unisex` |
+| Producttype | Shopify `productType` | `Shoe`, `Fashion`, `Sport`, `Sneaker` |
+| Categorie | `custom.shopify_originalbrands_category` | mixed: `Slipper`, `Shirt`, `Legging` … but also `Ondergoed`, `Kousen` |
+
+**Effect:** English facet values on a Dutch storefront, and the category list is inconsistent with itself (Dutch and English mixed in one facet).
+
+**Fix:** ideally the feed supplies Dutch values (`Heren`/`Dames`/`Uniseks` etc.) and one consistent language for categories. Failing that these can be renamed per value in Search & Discovery, but that is manual and drifts as soon as new values appear.
+
 ## Short message for Nick
 
 > Hi Nick,
@@ -95,6 +131,12 @@ Two questions rather than a definite bug:
 > **4.** The metaobject display name is the English `code` ("brown") instead of the Dutch `label` ("bruin") — on both `filtercolors` and `activities`. The Dutch labels are in the data already; it's the definition's display-name setting.
 >
 > **5. Two questions on `activities`**, which I need answered before I build the PDP icon row: all 7 products currently point at the same single value, *Lifestyle* — including the footwear — and nothing references *Running*. Is that real data yet, or a placeholder? And should the field be a **list**? Right now it's a single `metaobject_reference`, so a product physically can't carry both *Running* and *Lifestyle*.
+>
+> **4 (update, 2026-08-26).** This one turned out to have three layers and is now working on dev — but it needs one thing from the sync. `label` is a **reserved word** in Shopify's Liquid, so a theme literally cannot read a metaobject field called `label` (it silently returns the handle instead — `pink` instead of `roze`). I've added a duplicate field **`display_label`** to `filtercolors` and `activities` and backfilled the existing 23 entries. **Could the sync write `display_label` alongside `label`?** Otherwise any new colour or activity will show up in English.
+>
+> **6.** The Categorie filter shows only 1 value instead of 9, because Shopify's native taxonomy `category` field is empty on 25 of 26 products. The real data is in `custom.shopify_originalbrands_category` (9 values). Should the sync fill Shopify's taxonomy field, or shall we just point the filter at that metafield?
+>
+> **7.** Gender (`Men`/`Women`/`Unisex`) and Producttype (`Shoe`/`Fashion`/`Sport`) come through in English, and the category values are mixed language (`Slipper`, `Shirt` … but `Ondergoed`, `Kousen`). These are plain text, so unlike the colours the theme can't translate them — can the feed supply Dutch, and pick one language for categories?
 >
 > No rush on 2–4, but 5 is blocking me.
 >

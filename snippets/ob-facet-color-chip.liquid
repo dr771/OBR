@@ -24,11 +24,18 @@
   {% render 'ob-facet-color-chip', value: value %}
 {% endcomment %}
 {%- liquid
+  # A metaobject entry has no `.id` (nil), and `entry.system.id` is the bare
+  # numeric id while `value.value` is the full GID — so the prefix is
+  # re-attached before comparing. See ob-facet-value-label for all four traps.
+  # Until this was fixed the GID branch never matched and chips resolved only
+  # when the entry's label happened to equal Shopify's index label.
+  assign gid_prefix = 'gid://shopify/Metaobject/'
   assign matched_hex = null
   assign matched_image = null
   for entry in shop.metaobjects.filtercolors.values
     assign is_match = false
-    if entry.id == value.value
+    assign entry_gid = gid_prefix | append: entry.system.id
+    if entry_gid == value.value
       assign is_match = true
     elsif entry.label == value.label
       assign is_match = true

@@ -209,12 +209,20 @@
                             facets__label facet-checkbox{% if is_disabled %} disabled{% endif %}{% if value.active %} active{% endif %}
                             {%- endcapture -%}
 
+                            {%- comment -%}
+                              Metaobject-backed facets read their label from the metaobject itself,
+                              not from Shopify's filter index — see ob-facet-value-label.
+                            {%- endcomment -%}
+                            {%- capture ob_value_label -%}
+                              {%- render 'ob-facet-value-label', value: value, param_name: filter.param_name -%}
+                            {%- endcapture -%}
+
                             {%- capture text_value -%}
                               <span class="facet-checkbox__text" aria-hidden="true">
-                                <span class="facet-checkbox__text-label">{{- value.label | escape }}</span> ({{- value.count -}})
+                                <span class="facet-checkbox__text-label">{{- ob_value_label }}</span> ({{- value.count -}})
                               </span>
                               <span class="visually-hidden">
-                                {{- value.label | escape }} (
+                                {{- ob_value_label }} (
                                 {%- if value.count == 1 -%}
                                   {{- 'products.facets.product_count_simple.one' | t: count: value.count -}}
                                 {%- else -%}
@@ -259,7 +267,7 @@
                               {%- elsif is_color_facet -%}
                                 <div
                                   class="{{ label_class }} ob-color-facet-option"
-                                  data-ob-swatch-name="{{ value.label | escape }} ({{ value.count }})"
+                                  data-ob-swatch-name="{{ ob_value_label }} ({{ value.count }})"
                                 >
                                   <div class="swatch-input-wrapper">
                                     {% render 'ob-facet-swatch-input',
@@ -268,6 +276,7 @@
                                       name: value.param_name,
                                       value: value.value,
                                       value_obj: value,
+                                      label_text: ob_value_label,
                                       product_form_id: 'FacetFiltersForm',
                                       checked: value.active,
                                       disabled: is_disabled
@@ -408,13 +417,16 @@
             <div class="active-facets active-facets-desktop">
               {%- for filter in results.filters -%}
                 {%- for value in filter.active_values -%}
+                  {%- capture ob_value_label -%}
+                    {%- render 'ob-facet-value-label', value: value, param_name: filter.param_name -%}
+                  {%- endcapture -%}
                   <facet-remove>
                     <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
                       <span class="active-facets__button-inner button button--tertiary">
                         {%- if filter.param_name contains 'filtercolors' -%}
-                          {{ value.label | escape }}
+                          {{ ob_value_label }}
                         {%- else -%}
-                          {{ filter.label | escape }}: {{ value.label | escape }}
+                          {{ filter.label | escape }}: {{ ob_value_label }}
                         {%- endif -%}
                         <span class="svg-wrapper">
                           {{- 'icon-close-small.svg' | inline_asset_content -}}
@@ -665,12 +677,16 @@
                               facets__label mobile-facets__label{% if is_disabled %} disabled{% endif %}{% if value.active %} active{% endif %}
                               {%- endcapture -%}
 
+                              {%- capture ob_value_label -%}
+                                {%- render 'ob-facet-value-label', value: value, param_name: filter.param_name -%}
+                              {%- endcapture -%}
+
                               {%- capture text_value -%}
                                 <span class="facet-checkbox__text" aria-hidden="true">
-                                  <span class="facet-checkbox__text-label">{{- value.label | escape }}</span> ({{- value.count -}})
+                                  <span class="facet-checkbox__text-label">{{- ob_value_label }}</span> ({{- value.count -}})
                                 </span>
                                 <span class="visually-hidden">
-                                  {{- value.label | escape }} (
+                                  {{- ob_value_label }} (
                                   {%- if value.count == '1' -%}
                                     {{- 'products.facets.product_count_simple.one' | t: count: value.count -}}
                                   {%- else -%}
@@ -684,7 +700,7 @@
                                 {% if is_color_facet %}
                                   <div
                                     class="{{ label_class }} ob-color-facet-option"
-                                    data-ob-swatch-name="{{ value.label | escape }} ({{ value.count }})"
+                                    data-ob-swatch-name="{{ ob_value_label }} ({{ value.count }})"
                                   >
                                     <div class="swatch-input-wrapper">
                                       {% render 'ob-facet-swatch-input',
@@ -693,6 +709,7 @@
                                         name: value.param_name,
                                         value: value.value,
                                         value_obj: value,
+                                        label_text: ob_value_label,
                                         product_form_id: 'FacetFiltersFormMobile',
                                         checked: value.active,
                                         disabled: is_disabled
@@ -909,10 +926,13 @@
       -%}
       {%- unless has_mobile_bar_row -%}
         {%- for value in filter.active_values -%}
+          {%- capture ob_value_label -%}
+            {%- render 'ob-facet-value-label', value: value, param_name: filter.param_name -%}
+          {%- endcapture -%}
           <facet-remove>
             <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
               <span class="active-facets__button-inner button button--tertiary">
-                {{ value.label | escape }}
+                {{ ob_value_label }}
                 <span class="svg-wrapper">
                   {{- 'icon-close-small.svg' | inline_asset_content -}}
                 </span>
@@ -1029,13 +1049,16 @@
         <div class="active-facets active-facets-desktop">
           {%- for filter in results.filters -%}
             {%- for value in filter.active_values -%}
+              {%- capture ob_value_label -%}
+                {%- render 'ob-facet-value-label', value: value, param_name: filter.param_name -%}
+              {%- endcapture -%}
               <facet-remove>
                 <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
                   <span class="active-facets__button-inner button button--tertiary">
                     {%- if filter.param_name contains 'filtercolors' -%}
-                      {{ value.label | escape }}
+                      {{ ob_value_label }}
                     {%- else -%}
-                      {{ filter.label | escape }}: {{ value.label | escape }}
+                      {{ filter.label | escape }}: {{ ob_value_label }}
                     {%- endif -%}
                     <span class="svg-wrapper">
                       {{- 'icon-close-small.svg' | inline_asset_content -}}

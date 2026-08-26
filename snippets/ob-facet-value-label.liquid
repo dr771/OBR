@@ -1,0 +1,91 @@
+{% comment %}
+  Resolves a filter value's display label from its backing metaobject entry
+  rather than trusting Shopify's `value.label`.
+
+  Why: for metaobject-reference filters, `value.label` is served from Shopify's
+  storefront filter index, which mirrors the Search & Discovery "Label" field
+  mapping only after an internal re-derivation the shop cannot trigger. Observed
+  live on this shop (2026-08-26): after both the `activities` and `filtercolors`
+  filters were switched in Search & Discovery from the `code` field to the
+  `label` field, the index kept serving the old English `code` text for Kleur
+  ("black", "blue") and a stale humanized handle for one activity ("Hiking"
+  rather than "Wandelen"), while the app's own Values screen showed the correct
+  Dutch labels. Touching products to force a reindex changed nothing.
+
+  The metaobject entry itself is always correct and is already read from Liquid
+  by ob-facet-color-chip to resolve the chip hex, so the label is read from the
+  same place. The rendered label is then correct regardless of what the filter
+  index serves, and stays correct once it catches up.
+
+  Matching is by metaobject GID only; the label is read from `display_label`. A facet whose value is not a metaobject
+  GID (vendor, product_type, price, the size list) short-circuits on the
+  `contains` guard and keeps `value.label`.
+
+  Output is already HTML-escaped — callers MUST NOT escape it again.
+
+  Accepts:
+  - value: {Object} a filter value object (from facets.liquid)
+
+  Usage:
+  {%- capture value_label -%}
+    {%- render 'ob-facet-value-label', value: value -%}
+  {%- endcapture -%}
+{% endcomment %}
+{%- comment -%}
+  Five Liquid traps, every one confirmed live by instrumenting the rendered
+  page. Keep this snippet exactly as written — each looks harmless and each
+  silently degrades to the fallback rather than erroring:
+
+  1. `shop.metaobjects[some_variable]` resolves to nil, so each metaobject type
+     must be named statically; a new metaobject-backed facet needs its own loop.
+  2. `shop.metaobjects.<type>.values` is a lazy drop. `.size` reports correctly
+     (15), but `.first` returns nil and assigning the collection to a variable
+     before iterating produces an empty loop — it must be iterated directly.
+  3. A metaobject entry has NO `.id` property; it reads as nil, so comparing
+     `entry.id` to anything never matches.
+  4. `entry.system.id` is the BARE NUMERIC id (`224312459373`) while a filter
+     value's `value.value` is the full GID
+     (`gid://shopify/Metaobject/224312459373`), so the prefix must be
+     re-attached before comparing.
+  5. `label` is a RESERVED property on the metaobject drop. Despite the field
+     genuinely being keyed `label`, `entry.label` (and `entry["label"]`) return
+     the entry's HANDLE, never the field — verified live: the `pink` entry reads
+     `hexcode` -> `#FFC0CB` and `code` -> `pink` correctly, but `label` -> `pink`
+     where the stored field value is `roze`. The Dutch text is therefore
+     unreachable under that key, which is why this reads `display_label`, a
+     deliberate non-colliding duplicate of `label` on both definitions.
+     Sync requirement: Akeneo must populate `display_label` on new entries, or
+     they silently fall back to Shopify's index label. See NICK.md.
+
+  Trap 5 masked every earlier attempt: the GID match was succeeding all along,
+  but the shadowed read handed back the handle, which for most colours is
+  identical to the English fallback and so looked like "no match".
+{%- endcomment -%}
+{%- assign ob_gid_prefix = 'gid://shopify/Metaobject/' -%}
+{%- assign ob_resolved_label = '' -%}
+
+{%- if value.value contains ob_gid_prefix -%}
+  {%- for ob_entry in shop.metaobjects.filtercolors.values -%}
+    {%- assign ob_entry_gid = ob_gid_prefix | append: ob_entry.system.id -%}
+    {%- if ob_entry_gid == value.value -%}
+      {%- capture ob_resolved_label %}{{ ob_entry.display_label }}{% endcapture -%}
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if ob_resolved_label == '' -%}
+    {%- for ob_entry in shop.metaobjects.activities.values -%}
+      {%- assign ob_entry_gid = ob_gid_prefix | append: ob_entry.system.id -%}
+      {%- if ob_entry_gid == value.value -%}
+        {%- capture ob_resolved_label %}{{ ob_entry.display_label }}{% endcapture -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- assign ob_resolved_label = ob_resolved_label | strip -%}
+{%- if ob_resolved_label == '' -%}
+  {%- assign ob_resolved_label = value.label -%}
+{%- endif -%}
+{{- ob_resolved_label | escape -}}
