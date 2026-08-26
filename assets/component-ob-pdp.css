@@ -569,6 +569,17 @@
   color: var(--ob-pdp-accent-ink);
 }
 
+/*
+  Dawn's native zoom icon (.product__media-icon) sits at the same top-left
+  corner as the bestseller badge (.ob-badge--gallery). Move it to top-right
+  so the two never overlap.
+*/
+.ob-pdp .product__media-icon {
+  left: auto;
+  right: 2rem;
+  top: 2rem;
+}
+
 .ob-pdp__price-row {
   display: flex;
   align-items: center;
