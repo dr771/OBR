@@ -1,5 +1,29 @@
 # Smart collections
 
+## Current catalog values
+
+### Categories
+
+- Headware
+- Kousen
+- Legging
+- Ondergoed
+- Outdoor
+- Sandal
+- Shirt
+- Slipper
+- Sneaker
+
+### Activities
+
+- Fietsen
+- Lifestyle
+- Running
+- Skiën & Snowboard
+- Training
+- Wandelen
+- Zwemmen
+
 ## Special collections
 
 These three automatic collections use **OR** logic: a product is included when it matches at least one listed activity or category. The mapping below is the approved merchandising rule set for Original Brands DEV.
@@ -10,17 +34,12 @@ These three automatic collections use **OR** logic: a product is included when i
 - Running (act)
 - Zwemmen (act)
 - Training (act)
-- Legging (cat)
-- Shirt (cat)
-- Sneaker (cat)
 
 ### Outdoor & Werk
 
 - Wandelen (act)
 - Skiën & Snowboard (act)
 - Outdoor (cat)
-- Headware (cat)
-- Kousen (cat)
 
 ### Dagelijks Comfort
 
@@ -47,7 +66,4 @@ These automatic collections use the Product metafield `custom.genderid` with OR 
 
 ## Current scan baseline
 
-All current values are assigned exactly once across the three collections:
-
-- Activities: Fietsen, Wandelen, Lifestyle, Running, Skiën & Snowboard, Zwemmen, Training.
-- Categories: Headware, Kousen, Legging, Ondergoed, Outdoor, Sandal, Shirt, Slipper, Sneaker.
+All activities are assigned exactly once across the three collections. The generic category values `Headware`, `Kousen`, `Legging`, `Shirt`, and `Sneaker` intentionally do not control membership of these special collections: they caused false-positive merchandising results. The mapped category values are `Ondergoed`, `Outdoor`, `Sandal`, and `Slipper`.
