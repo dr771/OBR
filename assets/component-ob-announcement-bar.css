@@ -45,7 +45,7 @@
     scroll-snap-type: none;
     flex-wrap: nowrap;
     justify-content: center;
-    column-gap: 3rem;
+    column-gap: 6rem;
   }
 
   .announcement-bar-slider .grid--1-col .grid__item {
