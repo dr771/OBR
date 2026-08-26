@@ -21,9 +21,24 @@
   box-shadow: 0 1px 0 rgba(15, 23, 42, 0.08);
 }
 
+@media screen and (max-width: 989px) {
+  header.header {
+    padding-top: 1px;
+    padding-bottom: 0px;
+  }
+
+  .header__heading-logo {
+    transform: translateY(1px);
+  }
+}
+
 @media screen and (min-width: 990px) {
   header.header {
     padding-top: 10px;
     padding-bottom: 10px;
+  }
+
+  .header__heading-logo {
+    transform: translateY(2px);
   }
 }
