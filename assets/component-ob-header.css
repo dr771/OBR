@@ -1,0 +1,29 @@
+/* OB: header chrome matched to the Bolt reference — nav-link typography,
+   a scroll-triggered glass background, and a desktop padding correction.
+   Reuses Dawn's existing `sticky-header` scroll tracking (`.scrolled-past-header`,
+   added to `.section-header` in sections/header.liquid's own JS) rather than
+   introducing new scroll-listener JS. */
+
+.header .header__menu-item,
+.header .header__menu-item span {
+  font-weight: 500;
+  letter-spacing: normal;
+}
+
+.header-wrapper {
+  transition: background-color 300ms ease, box-shadow 300ms ease, backdrop-filter 300ms ease;
+}
+
+.section-header.scrolled-past-header .header-wrapper {
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.08);
+}
+
+@media screen and (min-width: 990px) {
+  header.header {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+}
