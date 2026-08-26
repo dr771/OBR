@@ -3,6 +3,20 @@
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'component-ob-plp.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'ob-plp.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'ob-breadcrumb.js' | asset_url }}" defer="defer"></script>
+
+{%- comment -%}
+  Records this collection as the shopper's browsing context, so the PDP
+  breadcrumb can name it. Search results deliberately do not do this: a query is
+  not a collection, so a shopper arriving from search gets the ranked default.
+{%- endcomment -%}
+<div
+  hidden
+  data-ob-collection-context
+  data-ob-collection-handle="{{ collection.handle }}"
+  data-ob-collection-title="{{ collection.title | escape }}"
+  data-ob-collection-url="{{ collection.url }}"
+></div>
 
 {% if section.settings.image_shape == 'blob' %}
   {{ 'mask-blobs.css' | asset_url | stylesheet_tag }}
@@ -189,7 +203,7 @@
                 {%- assign products_shown = paginate.current_offset | plus: collection.products.size -%}
                 <div class="ob-load-more">
                   <p class="ob-load-more__count caption-large">
-                    {{ products_shown }} van {{ paginate.items }} producten
+                    {{ products_shown }} van {{ paginate.items }} producten bekeken
                   </p>
                   <button
                     type="button"
@@ -198,7 +212,7 @@
                     data-ob-next-url="{{ paginate.next.url | escape }}"
                     data-ob-section-id="{{ section.id }}"
                   >
-                    Toon meer
+                    Meer producten laden
                   </button>
                 </div>
               {%- endif -%}

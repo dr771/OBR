@@ -1,14 +1,24 @@
 {% comment %}
   OB: PDP breadcrumb trail, matched to the Bolt reference.
 
-  Ancestry comes from Shopify's own routing rather than a metafield: when a
-  shopper reaches a product through a collection the `collection` object is
-  populated, which is the trail they actually walked. Falling back to the
-  product's first collection keeps a direct/deep link from rendering a stub
-  trail, and a product in no collection still gets Home > product.
+  Which collection the trail names is resolved from three sources, in order:
+
+  1. Shopify's `collection` routing global. Only populated on
+     /collections/<handle>/products/<slug> URLs, which this theme deliberately
+     never links to (product URLs stay clean), so in practice this is blank —
+     but it is correct when present, so it stays first.
+  2. The collection the shopper browsed earlier in this tab, recorded by
+     `ob-breadcrumb.js` and applied by the inline resolver below. Used only when
+     the product is actually in it, so a stale context can never caption a trail
+     with a collection the product does not belong to.
+  3. The lowest `custom.breadcrumb_rank` collection the product belongs to.
+     Rank is merchant data on the collection (product-type < occasion <
+     audience < brand); unset sorts last. This exists because Liquid's
+     `product.collections` order is neither documented nor configurable — the
+     broadest collection was winning every trail.
 
   Separators are decorative and marked aria-hidden, so a screen reader reads
-  "Home, Dagelijks Comfort, Slippers" rather than interleaved chevrons.
+  "Home, Schoenen, Loewenweiss Diva slipper" rather than interleaved chevrons.
 
   Accepts:
   - product: {Object} product object (optional; falls back to the global)
@@ -20,12 +30,33 @@
 {%- liquid
   assign ob_product = product | default: product
   assign ob_collection = collection
-  if ob_collection == blank or ob_collection.handle == blank
-    assign ob_collection = ob_product.collections.first
-  endif
+
+  unless ob_collection != blank and ob_collection.handle != blank
+    assign ob_collection = ''
+    assign ob_best_rank = 999999
+    for ob_candidate in ob_product.collections
+      assign ob_rank = ob_candidate.metafields.custom.breadcrumb_rank.value
+      if ob_rank == blank
+        assign ob_rank = 99999
+      endif
+      if ob_rank < ob_best_rank
+        assign ob_best_rank = ob_rank
+        assign ob_collection = ob_candidate
+      endif
+    endfor
+  endunless
 -%}
 
-<nav class="ob-breadcrumb" aria-label="{{ 'general.breadcrumb.label' | t }}">
+{%- capture ob_collections_json -%}
+[{% for ob_candidate in ob_product.collections %}{"h":{{ ob_candidate.handle | json }},"t":{{ ob_candidate.title | json }},"u":{{ ob_candidate.url | json }}}{% unless forloop.last %},{% endunless %}{% endfor %}]
+{%- endcapture -%}
+
+<nav
+  class="ob-breadcrumb"
+  aria-label="{{ 'general.breadcrumb.label' | t }}"
+  data-ob-breadcrumb
+  data-ob-collections="{{ ob_collections_json | strip | escape }}"
+>
   <ol class="ob-breadcrumb__list">
     <li class="ob-breadcrumb__item">
       <a class="ob-breadcrumb__link" href="{{ routes.root_url }}">{{ 'general.breadcrumb.home' | t }}</a>
@@ -34,7 +65,11 @@
 
     {%- if ob_collection != blank and ob_collection.handle != blank -%}
       <li class="ob-breadcrumb__item">
-        <a class="ob-breadcrumb__link" href="{{ ob_collection.url }}">{{ ob_collection.title }}</a>
+        <a
+          class="ob-breadcrumb__link"
+          href="{{ ob_collection.url }}"
+          data-ob-breadcrumb-collection
+        >{{ ob_collection.title }}</a>
         {%- render 'ob-icon', icon: 'chevron-right', class: 'ob-breadcrumb__sep' -%}
       </li>
     {%- endif -%}
@@ -44,3 +79,44 @@
     </li>
   </ol>
 </nav>
+
+<script>
+  // Pre-paint breadcrumb resolution. Deliberately inline and synchronous, and
+  // deliberately NOT in ob-breadcrumb.js: a deferred asset turns this into a
+  // race that it loses whenever the fetch costs more than the parse-to-paint
+  // gap. Measured at 300ms latency, the wrong collection stayed on screen for
+  // 10-20 frames (up to 310ms); inline it was 0 frames, every run. See the
+  // pdp-breadcrumb-walked-path design doc. Moving this into the deferred file
+  // silently reintroduces that flicker.
+  //
+  // The remembered value is untrusted: only its handle is used, and only to
+  // look up a title/URL that Liquid rendered above. Nothing from storage is
+  // ever written into the DOM.
+  (function () {
+    try {
+      var nav = document.querySelector('[data-ob-breadcrumb]');
+      if (!nav) return;
+
+      var link = nav.querySelector('[data-ob-breadcrumb-collection]');
+      if (!link) return;
+
+      var raw = sessionStorage.getItem('ob:breadcrumb-collection');
+      if (!raw) return;
+
+      var remembered = JSON.parse(raw);
+      if (!remembered || !remembered.handle) return;
+
+      var candidates = JSON.parse(nav.getAttribute('data-ob-collections') || '[]');
+      for (var i = 0; i < candidates.length; i++) {
+        if (candidates[i].h === remembered.handle) {
+          link.textContent = candidates[i].t;
+          link.setAttribute('href', candidates[i].u);
+          return;
+        }
+      }
+    } catch (e) {
+      // sessionStorage can throw outright (blocked site data, some private
+      // modes). The server-rendered ranked collection stands.
+    }
+  })();
+</script>

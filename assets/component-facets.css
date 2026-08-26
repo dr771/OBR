@@ -1614,26 +1614,44 @@ input.mobile-facets__checkbox {
   position: sticky;
   top: 10rem;
   z-index: 2;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-sizing: border-box;
   width: 100%;
-  padding: 1rem 1.6rem;
+  min-height: 4.4rem;
+  padding: 1.2rem 2.8rem;
   border: 0;
-  border-radius: 0;
-  background: rgb(var(--color-foreground));
-  color: rgb(var(--color-background));
-  font: inherit;
-  font-size: 1.3rem;
+  border-radius: 999.9rem;
+  background: #0f172a;
+  color: #fff;
+  font-family: var(--font-body-family);
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 2rem;
+  letter-spacing: normal;
+  text-transform: none;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
+  transition: background-color 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
 }
 
 .ob-summon-filters--visible {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
+}
+
+.ob-summon-filters:hover,
+.ob-summon-filters:focus {
+  background: #1e9fe6;
+  color: #fff;
+}
+
+.ob-summon-filters:focus-visible {
+  outline: 0.2rem solid #1e9fe6;
+  outline-offset: 0.3rem;
 }
 
 .ob-mobile-bar {

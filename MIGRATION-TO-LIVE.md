@@ -59,6 +59,15 @@ These do **not** travel with a theme export, and bare auto-created metafields ar
 - [ ] **Map the Search & Discovery filters to the `label` field, not `code`.** Both **Kleur** (`filtercolors`) and **Activities** were mapped to `code` on dev, which is what put English text in the facets in the first place. Set via *Search & Discovery → the filter → Manage values → Label*. Note this alone does **not** fix the storefront (the storefront filter index kept serving the old text indefinitely, and could not be forced to re-derive) — it is the theme snippet above that actually renders the Dutch label. Do both anyway, so the app's own Values screen and any native filter agree with the storefront.
 - [ ] **Decide how the Categorie filter is sourced.** On dev it is built on Shopify's standard taxonomy `category`, which the sync populates on only 1 of 26 products, so the facet shows a single value. The real data (9 values) is in the `custom.shopify_originalbrands_category` metafield. Either have the sync fill the taxonomy field or repoint the filter at the metafield — see NICK.md item 6.
 
+- [ ] **Create the `custom.breadcrumb_rank` collection metafield definition and set its values.** Integer, owner **Collection**, storefront access **public read**. Per `pdp-breadcrumb`, when a product sits in several collections the PDP breadcrumb picks the lowest rank; unset sorts last. This is what stops the breadcrumb naming the broadest collection on every product — on dev, `Dagelijks Comfort` (18 of 26 products) won every trail before this existed, because Liquid's `product.collections` order is neither documented nor configurable. Created on dev 2026-08-26 with this banding, which is merchant data and re-editable in Admin without a deploy:
+  - **10** — product-type: `schoenen`, `kleding`, `accessoires`
+  - **20** — occasion: `dagelijks-comfort`, `sport-training`, `outdoor-werk`
+  - **30** — audience: `dames`, `heren`, `kinderen`
+  - **40** — brand: `fitflop`, `hi-tec`, `holster`, `irasuto-studios`, `juicy-couture`, `loewenweiss`, `nike-swim`, `odlo`, `pas-de-monaco`, `sneaker-lab`, `sweaty-betty`
+  - **left unset deliberately** — `solden`, `merken`, `frontpage`, so a sale or landing collection never captions a trail.
+
+  Without the definition nothing errors: every collection reads as unset and the breadcrumb silently degrades to Shopify's arbitrary order, i.e. the original bug.
+
 ## 5. URLs & SEO
 
 - [ ] **Later phase — redirect map from the legacy Drupal-ish site.** Important before launch, but deliberately deferred until the catalog and destination URLs are mature. The old site gives each colour/size combo its own URL, which consolidate into one Shopify product; this needs a strategy, not just a file.
