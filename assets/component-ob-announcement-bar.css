@@ -45,12 +45,13 @@
     scroll-snap-type: none;
     flex-wrap: nowrap;
     justify-content: center;
-    column-gap: 3.2rem;
+    column-gap: 3rem;
   }
 
   .announcement-bar-slider .grid--1-col .grid__item {
     width: auto;
     max-width: none;
+    flex-grow: 0;
     flex-shrink: 0;
   }
 
