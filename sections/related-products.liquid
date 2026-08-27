@@ -29,14 +29,97 @@
   }
 {%- endstyle -%}
 
-<div class="color-{{ section.settings.color_scheme }} gradient ob-related-products">
-  <product-recommendations
-    class="related-products page-width section-{{ section.id }}-padding isolate{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
-    data-url="{{ routes.product_recommendations_url }}?limit={{ section.settings.products_to_show }}"
-    data-section-id="{{ section.id }}"
-    data-product-id="{{ product.id }}"
-  >
-    {% if recommendations.performed and recommendations.products_count > 0 %}
+{%- liquid
+  assign ob_related_gender = product.metafields.custom.genderid.value
+  assign ob_related_products_count = 0
+  assign ob_last_processed_rank = -1
+  assign ob_rendered_ids = '|'
+-%}
+
+{%- capture ob_related_cards -%}
+  {%- for ob_rank_pass in (1..50) -%}
+    {%- if ob_related_products_count == section.settings.products_to_show -%}
+      {%- break -%}
+    {%- endif -%}
+
+    {%- assign ob_next_rank = 999999 -%}
+    {%- for ob_candidate in product.collections -%}
+      {%- assign ob_rank = ob_candidate.metafields.custom.breadcrumb_rank.value -%}
+      {%- if ob_rank == blank -%}
+        {%- assign ob_rank = 99999 -%}
+      {%- endif -%}
+      {%- if ob_rank > ob_last_processed_rank and ob_rank < ob_next_rank -%}
+        {%- assign ob_next_rank = ob_rank -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if ob_next_rank == 999999 -%}
+      {%- break -%}
+    {%- endif -%}
+
+    {%- for ob_candidate in product.collections -%}
+      {%- assign ob_rank = ob_candidate.metafields.custom.breadcrumb_rank.value -%}
+      {%- if ob_rank == blank -%}
+        {%- assign ob_rank = 99999 -%}
+      {%- endif -%}
+
+      {%- if ob_rank == ob_next_rank -%}
+        {%- for ob_related_product in ob_candidate.products -%}
+          {%- assign ob_candidate_gender = ob_related_product.metafields.custom.genderid.value -%}
+          {%- assign ob_candidate_id = '|' | append: ob_related_product.id | append: '|' -%}
+          {%- if ob_related_product.id != product.id and ob_related_product.available and ob_related_gender != blank and ob_candidate_gender == ob_related_gender -%}
+            {%- unless ob_rendered_ids contains ob_candidate_id -%}
+              {%- if ob_related_products_count < section.settings.products_to_show -%}
+                <li class="grid__item">
+                  {%- if ob_related_products_count == 0 -%}
+                    {% render 'card-product',
+                      card_product: ob_related_product,
+                      media_aspect_ratio: section.settings.image_ratio,
+                      image_shape: section.settings.image_shape,
+                      show_secondary_image: section.settings.show_secondary_image,
+                      show_vendor: section.settings.show_vendor,
+                      show_rating: section.settings.show_rating,
+                      product_view_context: 'recommendation'
+                    %}
+                  {%- else -%}
+                    {% render 'card-product',
+                      card_product: ob_related_product,
+                      media_aspect_ratio: section.settings.image_ratio,
+                      image_shape: section.settings.image_shape,
+                      show_secondary_image: section.settings.show_secondary_image,
+                      show_vendor: section.settings.show_vendor,
+                      show_rating: section.settings.show_rating,
+                      skip_styles: true,
+                      product_view_context: 'recommendation'
+                    %}
+                  {%- endif -%}
+                </li>
+                {%- assign ob_related_products_count = ob_related_products_count | plus: 1 -%}
+                {%- assign ob_rendered_ids = ob_rendered_ids | append: ob_related_product.id | append: '|' -%}
+              {%- endif -%}
+            {%- endunless -%}
+          {%- endif -%}
+
+          {%- if ob_related_products_count == section.settings.products_to_show -%}
+            {%- break -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- if ob_related_products_count == section.settings.products_to_show -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- assign ob_last_processed_rank = ob_next_rank -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{% if ob_related_products_count > 0 %}
+  <div class="color-{{ section.settings.color_scheme }} gradient ob-related-products">
+    <div
+      class="related-products page-width section-{{ section.id }}-padding isolate{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+    >
       <h2 class="related-products__heading inline-richtext {{ section.settings.heading_size }}">
         {{ section.settings.heading }}
       </h2>
@@ -44,29 +127,14 @@
         class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down"
         role="list"
       >
-        {% assign skip_card_product_styles = false %}
-        {% for recommendation in recommendations.products %}
-          <li class="grid__item">
-            {% render 'card-product',
-              card_product: recommendation,
-              media_aspect_ratio: section.settings.image_ratio,
-              image_shape: section.settings.image_shape,
-              show_secondary_image: section.settings.show_secondary_image,
-              show_vendor: section.settings.show_vendor,
-              show_rating: section.settings.show_rating,
-              skip_styles: skip_card_product_styles,
-              product_view_context: 'recommendation'
-            %}
-          </li>
-          {%- assign skip_card_product_styles = true -%}
-        {% endfor %}
+        {{ ob_related_cards }}
       </ul>
-    {% endif %}
-  </product-recommendations>
-  {% if section.settings.image_shape == 'arch' %}
-    {{ 'mask-arch.svg' | inline_asset_content }}
-  {%- endif -%}
-</div>
+    </div>
+    {% if section.settings.image_shape == 'arch' %}
+      {{ 'mask-arch.svg' | inline_asset_content }}
+    {%- endif -%}
+  </div>
+{% endif %}
 
 {% schema %}
 {

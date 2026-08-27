@@ -60,7 +60,7 @@ These automatic collections use the Product metafield `custom.genderid` with OR 
 
 Most products belong to several of the collections above at once — the Loewenweiss Diva slipper is in `Schoenen`, `Dames`, `Loewenweiss` and `Dagelijks Comfort` simultaneously. The PDP breadcrumb can only name one, and Liquid's `product.collections` order is neither documented nor merchant-configurable, so the choice was effectively arbitrary: `Dagelijks Comfort` — the broadest collection at 18 of 26 products — won every trail on every product.
 
-Rank resolves that. It is the Collection metafield `custom.breadcrumb_rank` (integer, storefront access **public read**). **Lower wins; unset sorts last.** It is read only by the PDP breadcrumb and has no effect on membership, sorting, or merchandising.
+Rank resolves that. It is the Collection metafield `custom.breadcrumb_rank` (integer, storefront access **public read**). **Lower wins; unset sorts last.** It selects the default PDP breadcrumb collection and has no effect on membership or a collection's own product order.
 
 | Rank | Band | Collections |
 |---|---|---|
@@ -70,9 +70,16 @@ Rank resolves that. It is the Collection metafield `custom.breadcrumb_rank` (int
 | 40 | Brand | `FitFlop`, `Hi-Tec`, `Holster`, `Irasuto Studios`, `Juicy Couture`, `Loewenweiss`, `Nike Swim`, `Odlo`, `Pas dé Monacó`, `Sneaker Lab`, `Sweaty Betty` |
 | — | Left unset deliberately | `Solden`, `Merken`, `Home page` |
 
-The banding answers "which of these tells a shopper where they are?" — `Schoenen` locates them better than `Dames`, which locates them better than `Loewenweiss`. Nothing about a lower band makes a collection more important; `Dames` ranking below `Schoenen` is a statement about breadcrumbs only. `Solden` and `Merken` are left unset so a sale or landing collection can never caption a trail.
+The banding answers "which of these tells a shopper where they are?" — `Schoenen` locates them better than `Dames`, which locates them better than `Loewenweiss`. `Solden` and `Merken` are left unset so a sale or landing collection can never caption a trail.
 
-Rank is only the fallback. When a shopper reaches a product from a collection page, the breadcrumb names the collection they actually browsed instead — rank decides the direct-entry and crawler case. See the `pdp-breadcrumb` capability spec.
+For breadcrumbs, rank is only the fallback: when a shopper reaches a product from a collection page, the breadcrumb names the collection they actually browsed instead. See the `pdp-breadcrumb` capability spec.
+
+## PDP related products
+
+- Start at the lowest-ranked product collection; broaden through higher ranks only until four items are found. Unranked collections come last.
+- Keep only products with the exact same `custom.genderid`; exclude the viewed product, unavailable products, and duplicates.
+- Preserve each source collection's native Shopify product order. If no eligible product exists, hide the rail.
+- The rail never uses breadcrumb route/session context, so it is stable for every PDP entry point. See `pdp-related-products`.
 
 ## Sources and maintenance
 
