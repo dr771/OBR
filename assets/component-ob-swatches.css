@@ -335,17 +335,17 @@
   */
   .card:hover .card__media .media.media--hover-effect > img:first-child:only-child,
   .card-wrapper:hover .card__media .media.media--hover-effect > img:first-child:only-child {
-    transform: scale(1.08);
+    transform: scale(1.04);
   }
 
   .card-wrapper:hover .card__media .media.media--hover-effect > img:first-child:not(:only-child) {
     opacity: 1;
-    transform: scale(1.08);
+    transform: scale(1.04);
   }
 
   .card-wrapper:hover .card__media .media.media--hover-effect > img + img {
     opacity: 0;
-    transform: scale(1.08);
+    transform: scale(1.04);
   }
 
   .card-wrapper.ob-media-hover .card__media .media.media--hover-effect > img:first-child:not(:only-child) {
@@ -354,7 +354,7 @@
 
   .card-wrapper.ob-media-hover .card__media .media.media--hover-effect > img + img {
     opacity: 1;
-    transform: scale(1.08);
+    transform: scale(1.04);
   }
 }
 
