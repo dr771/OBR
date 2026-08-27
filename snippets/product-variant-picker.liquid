@@ -58,6 +58,17 @@
           whether Shopify's native swatch linking is set up — this project's
           feed doesn't use native swatch linking at all.
         endcomment
+        comment
+          A recognized color option with only one value has nothing to choose
+          from — the PDP renders no fieldset/rail for it at all (pdp-option-rails).
+          PLP card swatches and the cart drawer are untouched by this: they
+          render from their own separate templates, not this snippet.
+        endcomment
+        assign ob_hide_single_color_option = false
+        if option_kind == 'color' and option.values.size <= 1
+          assign ob_hide_single_color_option = true
+        endif
+
         if option_kind == 'color'
           assign picker_type = 'swatch'
         elsif option_kind == 'size'
@@ -70,7 +81,9 @@
           endif
         endif
       -%}
-      {%- if picker_type == 'swatch' -%}
+      {%- if picker_type == 'swatch' and ob_hide_single_color_option -%}
+        {%- comment -%} Single-value color option: render nothing on the PDP. {%- endcomment -%}
+      {%- elsif picker_type == 'swatch' -%}
         <fieldset class="js product-form__input product-form__input--swatch product-form__input--ob-block{% if option_kind == 'color' and ob_single_row_options %} product-form__input--option-rail{% endif %}">
           <legend class="form__label product-form__ob-label-row">
             <span>
