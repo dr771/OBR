@@ -78,7 +78,7 @@
       data-brand="{{ card_product.vendor | escape }}"
     {% endif %}
   >
-    <div class="card-wrapper product-card-wrapper underline-links-hover{% if card_brand_handle != blank %} ob-brand ob-brand--{{ card_brand_handle }}{% endif %}">
+    <div class="card-wrapper product-card-wrapper{% if card_brand_handle != blank %} ob-brand ob-brand--{{ card_brand_handle }}{% endif %}">
       <div
         class="
           card card--{{ settings.card_style }}
@@ -621,7 +621,7 @@
       assign ratio = 0.8
     endif
   -%}
-  <div class="card-wrapper product-card-wrapper underline-links-hover">
+  <div class="card-wrapper product-card-wrapper">
     <div
       class="
         card card--{{ settings.card_style }}

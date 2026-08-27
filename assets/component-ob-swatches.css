@@ -354,6 +354,22 @@
 }
 
 /*
+  No title-hover underline (removed from the card-wrapper markup); a subtle
+  image zoom stands in instead. Scaling the .media container rather than the
+  <img> elements keeps this independent of which image is opacity-visible
+  during the color-swap crossfade above.
+*/
+@media screen and (min-width: 990px) {
+  .card-wrapper.product-card-wrapper .card__media .media {
+    transition: transform var(--duration-long) ease;
+  }
+
+  .card-wrapper.product-card-wrapper:hover .card__media .media {
+    transform: scale(1.04);
+  }
+}
+
+/*
   Color FACET chip (ob-facet-color-chip): flat hex circle, deliberately not an
   image-swatch — see plp-color-filter. A filter value is a color family
   spanning many products, not one purchasable variant.
