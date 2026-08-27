@@ -1,5 +1,5 @@
 /*
-  PDP gallery counter ("Afbeelding 3 van 7").
+  PDP gallery counter ("Afbeelding 3 van 7") and chevron-overflow correction.
 
   Dawn's own .slider-counter is driven by SliderComponent and reports *pages*,
   not images — for a 4-up thumbnail rail of 7 images it reads "1 of 4". The
@@ -12,13 +12,24 @@
   gallery on the page and survives the colour-filtered rail being replaced
   wholesale (product-info.js re-renders it on every colour change).
 
+  component-ob-pdp.css hides the chevrons once SliderComponent has disabled
+  both prev/next — but SliderComponent's own isSlideVisible() sums each
+  thumbnail's offsetLeft + clientWidth (both rounded) and compares against the
+  rail's clientWidth, so an exactly-filling rail (e.g. 4 images on the 4-up
+  desktop rail) can land 1px over due to subpixel rounding and never get
+  marked disabled — chevrons that navigate nowhere reappear. Recheck the real
+  scrollWidth vs. clientWidth with a tolerance and force both buttons disabled
+  when there's nothing to scroll; genuine overflow is left to SliderComponent.
+
   Fails open: with no counter element, or no thumbnails, nothing happens.
 */
 (function () {
   'use strict';
 
   var COUNTER = '[data-ob-gallery-count]';
+  var CHEVRON_OVERFLOW_TOLERANCE = 1;
   var queued = false;
+  var chevronResizeObserver = null;
 
   /*
     The server-rendered string is the format source, so the phrasing stays in
@@ -51,10 +62,38 @@
     if (counter.textContent !== next) counter.textContent = next;
   }
 
+  function updateChevronsOne(shell) {
+    var slider = shell.querySelector('[id^="Slider-"]');
+    var prev = shell.querySelector('.ob-pdp__gallery-chevrons .slider-button--prev');
+    var next = shell.querySelector('.ob-pdp__gallery-chevrons .slider-button--next');
+    if (!slider || !prev || !next) return;
+
+    var overflowing = slider.scrollWidth - slider.clientWidth > CHEVRON_OVERFLOW_TOLERANCE;
+    if (!overflowing) {
+      prev.setAttribute('disabled', 'disabled');
+      next.setAttribute('disabled', 'disabled');
+    }
+  }
+
+  function updateChevronsAll() {
+    var shells = document.querySelectorAll('.thumbnail-slider');
+    for (var i = 0; i < shells.length; i++) updateChevronsOne(shells[i]);
+  }
+
+  function observeChevronResize() {
+    if (!('ResizeObserver' in window)) return;
+    if (!chevronResizeObserver) chevronResizeObserver = new ResizeObserver(schedule);
+
+    var sliders = document.querySelectorAll('.thumbnail-slider [id^="Slider-"]');
+    for (var i = 0; i < sliders.length; i++) chevronResizeObserver.observe(sliders[i]);
+  }
+
   function updateAll() {
     queued = false;
     var counters = document.querySelectorAll(COUNTER);
     for (var i = 0; i < counters.length; i++) updateOne(counters[i]);
+    updateChevronsAll();
+    observeChevronResize();
   }
 
   function schedule() {
