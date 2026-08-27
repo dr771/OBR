@@ -324,18 +324,28 @@
   link prevents .card__media:hover from matching reliably.
 */
 @media screen and (min-width: 990px) {
+  /*
+    No title-hover underline (removed from the card-wrapper markup); a subtle
+    image zoom stands in instead, on every img here rather than Dawn's
+    transform:none reset. The frame (.card__media, its tint, its
+    border-radius) never moves — only the photo inside it grows — and the
+    scale sits on the <img> itself, not on .media: a transform on .media
+    would give it its own stacking context and cut its multiply-blended img
+    off from .card__media's tint backdrop (the surface read as plain white).
+  */
   .card:hover .card__media .media.media--hover-effect > img:first-child:only-child,
   .card-wrapper:hover .card__media .media.media--hover-effect > img:first-child:only-child {
-    transform: none;
+    transform: scale(1.08);
   }
 
   .card-wrapper:hover .card__media .media.media--hover-effect > img:first-child:not(:only-child) {
     opacity: 1;
+    transform: scale(1.08);
   }
 
   .card-wrapper:hover .card__media .media.media--hover-effect > img + img {
     opacity: 0;
-    transform: none;
+    transform: scale(1.08);
   }
 
   .card-wrapper.ob-media-hover .card__media .media.media--hover-effect > img:first-child:not(:only-child) {
@@ -344,29 +354,18 @@
 
   .card-wrapper.ob-media-hover .card__media .media.media--hover-effect > img + img {
     opacity: 1;
+    transform: scale(1.08);
   }
-}
-
-/* Disable Dawn's generic opacity transition after the lazy pair exists. */
-.card__media .media.media--hover-effect > img:first-child:not(:only-child),
-.media > .ob-card-img2 {
-  transition: none;
 }
 
 /*
-  No title-hover underline (removed from the card-wrapper markup); a subtle
-  image zoom stands in instead. Scaling the .media container rather than the
-  <img> elements keeps this independent of which image is opacity-visible
-  during the color-swap crossfade above.
+  Opacity stays instant (Dawn's generic opacity transition would flicker once
+  the lazy pair exists); transform gets its own animated transition for the
+  zoom.
 */
-@media screen and (min-width: 990px) {
-  .card-wrapper.product-card-wrapper .card__media .media {
-    transition: transform var(--duration-long) ease;
-  }
-
-  .card-wrapper.product-card-wrapper:hover .card__media .media {
-    transform: scale(1.04);
-  }
+.card__media .media.media--hover-effect > img:first-child:not(:only-child),
+.media > .ob-card-img2 {
+  transition: opacity 0s, transform var(--duration-long) ease;
 }
 
 /*
