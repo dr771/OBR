@@ -99,6 +99,12 @@ cart-drawer:not(.is-empty) .cart-drawer__collection {
   right: 5px;
 }
 
+/* Scoped to .cart-drawer only — .drawer__close is shared with the mobile
+   menu drawer. */
+.cart-drawer .drawer__close {
+  top: 14px;
+}
+
 .drawer__close .svg-wrapper {
   height: 2rem;
   width: 2rem;
@@ -299,10 +305,11 @@ cart-drawer-items {
   grid-column: 2 / 5;
 }
 
-@media screen and (max-width: 749px) {
-  .cart-drawer .cart-item cart-remove-button {
-    margin-left: 0;
-  }
+/* Remove control now sits in the quantity row, right of the stepper (was:
+   row 1, level with the title) as a trash icon rather than an X, vertically
+   centered against the stepper via the row's own align-items: center. */
+.cart-drawer .cart-item__quantity-wrapper cart-remove-button {
+  margin-left: 0;
 }
 
 .cart-drawer__footer > * + * {
@@ -330,8 +337,44 @@ cart-drawer-items {
   transform: rotate(180deg);
 }
 
+/* Dawn's own `.button` min-height is `calc(4.5rem + var(--buttons-border-width) * 2)`;
+   component-ob-buttons.css sets that variable to a bare unitless `0`
+   site-wide, and length + unitless-number is an invalid calc() operand
+   combination — the whole min-height silently falls back to `auto`, and
+   with no vertical padding either the button collapsed to single-line-text
+   height. Hardcoding min-height here works around the site-wide bug locally
+   rather than fixing --buttons-border-width itself (out of scope for this
+   ask; worth revisiting if other buttons turn out to depend on it too). */
 .cart-drawer .cart__checkout-button {
   max-width: none;
+  min-height: 4.5rem;
+  padding: 1.2rem 3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+/* EXPERIMENTAL (owner review pending, 2026-08-28): total moved onto the
+   checkout button itself, Holster's cart-drawer.liquid pattern. The dot is a
+   plain CSS circle (not a scaled-up "&bull;" glyph, which needs a
+   font-size-specific negative vertical-align to avoid sitting on the
+   baseline) so it's a small, reliably centered point regardless of the
+   button's font-size. */
+.cart-drawer .cart__checkout-subtotal {
+  font-weight: 400;
+  display: inline-flex;
+  align-items: center;
+}
+
+.cart-drawer .cart__checkout-dot {
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin: 0 0.8rem;
+  border-radius: 50%;
+  background: currentColor;
+  font-size: 0;
 }
 
 .drawer__footer .cart__dynamic-checkout-buttons {
@@ -436,14 +479,29 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
 .cart-drawer .cart-item__quantity-wrapper .cart-item__price-wrapper {
   margin-left: auto;
 }
+/* Price sits level with the qty stepper — the wrapper's default flex
+   align-items (normal/stretch) otherwise leaves the price pinned to the
+   row's top edge instead of centered against the stepper's height. */
+.cart-drawer .cart-item__quantity-wrapper {
+  align-items: center;
+}
+/* Muted stepper: value + +/- arrows (SVGs use fill="currentColor") read off
+   the 0.75 ink; the border itself stays lighter (0.3) — the site's own
+   default input border is already 0.55 (--inputs-border-opacity), so 0.75
+   there read as darker than normal inputs instead of muted. */
+.cart-drawer .quantity,
+.cart-drawer .quantity__button,
+.cart-drawer .quantity__input {
+  color: rgba(var(--color-foreground), 0.75);
+}
+.cart-drawer .quantity__input {
+  opacity: 1;
+}
+.cart-drawer .quantity:after {
+  box-shadow: 0 0 0 var(--inputs-border-width) rgba(var(--color-foreground), 0.3);
+}
 .cart-drawer .cart-items thead {
   margin-bottom: 0;
-}
-/* .cart-item__totals is pointer-events:none in Dawn (it only ever held a
-   static price before); now it holds the remove button, so re-enable
-   pointer events on the interactive control itself. */
-.cart-drawer .cart-item__totals cart-remove-button {
-  pointer-events: auto;
 }
 /* Cap so the (now content-width) quantity stepper doesn't stretch wider
    than needed next to the price. Not gated by document viewport width —
@@ -455,7 +513,10 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
 }
 /* Smaller remove-icon glyph — scoped to the cart-remove-button custom
    element so it never touches the drawer's own close (X) button, which
-   uses a plain <button class="drawer__close"> and shares no ancestor here. */
+   uses a plain <button class="drawer__close"> and shares no ancestor here.
+   The icon-trash SVG has no Dawn-owned sizing rule fighting it, so this
+   alone is enough (base.css's `.svg-wrapper > svg { width/height: 100% }`
+   fills it from here). */
 .cart-drawer cart-remove-button .svg-wrapper {
   width: 11px;
   height: 11px;
@@ -482,8 +543,8 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
 }
 
 .cart-drawer .product-option.cart-item__variant-options {
-  font-size: calc(var(--font-heading-scale) * 1.4rem);
-  letter-spacing: -0.4px;
+  font-size: calc(var(--font-heading-scale) * 1.3rem);
+  letter-spacing: 0px;
 }
 
 .cart-drawer .caption-with-letter-spacing {
@@ -507,15 +568,27 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   border-radius: 1.6rem;
   mix-blend-mode: multiply;
 }
+
+/* The frame's `isolation: isolate` makes it a stacking context, which paints
+   above the media cell's absolutely-positioned (but DOM-earlier) empty
+   `.cart-item__link` — silently swallowing clicks on the image. Give the
+   link an explicit stacking order so it wins the hit-test again. */
+.cart-drawer .cart-item__link {
+  z-index: 1;
+}
 /* Shrink the remove button's tap-target height from Dawn's 3.5rem default
    to match the now-smaller icon/row, at every viewport width. */
 .cart-drawer cart-remove-button .button {
   min-height: 2rem;
 }
-/* Header hairline + tighter heading, pulled up against the line items. */
+/* Header hairline + tighter heading, pulled up against the line items.
+   Opaque background + stacking order so it doesn't show scrolled line
+   items bleeding through underneath it. */
 .cart-drawer .drawer__header {
   border-bottom: 1px solid #d0d0d0;
   margin-bottom: -2rem;
+  z-index: 1;
+  background: #fff;
 }
 .cart-drawer .drawer__heading {
   margin: 0;
@@ -536,6 +609,13 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   padding: 0 2.5rem 0 1.5rem;
 }
 
+/* Let the scroll track reach the drawer edge while keeping the shipped
+   2.5rem content gutter inside the scroll container (Holster pattern). */
+.cart-drawer cart-drawer-items {
+  margin-inline-end: -2.5rem;
+  padding-inline-end: 2.5rem;
+}
+
 /* ==========================================================================
    OB — wishlist cross-sell (wishlist-integration)
    Compact horizontal mini-rows for WK's <wishlist-page> cards, styled to
@@ -546,7 +626,7 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
    ========================================================================== */
 .ob-wishlist-cross-sell {
   display: none;
-  margin-top: 2rem;
+  margin-top: 1rem;
   padding-top: 1.5rem;
   border-top: 1px solid #d0d0d0;
 }
@@ -555,10 +635,26 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   display: block;
 }
 
+/* Same ink + tracking as the drawer's own h2 titles ("My cart",
+   "Estimated total"). Those get -0.01em not from base.css's h1-h5 rule
+   (which this element doesn't inherit anyway, not being a heading element)
+   but from component-ob-typography.css's more specific
+   `h2:not(.h0, .h1, …)` site-wide default, which still matches a plain
+   <h2 class="drawer__heading">. Now an <a> to /apps/wishlist, so the
+   default link underline/color are reset and swapped for an underline on
+   hover to signal it's clickable without changing the resting look. */
 .ob-wishlist-cross-sell__title {
+  display: inline-block;
   margin: 0;
-  font-size: calc(var(--font-heading-scale) * 1.4rem);
+  font-size: calc(var(--font-heading-scale) * 1.6rem);
   font-weight: 600;
+  color: rgb(var(--color-foreground));
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+.ob-wishlist-cross-sell__title:hover {
+  text-decoration: underline;
 }
 
 .ob-wishlist-cross-sell__heading {
@@ -571,8 +667,20 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   display: block;
 }
 
+/* WK's own .wk-page carries a 16px left/right page gutter (meant for its
+   full-page view) that pushed the whole row 16px right of the cart items
+   above, which don't have that extra inset — zeroed along with the
+   already-removed top padding. */
 .ob-wishlist-cross-sell .wk-page {
   padding-top: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Drawer-only: WK's own 80px bottom page padding (meant for its full-page
+   view) is way too much inside the compact drawer footer. */
+.ob-wishlist-cross-sell--drawer wishlist-page .wk-page {
+  padding-bottom: 10px !important;
 }
 
 /* wishlist-page is WK's full page component (it always renders its own
@@ -610,6 +718,7 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   display: grid;
   grid-template-columns: 8rem minmax(0, 1fr);
   gap: 1rem;
+  row-gap: 0;
   padding: 1rem 0;
   border-bottom: 1px solid rgba(var(--color-foreground), 0.08);
 }
@@ -620,11 +729,20 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
 
 .ob-wishlist-cross-sell .wk-image-link {
   grid-row: 1 / 3;
+  display: block;
+  background-color: #f1f5f9;
+  border-radius: 1.3rem;
+  isolation: isolate;
 }
 
+/* Same PLP/cart-item photo treatment: tinted frame + multiply blend so
+   packshots sit on the shared warm surface instead of raw white. */
 .ob-wishlist-cross-sell .wk-image {
+  display: block;
   width: 100%;
   height: auto;
+  border-radius: 1.3rem;
+  mix-blend-mode: multiply;
 }
 
 .ob-wishlist-cross-sell .wk-meta {
@@ -639,8 +757,15 @@ wishlist-product-card .wk-meta {
   margin-bottom: 0 !important;
 }
 
+/* Same style as .cart-item__name above (weight 500, normal tracking, full
+   ink), one size down (13px vs. the line-item's 14px) since these rows are
+   more compact. */
 .ob-wishlist-cross-sell .wk-product-title {
-  font-size: calc(var(--font-heading-scale) * 1.4rem);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.8rem;
+  letter-spacing: normal;
+  color: rgb(var(--color-foreground));
   text-align: left;
 }
 
@@ -648,11 +773,16 @@ wishlist-product-card .wk-meta {
   text-decoration: none;
 }
 
+/* Same size as the title above; ink matches the PLP price's 80% opacity
+   (component-ob-swatches.css `.card-wrapper.product-card-wrapper .price`)
+   rather than WK's own muted grey. */
 .ob-wishlist-cross-sell .wk-price {
   margin: 0;
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.2px;
+  color: rgb(var(--color-foreground));
+  opacity: 0.8;
   text-align: left;
   justify-content: flex-start;
 }
@@ -667,7 +797,7 @@ wishlist-product-card .wk-meta {
   flex-wrap: nowrap;
   align-items: center;
   gap: 0.6rem;
-  margin-top: 0.2rem;
+  margin-top: -1.8rem;
 }
 
 .ob-wishlist-cross-sell .wk-variants {
@@ -678,6 +808,12 @@ wishlist-product-card .wk-meta {
   flex: 0 1 auto;
   min-width: 0;
   padding: 0 !important;
+  /* WK gives this a ~5.4px bottom margin (spacing meant for its own
+     full-page layout); left as-is, that inflates the flex item's margin
+     box to exactly the row's height, so `.wk-form`'s align-items: center
+     had nothing left to center against and the CTA button sat visibly
+     lower than the dropdowns. */
+  margin: 0 !important;
 }
 
 /* WK lays out the custom option elements, not the nested selects. Reset its
@@ -701,6 +837,26 @@ wishlist-product-card .wk-meta {
   min-height: 3.2rem !important;
   padding: 0 !important;
   box-sizing: border-box;
+}
+
+/* Muted picker: value text takes the 0.75 ink (matches the cart's own
+   quantity stepper above); the border stays lighter (0.3) since the site's
+   own default input border is already 0.55 (--inputs-border-opacity), so
+   0.75 read as darker than a normal input instead of muted. The caret SVG's
+   stroke is hardcoded by WK, not currentColor, so it needs a direct
+   override — !important to beat WK's own more specific rule. */
+.ob-wishlist-cross-sell .wk-control {
+  border-color: rgba(var(--color-foreground), 0.3);
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.ob-wishlist-cross-sell .wk-control .wk-text,
+.ob-wishlist-cross-sell .wk-control .wk-icon {
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.ob-wishlist-cross-sell .wk-control .wk-icon svg path {
+  stroke: rgba(var(--color-foreground), 0.75) !important;
 }
 
 .ob-wishlist-cross-sell .wk-control .wk-content {
@@ -788,6 +944,33 @@ wishlist-product-card .wk-meta {
   opacity: 0.35;
   cursor: default;
   pointer-events: none;
+}
+
+/* JS-cloned per-row remove-from-wishlist button (ob-wishlist.js), right of
+   the CTA. Muted ink matches the cart's own trash icon and the picker
+   borders above rather than full-strength text. */
+.ob-wishlist-cross-sell__remove {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  margin-left: 0.2rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(var(--color-foreground), 0.75);
+  cursor: pointer;
+}
+
+.ob-wishlist-cross-sell__remove .svg-wrapper {
+  width: 12px;
+  height: 12px;
+}
+
+.ob-wishlist-cross-sell__remove-template {
+  display: none;
 }
 
 .ob-wishlist-cross-sell--page {

@@ -68,7 +68,9 @@ The PDP buy-buttons block SHALL render a square heart toggle button beside the a
 - **THEN** the wishlist item is removed and the heart returns to the empty outline state
 
 ### Requirement: Cart drawer and cart page wishlist cross-sell
-The cart drawer (filled and empty-cart states) and the `/cart` page SHALL render a wishlist cross-sell section: a localized title/heading above WK's wishlist-page element configured compact (product title, price, dropdown option pickers, add-to-cart CTA, move-to-cart). Cards SHALL render as horizontal mini rows (thumbnail, title/price, inline option dropdowns, compact CTA) visually matching OB's shipped `cart-drawer-line-item-layout` cart drawer, not a generic style. The section MUST hide itself entirely when the wishlist is empty or WK hasn't booted. The `/cart` page section SHALL be a standalone custom section wired into `templates/cart.json` (no edit to Dawn's `main-cart-items`). Adding an item from a cross-sell card MUST result in the full cart drawer refreshing and opening (never a single-row patch), showing the new line item and updated totals, with the item removed from the wishlist (move-to-cart).
+The cart drawer (filled and empty-cart states) and the `/cart` page SHALL render a wishlist cross-sell section: a localized title/heading above WK's wishlist-page element configured compact (product title, price, dropdown option pickers, add-to-cart CTA, move-to-cart). The title SHALL link to `/apps/wishlist`. Cards SHALL render as horizontal mini rows (thumbnail, title/price, inline option dropdowns, compact CTA) visually matching OB's shipped `cart-drawer-line-item-layout` cart drawer — including the same multiply-blend photo treatment on a tinted local frame — not a generic style. The section MUST hide itself entirely when the wishlist is empty or WK hasn't booted. The `/cart` page section SHALL be a standalone custom section wired into `templates/cart.json` (no edit to Dawn's `main-cart-items`). Adding an item from a cross-sell card MUST result in the full cart drawer refreshing and opening (never a single-row patch), showing the new line item and updated totals, with the item removed from the wishlist (move-to-cart).
+
+Each card SHALL also render a remove-from-wishlist control to the right of its add-to-cart CTA. Since WK's own remove control is a floating, JS-transform-positioned control built for a card corner (matching the PLP collection-card heart), not an inline row control, the theme SHALL render its own plain button here and drive it via WK's public `removeWishlistItem` API rather than repositioning WK's control. Activating it MUST remove the item from the wishlist (not just visually from the drawer); the card disappearing from WK's own reactive render is what removes it from the drawer, and the whole cross-sell section hides itself once the wishlist becomes empty as a result.
 
 The compact row SHALL hold this layout in the **no-variant** state an item saved from a PLP card arrives in, where WK renders a disabled CTA and placeholder pickers:
 
@@ -99,6 +101,18 @@ The label overlay and the measured widths MUST survive the cart drawer replacing
 #### Scenario: Move to cart after a previous cart mutation
 - **WHEN** the shopper adds one cross-sell item, and the drawer re-renders, and then works with a second cross-sell card
 - **THEN** that card still shows display labels and correctly sized pickers, and its own move-to-cart still adds in-drawer without a page navigation
+
+#### Scenario: Shopper clicks the cross-sell title
+- **WHEN** a shopper clicks the "Uw wenslijst" / "Your favorites" title above the cross-sell cards
+- **THEN** the browser navigates to `/apps/wishlist`
+
+#### Scenario: Shopper removes a cross-sell item
+- **WHEN** a shopper clicks a cross-sell card's remove control
+- **THEN** the card disappears from the drawer and the item is gone from `/apps/wishlist` as well — not merely hidden client-side while remaining saved
+
+#### Scenario: Removing the last cross-sell item
+- **WHEN** a shopper removes the only remaining item via a cross-sell card's remove control
+- **THEN** the whole cross-sell section (including title/heading) hides itself, matching the empty-wishlist scenario
 
 ### Requirement: WK readiness handling preserves lazy-init
 All WK-dependent theme JS SHALL obtain the WK app object via a shared readiness helper that waits for `window.WishlistKing` to appear (bounded polling with timeout) and MUST NOT touch WK's lazy-init loader stash or otherwise interfere with WK's existing loading strategy. If WK never appears, every consumer degrades silently (no errors, wishlist UI stays in its pre-boot state).

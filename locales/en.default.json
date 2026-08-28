@@ -315,6 +315,7 @@
       "empty": "Your cart is empty",
       "wishlist_title": "Your favorites",
       "wishlist_heading": "Items you saved for later",
+      "wishlist_remove_title": "Remove from wishlist",
       "product_disclosure": "Product disclosure",
       "product_disclosures": "Product disclosures",
       "cart_error": "There was an error while updating your cart. Please try again.",

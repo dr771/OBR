@@ -13,7 +13,7 @@
   {% render 'ob-wishlist-cross-sell', context: 'drawer' %}
 {% endcomment %}
 <div class="ob-wishlist-cross-sell ob-wishlist-cross-sell--{{ context | default: 'page' }}">
-  <p class="ob-wishlist-cross-sell__title">{{ 'sections.cart.wishlist_title' | t }}</p>
+  <a href="/apps/wishlist" class="ob-wishlist-cross-sell__title">{{ 'sections.cart.wishlist_title' | t }}</a>
   <p class="ob-wishlist-cross-sell__heading">{{ 'sections.cart.wishlist_heading' | t }}</p>
   <wishlist-page
     show-product-title
@@ -22,4 +22,20 @@
     product-options="dropdowns"
     move-to-cart
   ></wishlist-page>
+  {%- comment -%}
+    Template cloned by ob-wishlist.js into each WK-rendered .wk-form, right
+    of the CTA. WK's own <remove-button> is a floating, JS-transform-positioned
+    control (built for a card corner, like the PLP heart) — fighting that
+    positioning to sit inline was more fragile than driving WK's real
+    removeWishlistItem() API from a plain button we own.
+  {%- endcomment -%}
+  <template class="ob-wishlist-cross-sell__remove-template">
+    <button
+      type="button"
+      class="ob-wishlist-cross-sell__remove"
+      aria-label="{{ 'sections.cart.wishlist_remove_title' | t }}"
+    >
+      <span class="svg-wrapper">{{ 'icon-trash.svg' | inline_asset_content }}</span>
+    </button>
+  </template>
 </div>

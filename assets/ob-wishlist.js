@@ -459,4 +459,42 @@
       true
     );
   });
+
+  // Cart drawer / cart page cross-sell: per-row remove-from-wishlist button.
+  // WK's own <remove-button> is a floating, JS-transform-positioned control
+  // built for a card corner (like the PLP collection-card heart) — fighting
+  // that positioning to sit it inline next to the CTA was more fragile than
+  // driving WK's real removeWishlistItem() API from a plain button we own,
+  // cloned from the <template> in ob-wishlist-cross-sell.liquid. Removing the
+  // item lets WK's own reactive render drop the card from wishlist-page,
+  // which in turn re-hides the whole cross-sell via the
+  // :has(.wk-product-card) CSS rule once the wishlist is empty again — no
+  // separate "remove from the drawer" step needed.
+  (function () {
+    function injectButtons() {
+      var template = document.querySelector('.ob-wishlist-cross-sell__remove-template');
+      if (!template || !template.content) return;
+
+      document.querySelectorAll('.ob-wishlist-cross-sell .wk-form').forEach(function (form) {
+        if (form.querySelector('.ob-wishlist-cross-sell__remove')) return;
+        var wishlistItemId = form.dataset.wishlistItemId;
+        if (!wishlistItemId) return;
+
+        var button = template.content.firstElementChild.cloneNode(true);
+        button.addEventListener('click', function () {
+          try {
+            if (window.WishlistKing && typeof window.WishlistKing.removeWishlistItem === 'function') {
+              window.WishlistKing.removeWishlistItem({ wishlistItemId: wishlistItemId });
+            }
+          } catch (e) {
+            // fail open: click is a no-op
+          }
+        });
+        form.appendChild(button);
+      });
+    }
+
+    new MutationObserver(injectButtons).observe(document.body, { childList: true, subtree: true });
+    injectButtons();
+  })();
 })();

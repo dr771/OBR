@@ -25,23 +25,41 @@ Each cart drawer line item SHALL show exactly one price (the line total for its 
 - **WHEN** a cart line item has quantity greater than 1
 - **THEN** the single visible price is the line total (unit price × quantity), not a per-unit price
 
-### Requirement: Remove control and price occupy swapped rows
-Within a cart drawer line item's two-row grid layout, the remove control SHALL render in the top row, right-aligned and vertically level with the first line of the item title. The line price SHALL render in the bottom row, right-aligned and vertically level with the quantity stepper.
+### Requirement: Remove control sits beside the quantity stepper
+Within a cart drawer line item's two-row grid layout, the remove control SHALL render in the bottom row, immediately to the right of the quantity stepper and vertically centered against it (not in the top row beside the title). The line price SHALL render in the same bottom row, right-aligned.
 
 #### Scenario: Viewing a line item
 - **WHEN** a shopper views any line item in the cart drawer
-- **THEN** the remove control appears at the top-right, aligned with the title's first line, and the price appears at the bottom-right, aligned with the quantity stepper
+- **THEN** the remove control appears directly right of the quantity stepper, vertically centered with it, and the price sits further right on the same row
 
-### Requirement: Remove control uses a close (X) icon at a compact size
-The cart drawer's per-line-item remove control SHALL render Dawn's close icon (`icon-close.svg`) instead of the trash icon (`icon-remove.svg`), sized smaller (11px×11px) than Dawn's default and with a reduced tap-target height (2rem) — scoped to the `cart-remove-button` custom element so the drawer's own close (X) button (which closes the entire drawer) is unaffected and stays at its original size. The control SHALL keep its existing accessible name, custom element, and click behavior.
+### Requirement: Remove control uses a trash icon at a compact size
+The cart drawer's per-line-item remove control SHALL render a trash-can icon (`icon-trash.svg` — a tapered bin body with a flat lid and handle, no internal divider lines) sized smaller (11px×11px) than Dawn's default and with a reduced tap-target height (2rem) — scoped to the `cart-remove-button` custom element so the drawer's own close (X) button (which closes the entire drawer) is unaffected and stays at its original size. The control SHALL keep its existing accessible name, custom element, and click behavior. The media cell's remove-control link (`.cart-item__link`, an absolutely-positioned full-cell click target to the product page) MUST render above the line-item photo frame in stacking order, since the frame's `isolation: isolate` (needed for its multiply-blend backdrop) otherwise promotes it into the same stacking group as the link and — being later in DOM order — paints over it, silently swallowing clicks on the product image.
 
 #### Scenario: Shopper views the remove control
 - **WHEN** a shopper views a line item's remove control in the cart drawer
-- **THEN** it displays as a small, plain "X" close icon, not a trash-can icon, and is visibly smaller than the drawer's own close button in the header
+- **THEN** it displays as a small trash-can icon next to the quantity stepper, not a close ("X") icon, and is visibly smaller than the drawer's own close button in the header
 
 #### Scenario: Shopper activates the remove control
 - **WHEN** a shopper clicks the remove control
-- **THEN** the line item is removed from the cart exactly as before the icon/size change (no change to the underlying remove behavior)
+- **THEN** the line item is removed from the cart exactly as before the icon/position change (no change to the underlying remove behavior)
+
+#### Scenario: Shopper clicks the line-item product photo
+- **WHEN** a shopper clicks a line item's product image
+- **THEN** the click navigates to the product page, not swallowed by the image's own blend-mode frame
+
+### Requirement: Quantity stepper and remove control use muted ink
+The cart drawer's quantity stepper SHALL render its border at `rgba(var(--color-foreground), 0.3)` and its button/input text and icons at `rgba(var(--color-foreground), 0.75)` — deliberately lighter than the sitewide default input border (`--inputs-border-opacity`, 0.55), so the control reads as secondary chrome next to the price and remove icon rather than at full input-field strength.
+
+#### Scenario: Shopper views the quantity stepper
+- **WHEN** a shopper views a line item's quantity stepper in the cart drawer
+- **THEN** its border, value text, and +/- icons all render in a visibly muted ink rather than full-strength black
+
+### Requirement: Drawer header stays opaque while scrolling
+The cart drawer's header (containing the "My cart" heading and close button) SHALL render with an opaque white background and sit above the scrollable line-item list in stacking order, so line items scrolling underneath it do not visually bleed through.
+
+#### Scenario: Shopper scrolls a long cart drawer
+- **WHEN** a shopper with many line items scrolls the cart drawer's item list
+- **THEN** the header bar stays a solid opaque panel, with no scrolled content visible through it
 
 ### Requirement: Quantity stepper sizes to its content
 The cart drawer's quantity stepper SHALL size its width to fit its buttons and input (capped at a small max-width) rather than using Dawn's fixed default width, and SHALL keep sharp (non-rounded) corners consistent with the sitewide `--inputs-radius: 0` setting. This sizing applies uniformly regardless of viewport width (desktop, tablet, or mobile) since the drawer itself is always a fixed-width narrow panel.
