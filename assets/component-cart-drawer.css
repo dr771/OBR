@@ -460,9 +460,52 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   width: 11px;
   height: 11px;
 }
-/* Item title slightly smaller than Dawn's default h4 (1.5rem) size. */
+/* Drawer typography follows the PLP's Inter-only product-card surface. The
+   descendant scope also takes over Dawn's explicit heading font and browser
+   form-control font defaults without reaching the shared mobile-menu drawer. */
+.cart-drawer,
+.cart-drawer * {
+  font-family: var(--font-body-family) !important;
+}
+
+/* Compact title for the drawer's constrained product column. */
 .cart-drawer .cart-item__name {
   font-size: calc(var(--font-heading-scale) * 1.4rem);
+  font-weight: 500;
+  line-height: 1.9rem;
+  letter-spacing: normal;
+  text-decoration: none;
+}
+
+.cart-drawer .cart-item__name:hover {
+  text-decoration: none;
+}
+
+.cart-drawer .product-option.cart-item__variant-options {
+  font-size: calc(var(--font-heading-scale) * 1.4rem);
+  letter-spacing: -0.4px;
+}
+
+.cart-drawer .caption-with-letter-spacing {
+  font-size: 0.9rem;
+}
+
+.cart-drawer .cart-item__image-frame {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  background-color: #f1f5f9;
+  border-radius: 1.6rem;
+  isolation: isolate;
+}
+
+/* Blend and radius belong to the image; its local photo frame supplies the
+   PLP surface without tinting the full-height cart media cell. */
+.cart-drawer .cart-item__image {
+  display: block;
+  max-width: 100%;
+  border-radius: 1.6rem;
+  mix-blend-mode: multiply;
 }
 /* Shrink the remove button's tap-target height from Dawn's 3.5rem default
    to match the now-smaller icon/row, at every viewport width. */
