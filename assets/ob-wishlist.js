@@ -111,26 +111,141 @@
       }
     }
 
-    function sizeColorDropdowns() {
+    function escapeRe(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function optionKey(select) {
+      var match = select && typeof select.name === 'string' && select.name.match(/^options\[\[?(.*?)\]?\]$/);
+      return match ? match[1] : '';
+    }
+
+    function replaceIn(el, re, label) {
+      if (!el) return;
+      var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+      var node;
+      while ((node = walker.nextNode())) {
+        var text = node.nodeValue;
+        if (!text) continue;
+        var trimmed = text.trim();
+        var next = text.replace(re, function (full) {
+          return trimmed === full.trim() ? label : label.toLowerCase();
+        });
+        if (next !== text) node.nodeValue = next;
+      }
+    }
+
+    // Collapse an element's text to one value, leaving lit's comment markers.
+    function setOnlyText(el, value) {
+      if (!el) return;
+      var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+      var nodes = [];
+      var node;
+      while ((node = walker.nextNode())) nodes.push(node);
+      var first = null;
+      nodes.forEach(function (candidate) {
+        if (!first && candidate.nodeValue.trim()) first = candidate;
+      });
+      if (!first) return;
+      nodes.forEach(function (candidate) {
+        if (candidate === first) {
+          if (candidate.nodeValue !== value) candidate.nodeValue = value;
+        } else if (candidate.nodeValue.trim()) {
+          candidate.nodeValue = '';
+        }
+      });
+    }
+
+    /* Bracketless raw keys. Translate & Adapt strips the Akeneo brackets before
+       the storefront sees them (confirmed live: select names arrive as
+       `options[shoe_size_eu]`), so the bracket rewriter above never fires on the
+       three places WK prints the key verbatim: the picker's own label, its
+       "Selecteer <name>" placeholder (both the <option> and the visible
+       .wk-text), and — for an item added from a PLP card, where no variant is
+       chosen yet — the disabled CTA's label. Each key is read from its select's
+       name and substituted only inside those elements; walking the whole card
+       would risk mangling a product title that happens to contain "color". */
+    function rewriteRawKeys(root) {
+      root.querySelectorAll('wk-option-select').forEach(function (picker) {
+        var select = picker.querySelector('select[name^="options["]');
+        var key = optionKey(select);
+        var label = key && labelFor(key);
+        if (!label || label === key) return;
+        var re = new RegExp('\\[?' + escapeRe(key) + '\\]?', 'gi');
+        replaceIn(picker.querySelector('.wk-label'), re, label);
+        replaceIn(picker.querySelector('.wk-text'), re, label);
+        picker.querySelectorAll('option').forEach(function (option) {
+          replaceIn(option, re, label);
+        });
+
+        /* An item added from a PLP card has no variant yet, so both pickers
+           show WK's "Selecteer <name>" placeholder. Two of those side by side
+           in a drawer-width row both ellipsize to "Selecte…"; the bare option
+           name reads as the prompt and fits. The CTA keeps the full sentence
+           for screen readers. */
+        var placeholder = select && select.querySelector('option[disabled]');
+        if (!placeholder) return;
+        setOnlyText(placeholder, label);
+        if (select.options[select.selectedIndex] === placeholder) {
+          setOnlyText(picker.querySelector('.wk-text'), label);
+        }
+      });
+
+      root.querySelectorAll('.wk-cta-label').forEach(function (el) {
+        var form = el.closest('form');
+        if (!form) return;
+        form.querySelectorAll('select[name^="options["]').forEach(function (select) {
+          var key = optionKey(select);
+          var label = key && labelFor(key);
+          if (!label || label === key) return;
+          replaceIn(el, new RegExp('\\[?' + escapeRe(key) + '\\]?', 'gi'), label);
+        });
+      });
+    }
+
+    /* Off-screen ruler rather than canvas measureText: the visible text layer
+       carries letter-spacing, which measureText ignores — it came out ~3px
+       short per label, just enough to ellipsize "Maat" to "M…". */
+    function measureText(value, textEl) {
+      var ruler = measureText.el;
+      if (!ruler) {
+        ruler = measureText.el = document.createElement('span');
+        ruler.setAttribute('aria-hidden', 'true');
+        ruler.style.cssText =
+          'position:absolute;left:-9999px;top:-9999px;white-space:pre;visibility:hidden;pointer-events:none;';
+        document.body.appendChild(ruler);
+      }
+      var style = getComputedStyle(textEl);
+      ruler.style.font = style.font;
+      ruler.style.letterSpacing = style.letterSpacing;
+      ruler.style.textTransform = style.textTransform;
+      ruler.style.fontWeight = style.fontWeight;
+      ruler.textContent = value;
+      return ruler.getBoundingClientRect().width;
+    }
+
+    function measureOptionWidths() {
       document.querySelectorAll('.ob-wishlist-cross-sell .wk-variants > wk-option-select').forEach(function (picker) {
-        var select = picker.querySelector('select[name*="color" i], select[name*="colour" i], select[name*="kleur" i]');
+        var select = picker.querySelector('select');
         var text = picker.querySelector('.wk-text');
         var content = picker.querySelector('.wk-content');
         var icon = picker.querySelector('.wk-icon');
         var control = picker.querySelector('.wk-control');
         if (!select || !text || !content || !control) return;
 
-        var canvas = sizeColorDropdowns.canvas || (sizeColorDropdowns.canvas = document.createElement('canvas'));
-        var context = canvas.getContext('2d');
-        if (!context) return;
-
-        var textStyle = getComputedStyle(text);
-        context.font = textStyle.font || [textStyle.fontWeight, textStyle.fontSize, textStyle.fontFamily].join(' ');
-
-        var longest = 0;
-        Array.prototype.forEach.call(select.options, function (option) {
-          longest = Math.max(longest, context.measureText(option.textContent.trim()).width);
-        });
+        /* While nothing is chosen the picker only ever shows its own name, so
+           it should claim no more than that — sizing an unchosen colour picker
+           to "Cherry Blossom" would squeeze the size picker next to it down to
+           "M…". Once a value is chosen, size to the widest selectable value so
+           the control stops resizing as the shopper cycles through them. */
+        var placeholderShowing = !!(select.options[select.selectedIndex] || {}).disabled;
+        var longest = measureText(text.textContent.trim(), text);
+        if (!placeholderShowing) {
+          Array.prototype.forEach.call(select.options, function (option) {
+            if (option.disabled) return;
+            longest = Math.max(longest, measureText(option.textContent.trim(), text));
+          });
+        }
 
         var contentStyle = getComputedStyle(content);
         var controlStyle = getComputedStyle(control);
@@ -144,23 +259,54 @@
           (parseFloat(controlStyle.borderLeftWidth) || 0) +
           (parseFloat(controlStyle.borderRightWidth) || 0);
 
-        picker.style.setProperty('--ob-wk-option-width', Math.ceil(longest + chrome) + 'px');
+        picker.style.setProperty('--ob-wk-option-width', Math.ceil(longest + chrome) + 1 + 'px');
       });
     }
 
     function overlayAll() {
-      document.querySelectorAll('wishlist-page, .ob-wishlist-cross-sell').forEach(overlayContainer);
-      sizeColorDropdowns();
+      document.querySelectorAll('wishlist-page, .ob-wishlist-cross-sell').forEach(function (root) {
+        overlayContainer(root);
+        rewriteRawKeys(root);
+      });
+      measureOptionWidths();
     }
 
     obWkReady(function () {
+      var observed = new WeakSet();
+      var scheduled = false;
+
+      /* Content observer: lit rewrites the option text in place, so
+         characterData matters as much as childList. Every rewrite here is
+         idempotent, so the pass it triggers on itself simply finds nothing. */
+      var contentObserver = new MutationObserver(function () {
+        schedule();
+      });
+
+      function attach() {
+        document.querySelectorAll('wishlist-page, .ob-wishlist-cross-sell').forEach(function (el) {
+          if (observed.has(el)) return;
+          observed.add(el);
+          contentObserver.observe(el, { childList: true, subtree: true, characterData: true });
+        });
+      }
+
+      function schedule() {
+        if (scheduled) return;
+        scheduled = true;
+        requestAnimationFrame(function () {
+          scheduled = false;
+          attach();
+          overlayAll();
+        });
+      }
+
+      /* The cart drawer replaces <cart-drawer-items> wholesale on every cart
+         mutation, which throws away the cross-sell node the content observer
+         was watching — so watch the document for its replacement too. */
+      new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
+
+      attach();
       overlayAll();
-      var observer = new MutationObserver(function () {
-        overlayAll();
-      });
-      document.querySelectorAll('wishlist-page, .ob-wishlist-cross-sell').forEach(function (el) {
-        observer.observe(el, { childList: true, subtree: true, characterData: true });
-      });
     });
   })();
 

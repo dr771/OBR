@@ -36,6 +36,29 @@
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
+
+  /* The homepage's semantic H2 carries Dawn's configurable size utility. */
+  #collection-{{ section.id }} .collection__title .title {
+    font-size: 3rem;
+    font-weight: 600;
+    line-height: 3.6rem;
+    letter-spacing: -0.01em;
+  }
+
+  @media screen and (min-width: 640px) {
+    #collection-{{ section.id }} .collection__title .title {
+      font-size: 3.6rem;
+      line-height: 4rem;
+    }
+  }
+
+  /* Match the desktop PLP card rhythm without changing the global grid setting. */
+  @media screen and (min-width: 990px) {
+    #collection-{{ section.id }} .product-grid {
+      --grid-desktop-horizontal-spacing: 2.4rem;
+      --grid-desktop-vertical-spacing: 3.6rem;
+    }
+  }
 {%- endstyle -%}
 
 {%- liquid
@@ -202,7 +225,7 @@
       <div class="center collection__view-all{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
         <a
           href="{{ section.settings.collection.url }}"
-          class="{% if section.settings.view_all_style == 'link' %}link underlined-link{% elsif section.settings.view_all_style == 'solid' %}button{% else %}button button--secondary{% endif %}"
+          class="button ob-button--cta"
           aria-label="{{ 'sections.featured_collection.view_all_label' | t: collection_name: section.settings.collection.title | escape }}"
         >
           {{ 'sections.featured_collection.view_all' | t }}

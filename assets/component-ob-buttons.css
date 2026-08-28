@@ -1,0 +1,84 @@
+/* Shared primary CTA treatment. Utility and icon-only controls retain their own chrome. */
+:root {
+  --ob-button-background: #0f172a;
+  --ob-button-background-hover: #1e9fe6;
+  --ob-button-text: #fff;
+  --ob-button-radius: 999.9rem;
+}
+
+.button,
+.shopify-challenge__button,
+.customer button,
+button.shopify-payment-button__button--unbranded {
+  --buttons-border-width: 0;
+  --buttons-border-offset: 0;
+  border-radius: var(--ob-button-radius);
+}
+
+.button:not(.button--tertiary, .button-close, .slider-button, .share-button__button, .button-show-more, .button-show-less),
+.shopify-challenge__button,
+.customer button,
+button.shopify-payment-button__button--unbranded {
+  background-color: var(--ob-button-background);
+  color: var(--ob-button-text);
+  transition: background-color var(--duration-short) ease;
+}
+
+.button:not(.button--tertiary, .button-close, .slider-button, .share-button__button, .button-show-more, .button-show-less):not([disabled]):is(:hover, :focus-visible),
+.shopify-challenge__button:not([disabled]):is(:hover, :focus-visible),
+.customer button:not([disabled]):is(:hover, :focus-visible),
+button.shopify-payment-button__button--unbranded:not([disabled]):is(:hover, :focus-visible) {
+  background-color: var(--ob-button-background-hover);
+  color: var(--ob-button-text);
+}
+
+.button:focus-visible,
+.shopify-challenge__button:focus-visible,
+.customer button:focus-visible,
+button.shopify-payment-button__button--unbranded:focus-visible {
+  box-shadow: none;
+  outline: 0.2rem solid var(--ob-button-background-hover);
+  outline-offset: 0.3rem;
+}
+
+.button::before,
+.button::after,
+.button:not([disabled]):hover::after,
+.shopify-challenge__button::before,
+.shopify-challenge__button::after,
+.shopify-challenge__button:not([disabled]):hover::after,
+.customer button::before,
+.customer button::after,
+.customer button:not([disabled]):hover::after,
+button.shopify-payment-button__button--unbranded::before,
+button.shopify-payment-button__button--unbranded::after,
+button.shopify-payment-button__button--unbranded:not([disabled]):hover::after {
+  border-radius: inherit;
+  box-shadow: none;
+}
+
+/* These inherit Dawn's `.button` class for sizing only; they are icon controls, not CTAs. */
+cart-remove-button .button.button,
+.quick-order-list-remove-button .button.button,
+.quantity-popover__info .button.button {
+  background-color: transparent;
+  color: rgb(var(--color-foreground));
+}
+
+cart-remove-button .button.button:not([disabled]):is(:hover, :focus-visible),
+.quick-order-list-remove-button .button.button:not([disabled]):is(:hover, :focus-visible),
+.quantity-popover__info .button.button:not([disabled]):is(:hover, :focus-visible) {
+  background-color: transparent;
+  color: rgb(var(--color-foreground));
+}
+
+.collection__view-all .ob-button--cta {
+  min-width: 20.5rem;
+  min-height: 4.4rem;
+  padding: 1.2rem 2.8rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 2rem;
+  letter-spacing: normal;
+  text-transform: none;
+}

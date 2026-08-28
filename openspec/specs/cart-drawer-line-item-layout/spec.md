@@ -2,19 +2,17 @@
 
 ## Purpose
 Presentational layout of the cart drawer (`snippets/cart-drawer.liquid`) — how a line item's variant options, price, remove control, and quantity stepper are arranged and styled, plus the drawer panel's own chrome (header, heading, border/padding). Scoped to the cart drawer only, not the full `/cart` page (`sections/main-cart-items.liquid`) or the cart notification popup (`sections/cart-notification-product.liquid`), which render their own option/price markup and are unaffected by this spec.
-
 ## Requirements
-
 ### Requirement: Variant options render without labels
-Each cart drawer line item SHALL render its variant option values as plain text joined by " / ", with no option-name label (no "[color]:", "[tops_size]:", or any translated equivalent prefix). Line-item properties (user-entered text, e.g. gift-wrap notes or personalization) are unaffected and keep their own labeled list.
+Each cart drawer line item SHALL render its variant option values as plain text joined by " / ", with no option-name label (no "[color]:", "[tops_size]:", or any translated equivalent prefix). Variant-option text SHALL use `calc(var(--font-heading-scale) * 1.4rem)` and `-0.4px` letter spacing. Line-item properties (user-entered text, e.g. gift-wrap notes or personalization) are unaffected and keep their own labeled list.
 
 #### Scenario: Product has color and size options
 - **WHEN** a cart line item is a product with `[color]` value "Black Grey" and `[shoe_size_eu]` value "40"
-- **THEN** the drawer shows "Black Grey / 40" with no labels
+- **THEN** the drawer shows "Black Grey / 40" with no labels, at the same font size as the product name and with -0.4px letter spacing
 
 #### Scenario: Line item carries a custom property
 - **WHEN** a cart line item has a non-empty, non-underscore-prefixed line item property (e.g. "Engraving: Happy Birthday")
-- **THEN** that property still renders with its own `<dt>`/`<dd>` label pair, unaffected by the option-list formatting change
+- **THEN** that property still renders with its own `<dt>`/`<dd>` label pair, unaffected by the option-list typography change
 
 ### Requirement: Only one price renders per line item
 Each cart drawer line item SHALL show exactly one price (the line total for its quantity) — no separate per-unit price rendered under the title. The visible price SHALL use compact typography (13px, 500 weight, 0.2px letter-spacing) distinct from Dawn's default price styling, applied to both the current price and any struck-through original price.
@@ -57,11 +55,15 @@ The cart drawer's quantity stepper SHALL size its width to fit its buttons and i
 - **THEN** the quantity stepper is just as compact as on desktop, not reverting to Dawn's wider default
 
 ### Requirement: Item title uses a compact heading size
-The cart drawer line item's product title SHALL render slightly smaller than Dawn's default h4 size, using `calc(var(--font-heading-scale) * 1.4rem)` instead of the default 1.5rem multiplier.
+The cart drawer line item's product title SHALL use the body font family at `calc(var(--font-heading-scale) * 1.4rem)`, 500 weight, 1.9rem line height, and normal letter spacing.
 
 #### Scenario: Viewing a line item title
-- **WHEN** a shopper views a line item's product title in the cart drawer
-- **THEN** it renders at the compact size, still scaling with the theme's heading-scale setting
+- **WHEN** a shopper views any cart line item
+- **THEN** its title is compact enough for the drawer's narrow product column
+
+#### Scenario: Shopper hovers a line-item title
+- **WHEN** a pointer hovers a cart line-item product link
+- **THEN** the title remains free of an underline
 
 ### Requirement: Column-header row is visually hidden
 The cart drawer's line-item table SHALL NOT display visible "Product"/"Total" column-header text above the line items. The header cells SHALL remain present in the DOM as visually-hidden elements so the table's `headers` attribute associations (used for accessibility) continue to resolve.
@@ -95,3 +97,17 @@ The cart drawer panel SHALL render without Dawn's default panel border, and SHAL
 #### Scenario: Shopper opens the mobile menu drawer
 - **WHEN** a shopper opens the mobile hamburger menu drawer
 - **THEN** its border and padding are unaffected by the cart drawer's styling
+
+### Requirement: Cart drawer uses Inter throughout
+All text and form controls inside the cart drawer SHALL use the theme body font family (Inter); the drawer SHALL not render Fraunces heading text or browser-default form-control typography.
+
+#### Scenario: Shopper views a populated cart drawer
+- **WHEN** the drawer contains line items, controls, and totals
+- **THEN** all visible text in the drawer uses Inter
+
+### Requirement: Line-item images use the PLP default blend treatment
+Each cart drawer line-item image SHALL use `mix-blend-mode: multiply` and a 1.6rem border radius on a content-sized local `#f1f5f9` photo-frame backdrop. The media cell itself SHALL receive no blend-specific background, radius, or isolation styling.
+
+#### Scenario: Shopper views a white-background packshot
+- **WHEN** a cart drawer line item renders a white-background packshot
+- **THEN** the white background visibly blends into its local pale photo frame without creating a full-height tinted media column

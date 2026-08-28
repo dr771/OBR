@@ -460,9 +460,52 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   width: 11px;
   height: 11px;
 }
-/* Item title slightly smaller than Dawn's default h4 (1.5rem) size. */
+/* Drawer typography follows the PLP's Inter-only product-card surface. The
+   descendant scope also takes over Dawn's explicit heading font and browser
+   form-control font defaults without reaching the shared mobile-menu drawer. */
+.cart-drawer,
+.cart-drawer * {
+  font-family: var(--font-body-family) !important;
+}
+
+/* Compact title for the drawer's constrained product column. */
 .cart-drawer .cart-item__name {
   font-size: calc(var(--font-heading-scale) * 1.4rem);
+  font-weight: 500;
+  line-height: 1.9rem;
+  letter-spacing: normal;
+  text-decoration: none;
+}
+
+.cart-drawer .cart-item__name:hover {
+  text-decoration: none;
+}
+
+.cart-drawer .product-option.cart-item__variant-options {
+  font-size: calc(var(--font-heading-scale) * 1.4rem);
+  letter-spacing: -0.4px;
+}
+
+.cart-drawer .caption-with-letter-spacing {
+  font-size: 0.9rem;
+}
+
+.cart-drawer .cart-item__image-frame {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  background-color: #f1f5f9;
+  border-radius: 1.6rem;
+  isolation: isolate;
+}
+
+/* Blend and radius belong to the image; its local photo frame supplies the
+   PLP surface without tinting the full-height cart media cell. */
+.cart-drawer .cart-item__image {
+  display: block;
+  max-width: 100%;
+  border-radius: 1.6rem;
+  mix-blend-mode: multiply;
 }
 /* Shrink the remove button's tap-target height from Dawn's 3.5rem default
    to match the now-smaller icon/row, at every viewport width. */
@@ -545,6 +588,12 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   display: none !important;
 }
 
+/* A one-value option is auto-resolved by WK — showing it only eats row width
+   (SB and Holster both assert this too). */
+.ob-wishlist-cross-sell wk-option-select.wk-single-option {
+  display: none !important;
+}
+
 /* WK's own default lays multiple cards out in columns — force a vertical
    stack of compact rows instead (confirmed live: 2 wishlist items rendered
    cramped side-by-side without this). */
@@ -554,9 +603,12 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   gap: 0 !important;
 }
 
+/* minmax(0, …), not 1fr: a grid track's automatic minimum is its content's
+   max-content size, so the nowrap option row (two pickers + CTA) would widen
+   the card past the drawer instead of letting the pickers ellipsize. */
 .ob-wishlist-cross-sell .wk-product-card {
   display: grid;
-  grid-template-columns: 8rem 1fr;
+  grid-template-columns: 8rem minmax(0, 1fr);
   gap: 1rem;
   padding: 1rem 0;
   border-bottom: 1px solid rgba(var(--color-foreground), 0.08);
@@ -669,18 +721,23 @@ wishlist-product-card .wk-meta {
   box-sizing: border-box;
 }
 
-/* JS measures the longest option in WK's absolutely-positioned native select
-   and writes --ob-wk-option-width; WK's visible text layer otherwise sizes
-   only from the currently selected value. Size controls stay at the minimum
-   useful width and match every Akeneo size-kind key. */
-.ob-wishlist-cross-sell .wk-variants > wk-option-select:has(select[name*="size" i]) {
-  flex: 0 0 5.5rem;
-  width: 5.5rem !important;
+/* JS measures the longest selectable option (plus whatever is currently
+   displayed) in WK's absolutely-positioned native select and writes
+   --ob-wk-option-width; WK's visible text layer otherwise sizes only from the
+   currently selected value. The floor keeps a short numeric size picker from
+   collapsing to a caret. */
+.ob-wishlist-cross-sell .wk-variants > wk-option-select {
+  min-width: 5.5rem;
 }
 
-.ob-wishlist-cross-sell .wk-variants > wk-option-select:has(select[name*="size" i]) .wk-option-select,
-.ob-wishlist-cross-sell .wk-variants > wk-option-select:has(select[name*="size" i]) .wk-control {
-  width: 5.5rem;
+/* One line, ellipsized — WK's placeholder ("Selecteer maat") is long enough to
+   wrap to two lines and blow the 3.2rem control height otherwise. */
+.ob-wishlist-cross-sell .wk-control .wk-text {
+  overflow: hidden;
+  font-size: 1.2rem;
+  line-height: 1;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .ob-wishlist-cross-sell .wk-quantity {
@@ -689,15 +746,18 @@ wishlist-product-card .wk-meta {
 
 /* CTA: icon-only cart button (label hidden, icon via CSS mask — no JS icon
    swapping needed, works for every locale). Matches SB's shipped pattern. */
+/* !important throughout: WK's own stylesheet sizes .wk-cta-button[disabled]
+   (the "pick a size first" state) at width:100%/45px, which outspecifies a
+   plain descendant selector and squashed the option pickers to 0px wide. */
 .ob-wishlist-cross-sell .wk-cta-button {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 3.2rem;
-  height: 3.2rem;
-  min-height: 3.2rem;
-  padding: 0;
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 3.2rem !important;
+  height: 3.2rem !important;
+  min-height: 3.2rem !important;
+  padding: 0 !important;
   background: rgb(var(--color-button));
   color: rgb(var(--color-button-text));
   border: 0.1rem solid rgb(var(--color-button));
@@ -707,7 +767,7 @@ wishlist-product-card .wk-meta {
 }
 
 .ob-wishlist-cross-sell .wk-cta-button .wk-cta-label {
-  display: none;
+  display: none !important;
 }
 
 .ob-wishlist-cross-sell .wk-cta-button::before {
