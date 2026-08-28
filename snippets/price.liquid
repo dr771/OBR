@@ -26,13 +26,49 @@
   assign price_min = product.price_min
   assign price_max = product.price_max
   assign available = target.available | default: false
+
+  comment
+    Original Brands deliberately formats product prices without the ISO currency
+    code, even when Dawn's currency_code_enabled setting is on: the active
+    currency symbol supplied by Shopify is sufficient, so "€25,00 EUR" becomes
+    "€25,-" instead of repeating EUR after the symbol.
+
+    Shopify exposes money values as integer minor units (cents). A remainder of
+    zero after modulo 100 therefore identifies a true whole-euro amount. Replace
+    only its rendered ",00" suffix with ",-"; do not use
+    money_without_trailing_zeros, because that would produce "€25" and would not
+    express the approved Dutch price convention. Non-zero cents remain intact —
+    the catalog contains a real €7,99 item which must never be rounded.
+
+    Apply the same calculation to the current, minimum, maximum, and compare-at
+    amounts so regular prices, sale prices, and volume-price ranges cannot drift
+    into different formats. Keep this server-rendered in the shared price snippet:
+    Dawn reuses it for collection cards, PDPs, featured products, predictive
+    search, and section responses, while a document-wide DOM text rewrite can
+    interfere with page parsing and third-party markup.
+  endcomment
+
   assign money_price = price | money
   assign money_price_min = price_min | money
   assign money_price_max = price_max | money
-  if settings.currency_code_enabled
-    assign money_price = price | money_with_currency
-    assign money_price_min = price_min | money_with_currency
-    assign money_price_max = price_max | money_with_currency
+  assign money_compare_at_price = compare_at_price | money
+
+  assign price_remainder = price | modulo: 100
+  assign price_min_remainder = price_min | modulo: 100
+  assign price_max_remainder = price_max | modulo: 100
+  assign compare_at_price_remainder = compare_at_price | modulo: 100
+
+  if price_remainder == 0
+    assign money_price = money_price | replace: ',00', ',-'
+  endif
+  if price_min_remainder == 0
+    assign money_price_min = money_price_min | replace: ',00', ',-'
+  endif
+  if price_max_remainder == 0
+    assign money_price_max = money_price_max | replace: ',00', ',-'
+  endif
+  if compare_at_price and compare_at_price_remainder == 0
+    assign money_compare_at_price = money_compare_at_price | replace: ',00', ',-'
   endif
 
   if target == product and product.price_varies
@@ -67,11 +103,7 @@
               </span>
               <span>
                 <s class="price-item price-item--regular variant-item__old-price">
-                  {% if settings.currency_code_enabled %}
-                    {{ compare_at_price | money_with_currency }}
-                  {% else %}
-                    {{ compare_at_price | money }}
-                  {% endif %}
+                  {{ money_compare_at_price }}
                 </s>
               </span>
             {%- endunless -%}
@@ -95,11 +127,7 @@
           <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.regular_price' | t }}</span>
           <span>
             <s class="price-item price-item--regular">
-              {% if settings.currency_code_enabled %}
-                {{ compare_at_price | money_with_currency }}
-              {% else %}
-                {{ compare_at_price | money }}
-              {% endif %}
+              {{ money_compare_at_price }}
             </s>
           </span>
         {%- endunless -%}
