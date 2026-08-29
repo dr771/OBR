@@ -30,46 +30,23 @@
   comment
     Original Brands deliberately formats product prices without the ISO currency
     code, even when Dawn's currency_code_enabled setting is on: the active
-    currency symbol supplied by Shopify is sufficient, so "€25,00 EUR" becomes
-    "€25,-" instead of repeating EUR after the symbol.
+    currency symbol supplied by Shopify is sufficient. Use the normal money
+    filter so "€25,00 EUR" becomes "€25,00" and Shopify's two-digit cent fraction
+    remains exactly as configured; whole-euro amounts keep ",00" and real cent
+    prices such as "€7,99" remain unchanged.
 
-    Shopify exposes money values as integer minor units (cents). A remainder of
-    zero after modulo 100 therefore identifies a true whole-euro amount. Replace
-    only its rendered ",00" suffix with ",-"; do not use
-    money_without_trailing_zeros, because that would produce "€25" and would not
-    express the approved Dutch price convention. Non-zero cents remain intact —
-    the catalog contains a real €7,99 item which must never be rounded.
-
-    Apply the same calculation to the current, minimum, maximum, and compare-at
-    amounts so regular prices, sale prices, and volume-price ranges cannot drift
-    into different formats. Keep this server-rendered in the shared price snippet:
-    Dawn reuses it for collection cards, PDPs, featured products, predictive
-    search, and section responses, while a document-wide DOM text rewrite can
-    interfere with page parsing and third-party markup.
+    Apply the same symbol-only formatter to the current, minimum, maximum, and
+    compare-at amounts so regular prices, sale prices, and volume-price ranges
+    cannot drift into different formats. Keep this server-rendered in the shared
+    price snippet: Dawn reuses it for collection cards, PDPs, featured products,
+    predictive search, and section responses, while a document-wide DOM text
+    rewrite can interfere with page parsing and third-party markup.
   endcomment
 
   assign money_price = price | money
   assign money_price_min = price_min | money
   assign money_price_max = price_max | money
   assign money_compare_at_price = compare_at_price | money
-
-  assign price_remainder = price | modulo: 100
-  assign price_min_remainder = price_min | modulo: 100
-  assign price_max_remainder = price_max | modulo: 100
-  assign compare_at_price_remainder = compare_at_price | modulo: 100
-
-  if price_remainder == 0
-    assign money_price = money_price | replace: ',00', ',-'
-  endif
-  if price_min_remainder == 0
-    assign money_price_min = money_price_min | replace: ',00', ',-'
-  endif
-  if price_max_remainder == 0
-    assign money_price_max = money_price_max | replace: ',00', ',-'
-  endif
-  if compare_at_price and compare_at_price_remainder == 0
-    assign money_compare_at_price = money_compare_at_price | replace: ',00', ',-'
-  endif
 
   if target == product and product.price_varies
     assign money_price = 'products.product.price.from_price_html' | t: price: money_price

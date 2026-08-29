@@ -1,9 +1,17 @@
-# storefront-price-format Specification
+## ADDED Requirements
 
-## Purpose
-Formats product prices consistently through the theme's shared server-rendered price snippet, without changing currency labels that are not prices.
+### Requirement: Euro prices retain two decimal digits
+Every product price SHALL retain Shopify's standard two-digit cent fraction, including `,00` for whole-euro amounts and the actual cent digits for non-zero-cent amounts.
 
-## Requirements
+#### Scenario: Whole-euro price renders
+- **WHEN** a shopper-facing product amount is `€25,00`
+- **THEN** it remains displayed as `€25,00`
+
+#### Scenario: Non-zero-cent price renders
+- **WHEN** a shopper-facing product amount is `€7,99`
+- **THEN** it remains displayed as `€7,99`
+
+## MODIFIED Requirements
 
 ### Requirement: Euro prices omit the redundant currency code
 Every shopper-facing euro product amount SHALL retain the `€` symbol and SHALL omit a trailing `EUR` code. Currency codes shown as localization choices SHALL remain unchanged because they identify the selected market rather than repeat a price currency.
@@ -23,13 +31,9 @@ Every surface rendered through `snippets/price.liquid` SHALL use the same symbol
 - **WHEN** Dawn replaces a product card or predictive-search result with server-rendered markup
 - **THEN** its whole-euro product price is already formatted as `€50,00`
 
-### Requirement: Euro prices retain two decimal digits
-Every product price SHALL retain Shopify's standard two-digit cent fraction, including `,00` for whole-euro amounts and the actual cent digits for non-zero-cent amounts.
+## REMOVED Requirements
 
-#### Scenario: Whole-euro price renders
-- **WHEN** a shopper-facing product amount is `€25,00`
-- **THEN** it remains displayed as `€25,00`
+### Requirement: Whole-euro prices use the Dutch dash convention
+**Reason**: The owner has withdrawn the `,-` presentation and confirmed that Shopify's original `,00` fraction must remain.
 
-#### Scenario: Non-zero-cent price renders
-- **WHEN** a shopper-facing product amount is `€7,99`
-- **THEN** it remains displayed as `€7,99`
+**Migration**: Remove the modulo-based `,00` to `,-` replacement and rely on Shopify's symbol-only `money` output.
