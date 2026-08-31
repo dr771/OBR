@@ -3,7 +3,7 @@
 
   Driven by a product metafield rather than by tags — Akeneo owns the tag
   namespace, so merchandising flags set in Shopify would be overwritten on the
-  next sync. Both PDP placements read this one snippet so they cannot disagree
+  next sync. All placements read this one snippet so they cannot disagree
   about whether a product is a bestseller.
 
   Fails open: an unset field, or no field definition at all, renders nothing —
@@ -14,7 +14,10 @@
 
   Accepts:
   - product: {Object} product object
-  - placement: {String} 'gallery' | 'price'
+  - placement: {String} 'gallery' | 'price' | 'card' — 'card' is the PLP
+    product-card badge (see card-product.liquid); its visual rule lives in
+    component-ob-swatches.css, not component-ob-pdp.css, since it has to
+    reach every card surface, not just the PDP.
 
   Usage:
   {% render 'ob-product-badge', product: product, placement: 'price' %}

@@ -425,6 +425,37 @@
   isolation: isolate;
 }
 
+/*
+  Bestseller badge, PLP card placement. Same pill/colour as the PDP's
+  .ob-badge--gallery, but the PDP's shared .ob-badge base rule (pill shape,
+  type scale) lives in component-ob-pdp.css, which the PLP never loads —
+  card-product.liquid only pulls this file. So this selector restates the full
+  pill styling rather than layering on top of a base that isn't there; a first
+  attempt that only added position/padding/colour rendered as an unstyled
+  square block at the browser's default 16px type. Inset is smaller than the
+  PDP's 2.2rem since the card photo is roughly half the width of the PDP
+  gallery image; font-size/padding scaled down to match.
+*/
+.card-wrapper.product-card-wrapper .ob-badge--card {
+  display: inline-block;
+  position: absolute;
+  top: 1.2rem;
+  left: 1.2rem;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4rem;
+  padding: 0.5rem 1.3rem 0.6rem;
+  background: #38b6ff;
+  color: #fff;
+  font-family: var(--font-body-family);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4rem;
+  letter-spacing: 0.12rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 .card-wrapper.product-card-wrapper .card__inner .card__media .media {
   border-radius: inherit;
 }
