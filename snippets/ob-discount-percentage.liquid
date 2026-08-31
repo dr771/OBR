@@ -1,0 +1,17 @@
+{% comment %}
+  Renders a compact, rounded-down percentage discount for a Product or Variant.
+
+  Accepts:
+  - target: Product or Variant object exposing price and compare_at_price
+
+  Output example: -14%
+{% endcomment %}
+
+{%- liquid
+  assign ob_discount_percentage = 0
+  if target.compare_at_price > target.price and target.compare_at_price > 0
+    assign ob_discount_difference = target.compare_at_price | minus: target.price
+    assign ob_discount_percentage = ob_discount_difference | times: 100 | divided_by: target.compare_at_price
+  endif
+-%}
+{%- if target.compare_at_price > target.price -%}-{{ ob_discount_percentage }}%{%- endif -%}

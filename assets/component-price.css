@@ -73,6 +73,14 @@
   margin-left: 0.5rem;
 }
 
+.price__badge-sale {
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.4rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
 .price--on-sale .price__sale {
   display: initial;
   flex-direction: row;

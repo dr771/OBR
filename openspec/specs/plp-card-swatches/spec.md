@@ -3,17 +3,6 @@
 ## Purpose
 Renders the product card's color swatch row on every surface that renders `card-product.liquid` — the PLP grid, search results, homepage featured collections, related products, and collage blocks alike: one chip per color, each showing that color's own variant photo (this project's feed has no curated swatch-crop asset). Hovering a chip swaps the card image to that color and reveals its name; hovering the card reveals a second, color-matched shot. Also governs which color the card's base image represents, and where each chip links.
 ## Requirements
-### Requirement: Swatch chip visual is always the color's own variant photo
-Each PLP card swatch chip SHALL render the color's first variant's own product photo, cropped square. Unlike the reuse-source project, this project's Akeneo feed carries no per-color curated swatch-image metaobject and no curated color-crop map, so there is no preference chain to try before it — the variant photo is the only source. If a color has no resolvable image at all, the chip renders in a neutral/unavailable style rather than a broken or empty background.
-
-#### Scenario: Color has a variant with a product photo
-- **WHEN** a color value's first variant has a product image
-- **THEN** its chip renders that image, cropped to a square
-
-#### Scenario: Color has no image at all
-- **WHEN** a color value's first variant has no resolvable product image
-- **THEN** the chip renders in its unavailable style instead of a broken or empty background
-
 ### Requirement: Card base image tracks the first available variant's color, not featured_media
 The product card's base (non-hovered) image SHALL derive from `product.selected_or_first_available_variant`'s color — the same logic the PDP uses to choose its hero color — not from `featured_media` (simply the product's first uploaded image, in Akeneo upload order). This keeps the PLP grid tile and the PDP's initial hero color in agreement at all times, including once a color sells out.
 
@@ -228,4 +217,30 @@ The swatch-row visual treatment defined by this capability — borderless/blende
 #### Scenario: Card renders inside the collection grid or search results
 - **WHEN** a product card renders inside the collection page or search results grid
 - **THEN** behavior is unchanged from before this requirement was added
+
+### Requirement: PLP card swatch visual is merchant-switchable
+The theme SHALL provide one global presentation setting for PLP card color controls, with `color swatches` as the default and `image chips` as the retained alternative. Changing the setting SHALL change only the chip visual; selection, pressed state, card-image swapping, matched second-shot hover, and variant-link retargeting SHALL behave identically in both modes.
+
+#### Scenario: Default color-swatch mode
+- **WHEN** the merchant has not explicitly changed the PLP card swatch presentation setting
+- **THEN** product cards render color swatches while retaining the existing interactive behavior
+
+#### Scenario: Merchant restores image chips
+- **WHEN** the merchant selects the image-chip presentation
+- **THEN** product cards render the existing cropped variant-photo chips without a code or template change
+
+### Requirement: Color-swatch mode resolves variant filter-color values safely
+In color-swatch mode, each PLP color option SHALL resolve the `custom.filtercolors` values of its matched variant. One valid hex value SHALL render a solid swatch; multiple valid hex values SHALL render a segmented swatch containing every valid value; and no valid hex value SHALL fall back to that variant's image chip. Untrusted or malformed text SHALL NOT be emitted as executable inline CSS.
+
+#### Scenario: Variant has one filter color
+- **WHEN** the matched variant carries one `filtercolors` entry with a valid hex value
+- **THEN** the chip renders that hex as a solid color
+
+#### Scenario: Variant has several filter colors
+- **WHEN** the matched variant carries multiple `filtercolors` entries with valid hex values
+- **THEN** the chip renders all of those colors as equal segments
+
+#### Scenario: Variant has no valid filter color
+- **WHEN** the matched variant has no readable `filtercolors` reference or every referenced hex value is malformed or blank
+- **THEN** the chip renders the existing cropped variant photo, or the neutral unavailable state if no photo exists
 

@@ -30,7 +30,7 @@
   --ob-pdp-photo-surface: #f1f5f9;
 
   /* accent — the confirmed CTA blue and its tints */
-  --ob-pdp-accent: #38b6ff;
+  --ob-pdp-accent: var(--ob-accent);
   --ob-pdp-accent-icon: #1e9fe6;
   --ob-pdp-accent-tint: #eff9ff;
   --ob-pdp-accent-ink: #0d80c4;
@@ -421,6 +421,14 @@
   letter-spacing: 0;
 }
 
+.ob-pdp .price--on-sale .price-item--regular {
+  color: rgba(var(--color-foreground), 0.35);
+}
+
+.ob-pdp .price--on-sale .price-item--sale {
+  color: var(--ob-pdp-accent);
+}
+
 /* option blocks ---------------------------------------------------------- */
 
 .ob-pdp .product-form__input--ob-block {
@@ -550,14 +558,30 @@
   font-weight: 600;
   line-height: 1.6rem;
   letter-spacing: 0;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
-.ob-badge--gallery {
+.ob-badge--sale {
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.4rem;
+  letter-spacing: 0;
+}
+
+.ob-pdp__gallery-badges {
   position: absolute;
   top: 2rem;
   left: 2rem;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.ob-badge--gallery {
+  position: static;
   padding: 0.6rem 1.2rem;
   background: var(--ob-pdp-accent);
   color: #fff;
@@ -589,6 +613,10 @@
 
 .ob-pdp__price-row .price {
   margin-top: 0;
+}
+
+.ob-pdp .price .price__badge-sale {
+  display: none;
 }
 
 /* detail accordions ------------------------------------------------------- */
@@ -846,7 +874,7 @@
   by DOM order. Desktop-only symptom — the sticky column is off on mobile, where
   the badge was visible all along.
 */
-.ob-badge--gallery {
+.ob-pdp__gallery-badges {
   top: 2.2rem;
   left: 2.2rem;
   z-index: 3;

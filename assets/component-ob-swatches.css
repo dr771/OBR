@@ -445,7 +445,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4rem;
   padding: 0.5rem 1.3rem 0.6rem;
-  background: #38b6ff;
+  background: #121212;
   color: #fff;
   font-family: var(--font-body-family);
   font-size: 1rem;
@@ -559,6 +559,12 @@
   opacity: 0.8;
 }
 
+.card-wrapper.product-card-wrapper .price--on-sale .price-item--sale {
+  color: var(--ob-accent);
+  font-weight: 600;
+  opacity: 1;
+}
+
 .card-wrapper.product-card-wrapper .badge {
   font-family: var(--font-body-family);
   font-size: 1rem;
@@ -566,6 +572,16 @@
   line-height: 1.5rem;
   letter-spacing: 0.12rem;
   text-transform: uppercase;
+}
+
+.card-wrapper.product-card-wrapper .badge--sale {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: var(--ob-accent);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.4rem;
+  letter-spacing: 0;
 }
 
 /* Wishlist King's collection heart matches the approved Bolt card control. */

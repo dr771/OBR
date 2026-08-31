@@ -3,19 +3,6 @@
 ## Purpose
 Defines the PDP section shell and information-column presentation — content width, two-column split, type scale, block separation, add-to-cart row, and the collapsible detail stack — so a shopper crossing from a collection grid into a product page stays inside one design system.
 ## Requirements
-### Requirement: PDP content is capped independently of the theme page width
-The product section SHALL constrain its content to a 128rem maximum width with a 2.4rem inset at each page edge, independent of the theme's configured page width. The theme's page-width setting SHALL NOT be modified to achieve this.
-
-#### Scenario: PDP renders on a wide desktop viewport
-
-- **WHEN** the PDP renders at a viewport wider than 128rem
-- **THEN** its content is centred at 128rem with 2.4rem of inset, while collection pages keep their own wider inset behaviour
-
-#### Scenario: PDP renders below the cap
-
-- **WHEN** the PDP renders at a viewport narrower than 128rem
-- **THEN** its content fills the available width less the 2.4rem inset at each edge
-
 ### Requirement: Desktop PDP uses an asymmetric two-column split
 At desktop widths the product section SHALL place media and product information in two columns proportioned `1.12` to `0.88`, separated by a 5.6rem gutter, with the information column never narrower than 40rem. Below the desktop breakpoint the columns SHALL stack with media first.
 
@@ -87,3 +74,38 @@ Note: the reference shows four named panels (`Productdetails`, `Materiaal & onde
 
 - **WHEN** a keyboard user focuses and activates a panel trigger
 - **THEN** the panel toggles, the trigger exposes its expanded state to assistive technology, and focus remains on the trigger
+
+### Requirement: PDP sale pricing keeps the comparison subordinate
+On a PDP sale price, the current sale amount SHALL use the brand accent `#38B6FF` while retaining the normal PDP price size and weight. The struck-through compare-at amount SHALL use the current foreground colour at 35% opacity. This treatment SHALL NOT change a regular non-sale PDP price.
+
+#### Scenario: PDP renders a sale variant
+- **WHEN** the selected variant has a compare-at price greater than its current price
+- **THEN** the current amount is `#38B6FF` and the compare-at amount is struck through at `rgba(var(--color-foreground), 0.35)`
+
+#### Scenario: PDP renders a regular-price variant
+- **WHEN** the selected variant has no valid higher compare-at price
+- **THEN** its current amount retains the normal PDP ink colour
+
+### Requirement: PDP content follows the theme page width
+The product section SHALL use the theme's configured page width as its maximum width. At desktop widths its breadcrumb, main media frame, thumbnail rail, gallery counter, information controls, and related-products content SHALL use a 5rem inset aligned with the header logo. Below the desktop breakpoint the section SHALL retain a 2.4rem inset.
+
+#### Scenario: PDP renders on a wide desktop viewport
+
+- **WHEN** the PDP renders at a viewport wider than the configured theme page width
+- **THEN** its shell is centred at that configured width and the complete gallery/content chain begins 50px inside the shell on the header logo edge
+
+#### Scenario: PDP columns follow the admin Media width setting
+
+- **WHEN** the PDP renders at the desktop breakpoint or wider
+- **THEN** Media Small produces a 40/60 gallery/information split, Medium produces 50/50, and Large produces 60/40
+- **AND** the main frame, thumbnail rail, gallery counter, and related-products heading retain one shared leading edge with no horizontal overflow
+
+#### Scenario: PDP image follows the admin Fit setting
+
+- **WHEN** the merchant selects Original or Fill in the Product information section
+- **THEN** the main image SHALL use Dawn's corresponding contain or cover behavior without a custom PDP `object-fit` override
+
+#### Scenario: PDP renders below the desktop breakpoint
+
+- **WHEN** the PDP renders below the desktop breakpoint
+- **THEN** its content fills the available width less a 24px inset at each edge with no horizontal overflow

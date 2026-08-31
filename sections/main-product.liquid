@@ -76,12 +76,26 @@
   {%- endif -%}
 
   {% assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' %}
+  {%- liquid
+    assign selected_variant_is_on_sale = false
+    if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price
+      assign selected_variant_is_on_sale = true
+    endif
+  -%}
   <product-component view-event-payload="{{ product | standard_event_data: 'view', context: 'page' | escape }}">
     {%- render 'ob-breadcrumb', product: product -%}
     <div class="page-width">
       <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
         <div class="grid__item product__media-wrapper">
-          {%- render 'ob-product-badge', product: product, placement: 'gallery' -%}
+          <div class="ob-pdp__gallery-badges">
+            {%- render 'ob-product-badge', product: product, placement: 'gallery' -%}
+            <span
+              id="SaleBadge-{{ section.id }}"
+              class="ob-badge ob-badge--gallery ob-badge--sale{% unless selected_variant_is_on_sale %} hidden{% endunless %}"
+            >
+              {%- render 'ob-discount-percentage', target: product.selected_or_first_available_variant -%}
+            </span>
+          </div>
           {% render 'product-media-gallery', variant_images: variant_images %}
         </div>
         <div class="product__info-wrapper grid__item{% if settings.page_width > 1400 and section.settings.media_size == "small" %} product__info-wrapper--extra-padding{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">

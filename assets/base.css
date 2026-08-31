@@ -4,6 +4,7 @@ collection-component {
 }
 
 :root {
+  --ob-accent: #38b6ff;
   --alpha-button-background: 1;
   --alpha-button-border: 1;
   --alpha-link: 0.85;
@@ -2940,6 +2941,7 @@ details-disclosure > details {
   line-height: 1;
   padding: 0.5rem 1.3rem 0.6rem 1.3rem;
   text-align: center;
+  text-transform: uppercase;
   background-color: rgb(var(--color-badge-background));
   border-color: rgba(var(--color-badge-border), var(--alpha-badge-border));
   color: rgb(var(--color-badge-foreground));
