@@ -17,9 +17,13 @@
   same place. The rendered label is then correct regardless of what the filter
   index serves, and stays correct once it catches up.
 
-  Matching is by metaobject GID only; the label is read from `display_label`. A facet whose value is not a metaobject
-  GID (vendor, product_type, price, the size list) short-circuits on the
-  `contains` guard and keeps `value.label`.
+  Matching is by metaobject GID only; the label is read from `label_nl`, the
+  field the Akeneo sync writes the Dutch text into. If it ever renders English
+  again, read trap 5 below before changing anything — the field goes unreadable
+  after a connector definition rewrite and the fix is to recreate it, not to
+  rename it. A facet whose value is not a metaobject GID (vendor, product_type,
+  price, the size list) short-circuits on the `contains` guard and keeps
+  `value.label`.
 
   Output is already HTML-escaped — callers MUST NOT escape it again.
 
@@ -47,18 +51,40 @@
      value's `value.value` is the full GID
      (`gid://shopify/Metaobject/224312459373`), so the prefix must be
      re-attached before comparing.
-  5. `label` is a RESERVED property on the metaobject drop. Despite the field
-     genuinely being keyed `label`, `entry.label` (and `entry["label"]`) return
-     the entry's HANDLE, never the field — verified live: the `pink` entry reads
-     `hexcode` -> `#FFC0CB` and `code` -> `pink` correctly, but `label` -> `pink`
-     where the stored field value is `roze`. The Dutch text is therefore
-     unreachable under that key, which is why this reads `display_label`, a
-     deliberate non-colliding duplicate of `label` on both definitions.
-     Sync requirement: Akeneo must populate `display_label` on new entries, or
-     they silently fall back to Shopify's index label. See NICK.md.
+  5. **A metaobject field can become permanently unreadable on the storefront
+     while looking perfectly healthy everywhere else.** Symptom: `entry.<key>`
+     returns the entry's HANDLE instead of the stored value. Observed
+     2026-08-31, twice. Best explanation — inferred from a single occurrence,
+     not reproduced: when the Akeneo connector rewrites the metaobject
+     *definition* (it prunes fields no longer in its mapping), fields that
+     survive the rewrite are left orphaned in Shopify's storefront index and
+     stop serving their values. Treat the symptom and the fix below as the
+     reliable part; treat the cause as a working theory.
+
+     How to tell the two failure modes apart:
+     - key returns **empty** -> the field does not exist on the definition
+     - key returns **the handle** -> the field exists but is orphaned
+
+     Everything else looks fine and will mislead you: the Admin API returns the
+     correct value, `access.storefront` is `PUBLIC_READ`, `.type` reports
+     `single_line_text_field`, there are no translations overriding it, and
+     sibling fields on the same entry (`code`, `hexcode`) read correctly.
+
+     **Fix: delete the field from the definition, re-create it, re-write the
+     values.** It works immediately — no waiting, no reindex. Nothing else
+     worked: writing a sentinel value did not propagate, and waiting did not
+     help. See NICK.md item 4 for the exact mutations.
+
+     This also explains the earlier `label` / `display_label` failures, which
+     were misdiagnosed for days as "reserved Liquid property names". They were
+     orphaned the same way. Field *naming* is NOT the issue — `label_nl` itself
+     broke after the connector's 15:02 sync and was restored by recreating it.
+
+     **Any Akeneo mapping change by Nick can re-break this.** If the facets
+     suddenly render English again, this is the first thing to check.
 
   Trap 5 masked every earlier attempt: the GID match was succeeding all along,
-  but the shadowed read handed back the handle, which for most colours is
+  but the orphaned field handed back the handle, which for most colours is
   identical to the English fallback and so looked like "no match".
 {%- endcomment -%}
 {%- assign ob_gid_prefix = 'gid://shopify/Metaobject/' -%}
@@ -68,7 +94,7 @@
   {%- for ob_entry in shop.metaobjects.filtercolors.values -%}
     {%- assign ob_entry_gid = ob_gid_prefix | append: ob_entry.system.id -%}
     {%- if ob_entry_gid == value.value -%}
-      {%- capture ob_resolved_label %}{{ ob_entry.display_label }}{% endcapture -%}
+      {%- capture ob_resolved_label %}{{ ob_entry.label_nl }}{% endcapture -%}
       {%- break -%}
     {%- endif -%}
   {%- endfor -%}
@@ -77,7 +103,7 @@
     {%- for ob_entry in shop.metaobjects.activities.values -%}
       {%- assign ob_entry_gid = ob_gid_prefix | append: ob_entry.system.id -%}
       {%- if ob_entry_gid == value.value -%}
-        {%- capture ob_resolved_label %}{{ ob_entry.display_label }}{% endcapture -%}
+        {%- capture ob_resolved_label %}{{ ob_entry.label_nl }}{% endcapture -%}
         {%- break -%}
       {%- endif -%}
     {%- endfor -%}

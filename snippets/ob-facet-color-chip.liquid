@@ -12,10 +12,14 @@
   auto-populate value.swatch for this filter — this snippet resolves the hex
   itself by matching the filter value against shop.metaobjects.filtercolors.
 
-  NOT YET VERIFIED LIVE: authored before the Kleur filter had propagated in
-  Search & Discovery. Matches by value.value (assumed metaobject GID) first,
-  falls back to matching by label text, since the exact filter value shape
-  couldn't be confirmed against a live filter at authoring time.
+  Matches by GID only (value.value against entry.system.id, prefixed), same
+  pattern as ob-facet-value-label. A prior version also fell back to
+  `entry.label == value.label`, which never did anything useful: `entry.label`
+  returned the entry's handle rather than the field, so the comparison only
+  matched by coincidence for colours whose handle equals Shopify's English
+  index label. Removed 2026-08-31 now that the GID branch is verified reliable;
+  an unmatched value renders the existing `--unavailable` chip state, which is
+  correct (no known entry backs it).
 
   Accepts:
   - value: {Object} a color filter's value object (from facets.liquid)
@@ -33,14 +37,8 @@
   assign matched_hex = null
   assign matched_image = null
   for entry in shop.metaobjects.filtercolors.values
-    assign is_match = false
     assign entry_gid = gid_prefix | append: entry.system.id
     if entry_gid == value.value
-      assign is_match = true
-    elsif entry.label == value.label
-      assign is_match = true
-    endif
-    if is_match
       assign matched_hex = entry.hexcode
       assign matched_image = entry.image_asset
       break

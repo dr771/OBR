@@ -65,7 +65,7 @@ The Dutch values are present and correct in each entry's `label` field — they'
 
 **Effect:** English colour names on a Dutch storefront. (Lower impact on `activities`, where the theme reads the `label` field directly — but the admin and any native filter built on it still show English.)
 
-**Status (2026-08-26): RESOLVED on dev, but the obvious fix was not sufficient — read this before redoing it.**
+**Status (2026-08-31): RESOLVED on dev. Nick's sync writes `label_nl`, the theme reads it, Dutch labels are live. The real root cause was NOT field naming — see "Actual root cause" below before touching anything.**
 
 Three separate things were wrong, and only doing all three made the storefront show Dutch:
 
@@ -75,7 +75,50 @@ Three separate things were wrong, and only doing all three made the storefront s
 
 **New sync requirement — action for Nick.** Step 3 cannot read the field named `label`: **`label` is a reserved property on Shopify's metaobject Liquid drop**, so `entry.label` returns the entry's *handle*, never the field. Verified live: for the `pink` entry, `hexcode` → `#FFC0CB` and `code` → `pink` read correctly, while `label` → `pink` where the stored value is `roze`.
 
-A duplicate field **`display_label`** was therefore added to both `filtercolors` and `activities`, and all 23 existing entries were backfilled from `label`. **The sync must populate `display_label` alongside `label` on any new or updated entry** — otherwise new colours/activities silently fall back to Shopify's (English) index label. Renaming `label` itself would have been cleaner but would break the connector, so the duplicate was chosen deliberately.
+A duplicate field **`display_label`** was therefore added to both `filtercolors` and `activities`, and all 23 existing entries were backfilled from `label`. Renaming `label` itself would have been cleaner but would break the connector, so the duplicate was chosen deliberately.
+
+**Discovery + fix (2026-08-31): `display_label` never actually worked either — `display_label` is shadowed on the Liquid drop exactly like `label`.** Nick switched the sync to write `display_label`, and the Admin API confirms the field genuinely holds the Dutch text (`pink` entry → `display_label` = `roze`). But on the **storefront Liquid drop**, `entry.display_label` returns the entry's *handle* (`pink`), never the field — identical to the `label` bug.
+
+Proven name-based, not stale data or caching:
+- `display_label` was set to `ZZZTEST` via the Admin API; the storefront still rendered `pink`. So the field is not being read at all.
+- `.value` / `.type` access does not help. `display_label.type` even reports `single_line_text_field`, so it *looks* like a valid field read and fails silently.
+- On the same entry, `hexcode` → `#FFC0CB` reads correctly, so neutral field names are fine.
+- A newly created field `label_nl` = `roze` on the same entry read back correctly on the storefront on the first try.
+
+### Actual root cause (2026-08-31) — a field goes unreadable after a connector definition rewrite
+
+The "reserved property name" theory was **wrong**, and it cost most of a day. What actually happens:
+
+**When the Akeneo connector rewrites the metaobject *definition*, fields are left orphaned in Shopify's storefront index and stop serving their values from Liquid.** The connector prunes fields that are not in its mapping — when Nick switched the mapping to `label_nl`, it deleted `label` and `display_label` outright, and that rewrite also broke `label_nl`, which had been verified working 12 minutes earlier.
+
+Symptom, and how to tell the two cases apart from Liquid:
+- key returns **empty** → the field does not exist on the definition
+- key returns **the entry's handle** → the field exists but is orphaned
+
+Everything else looks healthy and will mislead you: the Admin API returns the correct value, `access.storefront` is `PUBLIC_READ`, `.type` reports `single_line_text_field`, `translations` is empty, and sibling fields on the same entry (`code`, `hexcode`) read correctly.
+
+**Fix — delete the field, re-create it, re-write the values. Works instantly, no reindex, no waiting:**
+```graphql
+# 1. drop it (displayNameKey must not point at it while deleting)
+metaobjectDefinitionUpdate(id: $defId, definition: {
+  displayNameKey: "code", fieldDefinitions: [{delete: {key: "label_nl"}}] })
+# 2. re-create it
+metaobjectDefinitionUpdate(id: $defId, definition: {
+  fieldDefinitions: [{create: {key: "label_nl", name: "label_nl", type: "single_line_text_field"}}] })
+# 3. re-write every entry's value with metaobjectUpdate, then optionally
+#    put displayNameKey back to "label_nl"
+```
+Definition ids: `filtercolors` `20196884589`, `activities` `20193411181`.
+
+Things that did **not** work: writing a sentinel value (never propagated), waiting, forcing a reindex, renaming, `.value`/`.type` access. Re-creating the field is the only lever found.
+
+**Current state:** `label_nl` exists on both definitions, is written by Nick's sync, and was recreated + re-backfilled after his 15:02 sync. Live-verified — Kleur renders `zwart`/`roze`/`blauw`/… and Activities renders `Wandelen`. Nothing further is owed by Nick.
+
+**Standing risk:** any future Akeneo *mapping* change re-breaks this the same way. Routine value syncs appear unaffected (not yet observed across one). If the facets suddenly render English again, this is the first thing to check — and the fix above takes about two minutes.
+
+Note `label` and `display_label` are **gone** — Nick's connector deleted them when the mapping changed. The Dutch text now exists only in `label_nl`, so there is no second copy to backfill from if that field is ever pruned.
+
+**Lesson for any future field added to route around this:** verify the *storefront Liquid render*, never just the Admin API. The API reports the field correctly whether or not Liquid can read it, which is exactly how `display_label` went unnoticed for 5 days.
 
 ---
 
@@ -133,6 +176,12 @@ Found 2026-08-26. Unlike colours and activities, these are **plain text on the p
 > **5. Two questions on `activities`**, which I need answered before I build the PDP icon row: all 7 products currently point at the same single value, *Lifestyle* — including the footwear — and nothing references *Running*. Is that real data yet, or a placeholder? And should the field be a **list**? Right now it's a single `metaobject_reference`, so a product physically can't carry both *Running* and *Lifestyle*.
 >
 > **4 (update, 2026-08-26).** This one turned out to have three layers and is now working on dev — but it needs one thing from the sync. `label` is a **reserved word** in Shopify's Liquid, so a theme literally cannot read a metaobject field called `label` (it silently returns the handle instead — `pink` instead of `roze`). I've added a duplicate field **`display_label`** to `filtercolors` and `activities` and backfilled the existing 23 entries. **Could the sync write `display_label` alongside `label`?** Otherwise any new colour or activity will show up in English.
+>
+> **4 (update, 2026-08-31) — done, nothing needed from you.** Thanks for switching the sync to `label_nl`, that's exactly right and the Dutch labels are live now (colours show `zwart`/`roze`/…, Activities shows `Wandelen` instead of `Hiking`).
+>
+> One thing worth knowing for the future: when the connector changes its field mapping, it rewrites the metaobject definition — and that leaves the surviving fields unreadable from the storefront theme until they're re-created. That's what happened after your sync: `label_nl` had the right values in the API, but the theme still got English. Re-creating the field fixed it in two minutes.
+>
+> So **if the colour or activity filters ever show English again after a mapping change, ping me** — it's a known two-minute fix on my side, not a data problem on yours. Nothing to do otherwise.
 >
 > **6.** The Categorie filter shows only 1 value instead of 9, because Shopify's native taxonomy `category` field is empty on 25 of 26 products. The real data is in `custom.shopify_originalbrands_category` (9 values). Should the sync fill Shopify's taxonomy field, or shall we just point the filter at that metafield?
 >

@@ -50,6 +50,9 @@
         {%- assign is_color_filter = true -%}
       {%- endif -%}
       {%- for value in filter.active_values -%}
+        {%- capture ob_value_label -%}
+          {%- render 'ob-facet-value-label', value: value -%}
+        {%- endcapture -%}
         <facet-remove>
           <a
             href="{{ value.url_to_remove }}"
@@ -59,7 +62,7 @@
               {%- if is_color_filter -%}
                 {% render 'ob-facet-color-chip', value: value %}
               {%- endif -%}
-              {{ value.label | escape }}
+              {{ ob_value_label }}
               <span class="svg-wrapper">
                 {{- 'icon-close-small.svg' | inline_asset_content -}}
               </span>
