@@ -1017,6 +1017,7 @@ wishlist-product-card .wk-meta {
   border-radius: 0;
   cursor: pointer;
   line-height: 0;
+  transition: background-color 200ms ease;
 }
 
 .ob-wishlist-cross-sell .wk-cta-button .wk-cta-label {
@@ -1043,6 +1044,18 @@ wishlist-product-card .wk-meta {
   pointer-events: none;
 }
 
+.ob-wishlist-cross-sell .wk-cta-button:not([disabled]):is(:hover, :focus-visible) {
+  background-color: var(--ob-accent);
+  border-color: var(--ob-accent);
+  color: var(--ob-button-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-wishlist-cross-sell .wk-cta-button {
+    transition-duration: 0ms;
+  }
+}
+
 /* JS-cloned per-row remove-from-wishlist button (ob-wishlist.js), right of
    the CTA. Muted ink matches the cart's own trash icon and the picker
    borders above rather than full-strength text. */
@@ -1059,11 +1072,20 @@ wishlist-product-card .wk-meta {
   background: transparent;
   color: rgba(var(--color-foreground), 0.75);
   cursor: pointer;
+  transition: background-color 200ms ease;
 }
 
 .ob-wishlist-cross-sell__remove .svg-wrapper {
   width: 12px;
   height: 12px;
+}
+
+.ob-wishlist-cross-sell__remove:is(:hover, :focus-visible) {
+  color: #dc2626;
+}
+
+.cart-drawer cart-remove-button .button.button:not([disabled]):is(:hover, :focus-visible) {
+  color: #dc2626;
 }
 
 .ob-wishlist-cross-sell__remove-template {

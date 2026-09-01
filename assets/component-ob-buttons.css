@@ -13,6 +13,7 @@ button.shopify-payment-button__button--unbranded {
   --buttons-border-width: 0;
   --buttons-border-offset: 0;
   border-radius: var(--ob-button-radius);
+  transition: background-color 200ms ease;
 }
 
 .button:not(.button--tertiary, .button-close, .slider-button, .share-button__button, .button-show-more, .button-show-less),
@@ -21,7 +22,6 @@ button.shopify-payment-button__button--unbranded {
 button.shopify-payment-button__button--unbranded {
   background-color: var(--ob-button-background);
   color: var(--ob-button-text);
-  transition: background-color var(--duration-short) ease;
 }
 
 .button:not(.button--tertiary, .button-close, .slider-button, .share-button__button, .button-show-more, .button-show-less):not([disabled]):is(:hover, :focus-visible),
@@ -81,4 +81,13 @@ cart-remove-button .button.button:not([disabled]):is(:hover, :focus-visible),
   line-height: 2rem;
   letter-spacing: normal;
   text-transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .shopify-challenge__button,
+  .customer button,
+  button.shopify-payment-button__button--unbranded {
+    transition-duration: 0ms;
+  }
 }

@@ -973,12 +973,25 @@
   border: 0.1rem solid var(--ob-pdp-line-strong);
   border-radius: 99rem;
   color: var(--ob-pdp-ink);
-  transition: border-color var(--duration-short) ease;
+  transition: background-color 200ms ease;
 }
 
 .ob-pdp .product-form__buttons .ob-wishlist-btn:hover,
 .ob-pdp .product-form__buttons .ob-wishlist-btn:focus-visible {
   border-color: var(--ob-pdp-ink);
+}
+
+.ob-pdp .product-form__buttons .ob-wishlist-btn--selected,
+.ob-pdp .product-form__buttons .ob-wishlist-btn--selected:hover,
+.ob-pdp .product-form__buttons .ob-wishlist-btn--selected:focus-visible {
+  border-color: var(--ob-accent);
+  color: var(--ob-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-pdp .product-form__buttons .ob-wishlist-btn {
+    transition-duration: 0ms;
+  }
 }
 
 /* size guide dialog ------------------------------------------------------- */
