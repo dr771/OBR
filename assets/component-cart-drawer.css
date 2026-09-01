@@ -758,6 +758,72 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   border-bottom: 0;
 }
 
+/* A wishlist move is one deliberate, infrequent action: fade the source row
+   out before Dawn swaps the drawer, then let the rendered cart line arrive.
+   WK's own async re-render can briefly recreate that source row, so it stays
+   visually suppressed until WK removes it for real. */
+@keyframes ob-wishlist-card-exit {
+  to {
+    opacity: 0;
+    transform: translateY(-0.4rem);
+  }
+}
+
+@keyframes ob-cart-item-wishlist-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.4rem);
+  }
+}
+
+.ob-wishlist-cross-sell .wk-product-card.ob-wishlist-card--moving-to-cart {
+  pointer-events: none;
+  will-change: opacity, transform;
+  animation: ob-wishlist-card-exit 160ms cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+/* When the moved row is the final wishlist item, its title and description
+   belong to the same departing state. Fade the whole section so its chrome
+   cannot outlive the card while the cart request is still in flight. */
+.ob-wishlist-cross-sell.ob-wishlist-cross-sell--moving-last {
+  pointer-events: none;
+  will-change: opacity, transform;
+  animation: ob-wishlist-card-exit 160ms cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+.ob-wishlist-cross-sell--moving-last .wk-product-card.ob-wishlist-card--moving-to-cart {
+  animation: none;
+}
+
+.ob-wishlist-cross-sell .wk-product-card.ob-wishlist-card--awaiting-removal {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* If the moved card was the last wishlist row, suppress the section chrome
+   too. The card remains in WK's DOM briefly, so the normal
+   :has(.wk-product-card) visibility rule would otherwise leave the heading
+   and an empty block flashing below the newly rendered cart line. */
+.ob-wishlist-cross-sell:has(.ob-wishlist-card--awaiting-removal):not(
+    :has(.wk-product-card:not(.ob-wishlist-card--awaiting-removal))
+  ) {
+  display: none;
+}
+
+.cart-drawer .cart-item.ob-cart-item--wishlist-enter {
+  will-change: opacity, transform;
+  animation: ob-cart-item-wishlist-enter 360ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-wishlist-cross-sell.ob-wishlist-cross-sell--moving-last,
+  .ob-wishlist-cross-sell .wk-product-card.ob-wishlist-card--moving-to-cart,
+  .cart-drawer .cart-item.ob-cart-item--wishlist-enter {
+    animation-duration: 80ms;
+  }
+}
+
 .ob-wishlist-cross-sell .wk-image-link {
   grid-row: 1 / 3;
   display: block;

@@ -402,21 +402,108 @@
   // pattern (matching assets/product-form.js), removes the item from the
   // wishlist, and refreshes/opens the cart drawer instead of navigating.
   obWkReady(function (wk) {
+    function fadeInCartItem(cart, variantId) {
+      if (!cart || !variantId) return;
+      var item = Array.prototype.find.call(
+        cart.querySelectorAll('.cart-item'),
+        function (candidate) {
+          var input = candidate.querySelector('[data-quantity-variant-id]');
+          return input && String(input.dataset.quantityVariantId) === String(variantId);
+        }
+      );
+      if (!item) return;
+
+      item.classList.add('ob-cart-item--wishlist-enter');
+      window.setTimeout(function () {
+        item.classList.remove('ob-cart-item--wishlist-enter');
+      }, 400);
+    }
+
+    // WK renders asynchronously, so immediately after Dawn has replaced the
+    // drawer it can briefly render the just-moved wishlist card again. Keep
+    // that stale card hidden until its matching wishlist item actually leaves
+    // the DOM. The long timeout is only a fail-open escape hatch if WK's
+    // removal call fails; it must not race WK's normal delayed re-render.
+    function hideStaleWishlistCard(cart, wishlistItemId) {
+      if (!cart || !wishlistItemId) return;
+
+      var observer;
+      var failOpenTimer;
+      var sawMatchingCard = false;
+
+      function matchingCards() {
+        var cards = [];
+        cart.querySelectorAll('.ob-wishlist-cross-sell [data-wishlist-item-id]').forEach(function (element) {
+          if (element.dataset.wishlistItemId !== wishlistItemId) return;
+          var card = element.closest('.wk-product-card');
+          if (card && cards.indexOf(card) === -1) cards.push(card);
+        });
+        return cards;
+      }
+
+      function stopWatching() {
+        observer?.disconnect();
+        window.clearTimeout(failOpenTimer);
+      }
+
+      function reconcile() {
+        var cards = matchingCards();
+        if (cards.length) {
+          sawMatchingCard = true;
+          cards.forEach(function (card) {
+            card.classList.add('ob-wishlist-card--awaiting-removal');
+          });
+        } else if (sawMatchingCard) {
+          stopWatching();
+        }
+      }
+
+      observer = new MutationObserver(reconcile);
+      observer.observe(cart, { childList: true, subtree: true });
+      reconcile();
+
+      failOpenTimer = window.setTimeout(function () {
+        stopWatching();
+        matchingCards().forEach(function (card) {
+          card.classList.remove('ob-wishlist-card--awaiting-removal');
+        });
+      }, 5000);
+    }
+
     document.addEventListener(
       'submit',
       function (evt) {
         var form = evt.target;
         if (!form.closest || !form.closest('.ob-wishlist-cross-sell')) return;
         if (!form.action || form.action.indexOf('/cart/add') === -1) return;
+        if (form.dataset.obMoveToCartPending === 'true') return;
 
         evt.preventDefault();
         evt.stopPropagation();
 
         var cart = document.querySelector('cart-drawer');
         var formData = new FormData(form);
+        var wishlistCard = form.closest('.wk-product-card');
+        var wishlistSection = form.closest('.ob-wishlist-cross-sell');
+        var isLastWishlistCard =
+          wishlistSection && wishlistCard && wishlistSection.querySelectorAll('.wk-product-card').length === 1;
         var wishlistItemId = form.closest('[data-wishlist-item-id]')
           ? form.closest('[data-wishlist-item-id]').dataset.wishlistItemId
           : null;
+
+        form.dataset.obMoveToCartPending = 'true';
+        if (wishlistCard) {
+          wishlistCard.classList.add('ob-wishlist-card--moving-to-cart');
+          wishlistCard.setAttribute('aria-busy', 'true');
+        }
+        if (isLastWishlistCard) wishlistSection.classList.add('ob-wishlist-cross-sell--moving-last');
+
+        function resetMove() {
+          delete form.dataset.obMoveToCartPending;
+          wishlistCard?.classList.remove('ob-wishlist-card--moving-to-cart');
+          wishlistCard?.removeAttribute('aria-busy');
+          wishlistSection?.classList.remove('ob-wishlist-cross-sell--moving-last');
+        }
 
         if (cart && typeof cart.getSectionsToRender === 'function') {
           formData.append(
@@ -438,7 +525,10 @@
             return response.json();
           })
           .then(function (response) {
-            if (response.status) return;
+            if (response.status) {
+              resetMove();
+              return;
+            }
 
             try {
               if (wishlistItemId) wk.removeWishlistItem({ wishlistItemId: wishlistItemId });
@@ -448,11 +538,14 @@
 
             if (cart) {
               cart.renderContents(response);
+              fadeInCartItem(cart, response.id);
+              hideStaleWishlistCard(cart, wishlistItemId);
             } else {
               window.location = routes.cart_url;
             }
           })
           .catch(function () {
+            resetMove();
             // fail open: no drawer refresh, WK's own state is untouched
           });
       },
