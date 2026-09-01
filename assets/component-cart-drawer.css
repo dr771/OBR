@@ -594,6 +594,37 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   margin: 0;
   font-size: calc(var(--font-heading-scale) * 2rem);
 }
+
+/* OB — empty-state CI styling. Family/color already come from the drawer-wide
+   Inter override above; these retune size/weight/tracking to match the
+   drawer's own dense-UI conventions (.drawer__heading, .cart-item__name)
+   instead of untouched Dawn defaults. */
+.cart-drawer .cart__empty-text {
+  font-size: calc(var(--font-heading-scale) * 2rem);
+}
+
+.cart-drawer .cart__login-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: normal;
+}
+
+.cart-drawer .cart__login-paragraph {
+  font-size: 1.4rem;
+  letter-spacing: normal;
+}
+
+.cart-drawer .cart__login-paragraph a {
+  color: #0d80c4;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+.cart-drawer .cart__login-paragraph a:hover,
+.cart-drawer .cart__login-paragraph a:focus-visible {
+  color: #0f172a;
+}
+
 /* Line-item price (current + any struck-through original) — smaller/tighter
    than Dawn's default 1.6rem/0.1rem letter-spacing. */
 .cart-drawer .cart-item__price-wrapper .price {

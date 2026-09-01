@@ -1,0 +1,55 @@
+/* OB — /cart page CI styling. Scoped to <cart-items>, this page's own
+   wrapper element (distinct from the header's <cart-drawer>), so these
+   rules never cross-apply to the drawer's identically-named classes —
+   both surfaces render "cart__empty-text"/"cart__login-paragraph" markup
+   since the drawer is present sitewide, including on this page's own DOM.
+
+   component-ob-typography.css already covers bare h2/h3 site-wide (this
+   page's own "Heb je een account?" h2 already inherits 600 weight /
+   -0.01em tracking from it). h1 has no sitewide default yet, so the two
+   real h1s on this page ("Winkelwagen" title, "Je winkelwagen is leeg")
+   get the same weight/tracking treatment directly here.
+
+   Font-family: per MIXED-SHOPS-PLAYBOOK.md ("dense commerce UI ... uses
+   the Inter/body variable ... Fraunces reserved for true headings"),
+   Fraunces is reserved for PLP/PDP headings only — cart is dense commerce
+   UI like the drawer, not a PLP/PDP display heading, so these force Inter
+   too (matching .cart-drawer's own blanket override) rather than keeping
+   Dawn's inherited Fraunces. See CI-STYLE-TOKENS.md. */
+cart-items .cart__empty-text,
+cart-items .title.title--primary,
+cart-items .cart__login-title {
+  font-family: var(--font-body-family);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* More breathing room before the footer in the empty state — Dawn's own
+   .cart__warnings rule (component-cart.css) only pads the top (3rem/7rem
+   desktop), leaving just 1rem before the footer starts. Mirror the top
+   value for a balanced panel instead of inventing a new number. */
+cart-items .cart__warnings {
+  padding-bottom: 3rem;
+}
+
+@media screen and (min-width: 990px) {
+  cart-items .cart__warnings {
+    padding-bottom: 7rem;
+  }
+}
+
+cart-items .cart__login-paragraph,
+cart-items .cart__login-paragraph a {
+  letter-spacing: normal;
+}
+
+cart-items .cart__login-paragraph a {
+  color: #0d80c4;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+cart-items .cart__login-paragraph a:hover,
+cart-items .cart__login-paragraph a:focus-visible {
+  color: #0f172a;
+}

@@ -4,6 +4,7 @@
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'component-discounts.css' | asset_url | stylesheet_tag }}
 {{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
+{{ 'component-ob-cart-page.css' | asset_url | stylesheet_tag }}
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -39,7 +40,7 @@
 
     <div class="cart__warnings">
       <h1 class="cart__empty-text">{{ 'sections.cart.empty' | t }}</h1>
-      <a href="{{ routes.all_products_collection_url }}" class="button">
+      <a href="{{ routes.all_products_collection_url }}" class="button ob-button--cta">
         {{ 'general.continue_shopping' | t }}
       </a>
 

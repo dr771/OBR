@@ -1,7 +1,7 @@
 CARD DRAWER EMPTY
-- fix the mess
+- done: heading/button/question/login-link matched to CI (2026-09-01)
 
-CARD Page
+CARD Page (not empty)
 - messy layout - take from Holster
 
 KORTINGSCODE Input

@@ -72,7 +72,7 @@ cart-remove-button .button.button:not([disabled]):is(:hover, :focus-visible),
   color: rgb(var(--color-foreground));
 }
 
-.collection__view-all .ob-button--cta {
+.ob-button--cta {
   min-width: 20.5rem;
   min-height: 4.4rem;
   padding: 1.2rem 2.8rem;
