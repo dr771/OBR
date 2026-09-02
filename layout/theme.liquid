@@ -305,6 +305,10 @@
     {{ 'component-ob-buttons.css' | asset_url | stylesheet_tag }}
     {{ 'component-ob-typography.css' | asset_url | stylesheet_tag }}
     {{ 'component-ob-wishlist.css' | asset_url | stylesheet_tag }}
+    {%- if request.path contains '/apps/wishlist' -%}
+      {{ 'component-ob-swatches.css' | asset_url | stylesheet_tag }}
+      {{ 'component-ob-option-rail.css' | asset_url | stylesheet_tag }}
+    {%- endif -%}
     <link rel="stylesheet" href="{{ 'component-cart-items.css' | asset_url }}" media="print" onload="this.media='all'">
 
     {%- if settings.cart_type == 'drawer' -%}
@@ -435,6 +439,11 @@
     {%- endif -%}
 
     <script src="{{ 'ob-wishlist.js' | asset_url }}" defer="defer"></script>
+    {%- if request.path contains '/apps/wishlist' -%}
+      <script src="{{ 'ob-swatch-tooltip.js' | asset_url }}" defer="defer"></script>
+      <script src="{{ 'ob-option-rail.js' | asset_url }}" defer="defer"></script>
+      <script src="{{ 'ob-wishlist-page-rails.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
     <script src="{{ 'ob-cart-discount.js' | asset_url }}" defer="defer"></script>
   </body>
 </html>

@@ -1,6 +1,412 @@
 /* Standalone Swish wishlist page alignment. Cart/drawer cross-sells are excluded. */
+#MainContent > wishlist-page > .wk-page {
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
 @media screen and (min-width: 990px) {
   #MainContent > wishlist-page > .wk-page {
-    padding-inline: 5rem;
+    padding-inline: 3rem;
   }
+}
+
+/* Standalone wishlist page skin. All rules scoped under #MainContent > wishlist-page —
+   a second, hidden <wishlist-page> instance renders the cart-drawer cross-sell earlier
+   in the DOM, and must never be affected by these rules. */
+
+/* Product-card grid */
+#MainContent > wishlist-page .wk-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  column-gap: 1.6rem !important;
+  row-gap: 3.2rem !important;
+}
+
+@media screen and (min-width: 750px) {
+  #MainContent > wishlist-page .wk-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  #MainContent > wishlist-page .wk-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    column-gap: 2.4rem !important;
+    row-gap: 3.6rem !important;
+  }
+}
+
+/* Product photo — matches the PLP card treatment */
+#MainContent > wishlist-page .wk-image-link {
+  background-color: #f1f5f9;
+  border-radius: 1.6rem;
+  isolation: isolate;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
+#MainContent > wishlist-page .wk-image {
+  border-radius: 1.6rem;
+  mix-blend-mode: multiply;
+}
+
+/* Colour rail — sits directly under the main photo, matching the PLP layout
+   (assets/ob-wishlist-page-rails.js inserts it as a sibling of .wk-image-link,
+   before .wk-meta; size/other option rails stay with the form, see below) */
+#MainContent > wishlist-page .ob-wishlist-color-rail {
+  margin-top: 0.4rem;
+}
+
+/* Card meta — matches PLP card-meta typography, left-aligned like PLP (was WK's centered default) */
+#MainContent > wishlist-page .wk-meta {
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+  text-align: left;
+}
+
+#MainContent > wishlist-page .wk-vendor {
+  font-family: var(--font-body-family);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+  letter-spacing: 0.18rem;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.45);
+  text-align: left;
+}
+
+#MainContent > wishlist-page .wk-product-title,
+#MainContent > wishlist-page .wk-product-title .wk-text-link {
+  font-family: var(--font-body-family);
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 2.2rem;
+  color: rgb(var(--color-foreground));
+  text-decoration: none;
+  text-align: left;
+}
+
+#MainContent > wishlist-page .wk-price {
+  justify-content: flex-start;
+}
+
+#MainContent > wishlist-page .wk-price,
+#MainContent > wishlist-page .wk-current-price {
+  font-family: var(--font-body-family);
+  font-size: 1.4rem;
+  color: rgb(var(--color-foreground));
+  opacity: 0.8;
+  text-align: left;
+}
+
+/* Variant dropdowns — cart-drawer cross-sell's compact tokens. Always one row:
+   multiple pickers share the row width equally and shrink rather than wrap. */
+#MainContent > wishlist-page .wk-variants {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 0.6rem;
+}
+
+#MainContent > wishlist-page .wk-variants > wk-option-select {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+#MainContent > wishlist-page .wk-control {
+  height: 3.2rem !important;
+  min-height: 3.2rem !important;
+  width: 100%;
+  min-width: 0;
+  padding: 0 !important;
+  border-radius: 0.4rem;
+  border-color: rgba(var(--color-foreground), 0.3);
+  color: rgba(var(--color-foreground), 0.75);
+  box-sizing: border-box;
+}
+
+#MainContent > wishlist-page .wk-control .wk-text,
+#MainContent > wishlist-page .wk-control .wk-icon {
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+#MainContent > wishlist-page .wk-control .wk-icon svg path {
+  stroke: rgba(var(--color-foreground), 0.75) !important;
+}
+
+#MainContent > wishlist-page .wk-control .wk-content {
+  padding: 0 0.6rem 0 0.8rem;
+  gap: 0.4rem;
+}
+
+#MainContent > wishlist-page .wk-control .wk-text {
+  font-size: 1.2rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#MainContent > wishlist-page .wk-variants select,
+#MainContent > wishlist-page .wk-variants select option {
+  font-family: var(--font-body-family) !important;
+}
+
+#MainContent > wishlist-page .wk-variants select {
+  height: 3.2rem;
+  min-height: 3.2rem;
+  font-size: 1.2rem;
+  padding: 0 0.6rem 0 0.8rem;
+  box-sizing: border-box;
+}
+
+/* Form layout — variants on their own row, CTA + remove-from-wishlist button
+   sharing the row below (explicit grid placement, so it doesn't matter that
+   the remove button is DOM-appended after the CTA by ob-wishlist.js) */
+#MainContent > wishlist-page .wk-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: 0.8rem;
+  row-gap: 1.2rem;
+  margin-top: 2rem;
+  /* WK's own base CSS sets flex-grow:1 here, so a card sitting next to a
+     taller one (e.g. a wrapped 2-line title) gets stretched by the outer
+     product grid's row-stretch, and that slack lands inside this grid's
+     auto-sized row 1 — pushing the size grid down by a different amount on
+     every card. Fixed size, not stretched, so the price-to-grid gap is
+     identical everywhere regardless of a neighbouring card's height. */
+  flex-grow: 0;
+}
+
+#MainContent > wishlist-page .wk-variants {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+/* WK's own floating "X" remove control is replaced by the themed trash-icon
+   button (.ob-wishlist-cross-sell__remove, injected by ob-wishlist.js and
+   already styled by component-cart-drawer.css) placed beside the CTA below */
+#MainContent > wishlist-page remove-button {
+  display: none;
+}
+
+/* CTA — labeled pill using the theme's button tokens, sized to sit next to the remove button */
+#MainContent > wishlist-page .wk-cta-button {
+  grid-column: 1;
+  grid-row: 2;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 3.6rem !important;
+  padding: 0.8rem 1.2rem !important;
+  margin-top: 0;
+  background: var(--ob-button-background) !important;
+  color: var(--ob-button-text) !important;
+  border: 0 !important;
+  border-radius: var(--ob-button-radius) !important;
+  font-family: var(--font-body-family) !important;
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+  line-height: 1.8rem !important;
+  text-transform: none !important;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+#MainContent > wishlist-page .ob-wishlist-cross-sell__remove {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+#MainContent > wishlist-page .wk-cta-button:not([disabled]):is(:hover, :focus-visible) {
+  background: var(--ob-button-background-hover) !important;
+  color: var(--ob-button-text) !important;
+}
+
+#MainContent > wishlist-page .wk-cta-button:focus-visible {
+  outline: 0.2rem solid var(--ob-button-background-hover);
+  outline-offset: 0.3rem;
+}
+
+#MainContent > wishlist-page .wk-cta-button[disabled] {
+  background: rgba(var(--color-foreground), 0.08) !important;
+  color: rgba(var(--color-foreground), 0.4) !important;
+  border: 0 !important;
+  opacity: 1 !important;
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #MainContent > wishlist-page .wk-cta-button {
+    transition-duration: 0ms;
+  }
+}
+
+/* Page header — WK's own title/login/controls chrome, matched to theme typography */
+#MainContent > wishlist-page .wk-title {
+  font-family: var(--font-body-family) !important;
+  font-size: calc(var(--font-heading-scale) * 3.6rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: rgb(var(--color-foreground));
+}
+
+#MainContent > wishlist-page .wk-login-callout,
+#MainContent > wishlist-page .wk-login-callout p {
+  font-family: var(--font-body-family);
+}
+
+#MainContent > wishlist-page .wk-login-callout a {
+  color: #0d80c4;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+#MainContent > wishlist-page .wk-login-callout a:hover {
+  color: rgb(var(--color-foreground));
+}
+
+#MainContent > wishlist-page .wk-controls .wk-button {
+  font-family: var(--font-body-family) !important;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+#MainContent > wishlist-page .wk-controls .wk-button:hover {
+  color: rgb(var(--color-foreground));
+}
+
+/* Option rails (assets/ob-wishlist-page-rails.js) — replace the native dropdown
+   row with PLP/PDP-style colour chips and size boxes, reusing the shared rail
+   chrome (component-ob-option-rail.css) and swatch base (component-ob-swatches.css)
+   loaded only on this page; only chip/box geometry is overridden here. */
+#MainContent > wishlist-page .wk-variants {
+  display: none;
+}
+
+#MainContent > wishlist-page .ob-wishlist-rails {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/* Chevron size matched to the PLP card rail (2.8rem/0.9rem icon), not the PDP's
+   larger 3.2rem — and positioned flush at the rail edge like the PLP, rather
+   than overhanging outside it, so no shell inline padding buffer is needed. */
+#MainContent > wishlist-page .product-form__option-rail-button {
+  width: 2.8rem;
+  height: 2.8rem;
+  top: 0;
+  bottom: 0;
+}
+
+#MainContent > wishlist-page .product-form__option-rail-button--previous {
+  left: 0;
+}
+
+#MainContent > wishlist-page .product-form__option-rail-button--next {
+  right: 0;
+}
+
+#MainContent > wishlist-page .product-form__option-rail-button .icon {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+#MainContent > wishlist-page .product-form__option-rail {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* The shared rule's 0.4rem/0.7rem top/bottom padding reserves room for a
+     visible scrollbar thumb, which this page hides — the asymmetry was
+     pulling the chevrons (centered on the shell, not the track) visibly
+     below the chip row's true center. Symmetric padding fixes both. */
+  padding: 0.4rem 0;
+}
+
+#MainContent > wishlist-page .product-form__option-rail::-webkit-scrollbar {
+  display: none;
+  height: 0;
+}
+
+#MainContent > wishlist-page .ob-swatch-input__chip {
+  width: 5rem;
+  height: 5rem;
+  border: 0.1rem solid transparent;
+  border-radius: 0.8rem;
+  background-color: color-mix(in srgb, #f1f5f9 40%, #fff);
+  transition: background-color var(--duration-short) ease;
+}
+
+#MainContent > wishlist-page .ob-swatch-input__chip img {
+  mix-blend-mode: multiply;
+}
+
+#MainContent > wishlist-page .ob-swatch-input__label:hover .ob-swatch-input__chip,
+#MainContent > wishlist-page .ob-swatch-input__radio:checked + .ob-swatch-input__label .ob-swatch-input__chip,
+#MainContent > wishlist-page .ob-swatch-input__radio:focus-visible + .ob-swatch-input__label .ob-swatch-input__chip {
+  background-color: #f1f5f9;
+  border-color: #66666612;
+  border-width: 0.1rem;
+}
+
+#MainContent > wishlist-page .ob-swatch-input__radio:focus-visible + .ob-swatch-input__label {
+  outline: 0.2rem solid rgb(var(--color-foreground));
+  outline-offset: 0.2rem;
+}
+
+#MainContent > wishlist-page .ob-swatch-input__radio.disabled + .ob-swatch-input__label {
+  opacity: 0.35;
+}
+
+/* Simple wrapping grid, not a rail — no scroll, no chevrons. Sizes rarely run
+   past 6-8 values, so all of them stay visible at once instead of hidden
+   behind a scroll/chevron interaction. */
+#MainContent > wishlist-page .product-form__input--size-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+#MainContent > wishlist-page .product-form__input--size-grid input[type='radio'] + label {
+  flex: 0 0 3.4rem;
+  min-height: 3.4rem;
+  height: 3.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.3);
+  border-radius: 0;
+  background: rgb(var(--color-background));
+  font-family: var(--font-body-family);
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: rgb(var(--color-foreground));
+  cursor: pointer;
+  transition: border-color var(--duration-short) ease;
+}
+
+#MainContent > wishlist-page .product-form__input--size-grid input[type='radio']:not(:checked) + label:hover {
+  border-color: rgb(var(--color-foreground));
+}
+
+#MainContent > wishlist-page .product-form__input--size-grid input[type='radio']:checked + label {
+  border-color: rgb(var(--color-foreground));
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+}
+
+#MainContent > wishlist-page .product-form__input--size-grid input[type='radio']:focus-visible + label {
+  outline: 0.2rem solid rgb(var(--color-foreground));
+  outline-offset: 0.2rem;
+}
+
+#MainContent > wishlist-page .product-form__input--size-grid input[type='radio'].disabled + label,
+#MainContent > wishlist-page .product-form__input--size-grid input[type='radio'][disabled] + label {
+  color: rgba(var(--color-foreground), 0.4);
+  border-color: rgba(var(--color-foreground), 0.15);
+  cursor: default;
 }

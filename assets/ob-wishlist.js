@@ -263,10 +263,26 @@
       });
     }
 
+    /* WK renders the price as "€100,00 EUR" — the trailing ISO code is
+       redundant next to the currency symbol and doesn't match how prices
+       render anywhere else in the theme. Strip a trailing 3-letter code so
+       "€100,00 EUR" reads "€100,00". */
+    function stripCurrencySuffix(root) {
+      root.querySelectorAll('.wk-current-price').forEach(function (el) {
+        var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+        var node;
+        while ((node = walker.nextNode())) {
+          var next = node.nodeValue.replace(/(\S)\s+[A-Z]{3}(\s*)$/, '$1$2');
+          if (next !== node.nodeValue) node.nodeValue = next;
+        }
+      });
+    }
+
     function overlayAll() {
       document.querySelectorAll('wishlist-page, .ob-wishlist-cross-sell').forEach(function (root) {
         overlayContainer(root);
         rewriteRawKeys(root);
+        stripCurrencySuffix(root);
       });
       measureOptionWidths();
     }
@@ -553,22 +569,23 @@
     );
   });
 
-  // Cart drawer / cart page cross-sell: per-row remove-from-wishlist button.
-  // WK's own <remove-button> is a floating, JS-transform-positioned control
-  // built for a card corner (like the PLP collection-card heart) — fighting
-  // that positioning to sit it inline next to the CTA was more fragile than
-  // driving WK's real removeWishlistItem() API from a plain button we own,
-  // cloned from the <template> in ob-wishlist-cross-sell.liquid. Removing the
-  // item lets WK's own reactive render drop the card from wishlist-page,
-  // which in turn re-hides the whole cross-sell via the
-  // :has(.wk-product-card) CSS rule once the wishlist is empty again — no
-  // separate "remove from the drawer" step needed.
+  // Per-row remove-from-wishlist button: cart/cart-page cross-sell AND the
+  // standalone /apps/wishlist page. WK's own <remove-button> is a floating,
+  // JS-transform-positioned control built for a card corner (like the PLP
+  // collection-card heart) — fighting that positioning to sit it inline next
+  // to the CTA was more fragile than driving WK's real removeWishlistItem()
+  // API from a plain button we own, cloned from the <template> in
+  // ob-wishlist-cross-sell.liquid (present in every page's DOM since the cart
+  // drawer renders globally). Removing the item lets WK's own reactive render
+  // drop the card from wishlist-page, which in turn re-hides the whole
+  // cross-sell via the :has(.wk-product-card) CSS rule once the wishlist is
+  // empty again — no separate "remove from the drawer" step needed.
   (function () {
     function injectButtons() {
       var template = document.querySelector('.ob-wishlist-cross-sell__remove-template');
       if (!template || !template.content) return;
 
-      document.querySelectorAll('.ob-wishlist-cross-sell .wk-form').forEach(function (form) {
+      document.querySelectorAll('.ob-wishlist-cross-sell .wk-form, #MainContent > wishlist-page .wk-form').forEach(function (form) {
         if (form.querySelector('.ob-wishlist-cross-sell__remove')) return;
         var wishlistItemId = form.dataset.wishlistItemId;
         if (!wishlistItemId) return;
