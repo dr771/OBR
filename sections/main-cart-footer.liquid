@@ -24,12 +24,21 @@
 >
   <div class="page-width">
     <div class="cart__footer isolate section-{{ section.id }}-padding">
-      {%- if cart != empty -%}
-        <div class="ob-cart-summary__heading">
-          <p class="ob-cart-summary__eyebrow">{{ 'sections.cart.summary.eyebrow' | t }}</p>
-          <h2 class="ob-cart-summary__title">{{ 'sections.cart.summary.title' | t }}</h2>
-        </div>
-      {%- endif -%}
+      {%- comment -%}
+        Not wrapped in `{% if cart != empty %}`: `.is-empty .cart__footer` is already
+        display:none (component-cart.css), and cart.js re-renders this block by id after
+        every quantity change — a node that disappears from the section response mid-flow
+        would throw in getSectionInnerHTML. Same reason it carries an id at all: the count
+        and total live outside .js-contents, so Dawn's own list would leave them stale.
+      {%- endcomment -%}
+      <div class="ob-cart-summary__heading" id="cart-summary-heading">
+        <p class="ob-cart-summary__eyebrow">
+          {{- 'sections.cart.summary.item_count' | t: count: cart.item_count -}}
+        </p>
+        <h2 class="ob-cart-summary__title">
+          {{- 'sections.cart.summary.total' | t }} {{ cart.total_price | money -}}
+        </h2>
+      </div>
 
       {%- if settings.show_cart_note -%}
         <cart-note class="cart__note field">

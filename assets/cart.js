@@ -192,6 +192,16 @@ class CartItems extends window.StandardEvents.createViewEventElement(HTMLElement
       });
     }
 
+    // Same for the summary card's heading, which carries the live item count and total
+    // and also sits outside .js-contents.
+    if (document.getElementById('cart-summary-heading')) {
+      sections.push({
+        id: 'cart-summary-heading',
+        section: document.getElementById('main-cart-footer').dataset.id,
+        selector: '.ob-cart-summary__heading',
+      });
+    }
+
     return sections;
   }
 
