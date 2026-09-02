@@ -341,7 +341,18 @@
       "duties_included_taxes_at_checkout_shipping_at_checkout_with_policy_html": "Douanerechten inbegrepen. Belastingen, kortingen en <a href=\"{{ link }}\">verzending</a> worden bij de checkout berekend.",
       "duties_included_taxes_at_checkout_shipping_at_checkout_without_policy": "Douanerechten inbegrepen. Belastingen, kortingen en verzending worden bij de checkout berekend.",
       "taxes_at_checkout_shipping_at_checkout_with_policy_html": "Belastingen, kortingen en <a href=\"{{ link }}\">verzending</a> worden bij de checkout berekend.",
-      "taxes_at_checkout_shipping_at_checkout_without_policy": "Belastingen, kortingen en verzending worden bij de checkout berekend."
+      "taxes_at_checkout_shipping_at_checkout_without_policy": "Belastingen, kortingen en verzending worden bij de checkout berekend.",
+      "summary": {
+        "eyebrow": "Overzicht",
+        "title": "Jouw bestelling",
+        "usp_label": "Bezorginformatie",
+        "free_shipping": "Gratis levering vanaf € 70 in BE & NL",
+        "dispatch": "Voor 12u besteld, volgende werkdag geleverd"
+      },
+      "header": {
+        "eyebrow": "Jouw selectie",
+        "continue_shopping": "Verder winkelen"
+      }
     },
     "footer": {
       "payment": "Veilig betalen met"

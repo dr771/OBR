@@ -4,6 +4,11 @@
   --ob-button-background-hover: #1e9fe6;
   --ob-button-text: #fff;
   --ob-button-radius: 999.9rem;
+  --ob-button-outline-background: rgb(var(--color-background));
+  --ob-button-outline-background-hover: #f8fafc;
+  --ob-button-outline-border: #d9dee5;
+  --ob-button-outline-border-hover: #0f172a;
+  --ob-button-outline-text: #0f172a;
 }
 
 .button,
@@ -81,6 +86,31 @@ cart-remove-button .button.button:not([disabled]):is(:hover, :focus-visible),
   line-height: 2rem;
   letter-spacing: normal;
   text-transform: none;
+}
+
+/* Secondary action: quiet outline treatment for paired actions. */
+.button.ob-button--outline {
+  --buttons-border-width: 0;
+  background-color: var(--ob-button-outline-background);
+  border: 0.1rem solid var(--ob-button-outline-border);
+  color: var(--ob-button-outline-text);
+  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+}
+
+.button.ob-button--outline:not([disabled]):is(:hover, :focus-visible) {
+  background-color: var(--ob-button-outline-background-hover);
+  border-color: var(--ob-button-outline-border-hover);
+  color: var(--ob-button-outline-text);
+}
+
+.button.ob-button--outline::before,
+.button.ob-button--outline::after,
+.button.ob-button--outline:not([disabled]):hover::after {
+  box-shadow: none;
+}
+
+.button.cart__checkout-button {
+  text-transform: uppercase;
 }
 
 @media (prefers-reduced-motion: reduce) {

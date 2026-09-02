@@ -39,7 +39,7 @@
   },
   "order": [
     "cart-items",
-    "cart-wishlist",
-    "cart-footer"
+    "cart-footer",
+    "cart-wishlist"
   ]
 }

@@ -24,6 +24,13 @@
 >
   <div class="page-width">
     <div class="cart__footer isolate section-{{ section.id }}-padding">
+      {%- if cart != empty -%}
+        <div class="ob-cart-summary__heading">
+          <p class="ob-cart-summary__eyebrow">{{ 'sections.cart.summary.eyebrow' | t }}</p>
+          <h2 class="ob-cart-summary__title">{{ 'sections.cart.summary.title' | t }}</h2>
+        </div>
+      {%- endif -%}
+
       {%- if settings.show_cart_note -%}
         <cart-note class="cart__note field">
           <label for="Cart-note">{{ 'sections.cart.note' | t }}</label>
@@ -60,12 +67,7 @@
                   {%- endif -%}
                 </div>
 
-                <div class="totals">
-                  <h2 class="totals__total">{{ 'sections.cart.estimated_total' | t }}</h2>
-                  <p class="totals__total-value">{{ cart.total_price | money_with_currency }}</p>
-                </div>
-
-                <small class="tax-note caption-large rte">
+                {%- capture tax_note -%}
                   {%- if cart.duties_included and cart.taxes_included -%}
                     {%- if shop.shipping_policy.body == blank -%}
                       {{ 'sections.cart.duties_and_taxes_included_shipping_at_checkout_without_policy' | t }}
@@ -103,7 +105,7 @@
                       }}
                     {%- endif -%}
                   {%- endif -%}
-                </small>
+                {%- endcapture -%}
               </div>
             {%- else -%}
               <div class="cart__ctas" {{ block.shopify_attributes }}>
@@ -116,8 +118,10 @@
                     disabled
                   {% endif %}
                   form="cart"
+                  title="{{ tax_note | strip_html | strip_newlines | strip }}"
                 >
                   {{ 'sections.cart.checkout' | t }}
+                  <span class="cart__checkout-subtotal"><span class="cart__checkout-dot">&bull;</span> {{ cart.total_price | money }}</span>
                 </button>
               </div>
 
@@ -131,6 +135,19 @@
 
         <div id="cart-errors"></div>
       </div>
+
+      {%- if cart != empty -%}
+        <div class="ob-cart-summary__usps" aria-label="{{ 'sections.cart.summary.usp_label' | t }}">
+          <div class="ob-cart-summary__usp">
+            {%- render 'ob-icon', icon: 'truck', class: 'ob-cart-summary__usp-icon' -%}
+            <span>{{ 'sections.cart.summary.free_shipping' | t }}</span>
+          </div>
+          <div class="ob-cart-summary__usp">
+            {%- render 'ob-icon', icon: 'clock', class: 'ob-cart-summary__usp-icon' -%}
+            <span>{{ 'sections.cart.summary.dispatch' | t }}</span>
+          </div>
+        </div>
+      {%- endif -%}
     </div>
   </div>
 </div>

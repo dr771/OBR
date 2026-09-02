@@ -348,6 +348,17 @@
         "error_invalid": "Invalid discount code. Please try again.",
         "error_generic": "Something went wrong. Please try again.",
         "prefill_applied": "Discount \"{{ code }}\" applied."
+      },
+      "summary": {
+        "eyebrow": "Summary",
+        "title": "Your order",
+        "usp_label": "Delivery information",
+        "free_shipping": "Free delivery from €70 in BE & NL",
+        "dispatch": "Order before 12 pm, delivered next working day"
+      },
+      "header": {
+        "eyebrow": "Your selection",
+        "continue_shopping": "Continue shopping"
       }
     },
     "footer": {

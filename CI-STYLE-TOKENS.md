@@ -94,6 +94,14 @@ provenance rule — same caveat applies to this file).
      as a plain text link (`component-show-more.css`), excluded from the
      `.button` fill rule above.
 
+3. **`.ob-button--outline`** — paired secondary action: same pill radius,
+   `1px` border `#d9dee5`, background-colour fill, near-black text, and a
+   subtle `#f8fafc` hover surface with near-black border. Use together with
+   `class="button ob-button--outline"`; the shared discount-code Apply button
+   uses this treatment on both cart surfaces.
+4. **Checkout labels** — `.cart__checkout-button` is uppercase on cart and
+   drawer checkout CTAs; the subtotal dot and amount retain their normal case.
+
 ## Links (inline text, not buttons)
 
 Consistent pattern across the codebase: muted/ink at rest → accent or full
