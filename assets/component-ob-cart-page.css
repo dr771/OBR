@@ -567,8 +567,10 @@ cart-items .cart-item__line-total .cart-item__discounted-prices {
        rhythm it starts with. */
     padding-bottom: 4.8rem;
     box-sizing: border-box;
-    column-gap: 4.8rem;
-    grid-template-columns: minmax(0, 1fr) 34rem;
+    /* The wishlist row below spans the items column only, so its two
+       `calc(100% - 48.8rem)` widths track this pair: 42 + 6.8. */
+    column-gap: 6.8rem;
+    grid-template-columns: minmax(0, 1fr) 42rem;
     grid-template-areas:
       'header header'
       'items summary'
@@ -609,7 +611,7 @@ cart-items .cart-item__line-total .cart-item__discounted-prices {
     inset-inline-start: 0;
     position: absolute;
     top: 0;
-    width: calc(100% - 38.8rem);
+    width: calc(100% - 48.8rem);
   }
 
   #MainContent > :is(.ob-cart-items-section, .cart__footer-wrapper, .ob-cart-wishlist-section) .page-width {
@@ -620,12 +622,12 @@ cart-items .cart-item__line-total .cart-item__discounted-prices {
 
   #MainContent > .ob-cart-wishlist-section > .page-width {
     margin-inline: 0;
-    width: calc(100% - 38.8rem);
+    width: calc(100% - 48.8rem);
   }
 
   #main-cart-footer .cart__footer {
     display: block;
-    padding: 2.4rem;
+    padding: 3.4rem;
     background: var(--ob-cart-photo-surface);
     border-radius: 1.6rem;
   }
