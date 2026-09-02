@@ -108,7 +108,12 @@
                 {%- endcapture -%}
               </div>
             {%- else -%}
-              <div class="cart__ctas" {{ block.shopify_attributes }}>
+              {%- comment -%}
+                The id is cart.js's handle for re-rendering this block: the button is the
+                only place the cart total appears, but it sits outside .js-contents, so
+                Dawn's own section list would leave that total stale after a quantity change.
+              {%- endcomment -%}
+              <div class="cart__ctas" id="cart-checkout-ctas" {{ block.shopify_attributes }}>
                 <button
                   type="submit"
                   id="checkout"
