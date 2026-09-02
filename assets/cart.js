@@ -151,7 +151,7 @@ class CartItems extends window.StandardEvents.createViewEventElement(HTMLElement
   }
 
   getSectionsToRender() {
-    const sections = [
+    return [
       {
         id: 'main-cart-items',
         section: document.getElementById('main-cart-items').dataset.id,
@@ -173,36 +173,6 @@ class CartItems extends window.StandardEvents.createViewEventElement(HTMLElement
         selector: '.js-contents',
       },
     ];
-
-    // OB: the /cart checkout button is the only place the cart total appears
-    // ("Afrekenen • €430,00"), and it sits outside .js-contents, so Dawn's list
-    // above would leave that total stale after a quantity change. Re-render it from the
-    // same main-cart-footer response. (The drawer needs no equivalent — CartDrawerItems
-    // overrides this method and swaps the whole .drawer__inner.) Guarded so a merchant
-    // deleting the section's "buttons" block in the editor can't throw inside
-    // renderContents' loop. renderContents does
-    // getElementById(id).querySelector(selector) || getElementById(id): the id sits on the
-    // .cart__ctas element itself, so the fallback replaces its innerHTML. Side benefit: the
-    // button's disabled attribute, which Dawn never refreshes, now updates too.
-    if (document.getElementById('cart-checkout-ctas')) {
-      sections.push({
-        id: 'cart-checkout-ctas',
-        section: document.getElementById('main-cart-footer').dataset.id,
-        selector: '.cart__ctas',
-      });
-    }
-
-    // Same for the summary card's heading, which carries the live item count and total
-    // and also sits outside .js-contents.
-    if (document.getElementById('cart-summary-heading')) {
-      sections.push({
-        id: 'cart-summary-heading',
-        section: document.getElementById('main-cart-footer').dataset.id,
-        selector: '.ob-cart-summary__heading',
-      });
-    }
-
-    return sections;
   }
 
   updateQuantity(line, quantity, event, name, variantId) {

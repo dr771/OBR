@@ -319,10 +319,39 @@ cart-items .cart-item__line-total .cart-item__discounted-prices {
   justify-content: flex-start;
 }
 
+/* Estimated-total row. Dawn centres it and renders the label as an h2, which inherits
+   Fraunces — cart is an Inter surface (CI-STYLE-TOKENS: only PLP/PDP get the serif), so
+   both cells are forced to the body face. Hairlines above and below set the row apart
+   from the discount box and the tax note without adding a box. */
 #main-cart-footer .totals {
   align-items: baseline;
-  justify-content: center;
-  text-align: center;
+  justify-content: space-between;
+  text-align: left;
+  gap: 1.6rem;
+  padding-block: 1.6rem;
+  border-top: 0.1rem solid rgba(var(--color-foreground), 0.12);
+  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.12);
+}
+
+#main-cart-footer .totals > * + * {
+  margin-left: 0;
+}
+
+#main-cart-footer .totals__total,
+#main-cart-footer .totals__total-value {
+  font-family: var(--font-body-family);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+#main-cart-footer .totals__total {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+#main-cart-footer .totals__total-value {
+  font-size: 1.8rem;
+  line-height: 2.2rem;
 }
 
 #main-cart-footer .tax-note {
@@ -595,11 +624,6 @@ cart-items .cart-item__line-total .cart-item__discounted-prices {
 
   #main-cart-footer .cart__blocks {
     width: 100%;
-  }
-
-  #main-cart-footer .totals {
-    padding-bottom: 1.6rem;
-    border-bottom: 1px solid rgba(var(--color-foreground), 0.12);
   }
 
   #main-cart-footer .cart__ctas {

@@ -350,11 +350,8 @@
         "prefill_applied": "Discount \"{{ code }}\" applied."
       },
       "summary": {
-        "item_count": {
-          "one": "{{ count }} item",
-          "other": "{{ count }} items"
-        },
-        "total": "Total",
+        "eyebrow": "Summary",
+        "title": "Your order",
         "usp_label": "Delivery information",
         "free_shipping": "Free delivery from €70 in BE & NL",
         "dispatch": "Order before 12 pm, delivered next working day"
