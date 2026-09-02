@@ -1,0 +1,52 @@
+{% comment %}
+  Renders the discount code input + apply button, shared by the cart page
+  (sections/main-cart-footer.liquid) and the cart drawer
+  (snippets/cart-drawer.liquid). Interactive validate/apply flow lives in
+  assets/ob-cart-discount.js (document-delegated, so it survives both
+  surfaces re-rendering this markup wholesale on every cart AJAX update).
+
+  Accepts:
+  - id_prefix: {String} required, unique per-surface id root (e.g. "Cart", "CartDrawer")
+
+  Usage:
+  {% render 'ob-cart-discount', id_prefix: 'CartDrawer' %}
+{% endcomment %}
+
+{%- liquid
+  assign applied_code = blank
+  for discount in cart.discount_codes
+    if discount.applicable
+      assign applied_code = discount.code
+    endif
+  endfor
+-%}
+
+<div
+  class="cart-discount-box"
+  data-discount-apply-label="{{ 'sections.cart.discount.apply' | t }}"
+  data-discount-success="{{ 'sections.cart.discount.success' | t }}"
+  data-discount-error-invalid="{{ 'sections.cart.discount.error_invalid' | t }}"
+  data-discount-error-generic="{{ 'sections.cart.discount.error_generic' | t }}"
+>
+  <label class="cart-discount-box__label" for="{{ id_prefix }}-DiscountCode">
+    {{- 'sections.cart.discount.label' | t -}}
+  </label>
+  <div class="cart-discount-box__row">
+    <input
+      id="{{ id_prefix }}-DiscountCode"
+      type="text"
+      class="cart-discount-box__input"
+      placeholder="{{ 'sections.cart.discount.placeholder' | t }}"
+      autocomplete="off"
+      value="{{ applied_code }}"
+    >
+    <button type="button" class="cart-discount-box__btn button">
+      {{- 'sections.cart.discount.apply' | t -}}
+    </button>
+  </div>
+  {%- if applied_code != blank -%}
+    <div class="cart-discount-box__msg cart-discount-box__msg--success">
+      {{- 'sections.cart.discount.prefill_applied' | t: code: applied_code -}}
+    </div>
+  {%- endif -%}
+</div>

@@ -28,3 +28,75 @@
   height: 1.2rem;
   margin-right: 0.7rem;
 }
+
+/* Discount code box — cart page (main-cart-footer) + cart drawer (cart-drawer__footer) */
+.cart-discount-box {
+  margin-bottom: 1.6rem;
+}
+
+.cart-discount-box__label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-family: var(--font-body-family);
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.cart-discount-box__row {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.cart-discount-box__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 4rem;
+  padding: 0 1.4rem;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.15);
+  border-radius: 0.8rem;
+  background: rgb(var(--color-background));
+  font-family: var(--font-body-family);
+  font-size: 1.4rem;
+  color: rgb(var(--color-foreground));
+}
+
+.cart-discount-box__input:focus-visible {
+  outline: none;
+  border-color: #0d80c4;
+}
+
+.cart-discount-box__btn {
+  flex-shrink: 0;
+  min-height: 4rem;
+  padding: 0 1.8rem;
+  font-family: var(--font-body-family);
+  font-size: 1.3rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.cart-discount-box__msg {
+  margin-top: 0.6rem;
+  font-family: var(--font-body-family);
+  font-size: 1.2rem;
+}
+
+.cart-discount-box__msg--error {
+  color: #dc2626;
+}
+
+.cart-discount-box__msg--success {
+  color: #16a34a;
+}
+
+@keyframes cart-discount-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cart-discount-box__spinner {
+  animation: cart-discount-spin 0.7s linear infinite;
+  vertical-align: middle;
+}

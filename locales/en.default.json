@@ -339,6 +339,15 @@
       "login": {
         "title": "Have an account?",
         "paragraph_html": "<a href=\"{{ link }}\" class=\"link underlined-link\">Log in</a> to check out faster."
+      },
+      "discount": {
+        "label": "Discount code",
+        "placeholder": "Enter code",
+        "apply": "Apply",
+        "success": "Discount applied! Redirecting…",
+        "error_invalid": "Invalid discount code. Please try again.",
+        "error_generic": "Something went wrong. Please try again.",
+        "prefill_applied": "Discount \"{{ code }}\" applied."
       }
     },
     "footer": {
