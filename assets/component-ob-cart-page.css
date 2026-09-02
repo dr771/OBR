@@ -722,12 +722,20 @@ cart-items .cart-item__line-total .cart-item__discounted-prices {
     z-index: auto;
   }
 
+  /* In flow the button is an ordinary card control; the dock reserves exactly its
+     height (.ob-button--cta is 4.4rem) so the card doesn't collapse when the button is
+     lifted out — see ob-cart-sticky-cta.js for why that would oscillate. */
+  #main-cart-footer .ob-cart-cta-dock {
+    margin-top: 1.6rem;
+    min-height: 4.4rem;
+  }
+
   /* z-index 9 is deliberate: above Wishlist King's hearts (which use 9 — see
      component-ob-search.css — and sit earlier in the DOM, so an equal value wins on
      source order), below the sticky header (10, so the predictive-search overlay always
      wins), far below the cart drawer (1000) and the quantity-rules modal
      (.cart-disclosure-modal[open], 1001), both of which must cover the bar. */
-  #main-cart-footer .cart__ctas {
+  #main-cart-footer .ob-cart-cta-dock.is-stuck > .cart__ctas {
     position: fixed;
     left: 0;
     right: 0;
@@ -740,6 +748,14 @@ cart-items .cart-item__line-total .cart-item__discounted-prices {
     background: rgb(var(--color-background));
     border-top: 0.1rem solid #66666612;
     box-shadow: 0 -0.6rem 1.8rem rgba(0, 0, 0, 0.06);
+    animation: ob-cart-cta-rise 0.2s ease;
+  }
+
+  @keyframes ob-cart-cta-rise {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
   }
 
   /* Dawn caps the button at 36rem; in the bar it runs the full width. */
@@ -753,9 +769,21 @@ cart-items .cart-item__line-total .cart-item__discounted-prices {
      so no bar → no dead space) and tracks that toggle live, without a reload. Safe as a
      bare body rule: this stylesheet only loads on /cart, #main-cart-footer exists nowhere
      else, and base.css defines no body rule at all. */
+  :root {
+    /* 0.1 border + 1.2 padding + 4.4 button (.ob-button--cta min-height) + 1.2 padding. */
+    --ob-cart-cta-bar-height: 6.9rem;
+  }
+
+  /* Held constant rather than tied to .is-stuck: toggling it would change the document
+     height mid-scroll, move the dock, and re-fire the observer that toggled it. */
   body:has(#main-cart-footer:not(.is-empty)) {
-    /* 0.1 border + 1.2 padding + 4.4 button (.ob-button--cta min-height) + 1.2 padding */
-    padding-bottom: calc(6.9rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(var(--ob-cart-cta-bar-height) + env(safe-area-inset-bottom, 0px));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #main-cart-footer .ob-cart-cta-dock.is-stuck > .cart__ctas {
+      animation: none;
+    }
   }
 
   #main-cart-footer .tax-note {

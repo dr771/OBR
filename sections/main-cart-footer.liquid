@@ -3,6 +3,8 @@
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'component-discounts.css' | asset_url | stylesheet_tag }}
 
+<script src="{{ 'ob-cart-sticky-cta.js' | asset_url }}" defer="defer"></script>
+
 {%- style -%}
   .section-{{ section.id }}-padding {
     padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
@@ -121,19 +123,26 @@
                 <small class="tax-note caption-large rte">{{ tax_note }}</small>
               </div>
             {%- else -%}
-              <div class="cart__ctas" {{ block.shopify_attributes }}>
-                <button
-                  type="submit"
-                  id="checkout"
-                  class="cart__checkout-button button ob-button--cta"
-                  name="checkout"
-                  {% if cart == empty %}
-                    disabled
-                  {% endif %}
-                  form="cart"
-                >
-                  {{ 'sections.cart.checkout' | t }}
-                </button>
+              {%- comment -%}
+                The dock keeps the button's place in the card while ob-cart-sticky-cta.js
+                lifts it into the fixed mobile bar (and reserves its height, so the card's
+                geometry can't shift under the observer that drives the reveal).
+              {%- endcomment -%}
+              <div class="ob-cart-cta-dock" data-ob-cart-cta-dock>
+                <div class="cart__ctas" {{ block.shopify_attributes }}>
+                  <button
+                    type="submit"
+                    id="checkout"
+                    class="cart__checkout-button button ob-button--cta"
+                    name="checkout"
+                    {% if cart == empty %}
+                      disabled
+                    {% endif %}
+                    form="cart"
+                  >
+                    {{ 'sections.cart.checkout' | t }}
+                  </button>
+                </div>
               </div>
 
               {%- if additional_checkout_buttons -%}
