@@ -1,0 +1,269 @@
+/*
+  ob-merken — Merken (brands directory) page.
+
+  The tinted hero itself (bg, breadcrumb, title/subheading/meta) now lives
+  in the shared assets/component-ob-collection-hero.css +
+  snippets/ob-collection-hero.liquid, reused by every real collection page's
+  main-collection-banner.liquid. This file only owns what's specific to the
+  Merken page: the brand-chip grid rendered as that snippet's
+  `extra_content`, the per-brand logotypes, and the photo-tile grid below.
+
+  Brand logotypes (.ob-logotype / .ob-lt-*) are ported from
+  mockup/index.html's "Uitgelichte merken" chip treatment, recut in
+  var(--font-heading-family) (Fraunces live) instead of that file's DM Serif
+  Display, and left otherwise unset so bold marks inherit the theme's own
+  Inter body font/weight rather than redeclaring it. font-weight is 700 (not
+  800): theme.liquid only loads Inter 400/500/600/700 (see
+  ob-dawn-pdp-override-traps / CI-STYLE-TOKENS "Font stack") — a declared 800
+  would silently remap to 700 anyway, so 700 is written directly.
+*/
+
+.ob-merken {
+  background: rgb(var(--color-background));
+}
+
+/*
+  Chip grid — flex, not CSS grid, exactly as mockup/index.html: brand counts
+  rarely divide evenly into fixed columns, and a grid's last row would leave
+  a dead gap. `flex` lets each row's chips - however many fit - stretch to
+  fill the full width, so the row split stays uneven but there is never
+  empty space. Basis is tuned for 6 per row (11 brands -> 6 + 5).
+*/
+.ob-merken-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 2.4rem;
+}
+
+.ob-merken-chip {
+  flex: 1 1 9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 5.6rem;
+  padding: 0.8rem 1rem;
+  background: #ffffff;
+  border: 0.1rem solid #e2e8f0;
+  border-radius: 1rem;
+  color: #0f172a;
+  text-decoration: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
+}
+
+.ob-merken-chip:hover,
+.ob-merken-chip:focus-visible {
+  border-color: #0d80c4;
+  color: #0d80c4;
+  box-shadow: 0 0.8rem 1.8rem -1.4rem rgba(15, 23, 42, 0.45);
+}
+
+/* ---------------------------------------------------------- logotypes */
+
+.ob-logotype {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  color: currentColor;
+  white-space: nowrap;
+}
+
+.ob-logotype small {
+  display: block;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.ob-lt-fitflop { font-weight: 700; font-size: 1.7rem; text-transform: lowercase; letter-spacing: -0.02em; }
+.ob-lt-hitec { font-weight: 700; font-style: italic; font-size: 1.5rem; letter-spacing: -0.01em; }
+.ob-lt-holster { flex-direction: column; align-items: flex-start; gap: 0; font-weight: 700; font-size: 1.3rem; text-transform: lowercase; }
+.ob-lt-holster small { font-size: 0.5em; margin-top: 0.15rem; }
+.ob-lt-juicy { font-family: var(--font-heading-family); font-style: italic; font-size: 1.3rem; }
+.ob-lt-loewenweiss { font-family: var(--font-heading-family); font-size: 1.3rem; }
+.ob-lt-odlo { font-weight: 700; font-size: 1.6rem; letter-spacing: 0.01em; }
+.ob-lt-pasdemonaco { flex-direction: column; align-items: flex-start; gap: 0; font-family: var(--font-heading-family); font-size: 1.3rem; letter-spacing: 0.02em; line-height: 1.05; }
+.ob-lt-pasdemonaco small { font-size: 0.5em; letter-spacing: 0.22em; margin-top: 0.15rem; }
+.ob-lt-sneakerlab { font-weight: 700; font-size: 1.4rem; letter-spacing: -0.01em; text-transform: lowercase; }
+.ob-lt-sneakerlab b { font-weight: 400; }
+.ob-lt-irasuto { font-weight: 600; font-size: 1rem; letter-spacing: 0.16em; text-transform: uppercase; }
+.ob-lt-irasuto small { font-size: 0.85em; letter-spacing: 0.1em; text-transform: none; margin-left: 0.3rem; }
+.ob-lt-nikeswim { font-weight: 700; font-size: 1.3rem; letter-spacing: 0.02em; text-transform: uppercase; }
+.ob-lt-sweatybetty { font-family: var(--font-heading-family); font-style: italic; font-size: 1.3rem; }
+
+/* ------------------------------------------------------------ tile grid */
+
+.ob-merken-grid-wrap {
+  padding-top: 2.4rem;
+}
+
+.ob-merken-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1.6rem;
+  row-gap: 2.8rem;
+}
+
+.ob-merken-tile {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.ob-merken-tile__media {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 1.2rem;
+  background-color: #f1f5f9;
+  overflow: hidden;
+}
+
+/*
+  Full-bleed: these are campaign/lifestyle frames, not cut-out packshots, so
+  they fill the tile (`cover`) and keep their own tones - no multiply onto
+  the surface tint, which is the PLP/PDP convention's documented opt-out for
+  photography shot on a coloured, dark or location backdrop
+  (component-ob-brand-media.css).
+*/
+.ob-merken-tile__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-long, 0.4s) ease;
+}
+
+.ob-merken-tile:hover .ob-merken-tile__media img,
+.ob-merken-tile:focus-visible .ob-merken-tile__media img {
+  transform: scale(1.04);
+}
+
+.ob-merken-tile__body {
+  margin-top: 1rem;
+}
+
+/* Eyebrow: same 10px/600/1.8px-tracked scale as the PLP card meta label
+   (component-ob-swatches.css .caption-with-letter-spacing), but in the
+   readable accent ink (--ob-accent's #38b6ff fails AA text contrast - see
+   CI-STYLE-TOKENS.md) rather than muted ink, since this is the one place on
+   the page calling out the brand's category. */
+.ob-merken-tile__eyebrow {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4rem;
+  letter-spacing: 0.16rem;
+  text-transform: uppercase;
+  color: #0d80c4;
+}
+
+.ob-merken-tile__name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+}
+
+.ob-merken-tile__name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.9rem;
+  color: #0f172a;
+}
+
+.ob-merken-tile__arrow {
+  width: 1.3rem;
+  height: 1.3rem;
+  color: #64748b;
+  flex: none;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.ob-merken-tile:hover .ob-merken-tile__arrow,
+.ob-merken-tile:focus-visible .ob-merken-tile__arrow {
+  color: #0f172a;
+  transform: translateX(0.4rem);
+}
+
+.ob-merken-tile__desc {
+  margin: 0.3rem 0 0;
+  font-size: 1.15rem;
+  line-height: 1.6rem;
+  color: #64748b;
+}
+
+/* ------------------------------------------------------- desktop, 990px+ */
+
+@media screen and (min-width: 990px) {
+  .ob-merken-chips {
+    gap: 1.2rem;
+    margin-top: 4.8rem;
+  }
+
+  /* 6 per row (11 brands -> 6 + 5): basis is exactly one-sixth of the row
+     minus its share of the 5 inter-item gaps, so a short last row's chips
+     grow to fill the width instead of leaving a dead gap. */
+  .ob-merken-chip {
+    flex-basis: calc((100% - 5 * 1.2rem) / 6);
+    min-height: 8rem;
+    padding: 1.2rem 1.6rem;
+    border-radius: 1.2rem;
+  }
+
+  .ob-lt-fitflop { font-size: 2.6rem; }
+  .ob-lt-hitec { font-size: 2.3rem; }
+  .ob-lt-holster { font-size: 1.9rem; }
+  .ob-lt-juicy { font-size: 2rem; }
+  .ob-lt-loewenweiss { font-size: 2rem; }
+  .ob-lt-odlo { font-size: 2.2rem; }
+  .ob-lt-pasdemonaco { font-size: 1.9rem; }
+  .ob-lt-sneakerlab { font-size: 1.95rem; }
+  .ob-lt-irasuto { font-size: 1.55rem; }
+  .ob-lt-nikeswim { font-size: 1.9rem; }
+  .ob-lt-sweatybetty { font-size: 1.9rem; }
+
+  .ob-merken-grid-wrap {
+    padding-top: 4.8rem;
+  }
+
+  .ob-merken-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 2.4rem;
+    row-gap: 3.6rem;
+  }
+
+  .ob-merken-tile__media {
+    border-radius: 1.6rem;
+  }
+
+  .ob-merken-tile__body {
+    margin-top: 1.6rem;
+  }
+
+  .ob-merken-tile__eyebrow {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    letter-spacing: 0.18rem;
+  }
+
+  .ob-merken-tile__name-row {
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+  }
+
+  .ob-merken-tile__name {
+    font-size: 2rem;
+    line-height: normal;
+  }
+
+  .ob-merken-tile__arrow {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  .ob-merken-tile__desc {
+    margin-top: 0.4rem;
+    font-size: 1.3rem;
+    line-height: 1.9rem;
+  }
+}

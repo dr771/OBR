@@ -1,0 +1,37 @@
+{% comment %}
+  OB: brand-directory tile photo. A curated marketing/lifestyle shot for the
+  brands that have one in the Marketing asset library (as of 2026-09-03);
+  falls back to the collection's own featured_image for any brand without
+  one, so a newly synced collection with no curated shot still renders
+  something rather than a broken image.
+
+  Accepts:
+  - collection: {Object} Collection Liquid object
+
+  Usage:
+  <img src="{% render 'ob-brand-hero-image', collection: collection %}" ...>
+{% endcomment %}
+{%- liquid
+  assign ob_curated = blank
+  case collection.handle
+    when 'fitflop'
+      assign ob_curated = 'ob-brand-fitflop.jpg'
+    when 'hi-tec'
+      assign ob_curated = 'ob-brand-hi-tec.jpg'
+    when 'holster'
+      assign ob_curated = 'ob-brand-holster.jpg'
+    when 'juicy-couture'
+      assign ob_curated = 'ob-brand-juicy-couture.jpg'
+    when 'loewenweiss'
+      assign ob_curated = 'ob-brand-loewenweiss.jpg'
+    when 'nike-swim'
+      assign ob_curated = 'ob-brand-nike-swim.jpg'
+    when 'odlo'
+      assign ob_curated = 'ob-brand-odlo.jpg'
+    when 'pas-de-monaco'
+      assign ob_curated = 'ob-brand-pas-de-monaco.jpg'
+    when 'sweaty-betty'
+      assign ob_curated = 'ob-brand-sweaty-betty.jpg'
+  endcase
+-%}
+{%- if ob_curated != blank -%}{{ ob_curated | asset_url }}{%- else -%}{{ collection.featured_image | image_url: width: 1000 }}{%- endif -%}

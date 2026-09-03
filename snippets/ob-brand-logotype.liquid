@@ -1,0 +1,44 @@
+{% comment %}
+  OB: styled brand wordmark for the Merken hero's chip grid (main grid tile
+  headings stay plain text - see the merken-brands-directory spec). Cases on
+  the collection handle so an Akeneo/Shopify rename falls back to the plain
+  title rather than breaking.
+
+  Ported from mockup/index.html's "Uitgelichte merken" chip treatment
+  (.logotype / .lt-*), recut in Fraunces - the approved live serif - instead
+  of that file's DM Serif Display, and recolored to this theme's own ink
+  tokens rather than the mockup's separate palette. Styling lives in
+  component-ob-merken.css (.ob-logotype / .ob-lt-*).
+
+  Accepts:
+  - collection: {Object} Collection Liquid object
+
+  Usage:
+  {% render 'ob-brand-logotype', collection: collection %}
+{% endcomment %}
+{%- case collection.handle -%}
+  {%- when 'fitflop' -%}
+    <span class="ob-logotype ob-lt-fitflop">fitflop</span>
+  {%- when 'hi-tec' -%}
+    <span class="ob-logotype ob-lt-hitec">HI-TEC</span>
+  {%- when 'holster' -%}
+    <span class="ob-logotype ob-lt-holster">holster<small>australia</small></span>
+  {%- when 'irasuto-studios' -%}
+    <span class="ob-logotype ob-lt-irasuto">Irasuto<small>Studios</small></span>
+  {%- when 'juicy-couture' -%}
+    <span class="ob-logotype ob-lt-juicy">Juicy Couture</span>
+  {%- when 'loewenweiss' -%}
+    <span class="ob-logotype ob-lt-loewenweiss">Loewenweiss</span>
+  {%- when 'nike-swim' -%}
+    <span class="ob-logotype ob-lt-nikeswim">Nike Swim</span>
+  {%- when 'odlo' -%}
+    <span class="ob-logotype ob-lt-odlo">ODLO</span>
+  {%- when 'pas-de-monaco' -%}
+    <span class="ob-logotype ob-lt-pasdemonaco">Pas de<small>Monaco</small></span>
+  {%- when 'sneaker-lab' -%}
+    <span class="ob-logotype ob-lt-sneakerlab">sneaker<b>lab</b></span>
+  {%- when 'sweaty-betty' -%}
+    <span class="ob-logotype ob-lt-sweatybetty">Sweaty Betty</span>
+  {%- else -%}
+    <span class="ob-logotype">{{ collection.title }}</span>
+{%- endcase -%}

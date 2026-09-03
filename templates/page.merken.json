@@ -1,19 +1,96 @@
 {
   "sections": {
     "brands": {
-      "type": "collection-list",
+      "type": "merken-brands",
       "blocks": {
-        "fitflop": { "type": "featured_collection", "settings": { "collection": "fitflop" } },
-        "hi_tec": { "type": "featured_collection", "settings": { "collection": "hi-tec" } },
-        "holster": { "type": "featured_collection", "settings": { "collection": "holster" } },
-        "irasuto_studios": { "type": "featured_collection", "settings": { "collection": "irasuto-studios" } },
-        "juicy_couture": { "type": "featured_collection", "settings": { "collection": "juicy-couture" } },
-        "loewenweiss": { "type": "featured_collection", "settings": { "collection": "loewenweiss" } },
-        "nike_swim": { "type": "featured_collection", "settings": { "collection": "nike-swim" } },
-        "odlo": { "type": "featured_collection", "settings": { "collection": "odlo" } },
-        "pas_de_monaco": { "type": "featured_collection", "settings": { "collection": "pas-de-monaco" } },
-        "sneaker_lab": { "type": "featured_collection", "settings": { "collection": "sneaker-lab" } },
-        "sweaty_betty": { "type": "featured_collection", "settings": { "collection": "sweaty-betty" } }
+        "fitflop": {
+          "type": "brand",
+          "settings": {
+            "collection": "fitflop",
+            "eyebrow": "Comforttechnologie",
+            "description": "Biomechanisch ontwikkelde zolen, sinds 2007."
+          }
+        },
+        "hi_tec": {
+          "type": "brand",
+          "settings": {
+            "collection": "hi-tec",
+            "eyebrow": "Wandelen & buiten",
+            "description": "Lichtgewicht wandelschoenen sinds 1974."
+          }
+        },
+        "holster": {
+          "type": "brand",
+          "settings": {
+            "collection": "holster",
+            "eyebrow": "Australische sandalen",
+            "description": "Vegan EVA-comfort, geboren op Noosa Beach."
+          }
+        },
+        "irasuto_studios": {
+          "type": "brand",
+          "settings": {
+            "collection": "irasuto-studios",
+            "eyebrow": "Japanse streetwear",
+            "description": "Kunstgedreven graphics op zware jersey."
+          }
+        },
+        "juicy_couture": {
+          "type": "brand",
+          "settings": {
+            "collection": "juicy-couture",
+            "eyebrow": "Iconische leisure",
+            "description": "De velours tracksuit uit Los Angeles."
+          }
+        },
+        "loewenweiss": {
+          "type": "brand",
+          "settings": {
+            "collection": "loewenweiss",
+            "eyebrow": "Alpine pantoffels",
+            "description": "Tiroolse gekookte wol, handgemaakt in Italië."
+          }
+        },
+        "nike_swim": {
+          "type": "brand",
+          "settings": {
+            "collection": "nike-swim",
+            "eyebrow": "Zwemmen",
+            "description": "Badmode voor baan, strand en bad."
+          }
+        },
+        "odlo": {
+          "type": "brand",
+          "settings": {
+            "collection": "odlo",
+            "eyebrow": "Performance lagen",
+            "description": "Uitvinder van de synthetische baselayer."
+          }
+        },
+        "pas_de_monaco": {
+          "type": "brand",
+          "settings": {
+            "collection": "pas-de-monaco",
+            "eyebrow": "Racing culture",
+            "description": "Brits label met motorsport in het DNA."
+          }
+        },
+        "sneaker_lab": {
+          "type": "brand",
+          "settings": {
+            "collection": "sneaker-lab",
+            "eyebrow": "Sneakerverzorging",
+            "description": "Afbreekbare reinigers uit Kaapstad."
+          }
+        },
+        "sweaty_betty": {
+          "type": "brand",
+          "settings": {
+            "collection": "sweaty-betty",
+            "eyebrow": "Activewear voor haar",
+            "description": "Britse sportkleding, ontworpen voor vrouwen."
+          }
+        }
       },
       "block_order": [
         "fitflop",
@@ -30,15 +107,10 @@
       ],
       "settings": {
         "title": "Merken",
-        "heading_size": "h1",
-        "image_ratio": "square",
-        "columns_desktop": 3,
-        "columns_mobile": "2",
-        "swipe_on_mobile": false,
+        "subheading": "Elk merk is de beste in zijn vak. Wij brengen ze samen zodat jij niet hoeft te zoeken.",
         "color_scheme": "scheme-1",
-        "show_view_all": false,
-        "padding_top": 36,
-        "padding_bottom": 36
+        "padding_top": 0,
+        "padding_bottom": 48
       }
     }
   },

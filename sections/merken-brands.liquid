@@ -1,0 +1,179 @@
+{% comment %}theme-check-disable RemoteAsset, UnusedAssign{% endcomment %}
+{% comment %}
+  ob-brand-hero-image always resolves through asset_url or image_url
+  internally; theme-check can't see through the render to know that. Same
+  reason for UnusedAssign below: ob_merken_chips is passed as a `render`
+  parameter, which the checker's usage scan doesn't trace.
+
+  OB: Merken (brands directory) page. Replaces Dawn's stock collection-list
+  rendering with the shared tinted collection hero (snippets/ob-collection-hero.liquid
+  - see the ob-collection-hero-and-merken-directory spec), a styled
+  brand-logotype chip grid passed in as that hero's `extra_content`, and a
+  photo-tile grid per brand with a curated lifestyle image where the
+  Marketing library has one.
+
+  Block settings (collection/eyebrow/description) are merchant-editable so
+  copy can be corrected without a code change; defaults are seeded from
+  research done at build time (see the spec for sourcing).
+{% endcomment %}
+{{ 'component-ob-merken.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="ob-merken color-{{ section.settings.color_scheme }} section-{{ section.id }}-padding">
+  {%- capture ob_merken_chips -%}
+    <div class="ob-merken-chips">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.collection != blank -%}
+          <a
+            href="{{ block.settings.collection.url }}"
+            class="ob-merken-chip"
+            {{ block.shopify_attributes }}
+          >
+            {%- render 'ob-brand-logotype', collection: block.settings.collection -%}
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endcapture -%}
+
+  {%- liquid
+    assign ob_merken_title = section.settings.title | default: page.title
+    assign ob_merken_meta = section.blocks.size | append: ' merken'
+  -%}
+  {%- render 'ob-collection-hero',
+    title: ob_merken_title,
+    subheading: section.settings.subheading,
+    meta: ob_merken_meta,
+    extra_content: ob_merken_chips
+  -%}
+
+  <div class="ob-merken-grid-wrap page-width">
+    <div class="ob-merken-grid">
+      {%- for block in section.blocks -%}
+        {%- assign ob_collection = block.settings.collection -%}
+        {%- if ob_collection != blank -%}
+          <a href="{{ ob_collection.url }}" class="ob-merken-tile" {{ block.shopify_attributes }}>
+            <div class="ob-merken-tile__media">
+              <img
+                src="{% render 'ob-brand-hero-image', collection: ob_collection %}"
+                alt="{{ ob_collection.title | escape }}"
+                loading="lazy"
+                width="1000"
+                height="1000"
+              >
+            </div>
+            <div class="ob-merken-tile__body">
+              {%- if block.settings.eyebrow != blank -%}
+                <div class="ob-merken-tile__eyebrow">{{ block.settings.eyebrow }}</div>
+              {%- endif -%}
+              <div class="ob-merken-tile__name-row">
+                <span class="ob-merken-tile__name">{{ ob_collection.title }}</span>
+                {%- render 'ob-icon', icon: 'chevron-right', class: 'ob-merken-tile__arrow' -%}
+              </div>
+              {%- if block.settings.description != blank -%}
+                <p class="ob-merken-tile__desc">{{ block.settings.description }}</p>
+              {%- endif -%}
+            </div>
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Merken",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titel",
+      "default": "Merken"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Onderschrift",
+      "default": "Elk merk is de beste in zijn vak. Wij brengen ze samen zodat jij niet hoeft te zoeken."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Merk",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collectie"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Categorie (eyebrow)"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Korte omschrijving"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Merken",
+      "blocks": [
+        {
+          "type": "brand"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

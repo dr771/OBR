@@ -1,0 +1,49 @@
+{% comment %}
+  OB: reusable tinted collection-page hero. Bg/spacing taken over from the
+  bolt.host collection-hero "Default" variant - see the
+  ob-collection-hero-and-merken-directory spec. Shared by Dawn's
+  main-collection-banner.liquid (every real /collections/* page) and the
+  Merken brands-directory section, which passes its own brand-chip grid in
+  as `extra_content` so it renders inside the same tinted wrapper, above
+  the bottom border.
+
+  Accepts:
+  - title: {String} required
+  - subheading: {String} optional; rendered raw inside a `.rte` wrapper, so
+    a collection's own rich-text `description` is safe to pass directly
+  - meta: {String} optional trailing line (e.g. Merken's "11 merken");
+    leave blank on a real collection page, which already shows a product
+    count in its own filter/sort bar
+  - extra_content: {String} optional pre-rendered HTML (e.g. a capture),
+    inserted after the title/subheading/meta row, still inside the tint
+
+  Usage:
+  {% render 'ob-collection-hero', title: collection.title, subheading: collection.description %}
+{% endcomment %}
+{{ 'component-ob-collection-hero.css' | asset_url | stylesheet_tag }}
+
+<div class="ob-collection-hero">
+  <div class="page-width">
+    <nav class="ob-collection-hero__breadcrumb" aria-label="{{ 'general.breadcrumb.label' | t }}">
+      <a class="ob-collection-hero__breadcrumb-link" href="{{ routes.root_url }}">{{ 'general.breadcrumb.home' | t }}</a>
+      {%- render 'ob-icon', icon: 'chevron-right', class: 'ob-collection-hero__breadcrumb-sep' -%}
+      <span class="ob-collection-hero__breadcrumb-current" aria-current="page">{{ title }}</span>
+    </nav>
+
+    <div class="ob-collection-hero__row">
+      <div class="ob-collection-hero__text">
+        <h1 class="ob-collection-hero__title">{{ title }}</h1>
+        {%- if subheading != blank -%}
+          <div class="ob-collection-hero__subheading rte">{{ subheading }}</div>
+        {%- endif -%}
+      </div>
+      {%- if meta != blank -%}
+        <div class="ob-collection-hero__meta">{{ meta }}</div>
+      {%- endif -%}
+    </div>
+
+    {%- if extra_content != blank -%}
+      {{ extra_content }}
+    {%- endif -%}
+  </div>
+</div>
