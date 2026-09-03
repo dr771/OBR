@@ -1,0 +1,19 @@
+{% comment %}
+  OB: occasion card image resolver for the homepage "Shop per behoefte" grid.
+  Mirrors ob-brand-hero-image.liquid's curated-asset-with-fallback pattern
+  (case on the collection's own handle -> a theme asset also used as one of
+  the Merken brand tiles), rather than a vendor, since occasions are
+  metafield-based collections, not per-brand ones.
+
+  Accepts:
+  - collection: {Object} a collection resource
+
+  Usage:
+  {% render 'ob-occasion-image', collection: block.settings.collection %}
+{% endcomment %}
+{%- case collection.handle -%}
+  {%- when 'sport-training' -%}{{ 'ob-brand-hi-tec.jpg' | asset_url }}
+  {%- when 'outdoor-werk' -%}{{ 'ob-brand-odlo.jpg' | asset_url }}
+  {%- when 'dagelijks-comfort' -%}{{ 'ob-brand-loewenweiss.jpg' | asset_url }}
+  {%- else -%}{{ collection.featured_image | image_url: width: 1200 }}
+{%- endcase -%}

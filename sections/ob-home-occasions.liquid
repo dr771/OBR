@@ -1,0 +1,151 @@
+{% comment %}
+  OB: "Shop per behoefte" occasion grid - 3 photo cards (Sport & Training /
+  Outdoor & Werk / Dagelijks Comfort) linking straight to the real metafield-
+  based collections of the same handles, matched to bolt's occasion section.
+  Image per card resolves via snippets/ob-occasion-image.liquid.
+{% endcomment %}
+{% comment %}theme-check-disable RemoteAsset{% endcomment %}
+{{ 'component-ob-home-occasions.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div id="shop-per-behoefte" class="ob-home-occasions page-width section-{{ section.id }}-padding">
+  <div class="ob-home-occasions__head">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="ob-home-occasions__eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="ob-home-occasions__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.subheading != blank -%}
+      <p class="ob-home-occasions__subheading">{{ section.settings.subheading }}</p>
+    {%- endif -%}
+  </div>
+
+  <div class="ob-home-occasions__grid">
+    {%- for block in section.blocks -%}
+      {%- assign ob_occasion_collection = block.settings.collection -%}
+      {%- if ob_occasion_collection != blank -%}
+        <a href="{{ ob_occasion_collection.url }}" class="ob-home-occasions__card" {{ block.shopify_attributes }}>
+          <img
+            src="{% render 'ob-occasion-image', collection: ob_occasion_collection %}"
+            alt="{{ ob_occasion_collection.title | escape }}"
+            loading="lazy"
+            width="800"
+            height="1067"
+            class="ob-home-occasions__card-image"
+          >
+          <div class="ob-home-occasions__card-scrim"></div>
+          <div class="ob-home-occasions__card-body">
+            {%- if block.settings.number_label != blank -%}
+              <p class="ob-home-occasions__card-number">{{ block.settings.number_label }}</p>
+            {%- endif -%}
+            <h3 class="ob-home-occasions__card-title">{{ ob_occasion_collection.title }}</h3>
+            <span class="ob-home-occasions__card-cta">
+              {{ section.settings.cta_label }}
+              {%- render 'ob-icon', icon: 'chevron-right' -%}
+            </span>
+          </div>
+        </a>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "OB Shop per behoefte",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Shop per behoefte"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titel",
+      "default": "Niet per merk, maar per moment"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Onderschrift",
+      "default": "Wij brengen tien specialisten samen en helpen je kiezen wat écht bij je past — of je nu traint, buiten bent of gewoon lekker wilt zitten."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Kaart-link tekst",
+      "default": "Ontdek collectie"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "occasion",
+      "name": "Behoefte",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collectie"
+        },
+        {
+          "type": "text",
+          "id": "number_label",
+          "label": "Nummer-eyebrow",
+          "default": "01 — Beweeg beter"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "OB Shop per behoefte",
+      "blocks": [
+        { "type": "occasion" },
+        { "type": "occasion" },
+        { "type": "occasion" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,116 @@
+/*
+  OB: homepage newsletter card, matched to bolt's dark rounded signup
+  banner. Only usage of sections/newsletter.liquid in the theme, so this
+  reaches Dawn's shared .field/.newsletter-form__button classes directly
+  rather than adding a wrapper class to every rule - if a second newsletter
+  instance is ever added elsewhere, scope this file's selectors then.
+
+  Dawn draws the field's visible border via box-shadow on .field:after (not
+  a real border) and a separate drop-shadow ring on .field:before - both
+  keyed to --color-foreground/--color-shadow, which read as near-invisible
+  hairlines on light backgrounds and would read as plain wrong on this dark
+  one, so both are overridden directly rather than left inherited.
+*/
+
+.newsletter__wrapper {
+  background: #0f172a;
+  border-radius: 2.4rem;
+  padding-left: 2.4rem;
+  padding-right: 2.4rem;
+  text-align: center;
+}
+
+.newsletter__wrapper h2,
+.newsletter__wrapper .newsletter__subheading,
+.newsletter__wrapper .newsletter__subheading * {
+  color: #ffffff;
+}
+
+.newsletter__wrapper h2 {
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 2.8rem;
+  letter-spacing: -0.02em;
+}
+
+.newsletter__wrapper .newsletter__subheading {
+  max-width: 44.8rem;
+  margin: 1.6rem auto 0;
+  font-size: 1.6rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.ob-home-newsletter__eyebrow {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.336rem;
+  text-transform: uppercase;
+  color: #5cbef0;
+}
+
+.newsletter__wrapper .newsletter-form {
+  max-width: 44.8rem;
+  margin-top: 2.8rem;
+}
+
+.newsletter__wrapper .field:before {
+  box-shadow: none;
+}
+
+.newsletter__wrapper .field,
+.newsletter__wrapper .field:after,
+.newsletter__wrapper .field__input {
+  border-radius: 999.9rem;
+}
+
+.newsletter__wrapper .field:after {
+  box-shadow: 0 0 0 0.1rem rgba(255, 255, 255, 0.15);
+}
+
+.newsletter__wrapper .field__input {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.newsletter__wrapper .field__label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.newsletter__wrapper .newsletter-form__button {
+  background-color: var(--ob-accent, #38b6ff);
+  border-radius: 999.9rem;
+  color: #ffffff;
+}
+
+.newsletter__wrapper .newsletter-form__button:not(:focus-visible):not(.focused) {
+  background-color: var(--ob-accent, #38b6ff);
+}
+
+.ob-home-newsletter__fine-print {
+  margin: 1.6rem 0 0;
+  font-size: 1.2rem;
+  color: rgba(226, 232, 240, 0.6);
+}
+
+@media screen and (min-width: 750px) {
+  .newsletter__wrapper .newsletter-form {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .newsletter__wrapper {
+    border-radius: 4rem;
+    padding-left: 5.6rem;
+    padding-right: 5.6rem;
+  }
+
+  .newsletter__wrapper h2 {
+    font-size: 3.6rem;
+    line-height: 4rem;
+    letter-spacing: -0.036em;
+  }
+}

@@ -1,5 +1,6 @@
 {{ 'component-newsletter.css' | asset_url | stylesheet_tag }}
 {{ 'newsletter-section.css' | asset_url | stylesheet_tag }}
+{{ 'component-ob-home-newsletter.css' | asset_url | stylesheet_tag }}
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -21,6 +22,8 @@
       {%- case block.type -%}
         {%- when '@app' -%}
           {% render block %}
+        {%- when 'eyebrow' -%}
+          <p class="ob-home-newsletter__eyebrow" {{ block.shopify_attributes }}>{{ block.settings.text }}</p>
         {%- when 'heading' -%}
           <h2
             class="inline-richtext {{ block.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
@@ -115,6 +118,8 @@
               {%- endif -%}
             {% endform %}
           </div>
+        {%- when 'fine_print' -%}
+          <p class="ob-home-newsletter__fine-print" {{ block.shopify_attributes }}>{{ block.settings.text }}</p>
       {%- endcase -%}
     {%- endfor -%}
   </div>
@@ -142,7 +147,7 @@
     {
       "type": "checkbox",
       "id": "full_width",
-      "default": true,
+      "default": false,
       "label": "t:sections.newsletter.settings.full_width.label"
     },
     {
@@ -157,7 +162,7 @@
       "step": 4,
       "unit": "px",
       "label": "t:sections.all.padding.padding_top",
-      "default": 40
+      "default": 64
     },
     {
       "type": "range",
@@ -167,10 +172,23 @@
       "step": 4,
       "unit": "px",
       "label": "t:sections.all.padding.padding_bottom",
-      "default": 52
+      "default": 64
     }
   ],
   "blocks": [
+    {
+      "type": "eyebrow",
+      "name": "Eyebrow",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Tekst",
+          "default": "Blijf als eerste op de hoogte"
+        }
+      ]
+    },
     {
       "type": "heading",
       "name": "t:sections.newsletter.blocks.heading.name",
@@ -231,6 +249,19 @@
       "limit": 1
     },
     {
+      "type": "fine_print",
+      "name": "Kleine tekst",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Tekst",
+          "default": "Geen spam. Je kunt je elk moment uitschrijven."
+        }
+      ]
+    },
+    {
       "type": "@app"
     }
   ],
@@ -239,6 +270,9 @@
       "name": "t:sections.newsletter.presets.name",
       "blocks": [
         {
+          "type": "eyebrow"
+        },
+        {
           "type": "heading"
         },
         {
@@ -246,6 +280,9 @@
         },
         {
           "type": "email_form"
+        },
+        {
+          "type": "fine_print"
         }
       ]
     }

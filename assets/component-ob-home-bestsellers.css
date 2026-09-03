@@ -1,0 +1,65 @@
+/*
+  OB: homepage "Onze bestsellers" chrome layered onto Dawn's stock
+  featured-collection section (the only place this section renders - see
+  templates/index.json). Product cards themselves need no work here: they
+  already carry the full PLP treatment (badges, swatches, hover zoom) via
+  card-product.liquid, live-verified on this exact surface by
+  carry-plp-card-treatment-everywhere.
+
+  Compound selectors (`.collection__title.ob-bestsellers__head`) are used
+  deliberately to out-specify Dawn's own single-class `.title-wrapper`
+  centering rules rather than reaching for !important.
+*/
+
+.collection__title.ob-bestsellers__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.6rem;
+  text-align: left;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.ob-bestsellers__head-text {
+  text-align: left;
+}
+
+.ob-bestsellers__eyebrow {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.336rem;
+  text-transform: uppercase;
+  color: #0d80c4;
+}
+
+.ob-bestsellers__view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: none;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #0f172a;
+  text-decoration: none;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.ob-bestsellers__view-all svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.ob-bestsellers__view-all:hover,
+.ob-bestsellers__view-all:focus-visible {
+  color: #0d80c4;
+  transform: translateX(0.3rem);
+}
+
+@media screen and (min-width: 990px) {
+  .ob-bestsellers__view-all {
+    font-size: 1.4rem;
+  }
+}

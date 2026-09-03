@@ -1,0 +1,143 @@
+.ob-home-occasions__head {
+  max-width: 67.2rem;
+  margin-bottom: 3.2rem;
+}
+
+.ob-home-occasions__eyebrow {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.336rem;
+  text-transform: uppercase;
+  color: #0d80c4;
+}
+
+.ob-home-occasions__heading {
+  margin: 1.2rem 0 0;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 2.8rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+.ob-home-occasions__subheading {
+  margin: 1.6rem 0 0;
+  font-size: 1.6rem;
+  line-height: 1.6;
+  color: #64748b;
+}
+
+.ob-home-occasions__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.ob-home-occasions__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 2rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.ob-home-occasions__card-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-long, 0.4s) ease;
+}
+
+.ob-home-occasions__card:hover .ob-home-occasions__card-image,
+.ob-home-occasions__card:focus-visible .ob-home-occasions__card-image {
+  transform: scale(1.04);
+}
+
+.ob-home-occasions__card-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0) 60%);
+}
+
+.ob-home-occasions__card-body {
+  position: relative;
+  padding: 2rem;
+  color: #ffffff;
+}
+
+.ob-home-occasions__card-number {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.22rem;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ob-home-occasions__card-title {
+  margin: 0.6rem 0 0;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 2.2rem;
+  color: #ffffff;
+}
+
+.ob-home-occasions__card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.4rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.ob-home-occasions__card-cta svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.ob-home-occasions__card:hover .ob-home-occasions__card-cta,
+.ob-home-occasions__card:focus-visible .ob-home-occasions__card-cta {
+  transform: translateX(0.4rem);
+}
+
+@media screen and (min-width: 750px) {
+  .ob-home-occasions__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.4rem;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .ob-home-occasions__head {
+    margin-bottom: 4.8rem;
+  }
+
+  .ob-home-occasions__heading {
+    font-size: 3.6rem;
+    line-height: 4rem;
+    letter-spacing: -0.036em;
+  }
+
+  .ob-home-occasions__card-body {
+    padding: 2.8rem;
+  }
+
+  .ob-home-occasions__card-title {
+    font-size: 2.6rem;
+  }
+
+  .ob-home-occasions__card-cta {
+    font-size: 1.4rem;
+  }
+}

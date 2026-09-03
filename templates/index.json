@@ -1,49 +1,95 @@
 {
   "sections": {
-    "image_banner": {
-      "type": "image-banner",
-      "blocks": {
-        "heading": {
-          "type": "heading",
-          "settings": {
-            "heading": "Browse our latest products",
-            "heading_size": "h0"
-          }
-        },
-        "button": {
-          "type": "buttons",
-          "settings": {
-            "button_label_1": "Shop all",
-            "button_link_1": "shopify://collections/all",
-            "button_style_secondary_1": true,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
-          }
-        }
-      },
-      "block_order": [
-        "heading",
-        "button"
-      ],
+    "hero": {
+      "type": "ob-home-hero",
       "settings": {
-        "image_overlay_opacity": 40,
-        "image_height": "large",
-        "desktop_content_position": "bottom-center",
-        "show_text_box": false,
-        "image_behavior": "none",
-        "desktop_content_alignment": "center",
-        "color_scheme": "scheme-3",
-        "mobile_content_alignment": "center",
-        "stack_images_on_mobile": false,
-        "show_text_below": false
+        "eyebrow_badge": "10 topmerken · 1 slimme shop",
+        "heading_prefix": "Sterke specialisten voor",
+        "heading_accent": "elk moment",
+        "heading_suffix": "van je dag.",
+        "subheading": "Van training tot outdoor en everyday comfort — wij kiezen per behoefte het juiste merk, zodat jij slimmer shopt.",
+        "button_1_label": "Ontdek per behoefte",
+        "button_1_link": "#shop-per-behoefte",
+        "button_2_label": "Bekijk outlet-deals",
+        "button_2_link": "shopify://collections/solden",
+        "rating_value": "4,8/5",
+        "rating_text": "meer dan 12.000 tevreden klanten",
+        "badge_1_title": "Vandaag besteld",
+        "badge_1_text": "morgen in huis",
+        "badge_2_title": "Nu in de outlet",
+        "badge_2_text": "tot -40%",
+        "padding_top": 48,
+        "padding_bottom": 64
       }
     },
-    "featured_collection": {
+    "brand-marquee": {
+      "type": "ob-home-brand-marquee",
+      "blocks": {
+        "fitflop": { "type": "brand", "settings": { "collection": "fitflop" } },
+        "hi_tec": { "type": "brand", "settings": { "collection": "hi-tec" } },
+        "holster": { "type": "brand", "settings": { "collection": "holster" } },
+        "irasuto_studios": { "type": "brand", "settings": { "collection": "irasuto-studios" } },
+        "juicy_couture": { "type": "brand", "settings": { "collection": "juicy-couture" } },
+        "loewenweiss": { "type": "brand", "settings": { "collection": "loewenweiss" } },
+        "nike_swim": { "type": "brand", "settings": { "collection": "nike-swim" } },
+        "odlo": { "type": "brand", "settings": { "collection": "odlo" } },
+        "pas_de_monaco": { "type": "brand", "settings": { "collection": "pas-de-monaco" } },
+        "sneaker_lab": { "type": "brand", "settings": { "collection": "sneaker-lab" } },
+        "sweaty_betty": { "type": "brand", "settings": { "collection": "sweaty-betty" } }
+      },
+      "block_order": [
+        "fitflop", "hi_tec", "holster", "irasuto_studios", "juicy_couture",
+        "loewenweiss", "nike_swim", "odlo", "pas_de_monaco", "sneaker_lab", "sweaty_betty"
+      ],
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "occasions": {
+      "type": "ob-home-occasions",
+      "blocks": {
+        "sport": {
+          "type": "occasion",
+          "settings": { "collection": "sport-training", "number_label": "01 — Beweeg beter" }
+        },
+        "outdoor": {
+          "type": "occasion",
+          "settings": { "collection": "outdoor-werk", "number_label": "02 — Ga naar buiten" }
+        },
+        "comfort": {
+          "type": "occasion",
+          "settings": { "collection": "dagelijks-comfort", "number_label": "03 — Voel je thuis" }
+        }
+      },
+      "block_order": ["sport", "outdoor", "comfort"],
+      "settings": {
+        "eyebrow": "Shop per behoefte",
+        "heading": "Niet per merk, maar per moment",
+        "subheading": "Wij brengen tien specialisten samen en helpen je kiezen wat écht bij je past — of je nu traint, buiten bent of gewoon lekker wilt zitten.",
+        "cta_label": "Ontdek collectie",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "promo": {
+      "type": "ob-home-promo",
+      "settings": {
+        "badge": "Beperkte stock · op = op",
+        "heading": "Slim gekozen. Extra scherp geprijsd.",
+        "subheading": "Ontdek outlet-deals op topmerken tot -40%. Kwaliteit die blijft, tegen een prijs die verrast.",
+        "button_label": "Shop de outlet",
+        "button_link": "shopify://collections/solden",
+        "padding_top": 24,
+        "padding_bottom": 24
+      }
+    },
+    "bestsellers": {
       "type": "featured-collection",
       "settings": {
-        "title": "Featured products",
-        "heading_size": "h2",
+        "eyebrow": "Populair nu",
+        "title": "Onze bestsellers",
+        "heading_size": "h1",
         "description": "",
         "show_description": false,
         "description_style": "body",
@@ -53,7 +99,7 @@
         "color_scheme": "scheme-1",
         "full_width": false,
         "show_view_all": true,
-        "view_all_style": "solid",
+        "view_all_style": "link",
         "enable_desktop_slider": false,
         "swipe_on_mobile": false,
         "image_ratio": "adapt",
@@ -63,13 +109,69 @@
         "show_rating": false,
         "quick_add": "none",
         "columns_mobile": "2",
-        "padding_top": 44,
-        "padding_bottom": 36
+        "padding_top": 64,
+        "padding_bottom": 44
+      }
+    },
+    "brands": {
+      "type": "ob-home-brands",
+      "blocks": {
+        "odlo": { "type": "brand", "settings": { "collection": "odlo", "description": "Performance lagen" } },
+        "sweaty_betty": { "type": "brand", "settings": { "collection": "sweaty-betty", "description": "Activewear voor haar" } },
+        "hi_tec": { "type": "brand", "settings": { "collection": "hi-tec", "description": "Wandelen & buiten" } },
+        "fitflop": { "type": "brand", "settings": { "collection": "fitflop", "description": "Comforttechnologie" } },
+        "juicy_couture": { "type": "brand", "settings": { "collection": "juicy-couture", "description": "Iconische leisure" } },
+        "holster": { "type": "brand", "settings": { "collection": "holster", "description": "Australische sandalen" } },
+        "loewenweiss": { "type": "brand", "settings": { "collection": "loewenweiss", "description": "Alpine pantoffels" } },
+        "irasuto_studios": { "type": "brand", "settings": { "collection": "irasuto-studios", "description": "Japanse streetwear" } },
+        "nike_swim": { "type": "brand", "settings": { "collection": "nike-swim", "description": "Zwemmen" } },
+        "pas_de_monaco": { "type": "brand", "settings": { "collection": "pas-de-monaco", "description": "Racing culture" } },
+        "sneaker_lab": { "type": "brand", "settings": { "collection": "sneaker-lab", "description": "Sneakerverzorging" } }
+      },
+      "block_order": [
+        "odlo", "sweaty_betty", "hi_tec", "fitflop", "juicy_couture",
+        "holster", "loewenweiss", "irasuto_studios", "nike_swim", "pas_de_monaco", "sneaker_lab"
+      ],
+      "settings": {
+        "eyebrow": "Uitgelichte merken",
+        "heading": "Tien specialisten, zorgvuldig gekozen",
+        "subheading": "Elk merk is de beste in zijn vak. Wij brengen ze samen zodat jij niet hoeft te zoeken.",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "blocks": {
+        "eyebrow": {
+          "type": "eyebrow",
+          "settings": { "text": "Blijf als eerste op de hoogte" }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": { "heading": "Nieuwe collecties & exclusieve deals", "heading_size": "h1" }
+        },
+        "paragraph": {
+          "type": "paragraph",
+          "settings": { "text": "<p>Ontvang als eerste nieuwe drops, outlet-deals en ledenvoordelen. Plus 10% korting op je eerste bestelling.</p>" }
+        },
+        "email_form": {
+          "type": "email_form",
+          "settings": {}
+        },
+        "fine_print": {
+          "type": "fine_print",
+          "settings": { "text": "Geen spam. Je kunt je elk moment uitschrijven." }
+        }
+      },
+      "block_order": ["eyebrow", "heading", "paragraph", "email_form", "fine_print"],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "full_width": false,
+        "padding_top": 64,
+        "padding_bottom": 64
       }
     }
   },
-  "order": [
-    "image_banner",
-    "featured_collection"
-  ]
+  "order": ["hero", "brand-marquee", "occasions", "promo", "bestsellers", "brands", "newsletter"]
 }

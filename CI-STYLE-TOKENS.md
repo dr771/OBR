@@ -14,22 +14,26 @@ provenance rule — same caveat applies to this file).
 - Body: **Inter**. Headings: **Fraunces** (serif) — **authoritative rule is
   MIXED-SHOPS-PLAYBOOK.md:300-302, read that first**: "Dense commerce
   UI... uses the Inter/body variable... Fraunces reserved for true
-  headings." In practice this cashes out by *surface*, not by tag or size:
-  **only PLP and PDP headings get Fraunces. Every other surface — cart
-  (drawer and full page), footer, announcement bar, predictive search,
-  wishlist, account/utility pages — is Inter, full stop**, regardless of
-  whether the element is a big `<h1>` or a small label. (An earlier version
-  of this doc guessed "genuine display heading vs. dense UI" as the
-  dividing line and wrongly kept the `/cart` page's h1s in Fraunces because
-  they looked page-level-prominent — corrected 2026-09-01 per the owner:
-  the surface is what matters, not how big the text renders.) Explicit
-  forces already in place: `component-ob-footer.css:109`,
-  `component-ob-announcement-bar.css:21`,
+  headings." In practice this cashes out by *surface*, not by tag or size,
+  and the real mechanism is Dawn's own default: the theme's heading-font
+  setting is Fraunces, so **every untouched `<h1>`-`<h6>` (and `.h0`-`.h5`
+  utility class) is Fraunces sitewide unless a surface explicitly forces it
+  back to Inter**. PLP, PDP, and (2026-09-03) the homepage never got that
+  override, so they stay on the default; cart (drawer and full page),
+  footer, announcement bar, predictive search, wishlist, and account/utility
+  pages all carry an explicit Inter force, regardless of whether the element
+  is a big `<h1>` or a small label. (An earlier version of this doc guessed
+  "genuine display heading vs. dense UI" as the dividing line and wrongly
+  kept the `/cart` page's h1s in Fraunces because they looked
+  page-level-prominent — corrected 2026-09-01 per the owner: the surface is
+  what matters, not how big the text renders.) Explicit forces already in
+  place: `component-ob-footer.css:109`, `component-ob-announcement-bar.css:21`,
   `component-ob-swatches.css:450/524/532/554/569`, `component-ob-pdp.css:640`
   (dense elements *within* the PDP surface, e.g. its accordion labels — the
-  PDP product `<h1>` itself stays Fraunces since PDP is one of the two
-  Fraunces-approved surfaces), `component-ob-cart-page.css` (`/cart` page
-  h1s + login h2).
+  PDP product `<h1>` itself stays Fraunces since PDP never overrides it),
+  `component-ob-cart-page.css` (`/cart` page h1s + login h2). The homepage's
+  seven sections (`homepage-sections` spec) deliberately add no such
+  override either, matching bolt's own homepage typography 1:1.
 - **The entire cart drawer is force-Inter site-wide**:
   `.cart-drawer, .cart-drawer * { font-family: var(--font-body-family) !important; }`
   (`component-cart-drawer.css:527-530`). If a drawer heading looks wrong,

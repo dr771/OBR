@@ -161,6 +161,14 @@ Found 2026-08-26. Unlike colours and activities, these are **plain text on the p
 
 **Fix:** ideally the feed supplies Dutch values (`Heren`/`Dames`/`Uniseks` etc.) and one consistent language for categories. Failing that these can be renamed per value in Search & Discovery, but that is manual and drifts as soon as new values appear.
 
+## 8. A product's title is an internal attribute description, not a name
+
+Found 2026-09-03, spotted in the new homepage bestsellers grid (`/products/eva-grey-colour-with-holster-branding`, vendor Holster). Its Shopify product title is literally **"EVA grey colour with holster branding"** — reads like a PIM/spec field (colourway + material note) that landed in the customer-facing title, not a real product name the way `FitFlop Airmesh™ Sneaker` or `Ceramicool Run Crew Socks` are.
+
+**Effect:** this exact string shows to shoppers everywhere the title renders — PLP cards, PDP `<h1>`, cart line items, order confirmations.
+
+**Question for Nick:** is this an isolated mis-mapped field on one product, or does it point at a wider issue — e.g. a fallback that fires when Akeneo's real name field is blank for some products? Worth spot-checking whether other products in the same import batch/brand have the same pattern before assuming it's a one-off.
+
 ## Short message for Nick
 
 > Hi Nick,
@@ -187,6 +195,8 @@ Found 2026-08-26. Unlike colours and activities, these are **plain text on the p
 >
 > **7.** Gender (`Men`/`Women`/`Unisex`) and Producttype (`Shoe`/`Fashion`/`Sport`) come through in English, and the category values are mixed language (`Slipper`, `Shirt` … but `Ondergoed`, `Kousen`). These are plain text, so unlike the colours the theme can't translate them — can the feed supply Dutch, and pick one language for categories?
 >
-> No rush on 2–4, but 5 is blocking me.
+> **8.** One product's title is literally `EVA grey colour with holster branding` (`/products/eva-grey-colour-with-holster-branding`) — reads like an internal spec note, not a name. Is that isolated, or could other products have the same real-name-missing pattern?
+>
+> No rush on 2–4 or 8, but 5 is blocking me.
 >
 > Thanks!

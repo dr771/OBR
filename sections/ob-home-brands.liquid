@@ -1,0 +1,132 @@
+{% comment %}
+  OB: homepage "Uitgelichte merken" grid - plain bordered brand cards (name +
+  one-line description), matched to bolt's 5-col desktop grid. The real
+  brand roster is 11 (bolt's own demo used 10, three of which - Magnum, RH+,
+  Mechanix - don't exist as real collections here and four real ones were
+  missing from it), so this reuses the Merken chip grid's flex/uneven-row
+  technique (6 + 5) instead of a rigid column count, exactly like
+  component-ob-merken.css's .ob-merken-chips.
+
+  Default block copy reuses the identical one-line "eyebrow" strings already
+  written for templates/page.merken.json's brand blocks, so the two pages
+  never say two different things about the same brand.
+{% endcomment %}
+{{ 'component-ob-home-brands.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="ob-home-brands page-width section-{{ section.id }}-padding">
+  <div class="ob-home-brands__head">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="ob-home-brands__eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="ob-home-brands__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.subheading != blank -%}
+      <p class="ob-home-brands__subheading">{{ section.settings.subheading }}</p>
+    {%- endif -%}
+  </div>
+
+  <div class="ob-home-brands__grid">
+    {%- for block in section.blocks -%}
+      {%- if block.settings.collection != blank -%}
+        <a href="{{ block.settings.collection.url }}" class="ob-home-brands__card" {{ block.shopify_attributes }}>
+          <span class="ob-home-brands__name">{{ block.settings.collection.title }}</span>
+          {%- if block.settings.description != blank -%}
+            <span class="ob-home-brands__desc">{{ block.settings.description }}</span>
+          {%- endif -%}
+        </a>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "OB Uitgelichte merken",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Uitgelichte merken"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titel",
+      "default": "Tien specialisten, zorgvuldig gekozen"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Onderschrift",
+      "default": "Elk merk is de beste in zijn vak. Wij brengen ze samen zodat jij niet hoeft te zoeken."
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Merk",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collectie"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Korte omschrijving"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "OB Uitgelichte merken",
+      "blocks": [
+        { "type": "brand" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,102 @@
+{% comment %}
+  OB: homepage brand marquee - a continuously scrolling row of brand
+  wordmarks just under the hero, matched to bolt's `animate-marquee` strip.
+  Reuses snippets/ob-brand-logotype.liquid (built for the Merken hero chips)
+  so the same brand typography shows up here for free.
+
+  Pure-CSS loop: the block list is rendered twice back-to-back and the track
+  animates -50%, so the seam is invisible and no JS is needed. Pauses on
+  hover/focus and is skipped entirely under reduced motion.
+{% endcomment %}
+{{ 'component-ob-home-marquee.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- if section.blocks.size > 0 -%}
+  <div class="ob-home-marquee section-{{ section.id }}-padding">
+    <div class="ob-home-marquee__track">
+      {%- for copy in (1..2) -%}
+        <div class="ob-home-marquee__set" aria-hidden="{% unless copy == 1 %}true{% endunless %}">
+          {%- for block in section.blocks -%}
+            {%- if block.settings.collection != blank -%}
+              <a
+                href="{{ block.settings.collection.url }}"
+                class="ob-home-marquee__item"
+                {% if copy == 1 %}{{ block.shopify_attributes }}{% endif %}
+                {% if copy == 2 %}tabindex="-1"{% endif %}
+              >
+                {%- render 'ob-brand-logotype', collection: block.settings.collection -%}
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "OB Brand marquee",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 28
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Merk",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collectie"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "OB Brand marquee",
+      "blocks": [
+        { "type": "brand" }
+      ]
+    }
+  ]
+}
+{% endschema %}

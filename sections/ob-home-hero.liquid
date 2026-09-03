@@ -1,0 +1,262 @@
+{% comment %}
+  OB: homepage hero, matched to https://original-brands.bolt.host/. Two-column
+  layout (copy + CTAs + rating left, photo with two floating info cards
+  right). Heading is split into prefix/accent/suffix settings rather than one
+  richtext field so the accent phrase can carry its own italic/colour styling
+  without fragile inline-HTML editing.
+
+  Image ships with a real default (assets/ob-brand-fitflop.jpg, already
+  curated for the Merken page) via the same hardcoded-asset-with-picker-
+  override pattern as snippets/ob-brand-hero-image.liquid, so the section
+  never renders blank before a merchant uploads their own photo.
+{% endcomment %}
+{{ 'component-ob-home-hero.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="ob-home-hero section-{{ section.id }}-padding">
+  <div class="ob-home-hero__inner page-width">
+    <div class="ob-home-hero__copy">
+      {%- if section.settings.eyebrow_badge != blank -%}
+        <span class="ob-home-hero__badge">{{ section.settings.eyebrow_badge }}</span>
+      {%- endif -%}
+
+      <h1 class="ob-home-hero__heading">
+        {{ section.settings.heading_prefix }}
+        <span class="ob-home-hero__heading-accent">{{ section.settings.heading_accent }}</span>
+        {{ section.settings.heading_suffix }}
+      </h1>
+
+      {%- if section.settings.subheading != blank -%}
+        <p class="ob-home-hero__subheading">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+
+      <div class="ob-home-hero__ctas">
+        {%- if section.settings.button_1_label != blank -%}
+          <a href="{{ section.settings.button_1_link }}" class="button ob-button--cta">
+            {{ section.settings.button_1_label }}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.button_2_label != blank -%}
+          <a href="{{ section.settings.button_2_link }}" class="button ob-button--outline">
+            {{ section.settings.button_2_label }}
+          </a>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.rating_value != blank -%}
+        <div class="ob-home-hero__rating">
+          <span class="ob-home-hero__stars" aria-hidden="true">
+            {%- for i in (1..5) -%}
+              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2.6 5.6 6 .7-4.5 4.1 1.2 6-5.3-3-5.3 3 1.2-6-4.5-4.1 6-.7z"/></svg>
+            {%- endfor -%}
+          </span>
+          <p>
+            <span class="ob-home-hero__rating-value">{{ section.settings.rating_value }}</span>
+            {%- if section.settings.rating_text != blank -%}
+              &nbsp;· {{ section.settings.rating_text }}
+            {%- endif -%}
+          </p>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="ob-home-hero__media">
+      {%- liquid
+        assign ob_hero_image_url = 'ob-brand-fitflop.jpg' | asset_url
+        if section.settings.image != blank
+          assign ob_hero_image_url = section.settings.image | image_url: width: 1200
+        endif
+      -%}
+      {% comment %}theme-check-disable RemoteAsset{% endcomment %}
+      <img
+        src="{{ ob_hero_image_url }}"
+        alt="{{ section.settings.image.alt | default: 'Original Brands' | escape }}"
+        width="1200"
+        height="1200"
+        class="ob-home-hero__image"
+      >
+
+      {%- if section.settings.badge_1_title != blank -%}
+        <div class="ob-home-hero__float ob-home-hero__float--top">
+          {%- render 'ob-icon', icon: 'truck', class: 'ob-home-hero__float-icon' -%}
+          <div>
+            <p class="ob-home-hero__float-title">{{ section.settings.badge_1_title }}</p>
+            <p class="ob-home-hero__float-text">{{ section.settings.badge_1_text }}</p>
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.badge_2_title != blank -%}
+        <div class="ob-home-hero__float ob-home-hero__float--bottom">
+          <p class="ob-home-hero__float-eyebrow">{{ section.settings.badge_2_title }}</p>
+          <p class="ob-home-hero__float-accent">{{ section.settings.badge_2_text }}</p>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "OB Homepage hero",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow_badge",
+      "label": "Badge boven titel",
+      "default": "10 topmerken · 1 slimme shop"
+    },
+    {
+      "type": "text",
+      "id": "heading_prefix",
+      "label": "Titel (voor accent)",
+      "default": "Sterke specialisten voor"
+    },
+    {
+      "type": "text",
+      "id": "heading_accent",
+      "label": "Titel accent (blauw, cursief)",
+      "default": "elk moment"
+    },
+    {
+      "type": "text",
+      "id": "heading_suffix",
+      "label": "Titel (na accent)",
+      "default": "van je dag."
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Onderschrift",
+      "default": "Van training tot outdoor en everyday comfort — wij kiezen per behoefte het juiste merk, zodat jij slimmer shopt."
+    },
+    {
+      "type": "header",
+      "content": "Knoppen"
+    },
+    {
+      "type": "text",
+      "id": "button_1_label",
+      "label": "Primaire knop label",
+      "default": "Ontdek per behoefte"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Primaire knop link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "Secundaire knop label",
+      "default": "Bekijk outlet-deals"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Secundaire knop link"
+    },
+    {
+      "type": "header",
+      "content": "Beoordeling"
+    },
+    {
+      "type": "text",
+      "id": "rating_value",
+      "label": "Score",
+      "default": "4,8/5"
+    },
+    {
+      "type": "text",
+      "id": "rating_text",
+      "label": "Tekst",
+      "default": "meer dan 12.000 tevreden klanten"
+    },
+    {
+      "type": "header",
+      "content": "Afbeelding"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero-afbeelding",
+      "info": "Standaard: een gecureerde campagnefoto uit het thema."
+    },
+    {
+      "type": "header",
+      "content": "Zwevende kaart 1 (rechtsboven)"
+    },
+    {
+      "type": "text",
+      "id": "badge_1_title",
+      "label": "Titel",
+      "default": "Vandaag besteld"
+    },
+    {
+      "type": "text",
+      "id": "badge_1_text",
+      "label": "Tekst",
+      "default": "morgen in huis"
+    },
+    {
+      "type": "header",
+      "content": "Zwevende kaart 2 (linksonder)"
+    },
+    {
+      "type": "text",
+      "id": "badge_2_title",
+      "label": "Eyebrow",
+      "default": "Nu in de outlet"
+    },
+    {
+      "type": "text",
+      "id": "badge_2_text",
+      "label": "Waarde",
+      "default": "tot -40%"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "OB Homepage hero"
+    }
+  ]
+}
+{% endschema %}
