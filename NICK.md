@@ -169,6 +169,12 @@ Found 2026-09-03, spotted in the new homepage bestsellers grid (`/products/eva-g
 
 **Question for Nick:** is this an isolated mis-mapped field on one product, or does it point at a wider issue — e.g. a fallback that fires when Akeneo's real name field is blank for some products? Worth spot-checking whether other products in the same import batch/brand have the same pattern before assuming it's a one-off.
 
+## 9. Featured brand roster doesn't match the full-catalog SKU export
+
+Found 2026-09-03, while restructuring the homepage "Shop per behoefte" collections. The Merken page / homepage brand marquee and featured-brands grid list 11 brands including **Sweaty Betty** and **Nike Swim**, but a full-catalog SKU export shows **zero SKUs** for Sweaty Betty and only 3 for Nike Swim — while **RH+** (2801 SKUs) and **Magnum** (620 SKUs, work/tactical boots) have real volume but aren't featured on either page yet.
+
+**Question for Nick:** is Sweaty Betty actually leaving the feed (it currently has a handful of live synced test products, so it hasn't fully dropped out yet), and when are RH+ and Magnum expected to sync? The featured-brand roster (Merken page + homepage) will need rebuilding around whatever the confirmed final set is — not urgent, but the sooner this is confirmed the less rework.
+
 ## Short message for Nick
 
 > Hi Nick,
@@ -197,6 +203,8 @@ Found 2026-09-03, spotted in the new homepage bestsellers grid (`/products/eva-g
 >
 > **8.** One product's title is literally `EVA grey colour with holster branding` (`/products/eva-grey-colour-with-holster-branding`) — reads like an internal spec note, not a name. Is that isolated, or could other products have the same real-name-missing pattern?
 >
-> No rush on 2–4 or 8, but 5 is blocking me.
+> **9.** The brands featured on our Merken page and homepage (11 of them, including Sweaty Betty and Nike Swim) don't match a full-catalog SKU export you shared — Sweaty Betty shows 0 SKUs there and Nike Swim only 3, while RH+ (2801) and Magnum (620) have real volume but aren't featured yet. Is Sweaty Betty leaving the feed, and when do you expect RH+/Magnum to sync? Want to rebuild our featured-brand list around the confirmed final roster rather than guess.
+>
+> No rush on 2–4, 8, or 9, but 5 is blocking me.
 >
 > Thanks!

@@ -230,6 +230,14 @@ Owner's explicit call, given that gap: **keep Dawn's existing scroller behavior*
 
 Also decided: the reference's exact bar color (`#0F172A`) has no matching theme color scheme. Rather than adding a new one, the section stays on the theme's existing dark `scheme-3` — already live before this decision was made. General rule reaffirmed from D15/D16: **a reference's own implementation choices are not automatically the target** — geometry and visual treatment get matched; interaction patterns and exact colors get evaluated against what already exists in the theme, and the owner decides when they diverge.
 
+### D18 — Needs-collections merchandised by vendor, not activity/category — decided 2026-09-03
+
+The three homepage "Shop per behoefte" collections (`sport-training`, `outdoor-werk`, `dagelijks-comfort`) were originally OR-conditioned on the `custom.activities`/`custom.shopify_originalbrands_category` metafields. Reviewed against a full-catalog SKU export the owner provided (all 11 supplier brands' real SKU counts, not just the 11 test products synced at the time) and a live GraphQL check of synced products, two problems surfaced: `Outdoor & Werk` only looked empty because the 11-product test sync happened to have zero Magnum (work/tactical boots) items — the full catalog has 620 Magnum SKUs, so the pillar is real once that brand syncs; and `Dagelijks Comfort`'s activity-based conditions actively **overlapped** with `Sport & Training`, confirmed live — every sampled Odlo product (which dominates Sport & Training's volume) carries activity tags spanning both pillars' buckets simultaneously (e.g. one base layer tagged `Training, Fietsen, Skiën & Snowboard, Wandelen, Running` at once).
+
+**Decision:** switched all three collections to vendor-based OR conditions (mutually exclusive by construction, since vendor is single-valued per product) and renamed `Dagelijks Comfort` → **Fashion & Lifestyle** (handle `fashion-lifestyle`, vendor list Juicy Couture/Pas de Monaco/Irasuto Studios) rather than trying to salvage a "comfort" pillar — a "Comfort" needs-card would just duplicate the existing Schoenen/Kleding/Accessoires product-type axis (FitFlop/Holster/Loewenweiss stay reachable via that axis and their own Merken brand page instead). `Sport & Training` = Odlo/RH+/Nike Swim/Sweaty Betty (provisional); `Outdoor & Werk` = Hi-Tec/Magnum. Full rationale and the SKU-weight table live in `COLLECTIONS.md`; implementation is the archived OpenSpec change `restructure-needs-collections`.
+
+This also surfaced the brand-roster question below (Sweaty Betty/Nike Swim vs. RH+/Magnum) as concrete and no longer speculative.
+
 ## Reuse ledger (SB's shipped `openspec/specs/`)
 
 | Capability (spec) | Verdict | Note |
@@ -337,6 +345,8 @@ In rough priority order:
 ## Brand roster
 
 Apparel + footwear, sale-heavy merchandising (visible strikethrough pricing, "Solden" nav item), birthday-field newsletter popup. Carries Sweaty Betty itself as one of its brands, alongside FitFlop, Odlo, Juicy Couture, Mechanix, Holster Australië, RH+, others.
+
+**Roster mismatch confirmed 2026-09-03** (see D18): RH+ being a real carried brand was already known from this original 2026-07-14 audit, well before Akeneo confirmed it with real SKU volume (2801 SKUs). But the Merken page / homepage brand marquee and featured-brands grid (11 brands, built 2026-08-12–2026-09-03) list Sweaty Betty and Nike Swim, which have **zero SKUs** in a full-catalog Akeneo SKU export — while RH+ (2801 SKUs) and Magnum (620 SKUs, matches "Mechanix"'s work/tactical-boot niche in spirit though it's a different brand) have real volume but aren't featured anywhere in the theme yet. Not yet resolved: whether Sweaty Betty/Nike Swim are genuinely leaving the feed (Nick would confirm), and whether/when to rebuild the Merken/homepage featured-brand roster around RH+/Magnum. Tracked as a follow-up, out of scope for the `restructure-needs-collections` change, which only touched the three needs-collections themselves.
 
 ## Open questions before scoping for real
 

@@ -7,7 +7,7 @@
         "heading_prefix": "Sterke specialisten voor",
         "heading_accent": "elk moment",
         "heading_suffix": "van je dag.",
-        "subheading": "Van training tot outdoor en everyday comfort — wij kiezen per behoefte het juiste merk, zodat jij slimmer shopt.",
+        "subheading": "Van training tot outdoor en lifestyle — wij kiezen per behoefte het juiste merk, zodat jij slimmer shopt.",
         "button_1_label": "Ontdek per behoefte",
         "button_1_link": "#shop-per-behoefte",
         "button_2_label": "Bekijk outlet-deals",
@@ -59,14 +59,14 @@
         },
         "comfort": {
           "type": "occasion",
-          "settings": { "collection": "dagelijks-comfort", "number_label": "03 — Voel je thuis" }
+          "settings": { "collection": "fashion-lifestyle", "number_label": "03 — Vind je stijl" }
         }
       },
       "block_order": ["sport", "outdoor", "comfort"],
       "settings": {
         "eyebrow": "Shop per behoefte",
         "heading": "Niet per merk, maar per moment",
-        "subheading": "Wij brengen tien specialisten samen en helpen je kiezen wat écht bij je past — of je nu traint, buiten bent of gewoon lekker wilt zitten.",
+        "subheading": "Wij brengen tien specialisten samen en helpen je kiezen wat écht bij je past — of je nu traint, buiten bent of je eigen stijl zoekt.",
         "cta_label": "Ontdek collectie",
         "padding_top": 64,
         "padding_bottom": 64
