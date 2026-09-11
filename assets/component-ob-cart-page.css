@@ -44,7 +44,7 @@ cart-items .ob-cart-page-header__eyebrow {
   font-family: var(--font-body-family);
   font-size: 1.1rem;
   font-weight: 600;
-  letter-spacing: normal;
+  letter-spacing: 0.24rem;
   line-height: 1.6rem;
   margin: 0 0 0.8rem;
   text-transform: uppercase;
@@ -274,7 +274,7 @@ cart-items .cart-item__line-total .cart-item__discounted-prices {
   font-family: var(--font-body-family);
   font-size: 1.1rem;
   font-weight: 600;
-  letter-spacing: normal;
+  letter-spacing: 0.24rem;
   line-height: 1.6rem;
   margin: 0 0 0.8rem;
   text-transform: uppercase;

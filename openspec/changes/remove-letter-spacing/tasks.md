@@ -5,6 +5,7 @@
 - [x] 1.3 Replace every positive `letter-spacing` value in the Dawn component/template stylesheets with `normal` (cart items, cart drawer, card, article card, facets, localization form, price, pickup availability, variant picker, volume pricing, customer, gift card, password, main product, quick order list, quantity popover), leaving `component-rating.css` untouched
 - [x] 1.4 Replace every positive `letter-spacing` value in `assets/component-ob-*.css` with `normal`, including the `.ob-lt-*` wordmark rules and `.ob-logotype small`
 - [x] 1.5 Grep confirms the only remaining positive values are in `component-rating.css`
+- [x] 1.6 Restore section-eyebrow tracking after owner review: homepage brands/bestsellers/occasions/newsletter `0.336rem`, `/cart` header/summary `0.24rem`
 
 ## 2. Deploy and verify
 

@@ -23,7 +23,7 @@ Letter-spacing inherits, and Dawn seeds it at the root: `layout/theme.liquid`'s 
 
 ## Risks / Trade-offs
 
-- [Uppercase eyebrows at 10–12px read denser without tracking] → Accepted owner decision; size/weight unchanged so the hierarchy still comes from case, weight, and colour.
+- [Uppercase labels at 10–12px read denser without tracking] → The owner accepted this for brand labels, badges, and card/tile labels. For section eyebrows, which introduce a heading, the owner reversed it after live review: they keep their original tracking (homepage `0.336rem`, `/cart` `0.24rem`) as the second allowed exception.
 - [Specs recorded measured reference tracking] → The three affected requirements (`plp-card-meta`, `pdp-layout-chrome`, `cart-drawer-line-item-layout`) are modified in this change to record the deliberate departure.
 - [A selector missed by the sweep still sets positive tracking] → Verified live by sampling computed `letter-spacing` of every element on the homepage, a collection page, a PDP, and `/cart`, and listing any positive value with its selector source.
 - [Width-measuring JS (`ob-wishlist.js` option ruler) depends on tracking] → It measures rendered text with an off-screen ruler that inherits the live styles, so it adapts automatically.

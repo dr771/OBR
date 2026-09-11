@@ -10,6 +10,7 @@ Text across the storefront reads slightly "spaced out" in some places and not in
 - Negative tracking (large-heading tightening such as `-0.01em`/`-0.48px`) is unchanged — it tightens, it does not space out.
 - The per-brand text wordmarks (`.ob-lt-*`, `.ob-logotype small`) lose their tracking too — the homepage "Uitgelichte merken" grid renders them visibly.
 - Unchanged by design: the star-rating glyph spacing in `component-rating.css` (it drives the star row's width calculation, not text tracking).
+- Restored after live review (owner): section eyebrows keep their tracking. These are the homepage "Uitgelichte merken", bestsellers, occasions, and newsletter kickers (`0.336rem`) and the `/cart` header and summary kickers (`0.24rem`). Card, tile, and floating-card labels stay at `normal`.
 
 ## Capabilities
 

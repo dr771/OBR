@@ -138,10 +138,14 @@ the same two values. Untouched Dawn headings are the odd ones out.
   positive. **No positive tracking anywhere in the theme** (owner decision
   2026-09-11, `storefront-letter-spacing` spec): Dawn's inherited body
   `0.06rem`, its heading/button/badge/label/caption tracking, and every
-  uppercase eyebrow, brand label, badge, and brand text wordmark are all
-  `normal`. Uppercase eyebrows get their hierarchy from case, weight, and
-  colour, not from tracking. The only positive value left is the star-rating
-  glyph row in `component-rating.css`, which is width geometry, not text.
+  brand label, badge, card/tile label, and brand text wordmark are all
+  `normal`. **One deliberate exception: section eyebrows**, the small
+  uppercase kicker line above a section heading, keep wide tracking. On the
+  homepage (e.g. "Uitgelichte merken") that is 12px/600 at `0.336rem`; on
+  `/cart` it is `0.24rem`. Labels on a card, tile, or floating card are not
+  section eyebrows and stay `normal`. The only other positive value is the
+  star-rating glyph row in `component-rating.css`, which is width geometry,
+  not text.
 - Font-family is a **separate decision from weight/tracking, but not an
   independent judgment call** — see "Font stack" above: Fraunces only on
   PLP/PDP, Inter everywhere else, by surface. Don't reason it out per
