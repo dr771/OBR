@@ -137,7 +137,7 @@
     }
   }
 
-  @media screen and (min-width: 1500px) {
+  @media screen and (min-width: 1250px) {
     .header--middle-left:not(.drawer-menu) {
       grid-template-columns: auto minmax(0, 1fr) auto;
     }
@@ -149,7 +149,39 @@
     }
   }
 
-  @media screen and (min-width: 990px) and (max-width: 1499px) {
+  /* OB: compact the one-row header before it wraps — logo first, then menu
+     labels and icon spacing. Thresholds are measured against the 8-item main
+     menu and 230px logo; re-measure if either grows. */
+  @media screen and (min-width: 1250px) and (max-width: 1439px) {
+    .header--middle-left:not(.drawer-menu) {
+      column-gap: 1.2rem;
+    }
+
+    .header--middle-left:not(.drawer-menu) .header__heading-logo {
+      max-width: 18rem;
+    }
+  }
+
+  @media screen and (min-width: 1250px) and (max-width: 1379px) {
+    .header--middle-left:not(.drawer-menu) .header__inline-menu > .list-menu--inline > li > :is(
+      .header__menu-item,
+      header-menu > details > .header__menu-item
+    ) {
+      padding-inline: 0.8rem;
+      font-size: 1.3rem;
+    }
+
+    .header--middle-left:not(.drawer-menu) .header__icons .header__icon,
+    .header--middle-left:not(.drawer-menu) .header__icons .header__icon .svg-wrapper {
+      width: 3.6rem;
+    }
+
+    .header--middle-left:not(.drawer-menu) .header__icons .header__icon .icon {
+      flex-shrink: 0;
+    }
+  }
+
+  @media screen and (min-width: 990px) and (max-width: 1249px) {
     .header--middle-left:not(.drawer-menu) {
       grid-template-areas:
         '. heading icons'
