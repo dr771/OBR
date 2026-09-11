@@ -71,11 +71,41 @@
   display: block;
   position: absolute;
   inset: 0;
+  /* A true smooth `to top` alpha fade (e.g. rgba(0,0,0,.85) -> transparent)
+     silently fails to paint on some GPU/driver combos - confirmed by A/B
+     toggling live: identical fade works fine as `to right`, and works fine
+     stepped, but not smooth+vertical. Stepped into 28 thin hard-edged bands
+     as a render-safe substitute; at this band count it reads as smooth. */
   background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.85) 0%,
-    rgba(0, 0, 0, 0.25) 50%,
-    rgba(0, 0, 0, 0) 100%
+    0deg,
+    rgba(0, 0, 0, 0.850) 0%, rgba(0, 0, 0, 0.850) 3.571%,
+    rgba(0, 0, 0, 0.807) 3.571%, rgba(0, 0, 0, 0.807) 7.143%,
+    rgba(0, 0, 0, 0.764) 7.143%, rgba(0, 0, 0, 0.764) 10.714%,
+    rgba(0, 0, 0, 0.721) 10.714%, rgba(0, 0, 0, 0.721) 14.286%,
+    rgba(0, 0, 0, 0.679) 14.286%, rgba(0, 0, 0, 0.679) 17.857%,
+    rgba(0, 0, 0, 0.636) 17.857%, rgba(0, 0, 0, 0.636) 21.429%,
+    rgba(0, 0, 0, 0.593) 21.429%, rgba(0, 0, 0, 0.593) 25%,
+    rgba(0, 0, 0, 0.550) 25%, rgba(0, 0, 0, 0.550) 28.571%,
+    rgba(0, 0, 0, 0.507) 28.571%, rgba(0, 0, 0, 0.507) 32.143%,
+    rgba(0, 0, 0, 0.464) 32.143%, rgba(0, 0, 0, 0.464) 35.714%,
+    rgba(0, 0, 0, 0.421) 35.714%, rgba(0, 0, 0, 0.421) 39.286%,
+    rgba(0, 0, 0, 0.379) 39.286%, rgba(0, 0, 0, 0.379) 42.857%,
+    rgba(0, 0, 0, 0.336) 42.857%, rgba(0, 0, 0, 0.336) 46.429%,
+    rgba(0, 0, 0, 0.293) 46.429%, rgba(0, 0, 0, 0.293) 50%,
+    rgba(0, 0, 0, 0.250) 50%, rgba(0, 0, 0, 0.250) 53.571%,
+    rgba(0, 0, 0, 0.232) 53.571%, rgba(0, 0, 0, 0.232) 57.143%,
+    rgba(0, 0, 0, 0.214) 57.143%, rgba(0, 0, 0, 0.214) 60.714%,
+    rgba(0, 0, 0, 0.196) 60.714%, rgba(0, 0, 0, 0.196) 64.286%,
+    rgba(0, 0, 0, 0.179) 64.286%, rgba(0, 0, 0, 0.179) 67.857%,
+    rgba(0, 0, 0, 0.161) 67.857%, rgba(0, 0, 0, 0.161) 71.429%,
+    rgba(0, 0, 0, 0.143) 71.429%, rgba(0, 0, 0, 0.143) 75%,
+    rgba(0, 0, 0, 0.125) 75%, rgba(0, 0, 0, 0.125) 78.571%,
+    rgba(0, 0, 0, 0.107) 78.571%, rgba(0, 0, 0, 0.107) 82.143%,
+    rgba(0, 0, 0, 0.089) 82.143%, rgba(0, 0, 0, 0.089) 85.714%,
+    rgba(0, 0, 0, 0.071) 85.714%, rgba(0, 0, 0, 0.071) 89.286%,
+    rgba(0, 0, 0, 0.054) 89.286%, rgba(0, 0, 0, 0.054) 92.857%,
+    rgba(0, 0, 0, 0.036) 92.857%, rgba(0, 0, 0, 0.036) 96.429%,
+    rgba(0, 0, 0, 0.018) 96.429%, rgba(0, 0, 0, 0.018) 100%
   );
 }
 

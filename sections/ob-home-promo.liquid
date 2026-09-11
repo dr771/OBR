@@ -4,6 +4,11 @@
   footer's "Outlet" link already resolves to, so this banner uses the same
   informal "outlet" marketing language the footer already established for it
   rather than the literal Dutch collection title.
+
+  Background photo ships with a real default (assets/ob-brand-hi-tec.jpg,
+  already curated for the homepage occasion grid) via the same hardcoded-
+  asset-with-picker-override pattern as ob-home-hero.liquid, so the card
+  never renders flat-color-only before a merchant uploads their own shot.
 {% endcomment %}
 {{ 'component-ob-home-promo.css' | asset_url | stylesheet_tag }}
 
@@ -23,9 +28,27 @@
 
 <div class="page-width section-{{ section.id }}-padding">
   <div class="ob-home-promo">
+    {%- liquid
+      assign ob_promo_image_url = 'ob-brand-hi-tec.jpg' | asset_url
+      if section.settings.background_image != blank
+        assign ob_promo_image_url = section.settings.background_image | image_url: width: 1600
+      endif
+    -%}
+    {% comment %}theme-check-disable RemoteAsset{% endcomment %}
+    <img
+      src="{{ ob_promo_image_url }}"
+      alt=""
+      aria-hidden="true"
+      loading="lazy"
+      class="ob-home-promo__bg-image"
+    >
+    <div class="ob-home-promo__bg-gradient" aria-hidden="true"></div>
     <div class="ob-home-promo__content">
       {%- if section.settings.badge != blank -%}
-        <span class="ob-home-promo__badge">{{ section.settings.badge }}</span>
+        <span class="ob-home-promo__badge">
+          {%- render 'ob-icon', icon: 'timer', class: 'ob-home-promo__badge-icon' -%}
+          {{ section.settings.badge }}
+        </span>
       {%- endif -%}
       {%- if section.settings.heading != blank -%}
         <h2 class="ob-home-promo__heading">{{ section.settings.heading }}</h2>
@@ -36,7 +59,9 @@
       {%- if section.settings.button_label != blank -%}
         <a href="{{ section.settings.button_link }}" class="ob-home-promo__button">
           {{ section.settings.button_label }}
-          {%- render 'ob-icon', icon: 'chevron-right' -%}
+          <span class="ob-home-promo__button-icon">
+            {%- render 'ob-icon', icon: 'arrow-right' -%}
+          </span>
         </a>
       {%- endif -%}
     </div>
@@ -76,6 +101,16 @@
       "type": "url",
       "id": "button_link",
       "label": "Knop link"
+    },
+    {
+      "type": "header",
+      "content": "Achtergrond"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Achtergrondfoto",
+      "info": "Standaard: een gecureerde campagnefoto uit het thema."
     },
     {
       "type": "header",

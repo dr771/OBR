@@ -192,6 +192,26 @@ its literal Dutch title.
 - **WHEN** the promo section renders with default settings
 - **THEN** its button SHALL link to `/collections/solden`.
 
+### Requirement: Outlet promo banner matches the bolt reference's photo and hover choreography
+The banner SHALL carry a full-bleed background photo (25% opacity, a
+left-to-right gradient fading from the card's own dark colour to transparent)
+behind its copy, uploadable per-merchant via an `image_picker` setting with a
+curated theme default so the card never renders flat-colour-only. Its badge
+SHALL carry a leading icon (`timer`), and its CTA button SHALL match bolt's
+own hover state exactly: a drop shadow on the button (no lift/translate) and
+an `arrow-right` icon that slides right on hover/focus, not a static chevron.
+
+#### Scenario: Background photo and gradient
+- **WHEN** the promo section renders with no `background_image` set
+- **THEN** it SHALL fall back to a curated theme asset, rendered full-bleed
+  under the same dark-to-transparent gradient as when a merchant uploads
+  their own photo.
+
+#### Scenario: Button hover
+- **WHEN** the CTA button is hovered or focused
+- **THEN** the button SHALL gain a drop shadow and its arrow icon SHALL
+  translate right, matching bolt's measured hover state.
+
 ### Requirement: Bestsellers reuses the finished PLP card treatment with no bespoke card work
 The bestsellers section SHALL be Dawn's `featured-collection` section
 restyled (eyebrow added, "view all" link relocated beside the heading), not a

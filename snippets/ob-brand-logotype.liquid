@@ -24,12 +24,46 @@
   - collection: {Object} Collection Liquid object (optional if `handle` is given)
   - handle: {String} Brand handle to render, for a brand with no collection
     yet (e.g. RH+ - not synced from Akeneo). Defaults to `collection.handle`.
+  - style: {String} Pass 'text' to force the hand-styled wordmark treatment
+    (.ob-logotype / .ob-lt-*) instead of the real logo image, for a surface
+    that deliberately wants styled type over photographic marks (e.g. the
+    homepage "Uitgelichte merken" grid, per the mockup's own brand-chip
+    treatment). Omit for the default real-logo behavior.
 
   Usage:
   {% render 'ob-brand-logotype', collection: collection %}
   {% render 'ob-brand-logotype', handle: 'rh-plus' %}
+  {% render 'ob-brand-logotype', collection: collection, style: 'text' %}
 {% endcomment %}
 {%- assign ob_lt_handle = handle | default: collection.handle -%}
+{%- if style == 'text' -%}
+  {%- case ob_lt_handle -%}
+    {%- when 'fitflop' -%}
+      <span class="ob-logotype ob-lt-fitflop">fitflop</span>
+    {%- when 'hi-tec' -%}
+      <span class="ob-logotype ob-lt-hitec">HI-TEC</span>
+    {%- when 'holster' -%}
+      <span class="ob-logotype ob-lt-holster">holster<small>australia</small></span>
+    {%- when 'irasuto-studios' -%}
+      <span class="ob-logotype ob-lt-irasuto">Irasuto<small>Studios</small></span>
+    {%- when 'juicy-couture' -%}
+      <span class="ob-logotype ob-lt-juicy">Juicy Couture</span>
+    {%- when 'loewenweiss' -%}
+      <span class="ob-logotype ob-lt-loewenweiss">Loewenweiss</span>
+    {%- when 'nike-swim' -%}
+      <span class="ob-logotype ob-lt-nikeswim">Nike Swim</span>
+    {%- when 'odlo' -%}
+      <span class="ob-logotype ob-lt-odlo">ODLO</span>
+    {%- when 'pas-de-monaco' -%}
+      <span class="ob-logotype ob-lt-pasdemonaco">Pas de<small>Monaco</small></span>
+    {%- when 'sneaker-lab' -%}
+      <span class="ob-logotype ob-lt-sneakerlab">sneaker<b>lab</b></span>
+    {%- when 'sweaty-betty' -%}
+      <span class="ob-logotype ob-lt-sweatybetty">Sweaty Betty</span>
+    {%- else -%}
+      <span class="ob-logotype">{{ collection.title }}</span>
+  {%- endcase -%}
+{%- else -%}
 {%- case ob_lt_handle -%}
   {%- when 'fitflop' -%}
     <img
@@ -144,3 +178,4 @@
   {%- else -%}
     <span class="ob-logotype">{{ collection.title }}</span>
 {%- endcase -%}
+{%- endif -%}

@@ -1,3 +1,7 @@
+.ob-home-brands {
+  background: #f1f5f9;
+}
+
 .ob-home-brands__head {
   max-width: 67.2rem;
   margin-bottom: 3.2rem;
@@ -53,6 +57,7 @@
   background: #ffffff;
   border: 0.1rem solid #e2e8f0;
   border-radius: 1.4rem;
+  color: #0f172a;
   text-decoration: none;
   transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
@@ -63,15 +68,16 @@
   box-shadow: 0 0.8rem 1.8rem -1.4rem rgba(15, 23, 42, 0.45);
 }
 
+/* Typography comes from the rendered .ob-logotype / .ob-lt-* wordmark
+   (see ob-brand-logotype.liquid style:'text') - this stays a plain
+   layout wrapper so it doesn't fight those per-brand styles. */
 .ob-home-brands__name {
-  font-family: var(--font-heading-family);
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #0f172a;
+  display: inline-flex;
 }
 
 .ob-home-brands__desc {
   font-size: 1.2rem;
+  letter-spacing: 0;
   color: #64748b;
 }
 

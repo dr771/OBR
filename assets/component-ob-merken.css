@@ -90,6 +90,7 @@
 .ob-logotype {
   display: inline-flex;
   align-items: center;
+  gap: 0.4rem;
   line-height: 1;
   color: currentColor;
   white-space: nowrap;
@@ -105,8 +106,8 @@
 
 .ob-lt-fitflop { font-weight: 700; font-size: 1.7rem; text-transform: lowercase; letter-spacing: -0.02em; }
 .ob-lt-hitec { font-weight: 700; font-style: italic; font-size: 1.5rem; letter-spacing: -0.01em; }
-.ob-lt-holster { flex-direction: column; align-items: flex-start; gap: 0; font-weight: 700; font-size: 1.3rem; text-transform: lowercase; }
-.ob-lt-holster small { font-size: 0.5em; margin-top: 0.15rem; }
+.ob-lt-holster { font-weight: 700; font-size: 1.3rem; text-transform: lowercase; }
+.ob-lt-holster small { font-size: 0.5em; }
 .ob-lt-juicy { font-family: var(--font-heading-family); font-style: italic; font-size: 1.3rem; }
 .ob-lt-loewenweiss { font-family: var(--font-heading-family); font-size: 1.3rem; }
 .ob-lt-odlo { font-weight: 700; font-size: 1.6rem; letter-spacing: 0.01em; }

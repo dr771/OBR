@@ -15,9 +15,28 @@
 .newsletter__wrapper {
   background: #0f172a;
   border-radius: 2.4rem;
+  margin-top: 3.2rem;
+  margin-bottom: 3.2rem;
   padding-left: 2.4rem;
   padding-right: 2.4rem;
   text-align: center;
+}
+
+/*
+  The footer section (immediately after this one on the homepage) has its
+  own merchant-editable "margin_top" setting (Dawn's default footer spacing
+  control) that keeps getting set to a nonzero value via the theme editor,
+  stacking on top of this card's own margin-bottom and making the gap below
+  the card bigger than the gap above it. This card owns its own spacing on
+  both sides (see margin-top/bottom above), so the footer's copy of that
+  spacing is forced to zero here - !important because the footer's own
+  generated style block loads after this file and matches with equal
+  specificity. Scoped to this file, which only loads on the homepage
+  alongside this section (see the file header), so it never touches the
+  footer's spacing on any other page/template.
+*/
+.footer {
+  margin-top: 0 !important;
 }
 
 .newsletter__wrapper h2,
@@ -53,6 +72,11 @@
 .newsletter__wrapper .newsletter-form {
   max-width: 44.8rem;
   margin-top: 2.8rem;
+}
+
+.newsletter__wrapper .newsletter-form__field-wrapper {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .newsletter__wrapper .field:before {
@@ -104,6 +128,8 @@
 @media screen and (min-width: 990px) {
   .newsletter__wrapper {
     border-radius: 4rem;
+    margin-top: 6.8rem;
+    margin-bottom: 6.8rem;
     padding-left: 5.6rem;
     padding-right: 5.6rem;
   }

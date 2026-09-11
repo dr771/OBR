@@ -1,17 +1,25 @@
 {% comment %}
-  OB: homepage "Uitgelichte merken" grid - plain bordered brand cards (name +
-  one-line description), matched to bolt's 5-col desktop grid. The real
-  brand roster is 11 (bolt's own demo used 10, three of which - Magnum, RH+,
-  Mechanix - don't exist as real collections here and four real ones were
-  missing from it), so this reuses the Merken chip grid's flex/uneven-row
-  technique (6 + 5) instead of a rigid column count, exactly like
-  component-ob-merken.css's .ob-merken-chips.
+  OB: homepage "Uitgelichte merken" grid - bordered brand cards on a tinted
+  section background (name + one-line description), matched to bolt's 5-col
+  desktop grid. The real brand roster is 11 (bolt's own demo used 10, three
+  of which - Magnum, RH+, Mechanix - don't exist as real collections here
+  and four real ones were missing from it), so this reuses the Merken chip
+  grid's flex/uneven-row technique (6 + 5) instead of a rigid column count,
+  exactly like component-ob-merken.css's .ob-merken-chips.
+
+  Brand names render via ob-brand-logotype.liquid's style:'text' mode (the
+  mockup's hand-styled wordmark treatment, not the real-logo-image default),
+  per owner request - this surface wants styled type, not photographic
+  marks. That mode's classes (.ob-logotype / .ob-lt-*) live in
+  component-ob-merken.css, so it has to be loaded here too, not just on the
+  Merken page.
 
   Default block copy reuses the identical one-line "eyebrow" strings already
   written for templates/page.merken.json's brand blocks, so the two pages
   never say two different things about the same brand.
 {% endcomment %}
 {{ 'component-ob-home-brands.css' | asset_url | stylesheet_tag }}
+{{ 'component-ob-merken.css' | asset_url | stylesheet_tag }}
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -27,7 +35,8 @@
   }
 {%- endstyle -%}
 
-<div class="ob-home-brands page-width section-{{ section.id }}-padding">
+<div class="ob-home-brands section-{{ section.id }}-padding">
+ <div class="page-width">
   <div class="ob-home-brands__head">
     {%- if section.settings.eyebrow != blank -%}
       <p class="ob-home-brands__eyebrow">{{ section.settings.eyebrow }}</p>
@@ -44,7 +53,7 @@
     {%- for block in section.blocks -%}
       {%- if block.settings.collection != blank -%}
         <a href="{{ block.settings.collection.url }}" class="ob-home-brands__card" {{ block.shopify_attributes }}>
-          <span class="ob-home-brands__name">{{ block.settings.collection.title }}</span>
+          <span class="ob-home-brands__name">{%- render 'ob-brand-logotype', collection: block.settings.collection, style: 'text' -%}</span>
           {%- if block.settings.description != blank -%}
             <span class="ob-home-brands__desc">{{ block.settings.description }}</span>
           {%- endif -%}
@@ -52,6 +61,7 @@
       {%- endif -%}
     {%- endfor -%}
   </div>
+ </div>
 </div>
 
 {% schema %}

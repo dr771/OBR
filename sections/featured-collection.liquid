@@ -38,8 +38,12 @@
     }
   }
 
-  /* The homepage's semantic H2 carries Dawn's configurable size utility. */
+  /* The homepage's semantic H2 carries Dawn's configurable size utility.
+     Its own margin-top (Dawn's base .title rule, 3rem) is unreachable by
+     .title-wrapper--no-top-margin > .title since the eyebrow wrapper sits
+     between them - match the occasions section's eyebrow-to-heading gap. */
   #collection-{{ section.id }} .collection__title .title {
+    margin-top: 1.2rem;
     font-size: 3rem;
     font-weight: 600;
     line-height: 3.6rem;
