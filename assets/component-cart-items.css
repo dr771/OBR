@@ -144,7 +144,7 @@ cart-items .title-wrapper-with-link {
   font-weight: var(--font-body-weight);
   gap: 0.6rem;
   left: 50%;
-  letter-spacing: 0;
+  letter-spacing: normal;
   line-height: 1.35;
   max-width: min(36rem, calc(100vw - 4rem));
   opacity: 0;
@@ -451,7 +451,7 @@ cart-remove-button .icon-remove {
 .cart-item__error-text {
   font-size: 1.3rem;
   line-height: 1.4;
-  letter-spacing: 0.04rem;
+  letter-spacing: normal;
   order: 1;
 }
 

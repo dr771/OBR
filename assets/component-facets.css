@@ -1929,7 +1929,7 @@ input.mobile-facets__checkbox {
   font-size: 1.2rem;
   font-weight: 600;
   line-height: 1.6rem;
-  letter-spacing: 0.18em;
+  letter-spacing: normal;
   text-transform: uppercase;
 }
 
@@ -2046,7 +2046,7 @@ input.mobile-facets__checkbox {
   font-size: 1.2rem;
   font-weight: 600;
   line-height: 1.6rem;
-  letter-spacing: 0.16em;
+  letter-spacing: normal;
   text-transform: uppercase;
 }
 

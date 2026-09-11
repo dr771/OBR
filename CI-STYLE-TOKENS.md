@@ -76,8 +76,8 @@ provenance rule — same caveat applies to this file).
    .button-close, .slider-button, .share-button__button, .button-show-more,
    .button-show-less)`): pill shape (`border-radius: 999.9rem`), dark-ink
    fill (`#0f172a`), white text, hover fills `#1e9fe6`. This alone still
-   carries **Dawn's raw label typography** (400 weight, ~1px letter-spacing)
-   — color/shape only.
+   carries **Dawn's raw label typography** (400 weight; its ~1px
+   letter-spacing was removed theme-wide 2026-09-11) — color/shape only.
 2. **`.ob-button--cta`** — the actual default CTA-label refinement on top of
    `.button`: `min-width: 20.5rem; min-height: 4.4rem; padding: 1.2rem
    2.8rem; font-size: 1.4rem; font-weight: 600; letter-spacing: normal;
@@ -134,9 +134,14 @@ product title) or a compact Inter UI label (`.drawer__heading`), ends up at
 the same two values. Untouched Dawn headings are the odd ones out.
 - `font-weight: 600` (not the raw `--font-heading-weight` setting, which is
   `400` live — Dawn's h1-h5 default weight is regular, not bold).
-- `letter-spacing: normal`/slightly negative (`-0.01em`-ish) — never Dawn's
-  raw `calc(var(--font-heading-scale) * 0.06rem)` positive tracking (h1-h5
-  default), which reads as loose/dated next to anything already fixed.
+- `letter-spacing: normal`/slightly negative (`-0.01em`-ish) — never
+  positive. **No positive tracking anywhere in the theme** (owner decision
+  2026-09-11, `storefront-letter-spacing` spec): Dawn's inherited body
+  `0.06rem`, its heading/button/badge/label/caption tracking, and every
+  uppercase eyebrow, brand label, badge, and brand text wordmark are all
+  `normal`. Uppercase eyebrows get their hierarchy from case, weight, and
+  colour, not from tracking. The only positive value left is the star-rating
+  glyph row in `component-rating.css`, which is width geometry, not text.
 - Font-family is a **separate decision from weight/tracking, but not an
   independent judgment call** — see "Font stack" above: Fraunces only on
   PLP/PDP, Inter everywhere else, by surface. Don't reason it out per

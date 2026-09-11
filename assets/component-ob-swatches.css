@@ -451,7 +451,7 @@
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.4rem;
-  letter-spacing: 0.12rem;
+  letter-spacing: normal;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -533,7 +533,7 @@
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.5rem;
-  letter-spacing: 0.18rem;
+  letter-spacing: normal;
   /*
     Reference renders the brand at 45% ink. Dawn's `.light` gets there with
     `opacity: 0.7` on solid ink, which is both the wrong strength and dims
@@ -570,7 +570,7 @@
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.5rem;
-  letter-spacing: 0.12rem;
+  letter-spacing: normal;
   text-transform: uppercase;
 }
 
@@ -581,7 +581,7 @@
   font-size: 1.1rem;
   font-weight: 500;
   line-height: 1.4rem;
-  letter-spacing: 0;
+  letter-spacing: normal;
 }
 
 /* Wishlist King's collection heart matches the approved Bolt card control. */

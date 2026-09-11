@@ -350,7 +350,7 @@ cart-drawer-items {
   min-height: 4.5rem;
   padding: 1.2rem 3rem;
   text-transform: uppercase;
-  letter-spacing: 0.1rem;
+  letter-spacing: normal;
   font-size: 1.4rem;
   font-weight: 500;
 }
@@ -544,7 +544,7 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
 
 .cart-drawer .product-option.cart-item__variant-options {
   font-size: calc(var(--font-heading-scale) * 1.3rem);
-  letter-spacing: 0px;
+  letter-spacing: normal;
 }
 
 .cart-drawer .caption-with-letter-spacing {
@@ -630,7 +630,7 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
 .cart-drawer .cart-item__price-wrapper .price {
   font-size: 13px;
   font-weight: 500;
-  letter-spacing: 0.2px;
+  letter-spacing: normal;
 }
 /* Drop Dawn's panel border, widen the right-side gutter (left stays 1.5rem).
    `.drawer__inner` is shared with the mobile menu drawer, so scope to
@@ -877,7 +877,7 @@ wishlist-product-card .wk-meta {
   margin: 0;
   font-size: 13px;
   font-weight: 500;
-  letter-spacing: 0.2px;
+  letter-spacing: normal;
   color: rgb(var(--color-foreground));
   opacity: 0.8;
   text-align: left;

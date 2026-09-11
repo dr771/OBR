@@ -34,7 +34,7 @@
   font-size: 1.2rem;
   font-weight: 500;
   line-height: 1.6rem;
-  letter-spacing: 0.03rem;
+  letter-spacing: normal;
   color: #334155;
   background: rgba(255, 255, 255, 0.6);
   border: 0.1rem solid #cbd5e1;
@@ -143,7 +143,7 @@
 .ob-home-hero__rating-value {
   font-size: 1.4rem;
   font-weight: 600;
-  letter-spacing: 0;
+  letter-spacing: normal;
   color: #0f172a;
 }
 
@@ -296,7 +296,7 @@
   font-size: 1.1rem;
   line-height: 1.6rem;
   font-weight: 500;
-  letter-spacing: 0.1rem;
+  letter-spacing: normal;
   text-transform: uppercase;
   color: #64748b;
 }

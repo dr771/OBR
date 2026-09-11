@@ -99,7 +99,7 @@
 .ob-logotype small {
   display: block;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: normal;
   text-transform: uppercase;
   color: #64748b;
 }
@@ -110,14 +110,14 @@
 .ob-lt-holster small { font-size: 0.5em; }
 .ob-lt-juicy { font-family: var(--font-heading-family); font-style: italic; font-size: 1.3rem; }
 .ob-lt-loewenweiss { font-family: var(--font-heading-family); font-size: 1.3rem; }
-.ob-lt-odlo { font-weight: 700; font-size: 1.6rem; letter-spacing: 0.01em; }
-.ob-lt-pasdemonaco { flex-direction: column; align-items: flex-start; gap: 0; font-family: var(--font-heading-family); font-size: 1.3rem; letter-spacing: 0.02em; line-height: 1.05; }
-.ob-lt-pasdemonaco small { font-size: 0.5em; letter-spacing: 0.22em; margin-top: 0.15rem; }
+.ob-lt-odlo { font-weight: 700; font-size: 1.6rem; letter-spacing: normal; }
+.ob-lt-pasdemonaco { flex-direction: column; align-items: flex-start; gap: 0; font-family: var(--font-heading-family); font-size: 1.3rem; letter-spacing: normal; line-height: 1.05; }
+.ob-lt-pasdemonaco small { font-size: 0.5em; letter-spacing: normal; margin-top: 0.15rem; }
 .ob-lt-sneakerlab { font-weight: 700; font-size: 1.4rem; letter-spacing: -0.01em; text-transform: lowercase; }
 .ob-lt-sneakerlab b { font-weight: 400; }
-.ob-lt-irasuto { font-weight: 600; font-size: 1rem; letter-spacing: 0.16em; text-transform: uppercase; }
-.ob-lt-irasuto small { font-size: 0.85em; letter-spacing: 0.1em; text-transform: none; margin-left: 0.3rem; }
-.ob-lt-nikeswim { font-weight: 700; font-size: 1.3rem; letter-spacing: 0.02em; text-transform: uppercase; }
+.ob-lt-irasuto { font-weight: 600; font-size: 1rem; letter-spacing: normal; text-transform: uppercase; }
+.ob-lt-irasuto small { font-size: 0.85em; letter-spacing: normal; text-transform: none; margin-left: 0.3rem; }
+.ob-lt-nikeswim { font-weight: 700; font-size: 1.3rem; letter-spacing: normal; text-transform: uppercase; }
 .ob-lt-sweatybetty { font-family: var(--font-heading-family); font-style: italic; font-size: 1.3rem; }
 
 /* ------------------------------------------------------------ tile grid */
@@ -179,7 +179,7 @@
   font-size: 0.95rem;
   font-weight: 600;
   line-height: 1.4rem;
-  letter-spacing: 0.16rem;
+  letter-spacing: normal;
   text-transform: uppercase;
   color: #0d80c4;
 }
@@ -275,7 +275,7 @@
   .ob-merken-tile__eyebrow {
     font-size: 1rem;
     line-height: 1.5rem;
-    letter-spacing: 0.18rem;
+    letter-spacing: normal;
   }
 
   .ob-merken-tile__name-row {

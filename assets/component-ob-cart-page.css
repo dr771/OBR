@@ -44,7 +44,7 @@ cart-items .ob-cart-page-header__eyebrow {
   font-family: var(--font-body-family);
   font-size: 1.1rem;
   font-weight: 600;
-  letter-spacing: 0.24rem;
+  letter-spacing: normal;
   line-height: 1.6rem;
   margin: 0 0 0.8rem;
   text-transform: uppercase;
@@ -142,13 +142,13 @@ cart-items .cart-item__name:hover {
 
 cart-items .product-option.cart-item__variant-options {
   font-size: calc(var(--font-heading-scale) * 1.3rem);
-  letter-spacing: 0;
+  letter-spacing: normal;
 }
 
 cart-items .cart-item__line-price .price {
   font-size: 1.3rem;
   font-weight: 500;
-  letter-spacing: 0.02rem;
+  letter-spacing: normal;
 }
 
 #MainContent {
@@ -246,7 +246,7 @@ cart-items .cart-item .cart-item__line-total .price.price--end {
   font-family: var(--font-body-family);
   font-size: 1.4rem;
   font-weight: 500;
-  letter-spacing: 0;
+  letter-spacing: normal;
   line-height: 2.4rem;
   margin: 0;
   text-align: left;
@@ -274,7 +274,7 @@ cart-items .cart-item__line-total .cart-item__discounted-prices {
   font-family: var(--font-body-family);
   font-size: 1.1rem;
   font-weight: 600;
-  letter-spacing: 0.24rem;
+  letter-spacing: normal;
   line-height: 1.6rem;
   margin: 0 0 0.8rem;
   text-transform: uppercase;
