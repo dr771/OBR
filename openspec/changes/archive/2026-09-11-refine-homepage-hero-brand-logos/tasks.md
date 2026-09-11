@@ -15,4 +15,4 @@
 - [x] 2.1 Validate Liquid and OpenSpec, deploy scoped files to the active dev theme.
 - [x] 2.2 Inspect desktop/mobile screenshots and geometry, outlet links and keyboard focus; fix and reverify discrepancies.
 - [x] 2.4 Deploy logo assets/snippet/CSS; verify marquee and Merken chip grid on desktop + mobile, alt text and collection links, no white-box artifacts from opaque source PNGs.
-- [ ] 2.3 Record final behavior in shared project documentation.
+- [x] 2.3 Record final behavior in shared project documentation.
