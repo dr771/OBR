@@ -1,18 +1,32 @@
+/*
+  Same pale blue as the hero's outlet badge rest state
+  (component-ob-home-hero.css .ob-home-hero__float--bottom) rather than the
+  PDP/PLP slate surface tint - the two sat close enough on the page that
+  two different light-blue-ish tints read as clashing. Sharing one color
+  keeps them reading as one accent family instead of competing.
+*/
 .ob-home-marquee {
+  background: #edf7fd;
   border-top: 0.1rem solid #e2e8f0;
   border-bottom: 0.1rem solid #e2e8f0;
   overflow: hidden;
 }
 
+/*
+  Motion is driven by assets/ob-home-marquee.js (requestAnimationFrame,
+  writing `transform` directly) instead of this CSS animation. A CSS
+  keyframe can only start/stop instantly on hover - the owner flagged that
+  snap as too abrupt - and changing `animation-duration` mid-flight doesn't
+  ease the speed either: it recomputes position against the elapsed time at
+  the NEW duration, which is a visible jump/teleport, not a slowdown. JS
+  eases the px/sec speed toward a slower target on hover/focus instead. No
+  base `animation` here by design; if JS doesn't run, both rendered copies
+  sit static side by side, clipped by `overflow: hidden` above - a flat but
+  intact fallback, not a broken one.
+*/
 .ob-home-marquee__track {
   display: flex;
   width: max-content;
-  animation: ob-home-marquee-scroll 36s linear infinite;
-}
-
-.ob-home-marquee:hover .ob-home-marquee__track,
-.ob-home-marquee:focus-within .ob-home-marquee__track {
-  animation-play-state: paused;
 }
 
 .ob-home-marquee__set {
@@ -25,11 +39,12 @@
 
 .ob-home-marquee__item {
   display: inline-flex;
+  align-items: center;
   white-space: nowrap;
   font-family: var(--font-heading-family);
   font-size: 1.7rem;
   font-weight: 500;
-  color: #64748b;
+  color: #475569;
   text-decoration: none;
   transition: color 0.18s ease;
 }
@@ -39,24 +54,62 @@
   color: #0f172a;
 }
 
-@keyframes ob-home-marquee-scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+/*
+  Real brand logos (see ob-brand-logotype.liquid) ride the same row as the
+  text fallback, so they're held to a uniform grayscale weight at rest -
+  full brand color would make the mixed-color logos (e.g. Pas de Monaco's
+  olive, Holster's cool gray) read louder than the monochrome ones and the
+  text fallback beside them. Color reveals on hover/focus as the reward,
+  matching the text item's own darken-on-hover. `brightness`/`contrast`
+  stack after `grayscale` to pull the lighter source files (Holster's cool
+  gray ~55% luminance, Pas de Monaco's olive ~37%) down toward the near-
+  black logos (FitFlop, Hi-Tec, Irasuto, ...) instead of reading pale next
+  to them - a plain grayscale alone preserves each source file's original
+  lightness, which is exactly what looked too faint.
+*/
+.ob-brand-logo {
+  height: 2rem;
+  width: auto;
+  max-width: 9rem;
+  object-fit: contain;
+  filter: grayscale(1) brightness(0.5) contrast(1.15);
+  opacity: 0.9;
+  transition: filter 0.18s ease, opacity 0.18s ease;
+}
+
+.ob-home-marquee__item:hover .ob-brand-logo,
+.ob-home-marquee__item:focus-visible .ob-brand-logo {
+  filter: none;
+  opacity: 1;
+}
+
+/* RH+'s only source file is white-on-transparent (built for a dark navbar) -
+   see the comment in ob-brand-logotype.liquid. Invert instead of the usual
+   grayscale so it reads as a dark mark on this row's light surface, and
+   keep the invert on hover too since there's no legible color to reveal. */
+.ob-brand-logo--invert {
+  filter: grayscale(1) invert(1);
+}
+
+.ob-home-marquee__item:hover .ob-brand-logo--invert,
+.ob-home-marquee__item:focus-visible .ob-brand-logo--invert {
+  filter: grayscale(1) invert(1);
+  opacity: 1;
 }
 
 @media screen and (min-width: 990px) {
   .ob-home-marquee__item {
     font-size: 2rem;
   }
+
+  .ob-brand-logo {
+    height: 2.4rem;
+    max-width: 11rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ob-home-marquee__track {
-    animation: none;
     flex-wrap: wrap;
     width: 100%;
     justify-content: center;

@@ -19,17 +19,18 @@
 }
 
 .ob-home-hero__copy {
-  order: 2;
+  order: 1;
 }
 
 .ob-home-hero__media {
-  order: 1;
+  order: 2;
   position: relative;
 }
 
 .ob-home-hero__badge {
   display: inline-flex;
   align-items: center;
+  gap: 0.8rem;
   font-size: 1.2rem;
   font-weight: 500;
   line-height: 1.6rem;
@@ -39,6 +40,15 @@
   border: 0.1rem solid #cbd5e1;
   border-radius: 999.9rem;
   padding: 0.6rem 1.4rem;
+}
+
+.ob-home-hero__badge::before {
+  content: '';
+  width: 0.6rem;
+  height: 0.6rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--ob-accent);
 }
 
 .ob-home-hero__heading {
@@ -80,6 +90,15 @@
   flex-wrap: wrap;
 }
 
+.ob-home-hero__ctas .button {
+  min-height: 4.8rem;
+  padding-block: 1.3rem;
+}
+
+.ob-home-hero__ctas .ob-button--outline {
+  padding-block: 1.2rem;
+}
+
 .ob-home-hero__stars {
   display: inline-flex;
   gap: 0.2rem;
@@ -87,13 +106,28 @@
 }
 
 .ob-home-hero__stars svg {
+  display: block;
   width: 1.5rem;
   height: 1.5rem;
+}
+
+.ob-home-hero__star {
+  position: relative;
+  color: #d9dee5;
+}
+
+.ob-home-hero__star .ob-home-hero__star-fill {
+  position: absolute;
+  inset: 0;
+  color: #0d80c4;
+  clip-path: inset(0 var(--star-empty) 0 0);
 }
 
 .ob-home-hero__rating p {
   margin: 0;
   font-size: 1.4rem;
+  line-height: 1.5;
+  letter-spacing: normal;
   color: #64748b;
 }
 
@@ -103,8 +137,13 @@
 }
 
 .ob-home-hero__media {
-  max-width: 44rem;
-  margin: 0 auto;
+  /*
+    No max-width cap: the proto's image column is always full grid-cell
+    width below its 1024px two-column switch (a plain grid-cols-1 track,
+    same width as the copy column above it), never a narrower centered
+    block - a cap here read as noticeably narrower than the copy on tablet
+    widths, where there's no mobile-cramped-square concern to restrain it.
+  */
   width: 100%;
 }
 
@@ -112,31 +151,52 @@
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1;
   object-fit: cover;
   border-radius: 2.4rem;
 }
 
+/*
+  Cards are visible at every width (mobile included) - shown here at a
+  compact size/inset position so they sit fully inside the photo; both grow
+  back to the proto-matched desktop size/position (and the bottom card's
+  owner-dictated overflow past the image edge) at 1024px, once the photo
+  is a narrower side column with room around it. Below 1024px the photo now
+  runs full column width (see .ob-home-hero__media), so the desktop
+  negative-offset positions would overflow past the *page* edge, not just
+  the photo - the whole reason these need their own compact/inset values.
+*/
 .ob-home-hero__float {
-  display: none;
+  display: flex;
   position: absolute;
   align-items: center;
-  gap: 1rem;
+  gap: 0.8rem;
+  line-height: 1.4;
+  letter-spacing: normal;
   background: rgba(255, 255, 255, 0.95);
   border: 0.1rem solid #e2e8f0;
-  border-radius: 1.6rem;
+  border-radius: 1.4rem;
   box-shadow: 0 1.2rem 2.8rem -1.6rem rgba(15, 23, 42, 0.45);
 }
 
+.ob-home-hero__float-icon-wrap {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.9rem;
+  background: #edf7fd;
+}
+
 .ob-home-hero__float--top {
-  top: 2.4rem;
-  right: -1.2rem;
-  padding: 1.2rem 1.6rem;
+  top: 1.2rem;
+  right: 1.2rem;
+  padding: 1rem 1.2rem;
 }
 
 .ob-home-hero__float-icon {
-  width: 2rem;
-  height: 2rem;
+  width: 1.8rem;
+  height: 1.8rem;
   color: #0d80c4;
   flex: none;
 }
@@ -144,27 +204,79 @@
 .ob-home-hero__float-title {
   margin: 0;
   font-size: 1.3rem;
+  line-height: 1.8rem;
   font-weight: 600;
   color: #0f172a;
 }
 
 .ob-home-hero__float-text {
-  margin: 0.1rem 0 0;
-  font-size: 1.2rem;
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.5rem;
   color: #64748b;
 }
 
 .ob-home-hero__float--bottom {
-  bottom: -1.6rem;
-  left: -1rem;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 1.6rem 2rem;
+  bottom: 1.2rem;
+  left: 1.2rem;
+  gap: 1.4rem;
+  padding: 1.1rem 1.3rem;
+  background: #ffffff;
+  border-color: #cbe8f9;
+  text-decoration: none;
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+/*
+  Hover inverts to solid accent ink rather than a deeper blue tint - the
+  marquee band directly below now owns the badge's old pale-blue rest color
+  (component-ob-home-marquee.css), so a same-family hover here would read as
+  more of the same instead of a reward. White text/arrow-fill keeps the
+  arrow circle legible without extra rules (it's already #fff bg / accent
+  icon at rest).
+*/
+.ob-home-hero__float--bottom:is(:hover, :focus-visible) {
+  background: #0d80c4;
+  border-color: #0d80c4;
+}
+
+.ob-home-hero__float--bottom:is(:hover, :focus-visible) .ob-home-hero__float-eyebrow {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.ob-home-hero__float--bottom:is(:hover, :focus-visible) .ob-home-hero__float-accent {
+  color: #fff;
+}
+
+.ob-home-hero__float--bottom:is(:hover, :focus-visible) .ob-home-hero__float-arrow {
+  border-color: transparent;
+}
+
+.ob-home-hero__float--bottom:focus-visible {
+  outline: 0.2rem solid #0d80c4;
+  outline-offset: 0.3rem;
+}
+
+.ob-home-hero__float-arrow {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border: 0.1rem solid #cbe8f9;
+  border-radius: 50%;
+  color: #0d80c4;
+  background: #fff;
+}
+
+.ob-home-hero__float-arrow svg {
+  width: 1.4rem;
+  height: 1.4rem;
 }
 
 .ob-home-hero__float-eyebrow {
   margin: 0;
   font-size: 1.1rem;
+  line-height: 1.6rem;
   font-weight: 500;
   letter-spacing: 0.1rem;
   text-transform: uppercase;
@@ -172,9 +284,10 @@
 }
 
 .ob-home-hero__float-accent {
-  margin: 0.3rem 0 0;
+  margin: 0.4rem 0 0;
   font-family: var(--font-heading-family);
-  font-size: 2.2rem;
+  font-size: 2rem;
+  line-height: 2.6rem;
   font-weight: 600;
   color: #0d80c4;
 }
@@ -183,9 +296,20 @@
   .ob-home-hero__heading {
     font-size: 5rem;
   }
+
+  /*
+    The photo runs full column width from here up to 1024px (no max-width -
+    see .ob-home-hero__media), so a square ratio at, say, an 800px-wide
+    tablet column would stand 800px tall - a wall of photo. Shortened to
+    3:2 for this range only; back to square once the photo becomes the
+    narrower ~42% desktop side column at 1024px, where square reads fine.
+  */
+  .ob-home-hero__image {
+    aspect-ratio: 3 / 2;
+  }
 }
 
-@media screen and (min-width: 990px) {
+@media screen and (min-width: 1024px) {
   .ob-home-hero__inner {
     flex-direction: row;
     align-items: center;
@@ -193,15 +317,15 @@
   }
 
   .ob-home-hero__copy {
-    order: 1;
     flex: 1 1 50%;
   }
 
   .ob-home-hero__media {
-    order: 2;
     flex: 1 1 42%;
-    max-width: none;
-    margin: 0;
+  }
+
+  .ob-home-hero__image {
+    aspect-ratio: 1;
   }
 
   .ob-home-hero__heading {
@@ -209,7 +333,54 @@
     letter-spacing: -0.03em;
   }
 
-  .ob-home-hero__float {
-    display: flex;
+  /* Restore the full desktop size/position - see the compact/inset base
+     rules above component-ob-home-hero.css's mobile+tablet comment. */
+  .ob-home-hero__float-icon-wrap {
+    width: 3.6rem;
+    height: 3.6rem;
+    border-radius: 1rem;
+  }
+
+  .ob-home-hero__float--top {
+    top: 2.4rem;
+    right: -1.2rem;
+    padding: 1.2rem 1.6rem;
+  }
+
+  .ob-home-hero__float-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .ob-home-hero__float-title {
+    font-size: 1.4rem;
+    line-height: 2rem;
+  }
+
+  .ob-home-hero__float-text {
+    font-size: 1.2rem;
+    line-height: 1.6rem;
+  }
+
+  .ob-home-hero__float--bottom {
+    bottom: 5.4rem;
+    left: -6rem;
+    gap: 2rem;
+    padding: 1.4rem 1.6rem;
+  }
+
+  .ob-home-hero__float-arrow {
+    width: 3.2rem;
+    height: 3.2rem;
+  }
+
+  .ob-home-hero__float-arrow svg {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  .ob-home-hero__float-accent {
+    font-size: 2.4rem;
+    line-height: 3.2rem;
   }
 }

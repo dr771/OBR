@@ -60,6 +60,33 @@
 
 /* ---------------------------------------------------------- logotypes */
 
+/*
+  Real brand logos (see ob-brand-logotype.liquid) share the chip with the
+  hand-styled Sneaker Lab wordmark fallback (.ob-logotype / .ob-lt-*), so
+  they get the same grayscale-at-rest / color-on-hover treatment as the
+  homepage marquee's copy of this snippet (component-ob-home-marquee.css) -
+  keeps the chip row visually even instead of the colored logos (Pas de
+  Monaco's olive, Holster's cool gray) outweighing the monochrome ones.
+  `brightness`/`contrast` stack after `grayscale` for the same reason as the
+  marquee copy: plain grayscale keeps each source file's original
+  lightness, which read as too pale for the lighter logos specifically.
+*/
+.ob-brand-logo {
+  max-height: 2.4rem;
+  max-width: 100%;
+  width: auto;
+  object-fit: contain;
+  filter: grayscale(1) brightness(0.5) contrast(1.15);
+  opacity: 0.9;
+  transition: filter 0.18s ease, opacity 0.18s ease;
+}
+
+.ob-merken-chip:hover .ob-brand-logo,
+.ob-merken-chip:focus-visible .ob-brand-logo {
+  filter: none;
+  opacity: 1;
+}
+
 .ob-logotype {
   display: inline-flex;
   align-items: center;
@@ -208,6 +235,10 @@
     min-height: 8rem;
     padding: 1.2rem 1.6rem;
     border-radius: 1.2rem;
+  }
+
+  .ob-brand-logo {
+    max-height: 3.4rem;
   }
 
   .ob-lt-fitflop { font-size: 2.6rem; }

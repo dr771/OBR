@@ -1,44 +1,146 @@
 {% comment %}
-  OB: styled brand wordmark for the Merken hero's chip grid (main grid tile
-  headings stay plain text - see the merken-brands-directory spec). Cases on
-  the collection handle so an Akeneo/Shopify rename falls back to the plain
-  title rather than breaking.
+  OB: brand mark for the rows sharing this treatment (homepage marquee,
+  Merken hero chip grid). Cases on the collection handle so an
+  Akeneo/Shopify rename falls back to the plain title rather than breaking.
 
-  Ported from mockup/index.html's "Uitgelichte merken" chip treatment
-  (.logotype / .lt-*), recut in Fraunces - the approved live serif - instead
-  of that file's DM Serif Display, and recolored to this theme's own ink
-  tokens rather than the mockup's separate palette. Styling lives in
-  component-ob-merken.css (.ob-logotype / .ob-lt-*).
+  Renders the brand's real logo file (assets/ob-logo-<handle>.*, sourced from
+  each brand's own site - see openspec/changes/refine-homepage-hero-brand-
+  logos/logo-sources.json) for every brand one was sourced for. The one
+  brand without a usable source logo (Sneaker Lab) falls back to the
+  hand-styled wordmark this snippet used before (.ob-logotype / .ob-lt-*,
+  ported from mockup/index.html's "Uitgelichte merken" chip treatment, recut
+  in Fraunces) so the row never shows a raw collection title. Swap it to a
+  real logo by sourcing an asset and moving its handle into the image list
+  (.ob-lt-fitflop and friends in component-ob-merken.css stay defined for
+  every brand even after its image ships, so this stays a one-line swap).
+
+  Renders an <img> (real logo) or a <span> (fallback) depending on the
+  brand - callers must not assume one tag. Size/tint logos via `img`
+  descendant selectors on the row's own item class (see
+  component-ob-home-marquee.css / component-ob-merken.css's shared
+  `.ob-brand-logo` rules), not this snippet - it only picks the asset.
 
   Accepts:
-  - collection: {Object} Collection Liquid object
+  - collection: {Object} Collection Liquid object (optional if `handle` is given)
+  - handle: {String} Brand handle to render, for a brand with no collection
+    yet (e.g. RH+ - not synced from Akeneo). Defaults to `collection.handle`.
 
   Usage:
   {% render 'ob-brand-logotype', collection: collection %}
+  {% render 'ob-brand-logotype', handle: 'rh-plus' %}
 {% endcomment %}
-{%- case collection.handle -%}
+{%- assign ob_lt_handle = handle | default: collection.handle -%}
+{%- case ob_lt_handle -%}
   {%- when 'fitflop' -%}
-    <span class="ob-logotype ob-lt-fitflop">fitflop</span>
+    <img
+      src="{{ 'ob-logo-fitflop.svg' | asset_url }}"
+      alt="FitFlop"
+      width="184"
+      height="100"
+      loading="lazy"
+      class="ob-brand-logo"
+    >
   {%- when 'hi-tec' -%}
-    <span class="ob-logotype ob-lt-hitec">HI-TEC</span>
+    <img
+      src="{{ 'ob-logo-hi-tec.png' | asset_url }}"
+      alt="Hi-Tec"
+      width="292"
+      height="56"
+      loading="lazy"
+      class="ob-brand-logo"
+    >
   {%- when 'holster' -%}
-    <span class="ob-logotype ob-lt-holster">holster<small>australia</small></span>
+    <img
+      src="{{ 'ob-logo-holster.png' | asset_url }}"
+      alt="Holster Australia"
+      width="250"
+      height="73"
+      loading="lazy"
+      class="ob-brand-logo"
+    >
   {%- when 'irasuto-studios' -%}
-    <span class="ob-logotype ob-lt-irasuto">Irasuto<small>Studios</small></span>
+    <img
+      src="{{ 'ob-logo-irasuto-studios.png' | asset_url }}"
+      alt="Irasuto Studios"
+      width="600"
+      height="143"
+      loading="lazy"
+      class="ob-brand-logo"
+    >
   {%- when 'juicy-couture' -%}
-    <span class="ob-logotype ob-lt-juicy">Juicy Couture</span>
+    <img
+      src="{{ 'ob-logo-juicy-couture.png' | asset_url }}"
+      alt="Juicy Couture"
+      width="600"
+      height="103"
+      loading="lazy"
+      class="ob-brand-logo"
+    >
   {%- when 'loewenweiss' -%}
-    <span class="ob-logotype ob-lt-loewenweiss">Loewenweiss</span>
+    <img
+      src="{{ 'ob-logo-loewenweiss.png' | asset_url }}"
+      alt="Löwenweiss"
+      width="318"
+      height="39"
+      loading="lazy"
+      class="ob-brand-logo"
+    >
   {%- when 'nike-swim' -%}
-    <span class="ob-logotype ob-lt-nikeswim">Nike Swim</span>
+    <img
+      src="{{ 'ob-logo-nike-swim.png' | asset_url }}"
+      alt="Nike Swim"
+      width="130"
+      height="61"
+      loading="lazy"
+      class="ob-brand-logo"
+    >
   {%- when 'odlo' -%}
-    <span class="ob-logotype ob-lt-odlo">ODLO</span>
+    <img
+      src="{{ 'ob-logo-odlo.svg' | asset_url }}"
+      alt="Odlo"
+      width="499"
+      height="420"
+      loading="lazy"
+      class="ob-brand-logo"
+    >
   {%- when 'pas-de-monaco' -%}
-    <span class="ob-logotype ob-lt-pasdemonaco">Pas de<small>Monaco</small></span>
+    <img
+      src="{{ 'ob-logo-pas-de-monaco.png' | asset_url }}"
+      alt="Pas de Monaco"
+      width="600"
+      height="175"
+      loading="lazy"
+      class="ob-brand-logo"
+    >
+  {%- when 'rh-plus' -%}
+    {%- comment -%}
+      Source file is white text + red bars on transparent (built for the
+      brand's own dark navbar) - no dark-on-transparent variant exists, so
+      the shared grayscale treatment alone would leave the wordmark
+      invisible on this row's light surface. `ob-brand-logo--invert` adds a
+      permanent invert (see component-ob-home-marquee.css) instead of the
+      usual color-on-hover reveal, which this asset has no legible color
+      state for anyway.
+    {%- endcomment -%}
+    <img
+      src="{{ 'ob-logo-rh-plus.png' | asset_url }}"
+      alt="RH+"
+      width="755"
+      height="203"
+      loading="lazy"
+      class="ob-brand-logo ob-brand-logo--invert"
+    >
   {%- when 'sneaker-lab' -%}
     <span class="ob-logotype ob-lt-sneakerlab">sneaker<b>lab</b></span>
   {%- when 'sweaty-betty' -%}
-    <span class="ob-logotype ob-lt-sweatybetty">Sweaty Betty</span>
+    <img
+      src="{{ 'ob-logo-sweaty-betty.svg' | asset_url }}"
+      alt="Sweaty Betty"
+      width="1306"
+      height="122"
+      loading="lazy"
+      class="ob-brand-logo"
+    >
   {%- else -%}
     <span class="ob-logotype">{{ collection.title }}</span>
 {%- endcase -%}
