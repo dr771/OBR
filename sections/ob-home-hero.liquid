@@ -73,6 +73,15 @@
               &nbsp;· {{ section.settings.rating_text }}
             {%- endif -%}
           </p>
+          {% comment %}theme-check-disable RemoteAsset{% endcomment %}
+          <img
+            src="https://www.signpower.de/aufkleber-auf-rolle/images/trustedshops.png"
+            alt="Trusted Shops"
+            class="ob-home-hero__trustedshops-logo"
+            loading="lazy"
+            width="342"
+            height="147"
+          >
         </div>
       {%- endif -%}
     </div>
@@ -92,6 +101,7 @@
         height="1200"
         fetchpriority="high"
         class="ob-home-hero__image"
+        style="object-position: center {{ section.settings.image_position }}%;"
       >
 
       {%- if section.settings.badge_1_title != blank -%}
@@ -216,6 +226,17 @@
       "id": "image",
       "label": "Hero-afbeelding",
       "info": "Standaard: een gecureerde campagnefoto uit het thema."
+    },
+    {
+      "type": "range",
+      "id": "image_position",
+      "label": "Beeldpositie (verticaal)",
+      "info": "Lager = toont meer van de bovenkant van de foto (bv. bij afgesneden gezicht op tablet).",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
     },
     {
       "type": "header",
