@@ -12,9 +12,11 @@
         "button_1_link": "#shop-per-behoefte",
         "button_2_label": "Bekijk outlet-deals",
         "button_2_link": "shopify://collections/solden",
-        "rating_value": "Uitstekend, 4.50",
-        "rating_text": "2.394 geverifieerde beoordelingen",
+        "rating_value": "4.50 - Uitstekend",
+        "rating_text": "meer dan 2k geverifieerde beoordelingen",
         "rating_score": 4.5,
+        "image": "shopify://shop_images/JUICY_10_1_2_1.jpg",
+        "image_position": 20,
         "badge_1_title": "Vandaag besteld",
         "badge_1_text": "morgen in huis",
         "badge_2_title": "Nu in de outlet",
@@ -26,18 +28,18 @@
     "brand-marquee": {
       "type": "ob-home-brand-marquee",
       "blocks": {
-        "fitflop": { "type": "brand", "settings": { "collection": "fitflop" } },
-        "hi_tec": { "type": "brand", "settings": { "collection": "hi-tec" } },
-        "holster": { "type": "brand", "settings": { "collection": "holster" } },
-        "irasuto_studios": { "type": "brand", "settings": { "collection": "irasuto-studios" } },
-        "juicy_couture": { "type": "brand", "settings": { "collection": "juicy-couture" } },
-        "loewenweiss": { "type": "brand", "settings": { "collection": "loewenweiss" } },
-        "nike_swim": { "type": "brand", "settings": { "collection": "nike-swim" } },
-        "odlo": { "type": "brand", "settings": { "collection": "odlo" } },
-        "pas_de_monaco": { "type": "brand", "settings": { "collection": "pas-de-monaco" } },
-        "rh_plus": { "type": "brand", "settings": { "brand_handle": "rh-plus" } },
-        "sneaker_lab": { "type": "brand", "settings": { "collection": "sneaker-lab" } },
-        "sweaty_betty": { "type": "brand", "settings": { "collection": "sweaty-betty" } }
+        "fitflop": { "type": "brand", "settings": { "collection": "fitflop", "brand_handle": "" } },
+        "hi_tec": { "type": "brand", "settings": { "collection": "hi-tec", "brand_handle": "" } },
+        "holster": { "type": "brand", "settings": { "collection": "holster", "brand_handle": "" } },
+        "irasuto_studios": { "type": "brand", "settings": { "collection": "irasuto-studios", "brand_handle": "" } },
+        "juicy_couture": { "type": "brand", "settings": { "collection": "juicy-couture", "brand_handle": "" } },
+        "loewenweiss": { "type": "brand", "settings": { "collection": "loewenweiss", "brand_handle": "" } },
+        "nike_swim": { "type": "brand", "settings": { "collection": "nike-swim", "brand_handle": "" } },
+        "odlo": { "type": "brand", "settings": { "collection": "odlo", "brand_handle": "" } },
+        "pas_de_monaco": { "type": "brand", "settings": { "collection": "pas-de-monaco", "brand_handle": "" } },
+        "rh_plus": { "type": "brand", "settings": { "collection": "", "brand_handle": "rh-plus" } },
+        "sneaker_lab": { "type": "brand", "settings": { "collection": "sneaker-lab", "brand_handle": "" } },
+        "sweaty_betty": { "type": "brand", "settings": { "collection": "sweaty-betty", "brand_handle": "" } }
       },
       "block_order": [
         "fitflop", "hi_tec", "holster", "irasuto_studios", "juicy_couture",
@@ -53,22 +55,34 @@
       "blocks": {
         "sport": {
           "type": "occasion",
-          "settings": { "collection": "sport-training", "number_label": "01 — Beweeg beter" }
+          "settings": {
+            "collection": "sport-training",
+            "number_label": "01 — Beweeg beter",
+            "short_desc": "Performance, support en comfort voor elke workout. Van yoga tot trail run — beweeg op jouw manier."
+          }
         },
         "outdoor": {
           "type": "occasion",
-          "settings": { "collection": "outdoor-werk", "number_label": "02 — Ga naar buiten" }
+          "settings": {
+            "collection": "outdoor-werk",
+            "number_label": "02 — Ga naar buiten",
+            "short_desc": "Betrouwbare gear voor buiten, avontuur en werk. Duurzaam, functioneel en klaar voor elke uitdaging."
+          }
         },
         "comfort": {
           "type": "occasion",
-          "settings": { "collection": "fashion-lifestyle", "number_label": "03 — Vind je stijl" }
+          "settings": {
+            "collection": "fashion-lifestyle",
+            "number_label": "03 — Vind je stijl",
+            "short_desc": "Stijl, gemak en comfort voor elke dag. Van thuis tot city — voel je goed in elke stap."
+          }
         }
       },
       "block_order": ["sport", "outdoor", "comfort"],
       "settings": {
-        "eyebrow": "Shop per behoefte",
-        "heading": "Niet per merk, maar per moment",
-        "subheading": "Wij brengen tien specialisten samen en helpen je kiezen wat écht bij je past — of je nu traint, buiten bent of je eigen stijl zoekt.",
+        "eyebrow": "VIND WAT BIJ JE PAST",
+        "heading": "De juiste keuze voor elk moment",
+        "subheading": "Wij brengen meer dan tien gespecialiseerde merken en helpen je kiezen wat écht bij je past - of je nu traint, buiten bent of je eigen stijl zoekt",
         "cta_label": "Ontdek collectie",
         "padding_top": 64,
         "padding_bottom": 64

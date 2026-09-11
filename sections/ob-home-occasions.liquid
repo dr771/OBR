@@ -38,10 +38,15 @@
     {%- for block in section.blocks -%}
       {%- assign ob_occasion_collection = block.settings.collection -%}
       {%- if ob_occasion_collection != blank -%}
+        {%- if block.settings.image != blank -%}
+          {%- assign ob_occasion_image_url = block.settings.image | image_url: width: 1200 -%}
+        {%- else -%}
+          {%- capture ob_occasion_image_url -%}{% render 'ob-occasion-image', collection: ob_occasion_collection %}{%- endcapture -%}
+        {%- endif -%}
         <a href="{{ ob_occasion_collection.url }}" class="ob-home-occasions__card" {{ block.shopify_attributes }}>
           <img
-            src="{% render 'ob-occasion-image', collection: ob_occasion_collection %}"
-            alt="{{ ob_occasion_collection.title | escape }}"
+            src="{{ ob_occasion_image_url | strip }}"
+            alt="{{ block.settings.image.alt | default: ob_occasion_collection.title | escape }}"
             loading="lazy"
             width="800"
             height="1067"
@@ -53,9 +58,12 @@
               <p class="ob-home-occasions__card-number">{{ block.settings.number_label }}</p>
             {%- endif -%}
             <h3 class="ob-home-occasions__card-title">{{ ob_occasion_collection.title }}</h3>
+            {%- if block.settings.short_desc != blank -%}
+              <p class="ob-home-occasions__card-desc">{{ block.settings.short_desc }}</p>
+            {%- endif -%}
             <span class="ob-home-occasions__card-cta">
               {{ section.settings.cta_label }}
-              {%- render 'ob-icon', icon: 'chevron-right' -%}
+              {%- render 'ob-icon', icon: 'arrow-up-right', class: 'ob-home-occasions__card-cta-icon' -%}
             </span>
           </div>
         </a>
@@ -129,10 +137,22 @@
           "label": "Collectie"
         },
         {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Afbeelding",
+          "info": "Standaard: een gecureerde foto uit het thema."
+        },
+        {
           "type": "text",
           "id": "number_label",
           "label": "Nummer-eyebrow",
           "default": "01 — Beweeg beter"
+        },
+        {
+          "type": "textarea",
+          "id": "short_desc",
+          "label": "Korte beschrijving (bij hover)",
+          "info": "Wordt getoond bij hover/focus op de kaart."
         }
       ]
     }
