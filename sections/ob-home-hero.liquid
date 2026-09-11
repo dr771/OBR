@@ -58,30 +58,31 @@
 
       {%- if section.settings.rating_value != blank -%}
         <div class="ob-home-hero__rating">
-          <span class="ob-home-hero__stars" aria-hidden="true">
-            {%- for i in (1..5) -%}
-              {%- assign star_empty = i | minus: section.settings.rating_score | at_least: 0 | at_most: 1 | times: 100 -%}
-              <span class="ob-home-hero__star" style="--star-empty: {{ star_empty }}%">
-                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2.6 5.6 6 .7-4.5 4.1 1.2 6-5.3-3-5.3 3 1.2-6-4.5-4.1 6-.7z"/></svg>
-                <svg class="ob-home-hero__star-fill" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2.6 5.6 6 .7-4.5 4.1 1.2 6-5.3-3-5.3 3 1.2-6-4.5-4.1 6-.7z"/></svg>
-              </span>
-            {%- endfor -%}
-          </span>
-          <p>
+          <div class="ob-home-hero__rating-row">
+            <a href="https://www.trustedshops.nl/verkopersbeoordeling/info_XEF6A9A6375D0B95B950D0A48C758ABA3.html" target="_blank" rel="noopener">
+              <img
+                src="{{ 'ob-trustedshops-badge.png' | asset_url }}"
+                alt="Trusted Shops"
+                class="ob-home-hero__trustedshops-logo"
+                loading="lazy"
+                width="342"
+                height="147"
+              >
+            </a>
+            <span class="ob-home-hero__stars" aria-hidden="true">
+              {%- for i in (1..5) -%}
+                {%- assign star_empty = i | minus: section.settings.rating_score | at_least: 0 | at_most: 1 | times: 100 -%}
+                <span class="ob-home-hero__star" style="--star-empty: {{ star_empty }}%">
+                  <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2.6 5.6 6 .7-4.5 4.1 1.2 6-5.3-3-5.3 3 1.2-6-4.5-4.1 6-.7z"/></svg>
+                  <svg class="ob-home-hero__star-fill" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2.6 5.6 6 .7-4.5 4.1 1.2 6-5.3-3-5.3 3 1.2-6-4.5-4.1 6-.7z"/></svg>
+                </span>
+              {%- endfor -%}
+            </span>
             <span class="ob-home-hero__rating-value">{{ section.settings.rating_value }}</span>
-            {%- if section.settings.rating_text != blank -%}
-              &nbsp;· {{ section.settings.rating_text }}
-            {%- endif -%}
-          </p>
-          {% comment %}theme-check-disable RemoteAsset{% endcomment %}
-          <img
-            src="https://www.signpower.de/aufkleber-auf-rolle/images/trustedshops.png"
-            alt="Trusted Shops"
-            class="ob-home-hero__trustedshops-logo"
-            loading="lazy"
-            width="342"
-            height="147"
-          >
+          </div>
+          {%- if section.settings.rating_text != blank -%}
+            <p>{{ section.settings.rating_text }}</p>
+          {%- endif -%}
         </div>
       {%- endif -%}
     </div>

@@ -84,9 +84,16 @@
 
 .ob-home-hero__rating {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-top: 3.2rem;
+}
+
+.ob-home-hero__rating-row {
+  display: flex;
   align-items: center;
   gap: 1.2rem;
-  margin-top: 3.2rem;
   flex-wrap: wrap;
 }
 
@@ -125,21 +132,25 @@
 
 .ob-home-hero__rating p {
   margin: 0;
-  font-size: 1.4rem;
-  line-height: 1.5;
+  font-size: 1.3rem;
+  line-height: 1;
   letter-spacing: normal;
+  padding-left: 0.5rem;
+  font-style: italic;
   color: #64748b;
 }
 
 .ob-home-hero__rating-value {
+  font-size: 1.4rem;
   font-weight: 600;
+  letter-spacing: 0;
   color: #0f172a;
 }
 
 .ob-home-hero__trustedshops-logo {
   display: block;
   width: auto;
-  height: 3.4rem;
+  height: 4.4rem;
   flex-shrink: 0;
 }
 
