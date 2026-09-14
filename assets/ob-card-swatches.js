@@ -174,8 +174,18 @@
       return;
     }
 
+    // The .ob-media-hover class this sets is what actually reveals img2 (see
+    // component-ob-swatches.css) — so it must fire whenever the card has ANY
+    // hover-image source, not only when it has a color-swatch row. A
+    // single/no-color card carries no [data-ob-card-swatches] but still gets
+    // a [data-ob-card-default-swap2] holder from ob-card-swatches.liquid;
+    // gating on the swatch row alone left those cards' img2 permanently at
+    // opacity 0 even after it was correctly created.
     var card = event.target.closest && event.target.closest('.card-wrapper');
-    if (!card || !card.querySelector('[data-ob-card-swatches]')) {
+    if (
+      !card ||
+      !(card.querySelector('[data-ob-card-swatches]') || card.querySelector('[data-ob-card-default-swap2]'))
+    ) {
       clearMediaHover();
       return;
     }
