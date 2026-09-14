@@ -67,10 +67,16 @@
   to them - a plain grayscale alone preserves each source file's original
   lightness, which is exactly what looked too faint.
 */
-.ob-brand-logo {
-  height: 2rem;
+/* Height is a base times the logo's own optical-size multiplier
+   (--ob-logo-scale, set per brand in ob-brand-logotype.liquid), so a square
+   mark and a long wordmark carry the same visual weight. No max-width: a
+   width cap would shrink exactly the long logos the scale already sized.
+   Scoped to the marquee item: the homepage also loads component-ob-merken.css
+   (for ob-home-brands), whose own .ob-brand-logo rule would otherwise win on
+   source order. */
+.ob-home-marquee__item .ob-brand-logo {
+  height: calc(2rem * var(--ob-logo-scale, 1));
   width: auto;
-  max-width: 9rem;
   object-fit: contain;
   filter: grayscale(1) brightness(0.5) contrast(1.15);
   opacity: 0.9;
@@ -87,7 +93,7 @@
    see the comment in ob-brand-logotype.liquid. Invert instead of the usual
    grayscale so it reads as a dark mark on this row's light surface, and
    keep the invert on hover too since there's no legible color to reveal. */
-.ob-brand-logo--invert {
+.ob-home-marquee__item .ob-brand-logo--invert {
   filter: grayscale(1) invert(1);
 }
 
@@ -102,9 +108,8 @@
     font-size: 2rem;
   }
 
-  .ob-brand-logo {
-    height: 2.4rem;
-    max-width: 11rem;
+  .ob-home-marquee__item .ob-brand-logo {
+    height: calc(2.4rem * var(--ob-logo-scale, 1));
   }
 }
 

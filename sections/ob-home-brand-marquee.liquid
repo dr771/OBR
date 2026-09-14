@@ -47,7 +47,7 @@
                 {% if copy == 1 %}{{ block.shopify_attributes }}{% endif %}
                 {% if copy == 2 %}tabindex="-1"{% endif %}
               >
-                {%- render 'ob-brand-logotype', collection: block.settings.collection, handle: block.settings.brand_handle -%}
+                {%- render 'ob-brand-logotype', collection: block.settings.collection, brand_handle: block.settings.brand_handle -%}
               </a>
             {%- endif -%}
           {%- endfor -%}

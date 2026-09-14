@@ -71,8 +71,14 @@
   marquee copy: plain grayscale keeps each source file's original
   lightness, which read as too pale for the lighter logos specifically.
 */
-.ob-brand-logo {
-  max-height: 2.4rem;
+/* Height = base x the logo's optical-size multiplier (--ob-logo-scale, see
+   ob-brand-logotype.liquid). Base is a notch under the marquee's 2.4rem so
+   the tallest mark (Odlo) still sits in the 5.6rem chip without growing it
+   much; max-width stays as a guard for the narrowest chips. Scoped to the
+   chip because the homepage loads this file too, next to the marquee's own
+   .ob-brand-logo sizing. */
+.ob-merken-chip .ob-brand-logo {
+  height: calc(2rem * var(--ob-logo-scale, 1));
   max-width: 100%;
   width: auto;
   object-fit: contain;
@@ -238,8 +244,10 @@
     border-radius: 1.2rem;
   }
 
-  .ob-brand-logo {
-    max-height: 3.4rem;
+  /* Same optical-size multiplier on a larger base; the tallest mark (Odlo,
+     2.15x) lands at ~5.2rem, inside the 8rem chip's 5.6rem content box. */
+  .ob-merken-chip .ob-brand-logo {
+    height: calc(2.4rem * var(--ob-logo-scale, 1));
   }
 
   .ob-lt-fitflop { font-size: 2.6rem; }

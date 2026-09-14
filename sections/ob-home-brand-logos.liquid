@@ -1,0 +1,160 @@
+{% comment %}
+  OB: homepage "Uitgelichte merken" grid with each brand's real logo - the
+  successor to sections/ob-home-brands.liquid (text wordmarks), which stays
+  in the theme and in templates/index.json as a disabled fallback.
+
+  Same bordered 6 + 5 card grid as that section (flex, not a fixed column
+  count, so the short last row stretches instead of leaving a dead gap), but
+  each card renders ob-brand-logotype.liquid's real-logo default. Every logo
+  carries its own --ob-logo-scale (optical size from its ink box - see the
+  snippet), applied to this section's base height, so an Odlo mark and a
+  Sweaty Betty wordmark read at the same weight, exactly as in the marquee.
+  The logo sits in a fixed-height slot so descriptions line up per row.
+
+  Sneaker Lab has no sourced logo and falls back to the snippet's styled
+  wordmark, whose .ob-logotype / .ob-lt-* classes live in
+  component-ob-merken.css - loaded here for that reason only.
+
+  Description copy reuses the Merken page's per-brand eyebrow strings
+  (templates/page.merken.json) so both pages describe a brand identically.
+{% endcomment %}
+{{ 'component-ob-home-brand-logos.css' | asset_url | stylesheet_tag }}
+{{ 'component-ob-merken.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="ob-home-brand-logos section-{{ section.id }}-padding">
+  <div class="page-width">
+    <div class="ob-home-brand-logos__head">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="ob-home-brand-logos__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="ob-home-brand-logos__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="ob-home-brand-logos__subheading">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="ob-home-brand-logos__grid">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign ob_bl_handle = block.settings.collection.handle | default: block.settings.brand_handle
+          assign ob_bl_url = block.settings.collection.url
+          if ob_bl_url == blank and block.settings.brand_handle != blank
+            assign ob_bl_url = routes.collections_url | append: '/' | append: block.settings.brand_handle
+          endif
+        -%}
+        {%- if ob_bl_handle != blank -%}
+          <a href="{{ ob_bl_url }}" class="ob-home-brand-logos__card" {{ block.shopify_attributes }}>
+            <span class="ob-home-brand-logos__mark">
+              {%- render 'ob-brand-logotype',
+                collection: block.settings.collection,
+                brand_handle: block.settings.brand_handle
+              -%}
+            </span>
+            {%- if block.settings.description != blank -%}
+              <span class="ob-home-brand-logos__desc">{{ block.settings.description }}</span>
+            {%- endif -%}
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "OB Merklogo's",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Uitgelichte merken"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titel",
+      "default": "Tien specialisten, zorgvuldig gekozen"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Onderschrift",
+      "default": "Elk merk is de beste in zijn vak. Wij brengen ze samen zodat jij niet hoeft te zoeken."
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Merk",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collectie"
+        },
+        {
+          "type": "text",
+          "id": "brand_handle",
+          "label": "Merk-handle (fallback)",
+          "info": "Alleen invullen als de collectie hierboven nog niet bestaat (bv. \"rh-plus\"). Bepaalt dan het logo en de link (/collections/<handle>)."
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Korte omschrijving"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "OB Merklogo's",
+      "blocks": [
+        { "type": "brand" }
+      ]
+    }
+  ]
+}
+{% endschema %}

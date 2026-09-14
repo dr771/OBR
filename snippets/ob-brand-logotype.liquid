@@ -20,10 +20,27 @@
   component-ob-home-marquee.css / component-ob-merken.css's shared
   `.ob-brand-logo` rules), not this snippet - it only picks the asset.
 
+  Optical sizing: a shared height makes a near-square mark (Odlo) tiny and a
+  long wordmark (Sweaty Betty, Loewenweiss) huge, so each logo carries a
+  `--ob-logo-scale` multiplier the rows apply to their own base height. It is
+  equal-visual-weight sizing, derived from the logo's trimmed ink box:
+    scale = (4 / ratio)^0.6 * (0.33 / density)^0.3
+  where ratio = ink width / height and density = share of that box covered
+  by ink (thin serif marks like Pas de Monaco read lighter than dense ones
+  like FitFlop at the same size). 4 and 0.33 are the row's "typical" logo.
+  Two by-eye corrections on top: FitFlop x0.92, Nike Swim x0.8 (a diagonal
+  swoosh reads heavier than its bounding-box density says). Asset files must
+  be trimmed to their ink (no transparent padding) or the scale is off - a
+  new logo needs trimming and its own scale from the formula above.
+
   Accepts:
   - collection: {Object} Collection Liquid object (optional if `handle` is given)
-  - handle: {String} Brand handle to render, for a brand with no collection
-    yet (e.g. RH+ - not synced from Akeneo). Defaults to `collection.handle`.
+  - brand_handle: {String} Brand handle to render, for a brand with no
+    collection yet (e.g. RH+ - not synced from Akeneo). Defaults to
+    `collection.handle`. Deliberately not named `handle`: Shopify's global
+    `handle` (the current page's own handle - "merken" on /pages/merken)
+    stays visible inside a rendered snippet, so an omitted `handle` param
+    silently resolved to it and every chip fell through to the plain title.
   - style: {String} Pass 'text' to force the hand-styled wordmark treatment
     (.ob-logotype / .ob-lt-*) instead of the real logo image, for a surface
     that deliberately wants styled type over photographic marks (e.g. the
@@ -32,10 +49,10 @@
 
   Usage:
   {% render 'ob-brand-logotype', collection: collection %}
-  {% render 'ob-brand-logotype', handle: 'rh-plus' %}
+  {% render 'ob-brand-logotype', brand_handle: 'rh-plus' %}
   {% render 'ob-brand-logotype', collection: collection, style: 'text' %}
 {% endcomment %}
-{%- assign ob_lt_handle = handle | default: collection.handle -%}
+{%- assign ob_lt_handle = brand_handle | default: collection.handle -%}
 {%- if style == 'text' -%}
   {%- case ob_lt_handle -%}
     {%- when 'fitflop' -%}
@@ -73,15 +90,17 @@
       height="100"
       loading="lazy"
       class="ob-brand-logo"
+      style="--ob-logo-scale: 1.25;"
     >
   {%- when 'hi-tec' -%}
     <img
       src="{{ 'ob-logo-hi-tec.png' | asset_url }}"
       alt="Hi-Tec"
-      width="292"
-      height="56"
+      width="290"
+      height="54"
       loading="lazy"
       class="ob-brand-logo"
+      style="--ob-logo-scale: 0.74;"
     >
   {%- when 'holster' -%}
     <img
@@ -91,24 +110,27 @@
       height="73"
       loading="lazy"
       class="ob-brand-logo"
+      style="--ob-logo-scale: 1.28;"
     >
   {%- when 'irasuto-studios' -%}
     <img
       src="{{ 'ob-logo-irasuto-studios.png' | asset_url }}"
       alt="Irasuto Studios"
-      width="600"
-      height="143"
+      width="569"
+      height="133"
       loading="lazy"
       class="ob-brand-logo"
+      style="--ob-logo-scale: 1.09;"
     >
   {%- when 'juicy-couture' -%}
     <img
       src="{{ 'ob-logo-juicy-couture.png' | asset_url }}"
       alt="Juicy Couture"
-      width="600"
-      height="103"
+      width="599"
+      height="102"
       loading="lazy"
       class="ob-brand-logo"
+      style="--ob-logo-scale: 0.86;"
     >
   {%- when 'loewenweiss' -%}
     <img
@@ -118,15 +140,17 @@
       height="39"
       loading="lazy"
       class="ob-brand-logo"
+      style="--ob-logo-scale: 0.71;"
     >
   {%- when 'nike-swim' -%}
     <img
       src="{{ 'ob-logo-nike-swim.png' | asset_url }}"
       alt="Nike Swim"
       width="130"
-      height="61"
+      height="46"
       loading="lazy"
       class="ob-brand-logo"
+      style="--ob-logo-scale: 1.07;"
     >
   {%- when 'odlo' -%}
     <img
@@ -136,15 +160,17 @@
       height="420"
       loading="lazy"
       class="ob-brand-logo"
+      style="--ob-logo-scale: 1.75;"
     >
   {%- when 'pas-de-monaco' -%}
     <img
       src="{{ 'ob-logo-pas-de-monaco.png' | asset_url }}"
       alt="Pas de Monaco"
-      width="600"
-      height="175"
+      width="578"
+      height="133"
       loading="lazy"
       class="ob-brand-logo"
+      style="--ob-logo-scale: 1.35;"
     >
   {%- when 'rh-plus' -%}
     {%- comment -%}
@@ -163,6 +189,7 @@
       height="203"
       loading="lazy"
       class="ob-brand-logo ob-brand-logo--invert"
+      style="--ob-logo-scale: 1.03;"
     >
   {%- when 'sneaker-lab' -%}
     <span class="ob-logotype ob-lt-sneakerlab">sneaker<b>lab</b></span>
@@ -174,6 +201,7 @@
       height="122"
       loading="lazy"
       class="ob-brand-logo"
+      style="--ob-logo-scale: 0.52;"
     >
   {%- else -%}
     <span class="ob-logotype">{{ collection.title }}</span>
