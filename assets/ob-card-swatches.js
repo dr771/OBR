@@ -31,6 +31,18 @@
 
     var active = card.querySelector('.ob-card-swatch--active');
     var src = active && active.dataset.obSwap2Src;
+    var srcset = active && active.dataset.obSwap2Srcset;
+
+    // No active chip means the product has no color swatches at all (single
+    // color or none) — fall back to the card's own default second shot,
+    // rendered by ob-card-swatches.liquid regardless of the swatch row.
+    if (!src) {
+      var fallback = card.querySelector('[data-ob-card-default-swap2]');
+      if (fallback) {
+        src = fallback.dataset.obSwap2Src;
+        srcset = fallback.dataset.obSwap2Srcset;
+      }
+    }
 
     var others = media.querySelectorAll('img:not(.ob-card-img2)');
     var img1 = others[0];
@@ -50,7 +62,7 @@
       var target = src || dawnImg2.dataset.obOrigSrc;
       if (dawnImg2.dataset.obFor !== target) {
         dawnImg2.setAttribute('src', target);
-        dawnImg2.setAttribute('srcset', src ? active.dataset.obSwap2Srcset || '' : dawnImg2.dataset.obOrigSrcset);
+        dawnImg2.setAttribute('srcset', src ? srcset || '' : dawnImg2.dataset.obOrigSrcset);
         dawnImg2.dataset.obFor = target;
       }
       return;
@@ -78,7 +90,7 @@
 
     if (img2.dataset.obFor !== src) {
       img2.src = src;
-      img2.srcset = active.dataset.obSwap2Srcset || '';
+      img2.srcset = srcset || '';
       img2.dataset.obFor = src;
     }
   }
@@ -120,7 +132,18 @@
     var swatch = event.target.closest('.ob-card-swatch');
     if (swatch) {
       selectSwatch(swatch);
+      return;
     }
+
+    // Warm the hover image as soon as the pointer enters ANY part of the
+    // card (bubbling mouseover fires well before it reaches the photo
+    // itself), instead of waiting for the geometric mousemove check below
+    // to confirm the cursor is over the media — that check fires only once
+    // the user is already basically hovering the image, leaving no lead
+    // time for the fetch. Cheap to call repeatedly: guarded by dataset.obFor.
+    if (!hoverMediaQuery.matches) return;
+    var card = event.target.closest('.card-wrapper');
+    if (card) ensureHoverImage(card, true);
   });
 
   document.addEventListener(

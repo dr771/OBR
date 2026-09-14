@@ -49,7 +49,43 @@
     endif
   endfor
   assign media_codes = media_codes | split: '@@'
+
+  comment
+    Default second shot for the card's CURRENT image (selected_or_first_available_variant).
+    Color swatches (below) carry their own per-color swap2, but a single/no-color
+    product renders no swatch row at all, so ensureHoverImage() in JS has nothing to
+    read — this fallback holder is what it falls back to in that case.
+  endcomment
+  assign default_swap2_media = null
+  assign default_variant = card_product.selected_or_first_available_variant
+  if default_variant.featured_image
+    capture default_color_code
+      render 'ob-media-color-code', image_src: default_variant.featured_image.src
+    endcapture
+    assign default_color_code = default_color_code | strip
+    if default_color_code != blank
+      assign matches = 0
+      for media in card_product.media
+        if media_codes[forloop.index0] == default_color_code
+          assign matches = matches | plus: 1
+          if matches == 2
+            assign default_swap2_media = media
+            break
+          endif
+        endif
+      endfor
+    endif
+  endif
 -%}
+{%- if default_swap2_media -%}
+  <span
+    class="visually-hidden"
+    aria-hidden="true"
+    data-ob-card-default-swap2
+    data-ob-swap2-src="{{ default_swap2_media | image_url: width: 533 }}"
+    data-ob-swap2-srcset="{{ default_swap2_media | image_url: width: 360 }} 360w, {{ default_swap2_media | image_url: width: 533 }} 533w, {{ default_swap2_media | image_url: width: 720 }} 720w"
+  ></span>
+{%- endif -%}
 {%- if color_option and color_option.values.size > 1 -%}
   {%- comment -%}
     The chips ride a single-row rail (see ob-option-rail.js), so a many-colour
