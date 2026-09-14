@@ -144,18 +144,20 @@
                     >
                       {%- if product.featured_media != blank -%}
                         {% comment %}responsive candidates for the enlarged desktop predictive-search cards{% endcomment %}
-                        <img
-                          class="predictive-search__image"
-                          src="{{ product.featured_media | image_url: width: 150 }}"
-                          srcset="
-                            {{ product.featured_media | image_url: width: 150 }} 150w,
-                            {{ product.featured_media | image_url: width: 300 }} 300w
-                          "
-                          sizes="(min-width: 750px) 115px, 50px"
-                          alt="{{ product.featured_media.alt | escape }}"
-                          width="50"
-                          height="{{ 50 | divided_by: product.featured_media.preview_image.aspect_ratio }}"
-                        >
+                        <div class="predictive-search__media">
+                          <img
+                            class="predictive-search__image"
+                            src="{{ product.featured_media | image_url: width: 150 }}"
+                            srcset="
+                              {{ product.featured_media | image_url: width: 150 }} 150w,
+                              {{ product.featured_media | image_url: width: 300 }} 300w
+                            "
+                            sizes="(min-width: 750px) 115px, 50px"
+                            alt="{{ product.featured_media.alt | escape }}"
+                            width="50"
+                            height="{{ 50 | divided_by: product.featured_media.preview_image.aspect_ratio }}"
+                          >
+                        </div>
                       {%- endif -%}
                       <div class="predictive-search__item-content{% unless settings.predictive_search_show_vendor or settings.predictive_search_show_price %} predictive-search__item-content--centered{% endunless %}">
                         {%- if settings.predictive_search_show_vendor -%}

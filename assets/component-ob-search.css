@@ -11,6 +11,96 @@
   text-transform: uppercase;
 }
 
+/*
+  Dawn's product-result title/vendor/price reuse the same shared classes the
+  PLP card overrides (.h5, .caption-with-letter-spacing, .price) but that
+  override in component-ob-swatches.css is scoped to
+  `.card-wrapper.product-card-wrapper`, so it never reached this widget — the
+  title fell through to the theme's default heading font (Fraunces serif).
+  Same measured PLP-card values (component-ob-swatches.css), reapplied here.
+*/
+.predictive-search--header .predictive-search__item-heading.h5 {
+  font-family: var(--font-body-family);
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 2.2rem;
+  letter-spacing: normal;
+}
+
+.predictive-search--header .predictive-search__item-vendor.caption-with-letter-spacing {
+  font-family: var(--font-body-family);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+  letter-spacing: normal;
+  opacity: 1;
+  color: rgba(var(--color-foreground), 0.45);
+}
+
+.predictive-search--header .predictive-search__item-vendor + .predictive-search__item-heading {
+  margin-top: 0.4rem;
+}
+
+/* Dawn underlines the title on hover/selection; PLP cards don't. */
+.predictive-search--header .predictive-search__list-item[aria-selected='true'] .predictive-search__item-heading,
+.predictive-search--header .predictive-search__list-item:hover .predictive-search__item-heading {
+  text-decoration: none;
+}
+
+.predictive-search--header .predictive-search__item-content .price,
+.predictive-search--header .predictive-search__item-content .price-item {
+  font-family: var(--font-body-family);
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 2rem;
+  letter-spacing: normal;
+  opacity: 0.8;
+}
+
+/*
+  Product thumbnail: same cool photo-tile surface + multiply blend as the PLP
+  card / PDP gallery (--ob-product-photo-surface / --ob-pdp-photo-surface,
+  both #f1f5f9), plus rounded corners. All Akeneo images are 1:1 (see
+  match-pdp-to-proto notes), so a fixed square aspect-ratio is safe and keeps
+  the mobile thumbnail (no explicit height in Dawn's markup) from taking on
+  whatever ratio the source photo happens to be.
+
+  Surface + blend live on a wrapper (.predictive-search__media, added in
+  sections/predictive-search.liquid), NOT on the <img> itself: mix-blend-mode
+  composites an element against whatever is painted BEHIND it in the same
+  stacking context, never against its own background-color. Putting both on
+  the <img> (first attempt here) meant object-fit: cover's opaque photo
+  content hid its own background permanently, while the blend instead
+  composited against the white search-modal backdrop — multiply-on-white is a
+  no-op, so the tint never showed. `isolation: isolate` on the wrapper caps
+  that backdrop at the wrapper's own #f1f5f9, matching the PLP card's
+  `.card__media` / PDP's `.ob-swatch-input__chip` pattern exactly.
+
+  Radius: PLP's card media (269.5px measured box, 1.6rem/16px radius, see
+  component-ob-swatches.css) runs a ~6% radius-to-width ratio, but the
+  design system doesn't hold that ratio flat as elements shrink — the PDP's
+  5rem/50px colour-swatch chip (component-ob-pdp.css .ob-swatch-input__chip)
+  uses 0.8rem/16%, over double the ratio, because a fixed small radius reads
+  as barely-rounded at a glance. This widget's mobile thumbnail is exactly
+  that same 5rem box, so it reuses 0.8rem outright; the desktop 11.5rem box
+  scales the same 16% ratio up to 1.8rem.
+*/
+.predictive-search--header .predictive-search__media {
+  grid-area: product-image;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 0.8rem;
+  background-color: #f1f5f9;
+  isolation: isolate;
+}
+
+.predictive-search--header .predictive-search__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+}
+
 .predictive-search--header
   #predictive-search-results-products-list
   .predictive-search__list-item:hover
@@ -43,15 +133,19 @@
     grid-template-columns: 11.5rem minmax(0, 1fr);
     column-gap: 1.2rem;
     align-items: start;
-    min-height: 14rem;
+    min-height: 11.5rem;
     padding: 0;
   }
 
-  .predictive-search--header #predictive-search-results-products-list .predictive-search__image {
+  /*
+    11.5rem square, not the old 11.5x14 cover box: every Akeneo image is 1:1
+    (see match-pdp-to-proto notes), so a non-square box only forced a crop.
+    Radius scales up from the mobile 0.8rem/5rem (16%) ratio, see the
+    .predictive-search__media comment above.
+  */
+  .predictive-search--header #predictive-search-results-products-list .predictive-search__media {
     width: 11.5rem;
-    height: 14rem;
-    object-fit: cover;
-    background: rgba(var(--color-foreground), 0.04);
+    border-radius: 1.8rem;
   }
 
   .predictive-search--header #predictive-search-results-products-list .predictive-search__item-content {
