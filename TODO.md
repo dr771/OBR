@@ -1,5 +1,8 @@
-Redesign-/UX-Audit-Anleitung - used by codex
 
+Filter: categories
+- normalize?
+- use for separate horizontal filter?
+- use for accessouires collection?
 ============
 
 SOLDEN page
@@ -13,4 +16,4 @@ MOb
 
 ============
 
-
+Redesign-/UX-Audit-Anleitung - used by codex
