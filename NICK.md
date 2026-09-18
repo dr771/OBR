@@ -161,6 +161,20 @@ Found 2026-08-26. Unlike colours and activities, these are **plain text on the p
 
 **Fix:** ideally the feed supplies Dutch values (`Heren`/`Dames`/`Uniseks` etc.) and one consistent language for categories. Failing that these can be renamed per value in Search & Discovery, but that is manual and drifts as soon as new values appear.
 
+**Escalated 2026-09-18 — no longer just a filter-label problem.** The two-level main navigation (playbook D19) builds automatic sub-collections on `custom.shopify_originalbrands_category` (Sandalen, Teenslippers, Sneakers, Broeken, …). Live values at 565 products: 25 distinct, mixed Dutch/English and casing (`Sandal`, `Teenslipper`, `Slipper`, `Clogg`, `boots`, `pants`, `buttonupshirt`, `sweater`, `vest`, `Kousen`, `Handschoenen`, `Headware`, `Ondergoed`, …), and `Kousen` sits under product type `Shoe`. Collection rules can OR the raw values, but every value added later lands in no sub-collection silently — so a fixed vocabulary is required before the menu is built. Message sent (NL):
+
+> Hoi Nick, korte vraag over de categorie-waarden in de feed. Tot nu toe gebruikte ik ze alleen als filter, maar nu ga ik er ook het hoofdmenu en de collecties op bouwen (Schoenen → Sandalen / Teenslippers / Sneakers …). Daarvoor moet elke waarde exact en stabiel zijn: elke nieuwe of afwijkende schrijfwijze valt anders stil buiten het menu.
+>
+> Nu zie ik 25 waarden, gemengd NL/EN en hoofdletters (`Sandal`, `Teenslipper`, `boots`, `pants`, `Clogg`, `buttonupshirt`, `Kousen`, `Handschoenen`, `Headware` …), en sokken staan onder producttype `Shoe`.
+>
+> Wat ik het liefst heb:
+> 1. Eén vaste lijst (gesloten vocabulaire), Nederlands, meervoud, consistente hoofdletters: bv. Sandalen, Teenslippers, Slippers, Sneakers, Laarzen, Ballerina's, Clogs, Broeken, Shorts, Shirts, Tops, Vesten, Truien, Jurken, Rokken, Leggings, Ondergoed, Zwemkleding, Sokken, Handschoenen, Mutsen & caps.
+> 2. Producttype consistent: Schoenen / Kleding / Accessoires (sokken, handschoenen, mutsen onder Accessoires).
+> 3. Gender: Dames / Heren / Kinderen / Uniseks.
+> 4. Nieuwe waarden eerst even melden voordat ze in de feed komen, dan hang ik ze meteen aan de juiste collectie.
+>
+> Als je me de volledige lijst van huidige Akeneo-waarden stuurt, maak ik het mapping-voorstel en jij hoeft alleen te bevestigen. Dank!
+
 ## 8. A product's title is an internal attribute description, not a name
 
 Found 2026-09-03, spotted in the new homepage bestsellers grid (`/products/eva-grey-colour-with-holster-branding`, vendor Holster). Its Shopify product title is literally **"EVA grey colour with holster branding"** — reads like a PIM/spec field (colourway + material note) that landed in the customer-facing title, not a real product name the way `FitFlop Airmesh™ Sneaker` or `Ceramicool Run Crew Socks` are.

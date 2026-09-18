@@ -64,6 +64,7 @@ Rank resolves that. It is the Collection metafield `custom.breadcrumb_rank` (int
 
 | Rank | Band | Collections |
 |---|---|---|
+| 5 | Product sub-type (planned, playbook D19) | the per-category sub-collections behind the two-level menu — `Sandalen`, `Teenslippers`, `Slippers`, `Sneakers`, `Laarzen`, … They locate a product more precisely than `Schoenen`, so they **must** rank below 10 or the breadcrumb keeps naming the parent. Assign 5 at creation, not later. |
 | 10 | Product type | `Schoenen`, `Kleding`, `Accessoires` |
 | 20 | Occasion | `Fashion & Lifestyle`, `Sport & Training`, `Outdoor & Werk` |
 | 30 | Gender | `Dames`, `Heren`, `Kinderen` |
