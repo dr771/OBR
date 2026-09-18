@@ -185,7 +185,7 @@
   font-size: 0.95rem;
   font-weight: 600;
   line-height: 1.4rem;
-  letter-spacing: normal;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #0d80c4;
 }
@@ -283,7 +283,6 @@
   .ob-merken-tile__eyebrow {
     font-size: 1rem;
     line-height: 1.5rem;
-    letter-spacing: normal;
   }
 
   .ob-merken-tile__name-row {

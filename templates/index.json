@@ -338,109 +338,6 @@
         "padding_bottom": 64
       }
     },
-    "brands": {
-      "type": "ob-home-brands",
-      "blocks": {
-        "odlo": {
-          "type": "brand",
-          "settings": {
-            "collection": "odlo",
-            "description": "Performance lagen"
-          }
-        },
-        "sweaty_betty": {
-          "type": "brand",
-          "settings": {
-            "collection": "sweaty-betty",
-            "description": "Activewear voor haar"
-          }
-        },
-        "hi_tec": {
-          "type": "brand",
-          "settings": {
-            "collection": "hi-tec",
-            "description": "Wandelen & buiten"
-          }
-        },
-        "fitflop": {
-          "type": "brand",
-          "settings": {
-            "collection": "fitflop",
-            "description": "Comforttechnologie"
-          }
-        },
-        "juicy_couture": {
-          "type": "brand",
-          "settings": {
-            "collection": "juicy-couture",
-            "description": "Iconische leisure"
-          }
-        },
-        "holster": {
-          "type": "brand",
-          "settings": {
-            "collection": "holster",
-            "description": "Australische sandalen"
-          }
-        },
-        "loewenweiss": {
-          "type": "brand",
-          "settings": {
-            "collection": "loewenweiss",
-            "description": "Alpine pantoffels"
-          }
-        },
-        "irasuto_studios": {
-          "type": "brand",
-          "settings": {
-            "collection": "irasuto-studios",
-            "description": "Japanse streetwear"
-          }
-        },
-        "nike_swim": {
-          "type": "brand",
-          "settings": {
-            "collection": "nike-swim",
-            "description": "Zwemmen"
-          }
-        },
-        "pas_de_monaco": {
-          "type": "brand",
-          "settings": {
-            "collection": "pas-de-monaco",
-            "description": "Racing culture"
-          }
-        },
-        "sneaker_lab": {
-          "type": "brand",
-          "settings": {
-            "collection": "sneaker-lab",
-            "description": "Sneakerverzorging"
-          }
-        }
-      },
-      "block_order": [
-        "odlo",
-        "sweaty_betty",
-        "hi_tec",
-        "fitflop",
-        "juicy_couture",
-        "holster",
-        "loewenweiss",
-        "irasuto_studios",
-        "nike_swim",
-        "pas_de_monaco",
-        "sneaker_lab"
-      ],
-      "settings": {
-        "eyebrow": "Uitgelichte merken",
-        "heading": "Elk met een eigen kracht",
-        "subheading": "Elk merk is de beste in zijn vak. Wij brengen ze samen zodat jij niet hoeft te zoeken.",
-        "padding_top": 64,
-        "padding_bottom": 64
-      },
-      "disabled": true
-    },
     "newsletter": {
       "type": "newsletter",
       "blocks": {
@@ -496,7 +393,6 @@
     "promo",
     "bestsellers",
     "brand_logos",
-    "brands",
     "newsletter"
   ]
 }

@@ -64,6 +64,10 @@
     <div class="ob-merken-grid">
       {%- for block in section.blocks -%}
         {%- assign ob_collection = block.settings.collection -%}
+        {%- capture ob_tile_eyebrow -%}
+          {%- render 'ob-brand-tagline', collection: ob_collection, fallback: block.settings.eyebrow -%}
+        {%- endcapture -%}
+        {%- assign ob_tile_eyebrow = ob_tile_eyebrow | strip -%}
         {%- if ob_collection != blank -%}
           <a href="{{ ob_collection.url }}" class="ob-merken-tile" {{ block.shopify_attributes }}>
             <div class="ob-merken-tile__media">
@@ -76,8 +80,8 @@
               >
             </div>
             <div class="ob-merken-tile__body">
-              {%- if block.settings.eyebrow != blank -%}
-                <div class="ob-merken-tile__eyebrow">{{ block.settings.eyebrow }}</div>
+              {%- if ob_tile_eyebrow != blank -%}
+                <div class="ob-merken-tile__eyebrow">{{ ob_tile_eyebrow }}</div>
               {%- endif -%}
               <div class="ob-merken-tile__name-row">
                 <span class="ob-merken-tile__name">{{ ob_collection.title }}</span>
@@ -155,7 +159,8 @@
         {
           "type": "text",
           "id": "eyebrow",
-          "label": "Categorie (eyebrow)"
+          "label": "Categorie (eyebrow)",
+          "info": "Alleen een terugval. Als de collectie het metaveld \"Brand tagline\" (custom.brand_tagline) heeft, wint die waarde — pas hem daar aan, dan verandert ook de homepage mee."
         },
         {
           "type": "text",

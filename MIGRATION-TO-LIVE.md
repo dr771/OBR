@@ -68,6 +68,13 @@ These do **not** travel with a theme export, and bare auto-created metafields ar
 
   Without the definition nothing errors: every collection reads as unset and the breadcrumb silently degrades to Shopify's arbitrary order, i.e. the original bug.
 
+- [ ] **Create the `custom.brand_tagline` collection metafield definition and set its 11 values.** Single-line text, owner **Collection**, pinned. Per `single-source-brand-tagline`, this is the single source for a brand's one-line tagline ("Alpine pantoffels"), rendered by both the homepage featured-brands grid and the Merken page tile eyebrow via `snippets/ob-brand-tagline.liquid`. Created on dev 2026-09-18 with these values, which are merchant copy and re-editable in Admin without a deploy:
+  - `fitflop` Comforttechnologie · `hi-tec` Wandelen & buiten · `holster` Australische sandalen · `irasuto-studios` Japanse streetwear · `juicy-couture` Iconische leisure · `loewenweiss` Alpine pantoffels · `nike-swim` Zwemmen · `odlo` Performance lagen · `pas-de-monaco` Racing culture · `sneaker-lab` Sneakerverzorging · `sweaty-betty` Activewear voor haar
+
+  Storefront access is deliberately left at `NONE`: only Liquid reads this field, and Liquid reads any *defined* metafield regardless of the `access.storefront` setting — that setting governs the Storefront API. Verified live on dev 2026-09-18 with `storefront: NONE` and both surfaces rendering correctly. (The blanket claim in section 3 that Liquid cannot read a value without `PUBLIC_READ` does not hold for plain Liquid rendering; leave this one as-is rather than "fixing" it.)
+
+  Without the definition nothing errors — both surfaces silently fall back to each section block's own tagline setting, which is exactly the duplicated-copy state this change removed. So a live shop missing the definition looks correct but has regressed to two sources of truth.
+
 ## 5. URLs & SEO
 
 - [ ] **Later phase — redirect map from the legacy Drupal-ish site.** Important before launch, but deliberately deferred until the catalog and destination URLs are mature. The old site gives each colour/size combo its own URL, which consolidate into one Shopify product; this needs a strategy, not just a file.

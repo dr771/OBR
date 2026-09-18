@@ -1,0 +1,32 @@
+{%- comment -%}
+  OB: a brand's one-line tagline ("Alpine pantoffels"), resolved from the one
+  place it is stored: the brand collection's `custom.brand_tagline` metafield.
+
+  Two surfaces render this string - the homepage featured-brands grid
+  (ob-home-brand-logos) and the Merken page tile eyebrow (merken-brands).
+  They used to hold their own copy per section block, in two different
+  template JSONs, which Shopify has no way of keeping in sync; the copy
+  belongs to the brand, not to a page, so it lives on the collection.
+
+  The per-block setting stays as `fallback` and is deliberately not removed:
+  - a brand can have no collection at all (RH+ is rendered from a
+    `brand_handle`, since it is not synced from Akeneo) and then has nowhere
+    to carry a metafield;
+  - it keeps the storefront correct in the window between deploying this
+    Liquid and populating the metafields, so rollout order does not matter.
+
+  `default` treats an empty string as unset, so a collection whose metafield
+  was created but left blank also falls back instead of rendering nothing.
+
+  Emits the bare string with no surrounding whitespace, but callers should
+  still `capture` + `strip` it before testing it against `blank`.
+
+  Accepts:
+  - collection: {Object} the brand's Collection, or nil/blank for a brand
+    that has no collection yet
+  - fallback: {String} the calling block's own tagline setting
+{%- endcomment -%}
+{%- liquid
+  assign ob_bt_value = collection.metafields.custom.brand_tagline.value | default: fallback
+  echo ob_bt_value
+-%}

@@ -203,7 +203,7 @@
   width: 3rem;
   height: 3rem;
   border-radius: 0.9rem;
-  background: #edf7fd;
+  background: #f1f5f9;
 }
 
 .ob-home-hero__float--top {
@@ -296,7 +296,7 @@
   font-size: 1.1rem;
   line-height: 1.6rem;
   font-weight: 500;
-  letter-spacing: normal;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #64748b;
 }

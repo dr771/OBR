@@ -1,12 +1,13 @@
 /*
-  Same pale blue as the hero's outlet badge rest state
-  (component-ob-home-hero.css .ob-home-hero__float--bottom) rather than the
-  PDP/PLP slate surface tint - the two sat close enough on the page that
-  two different light-blue-ish tints read as clashing. Sharing one color
-  keeps them reading as one accent family instead of competing.
+  The theme's single light surface tint, shared with the featured-brands
+  band, the footer, and the PLP/PDP product-photo surface. This band and the
+  hero's floating-card icon tile used to carry their own pale blue (#edf7fd);
+  one step away from #f1f5f9 it read as an inconsistency rather than a
+  distinction, so both moved onto the common value. The hero outlet badge
+  keeps its solid-accent hover, which still reads as a reward against this.
 */
 .ob-home-marquee {
-  background: #edf7fd;
+  background: #f1f5f9;
   border-top: 0.1rem solid #e2e8f0;
   border-bottom: 0.1rem solid #e2e8f0;
   overflow: hidden;
@@ -72,8 +73,8 @@
    mark and a long wordmark carry the same visual weight. No max-width: a
    width cap would shrink exactly the long logos the scale already sized.
    Scoped to the marquee item: the homepage also loads component-ob-merken.css
-   (for ob-home-brands), whose own .ob-brand-logo rule would otherwise win on
-   source order. */
+   (for ob-home-brand-logos' wordmark fallback), whose own .ob-brand-logo rule
+   would otherwise win on source order. */
 .ob-home-marquee__item .ob-brand-logo {
   height: calc(2rem * var(--ob-logo-scale, 1));
   width: auto;

@@ -1,8 +1,9 @@
 /*
   ob-home-brand-logos - homepage "Uitgelichte merken" logo grid
-  (sections/ob-home-brand-logos.liquid). Card chrome is deliberately a copy of
-  component-ob-home-brands.css rather than shared with it: that section is
-  archived (disabled in templates/index.json) and should stay frozen as-is.
+  (sections/ob-home-brand-logos.liquid). Card chrome started as a copy of the
+  text-wordmark predecessor's stylesheet (component-ob-home-brands.css), which
+  was removed with its section once this grid had shipped; these rules are now
+  the only definition of the treatment.
 */
 
 .ob-home-brand-logos {
@@ -18,7 +19,7 @@
   margin: 0;
   font-size: 1.2rem;
   font-weight: 600;
-  letter-spacing: normal;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #0d80c4;
 }

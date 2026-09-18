@@ -8,9 +8,7 @@ https://original-brands.bolt.host/. Order: hero, brand marquee, "Shop per
 behoefte" occasion grid, outlet promo banner, bestsellers (Dawn's
 `featured-collection`, restyled), featured-brands grid, newsletter signup
 (Dawn's `newsletter`, restyled).
-
 ## Requirements
-
 ### Requirement: Hero links copy, CTAs, and floating info cards to editable settings
 The hero SHALL render an eyebrow badge, a heading split into prefix/accent/suffix
 text settings (so the accent phrase can carry its own italic/colour styling
@@ -91,7 +89,7 @@ The homepage SHALL render a continuously auto-scrolling row of brand marks on a 
 
 #### Scenario: Tinted band
 - **WHEN** the marquee is displayed
-- **THEN** its strip SHALL render on the same pale blue as the hero's outlet badge rest state (`#edf7fd`), not a transparent/white background or a different tint, so it reads as its own band between the hero and the next section without clashing against the badge directly above it.
+- **THEN** its strip SHALL render on `#f1f5f9`, the theme's single light surface tint — the same value used by the featured-brands band, the footer, and the PLP/PDP product-photo surface — not a transparent/white background and not a second, near-identical pale blue. The hero's floating-card icon tile directly above SHALL use that same value, so no two light surfaces on the page sit one step apart.
 
 #### Scenario: Real logo for a sourced brand
 - **WHEN** a marquee item is rendered for a brand with a sourced logo file (FitFlop, Hi-Tec, Holster, Irasuto Studios, Juicy Couture, Löwenweiss, Nike Swim, Odlo, Pas de Monaco, RH+, Sweaty Betty)
@@ -237,18 +235,16 @@ The "Uitgelichte merken" grid SHALL be its own section
 collections, each card showing that brand's real logo from
 `snippets/ob-brand-logotype.liquid` (the text wordmark fallback only for a
 brand with no sourced logo, currently Sneaker Lab) and a short one-line
-description reusing the identical copy already written for each brand's
-block on the Merken page, laid out with an uneven flex-row technique (6 + 5)
-rather than a rigid column count. The previous text-wordmark grid
-(`sections/ob-home-brands.liquid`) SHALL remain in the theme and in
-`templates/index.json` as a disabled section, so it can be restored from the
-theme editor.
+tagline resolved from the brand collection's `custom.brand_tagline` metafield
+(the card's own block setting only as a fallback), laid out with an uneven
+flex-row technique (6 + 5) rather than a rigid column count. This SHALL be
+the only brand-grid section in the theme.
 
 #### Scenario: Copy matches the Merken page
-- **WHEN** a shopper reads a brand's one-line description on the homepage
-- **THEN** it SHALL read identically to that brand's `eyebrow` value on
-  `/pages/merken`, so the two surfaces never describe the same brand two
-  different ways.
+- **WHEN** a shopper reads a brand's one-line tagline on the homepage
+- **THEN** it SHALL read identically to that brand's eyebrow on
+  `/pages/merken`, because both render the same `custom.brand_tagline` value
+  rather than two independently maintained copies.
 
 #### Scenario: Uneven last row stretches to fill
 - **WHEN** 11 brand blocks are configured
@@ -268,15 +264,18 @@ theme editor.
 - **THEN** each logo SHALL sit centered in a fixed-height mark slot, so
   every card's description starts at the same vertical position.
 
-#### Scenario: Archived text grid can be restored
+#### Scenario: The superseded text grid is gone, not hidden
 - **WHEN** a merchant opens the homepage in the theme editor
-- **THEN** the text-wordmark "OB Uitgelichte merken" section SHALL be
-  present but hidden, with its 11 blocks and copy intact, and re-enabling it
-  SHALL render the old grid unchanged.
+- **THEN** no disabled "OB Uitgelichte merken" text-wordmark section SHALL be
+  present. Its section file and stylesheet are removed from the theme; the
+  wordmark treatment itself survives in `snippets/ob-brand-logotype.liquid`
+  (`style: 'text'`, and automatically for any brand with no sourced logo) with
+  its `.ob-logotype` / `.ob-lt-*` rules in `assets/component-ob-merken.css`, and
+  the removed section is recoverable from git history at commit `788772c`.
 
 ### Requirement: Homepage brand logos are optically size-normalized
-Every real brand logo on the homepage (marquee and featured-brands grid)
-SHALL be sized by its own `--ob-logo-scale` multiplier from
+Every real brand logo on the homepage SHALL be sized by its own
+`--ob-logo-scale` multiplier (marquee and featured-brands grid alike), from
 `snippets/ob-brand-logotype.liquid` applied to the row's base height,
 instead of a shared fixed height, so near-square marks and long wordmarks
 carry the same visual weight. Logo assets SHALL be trimmed to their ink (no
@@ -319,3 +318,26 @@ in `var(--font-heading-family)` (Fraunces) rather than Inter.
   footer, announcement bar, or cart, which deliberately fought that default
   back to Inter for their own dense-UI surfaces. See CI-STYLE-TOKENS.md's
   "Font stack" section.
+
+### Requirement: A brand's one-line tagline has a single source of truth
+Each brand's one-line tagline SHALL be stored once, on the brand's own collection, in the
+`custom.brand_tagline` metafield (single-line text), and SHALL be read from there by every surface
+that displays it. A surface SHALL fall back to its own block setting only when the metafield resolves
+to blank, or when the brand has no collection to carry a metafield at all. No surface SHALL require a
+merchant to write the same tagline twice.
+
+#### Scenario: One edit updates every surface
+- **WHEN** a merchant edits `custom.brand_tagline` on a brand's collection in Admin
+- **THEN** the homepage featured-brands card and the Merken page tile for that brand SHALL both show
+  the new text, with no theme-editor edit and no code change on either page.
+
+#### Scenario: Brand without a collection still renders
+- **WHEN** a brand is rendered from `brand_handle` because it has no Shopify collection yet (RH+)
+- **THEN** its tagline SHALL come from the section block's own setting, and the card SHALL render
+  normally rather than showing an empty tagline or erroring.
+
+#### Scenario: Empty metafield falls back rather than blanking
+- **WHEN** a brand collection exists but its `custom.brand_tagline` is unset or empty
+- **THEN** the surface SHALL render its block setting's text, so a not-yet-populated metafield never
+  strips copy that is already live.
+

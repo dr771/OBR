@@ -1,10 +1,11 @@
 {% comment %}
-  OB: homepage "Uitgelichte merken" grid with each brand's real logo - the
-  successor to sections/ob-home-brands.liquid (text wordmarks), which stays
-  in the theme and in templates/index.json as a disabled fallback.
+  OB: homepage "Uitgelichte merken" grid with each brand's real logo. The
+  only brand-grid section in the theme - it replaced a text-wordmark
+  predecessor (sections/ob-home-brands.liquid), removed once this had shipped
+  and been live-reviewed.
 
-  Same bordered 6 + 5 card grid as that section (flex, not a fixed column
-  count, so the short last row stretches instead of leaving a dead gap), but
+  A bordered 6 + 5 card grid (flex, not a fixed column count, so the short
+  last row stretches instead of leaving a dead gap), where
   each card renders ob-brand-logotype.liquid's real-logo default. Every logo
   carries its own --ob-logo-scale (optical size from its ink box - see the
   snippet), applied to this section's base height, so an Odlo mark and a
@@ -15,8 +16,10 @@
   wordmark, whose .ob-logotype / .ob-lt-* classes live in
   component-ob-merken.css - loaded here for that reason only.
 
-  Description copy reuses the Merken page's per-brand eyebrow strings
-  (templates/page.merken.json) so both pages describe a brand identically.
+  The one-line tagline under each logo comes from the brand collection's
+  custom.brand_tagline metafield via ob-brand-tagline.liquid - the same value
+  the Merken page's tile eyebrow renders, so one edit updates both pages. The
+  block's own "Korte omschrijving" is only that snippet's fallback.
 {% endcomment %}
 {{ 'component-ob-home-brand-logos.css' | asset_url | stylesheet_tag }}
 {{ 'component-ob-merken.css' | asset_url | stylesheet_tag }}
@@ -58,6 +61,13 @@
             assign ob_bl_url = routes.collections_url | append: '/' | append: block.settings.brand_handle
           endif
         -%}
+        {%- capture ob_bl_tagline -%}
+          {%- render 'ob-brand-tagline',
+            collection: block.settings.collection,
+            fallback: block.settings.description
+          -%}
+        {%- endcapture -%}
+        {%- assign ob_bl_tagline = ob_bl_tagline | strip -%}
         {%- if ob_bl_handle != blank -%}
           <a href="{{ ob_bl_url }}" class="ob-home-brand-logos__card" {{ block.shopify_attributes }}>
             <span class="ob-home-brand-logos__mark">
@@ -66,8 +76,8 @@
                 brand_handle: block.settings.brand_handle
               -%}
             </span>
-            {%- if block.settings.description != blank -%}
-              <span class="ob-home-brand-logos__desc">{{ block.settings.description }}</span>
+            {%- if ob_bl_tagline != blank -%}
+              <span class="ob-home-brand-logos__desc">{{ ob_bl_tagline }}</span>
             {%- endif -%}
           </a>
         {%- endif -%}
@@ -143,7 +153,8 @@
         {
           "type": "text",
           "id": "description",
-          "label": "Korte omschrijving"
+          "label": "Korte omschrijving",
+          "info": "Alleen een terugval. Als de collectie hierboven het metaveld \"Brand tagline\" (custom.brand_tagline) heeft, wint die waarde — pas hem daar aan, dan verandert ook de Merken-pagina mee."
         }
       ]
     }
