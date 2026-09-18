@@ -238,6 +238,24 @@ The three homepage "Shop per behoefte" collections (`sport-training`, `outdoor-w
 
 This also surfaced the brand-roster question below (Sweaty Betty/Nike Swim vs. RH+/Magnum) as concrete and no longer speculative.
 
+### D19 — Main navigation: two levels, no mega menu, no flat list — decided 2026-09-18 (not yet built)
+
+Assessed against the live dev shop at 565 synced products (an interim state of the catalog, not the full assortment). A mega menu only pays when a top-level item has two dimensions with several entries each to lay out as columns (Omoda: gender × type × brand; Only Brands: per brand, gender × model family). Here only Schoenen (402 products, 71%) has depth, and only along the type axis — Heren-schoenen is 35 products, Kinderen 1 — so mega columns would be mostly empty while costing hover panels and mobile depth. A flat list (the current 8 links) loses in the other direction: two taxonomies (needs and product type) share one row, the biggest category hides its 9 subtypes behind a filter (Teenslipper 112, Slipper 90, Sneaker 80, Sandal 50 …), and two links currently lead to empty collections (Accessoires 0, Solden 0). The bolt.host reference itself has only 5 flat links and no product-type axis at all.
+
+**Decision (owner, 2026-09-18):** hybrid two-level menu. Dropdown children where the catalog carries them, flat links elsewhere:
+
+- **Schoenen ▾** Alle schoenen, then per-type sub-collections (Sandalen, Teenslippers, Slippers, Sneakers, Laarzen, Ballerina's, Clogs)
+- **Kleding ▾** Alle kleding, then Broeken, Vesten, Shirts & tops, Shorts, Jurken & rokken
+- **Accessoires ▾** only once its collection rule actually catches the ~32 products (Handschoenen, Kousen, Headware) it has today; until then not in the nav
+- **Sport & Training ▾** by activity (Running, Training, Hiking, Fietsen, Skiën); **Outdoor & Werk** and **Fashion & Lifestyle** stay as top-level links — all three needs pillars remain in the nav (owner's call; Fashion & Lifestyle currently mirrors Kleding's 74 products, which resolves as the catalog fills)
+- **Merken ▾** every brand as a child (owner's call: a wanted brand must be reachable from anywhere), the page itself stays the parent link
+- **Solden** flat; hide until the collection is stocked
+- **No Dames/Heren/Kinderen top-level**: at 80% women it would produce three near-identical trees. Gender stays the first filter.
+
+Dawn's header already runs `menu_type_desktop: mega`, which renders a two-level menu as a full-width single row and a three-level menu as columns — so this is Admin navigation + smart collections, no theme code. The sub-collections are automatic collections conditioned on `custom.shopify_originalbrands_category` (the definition's *use as collection condition* is on, see MIGRATION-TO-LIVE.md), each ORing the raw Akeneo values it covers, so the inconsistent source values (`pants`, `Teenslipper`, `Clogg`, `buttonupshirt`; `Kousen` under product type Shoe) stay hidden behind clean Dutch titles. Still ask Nick to normalize first (NICK.md #7 already holds this) — not because the rules can't be written on raw values, but because every value he adds later lands in no sub-collection silently. Sub-type collections need a `custom.breadcrumb_rank` band **below** 10 (e.g. 5), since they locate a product more precisely than Schoenen/Kleding.
+
+**Upgrade trigger for a real mega menu:** once Magnum (620 SKUs, men's work boots) syncs, Schoenen gains a genuine gender dimension — then add a third level under Schoenen in Admin (Dames / Heren / Werk columns with the types beneath) and the existing `mega` setting renders columns without code.
+
 ## Reuse ledger (SB's shipped `openspec/specs/`)
 
 | Capability (spec) | Verdict | Note |
@@ -340,6 +358,7 @@ In rough priority order:
 
    **The trap to plan for:** a theme copy carries *only* the theme — not the metaobject/metafield definitions, entry ACTIVE status, or Search & Discovery filter config this build depends on. Tracked as a running checklist in **[MIGRATION-TO-LIVE.md](MIGRATION-TO-LIVE.md)**; append to it whenever you find a new shop-side dependency, rather than reconstructing the list at launch.
 5. ~~**Carry the finished PLP card treatment to every other card surface**~~ — **done 2026-08-21** (`carry-plp-card-treatment-everywhere`). The borderless/blended/surface swatch styling, brand photo corrections, and Bolt-matched meta typography in `component-ob-swatches.css` were re-scoped from `#ProductGridContainer` to a bare `.product-card-wrapper`, so every `card-product.liquid` render gets the identical treatment regardless of section. Live-verified on the homepage featured-collection surface (surface tint, chip hover/selection cue, rail chevrons, tooltip, Hi-Tec brand padding, mobile 2-up grid). Related products and collage blocks get the same fix but aren't independently exercisable yet: related-products' native Shopify recommendations API returns empty with this catalog's 11 test products and no traffic history (same class of caveat as predictive search's `>8 results` branch and PLP load-more's `>18 products` threshold), and no template currently configures a collage section — retest both once real data/config exists.
+7. **Main navigation restructure (D19, decided 2026-09-18, not built):** two-level hybrid menu via Admin navigation + per-type smart collections on `custom.shopify_originalbrands_category`, after Nick normalizes the category values (NICK.md #7). Prerequisites: fix the empty `Accessoires` and `Solden` collections before they go back into the nav.
 6. **PLP/PDP reference and CTA color are decided (2026-08-16).** ~~Homepage direction is deliberately still open.~~ — **resolved 2026-09-03**: the owner pointed directly at the bolt.host homepage and it's now built (`homepage-sections`, see Current Status). Bolt is the approved reference for PLP/PDP/homepage typography, spacing/gaps, blue shadows, borders, and border-radii (see Homepage section above); primary color is `#38B6FF`. The CTA-text-contrast issue is known but deprioritized, not urgent. Reviews, newsletter popup (the homepage now has a real newsletter *signup* section, but no popup/modal), and promo bar remain gated on the client. See Open questions.
 
 ## Brand roster
