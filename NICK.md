@@ -258,6 +258,26 @@ The definitions themselves are healthy: `access.storefront: PUBLIC_READ`, 564/56
 
 ## 11. The re-sync is only partly applied, and production differs from the CSV
 
+**Quantified against the CSV, 2026-09-20** (564 products carrying a category value, 31 distinct values). Three generations of values coexist in one field:
+
+| State | Products | Values |
+|---|---|---|
+| Already the CSV's Dutch label | 90 (16%) | Hemden 20, Truien 20, Broeken 14, Kousen 10, Shorten 10, Headware 5, accessoires 3, Vesten 3, Leggings 2, Bovenkleding 1, Ondergoed 1, Teenslippers 1 |
+| Still the raw Akeneo code | 345 (61%) | Slipper 90, Sneaker 80, Sandal 50, boots 26, Ballerina 20, pants 20, vest 18, Clogg 14, Shirt 13, top 5, dress 3, Legging 3, buttonupshirt 1, onepiece 1, swimwear 1 |
+| **In no vocabulary at all** | 129 (23%) | **Teenslipper 111**, Handschoenen 14, Rokjes 3, Outdoor 1 |
+
+The third row is the important one and it is not explained by "the sync is half done". `Teenslipper` is neither the code (`toepost`) nor the label (`Teenslippers`). `Handschoenen` is neither the code (`gloves`) nor the label — and note the shop's spelling is **correct** where the CSV's `Handsschoenen` has a typo. `Rokjes` vs the CSV's `Rokken`. These look like an **older, third vocabulary** still sitting in the data, not a partial application of the current one.
+
+Six CSV entries have no product on dev at all: `gloves`, `pyjama`, `skirt`, `robe`, `jacket`, `skipants`.
+
+**Two questions that resolve this before anything is built on it:**
+
+1. **Which Akeneo environment feeds dev?** Nick's note said the CSV lists production options and "test can differ slightly". A 23% orphan rate is not "slightly", so either dev is fed from a different environment than the CSV describes, or the CSV is not the vocabulary actually in use.
+2. **Run one full sync to completion, then re-measure.** If the 31 values collapse to the CSV's labels, the pipeline is sound and this was simply an unfinished run. If the orphans survive, there is a second value source in Akeneo.
+
+Until one of those is answered, **do not build the D19 sub-collections on this field** — the menu would silently drop 23% of the catalog. Vendor (11 clean values, matching) and the existing product-type collections are unaffected and remain safe to build on.
+
+
 Distinct category values on `/en` (the current index) show old codes and new Dutch labels side by side:
 
 | Old value (count) | New value (count) |
