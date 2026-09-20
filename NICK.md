@@ -225,6 +225,8 @@ Found 2026-09-03, while restructuring the homepage "Shop per behoefte" collectio
 
 ## 10. Plain-text metafield filters are broken on the Dutch storefront (2026-09-20)
 
+**RESOLVED 2026-09-20 by making Dutch the shop's primary locale.** All three facets recovered instantly, with no reindex: Category 31 values / 564 products, Gender 4 / 565, Maat 70 / 3452, alongside Merk 11 / 565, Kleur 15 / 1345 and Activities 7 / 747. Nothing was owed by Nick for this part. The diagnosis below is kept because the mechanism will recur on the live shop if its primary locale is set to English. See MIGRATION-TO-LIVE.md section 3.
+
 **Third and corrected write-up.** Two earlier versions of this item were wrong and are replaced: the first blamed a lagging Dutch reindex and advised waiting; the second additionally claimed the colour filter was dead. **The colour filter is fine** — it renders `radio` inputs (`swatch-input__input`), not checkboxes, and a checkbox-only selector counted zero. Re-measured type-agnostically below.
 
 English is the shop's primary locale, Dutch is secondary and published. Dutch is served at the root path; `/nl/` is a 404, `/en/` is the alternate.

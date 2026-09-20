@@ -238,6 +238,16 @@ The three homepage "Shop per behoefte" collections (`sport-training`, `outdoor-w
 
 This also surfaced the brand-roster question below (Sweaty Betty/Nike Swim vs. RH+/Magnum) as concrete and no longer speculative.
 
+### D20 — Dutch is the shop's primary locale, not a translation of English — decided and applied 2026-09-20
+
+The dev shop ran with `en` primary and `nl` published, although every piece of content was already written in Dutch and the EU market served `nl` at the root URL. English was nominal: `/en/` rendered the same Dutch text, and the shop had zero Dutch translations.
+
+That mismatch had a real cost. Shopify's storefront **filter index** is built per locale and, unlike content rendering, does not fall back to the primary locale for **plain-text** metafields. On Dutch, Category covered 16 of 565 products, Gender 17 of 565 and Maat 330 of 3452; the same facets on `/en` covered 564, 565 and 3452. Metaobject-reference facets (Kleur, Activities) and the native `vendor` field were unaffected on both locales, because a GID carries no locale-scoped text.
+
+**Decision:** make Dutch the primary locale rather than translating Dutch content into Dutch, and rather than migrating category/gender onto metaobjects. Applied in the admin on 2026-09-20; all three facets recovered instantly with no reindex. Moving the two plain-text fields onto metaobjects was considered and rejected: it would buy the same fix at the price of a connector change plus deeper exposure to the metaobject field-orphaning trap (see NICK.md item 4), which is the single failure mode that has cost this project the most time. The closed-vocabulary benefit a metaobject would also bring is obtainable far more cheaply by having Nick emit stable codes. Revisit metaobjects only if a category ever needs to carry more than its name — an icon, a sort order, a description.
+
+**Side effect to plan for:** the flip *removes* the old primary locale instead of demoting it. English disappeared from `shopLocales` and `/en/` now 404s. Re-add it via *Add language* if the DE/FR/LU market needs an English storefront; it had no translations, so nothing was lost.
+
 ### D19 — Main navigation: two levels, no mega menu, no flat list — decided 2026-09-18 (not yet built)
 
 Assessed against the live dev shop at 565 synced products (an interim state of the catalog, not the full assortment). A mega menu only pays when a top-level item has two dimensions with several entries each to lay out as columns (Omoda: gender × type × brand; Only Brands: per brand, gender × model family). Here only Schoenen (402 products, 71%) has depth, and only along the type axis — Heren-schoenen is 35 products, Kinderen 1 — so mega columns would be mostly empty while costing hover panels and mobile depth. A flat list (the current 8 links) loses in the other direction: two taxonomies (needs and product type) share one row, the biggest category hides its 9 subtypes behind a filter (Teenslipper 112, Slipper 90, Sneaker 80, Sandal 50 …), and two links currently lead to empty collections (Accessoires 0, Solden 0). The bolt.host reference itself has only 5 flat links and no product-type axis at all.
