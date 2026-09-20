@@ -266,14 +266,21 @@ The definitions themselves are healthy: `access.storefront: PUBLIC_READ`, 564/56
 | Still the raw Akeneo code | 345 (61%) | Slipper 90, Sneaker 80, Sandal 50, boots 26, Ballerina 20, pants 20, vest 18, Clogg 14, Shirt 13, top 5, dress 3, Legging 3, buttonupshirt 1, onepiece 1, swimwear 1 |
 | **In no vocabulary at all** | 129 (23%) | **Teenslipper 111**, Handschoenen 14, Rokjes 3, Outdoor 1 |
 
-The third row is the important one and it is not explained by "the sync is half done". `Teenslipper` is neither the code (`toepost`) nor the label (`Teenslippers`). `Handschoenen` is neither the code (`gloves`) nor the label — and note the shop's spelling is **correct** where the CSV's `Handsschoenen` has a typo. `Rokjes` vs the CSV's `Rokken`. These look like an **older, third vocabulary** still sitting in the data, not a partial application of the current one.
+**The sync was NOT half-finished — it completed, and this mixed state is its actual output.** Verified 2026-09-20 from `updatedAt`: 548 of 565 products were written on Friday 2026-09-18, and the final batch interleaves both generations within seconds — `Truien` at 14:22:13 and `Sneaker` at 14:22:31, 18 seconds apart, same run. (17 products were last touched 2026-09-14 and the sync did not reach them; one 2026-09-20 timestamp is a sentinel test write of ours, since restored.) So the question is not "did it finish" but "why did it write three different vocabularies".
+
+**The split is by brand, not by time.** Category values per vendor:
+
+| Vendor | Products | Values written |
+|---|---|---|
+| **Odlo** | 92 | almost entirely the new Dutch labels — Truien 20, Hemden 17, Broeken 14, Handschoenen 14, Kousen 9, Shorten 5, Vesten 3, accessoires 3, Bovenkleding 1, Leggings 1, Ondergoed 1 (stragglers: Legging 1, Shirt 1, Headware 2) |
+| **FitFlop** | 379 | entirely old codes/orphans — Teenslipper 111, Slipper 79, Sneaker 78, Sandal 50, boots 26, Ballerina 20, Clogg 14. Exactly **one** product carries the new `Teenslippers` |
+| **Juicy Couture** | 70 | mixed — raw codes (pants 20, vest 18, top 5, dress 3, Shirt 9, buttonupshirt 1, swimwear 1, onepiece 1) alongside new labels (Shorten 5, Rokjes 3) |
+
+`Teenslipper` (111, all FitFlop) is neither the code (`toepost`) nor the label (`Teenslippers`). `Handschoenen` (14, all Odlo) is neither the code (`gloves`) nor the label — and the shop's spelling is **correct** where the CSV's `Handsschoenen` carries a typo. `Rokjes` (3, Juicy) vs the CSV's `Rokken`.
 
 Six CSV entries have no product on dev at all: `gloves`, `pyjama`, `skirt`, `robe`, `jacket`, `skipants`.
 
-**Two questions that resolve this before anything is built on it:**
-
-1. **Which Akeneo environment feeds dev?** Nick's note said the CSV lists production options and "test can differ slightly". A 23% orphan rate is not "slightly", so either dev is fed from a different environment than the CSV describes, or the CSV is not the vocabulary actually in use.
-2. **Run one full sync to completion, then re-measure.** If the 31 values collapse to the CSV's labels, the pipeline is sound and this was simply an unfinished run. If the orphans survive, there is a second value source in Akeneo.
+**The question for Nick is therefore narrow:** the same completed run wrote new Dutch labels onto Odlo's products and left FitFlop's on the old values. Why is the mapping brand- or family-dependent? And which Akeneo environment feeds dev, given his note that the CSV lists production options and "test can differ slightly" — a 23% orphan rate is not slightly.
 
 Until one of those is answered, **do not build the D19 sub-collections on this field** — the menu would silently drop 23% of the catalog. Vendor (11 clean values, matching) and the existing product-type collections are unaffected and remain safe to build on.
 
