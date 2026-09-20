@@ -222,3 +222,45 @@ Found 2026-09-03, while restructuring the homepage "Shop per behoefte" collectio
 > No rush on 2–4, 8, or 9, but 5 is blocking me.
 >
 > Thanks!
+
+## 10. Dutch storefront lost its Category/Gender filter after the full re-sync (2026-09-20)
+
+Measured live on the dev shop right after Nick's full Akeneo re-sync. **English is the shop's primary locale; Dutch is secondary and published.** Dutch is served at the root path — `/nl/` is a 404, `/en/` is the alternate.
+
+Facet coverage on `/collections/all`, same theme, same template, read back to back:
+
+| Facet | Dutch (root) | English (`/en`) |
+|---|---|---|
+| Category (`custom.shopify_originalbrands_category`) | 7 values / **16 products** | 31 values / 564 products |
+| Gender (`custom.genderid`) | 3 values / **17 products** | 4 values / 565 products |
+| Merk (vendor) | 11 / 565 | 11 / 565 |
+| Activities (metaobject) | 7 / 747 | 7 / 747 |
+
+Only the two **plain-text product metafields** collapsed on Dutch. Vendor and the metaobject-backed facet are complete on both, so it is not product publication and not a market/theme problem. Before the re-sync the Dutch root served all 565 products across 25 category values, so this is a regression caused by the sync rewriting every product's metafields.
+
+**Not a translation gap.** Two products with the identical stored value `Slipper` — Holster (appears on Dutch) and FitFlop (does not) — both return `translations: []` for locale `nl`. So the Dutch index is simply stale: it still holds roughly the pre-sync product set while the primary-locale index is current. Re-check before treating it as a Shopify support case; a secondary-locale reindex can lag by hours.
+
+**Important:** smart-collection rules read the stored primary-locale value, so the D19 menu/collection plan is unaffected by this. It is a storefront-filter problem only.
+
+## 11. The re-sync is only partly applied, and production differs from the CSV
+
+Distinct category values on `/en` (the current index) show old codes and new Dutch labels side by side:
+
+| Old value (count) | New value (count) |
+|---|---|
+| Teenslipper (111) | Teenslippers (1) |
+| Shirt (13) + buttonupshirt (1) | Hemden (20) |
+| pants (20) | Broeken (14) |
+| vest (18) | Vesten (3) |
+| Legging (3) | Leggings (2) |
+| top (5) | Bovenkleding (1) |
+
+Fully migrated: `shorts` → Shorten (10), `sweater` → Truien (20), `skirt` → **Rokjes** (3). Untouched: Sandal (50), Slipper (90), Sneaker (80), boots (26), Ballerina (20), Clogg (14), Handschoenen (14), Kousen (10), Headware (5), accessoires (3), dress (3), Ondergoed (1), onepiece (1), swimwear (1), Outdoor (1).
+
+Points to raise:
+
+1. **`skirt` is `Rokjes` live but `Rokken` in the CSV Nick sent.** Production does not match his own list.
+2. **`shirt` and `buttonupshirt` both map to `Hemden`** — the collision is now real in the data, and the two cannot be separated in a menu or collection.
+3. **`Outdoor` (1 product) is in no vocabulary block at all.**
+4. **Gender and product type were not touched**: still `Men`/`Women`/`Unisex`/`Kids` and `Shoe`/`Fashion`/`Sport`/`Sneaker`, not the CSV's `W/M/U/K/B/G` and `shoe/sport/fashion`.
+5. Label errors still in the CSV: `Handsschoenen` (double s), `Shorten` (not a Dutch word), `Ballerinas` (should be `Ballerina's`), `Headware` (English and misspelt), `Bovenkleding` for `top` (means outerwear, not a top).
