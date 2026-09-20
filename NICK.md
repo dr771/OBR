@@ -223,29 +223,34 @@ Found 2026-09-03, while restructuring the homepage "Shop per behoefte" collectio
 >
 > Thanks!
 
-## 10. The storefront filter index is broken after the full re-sync (2026-09-20)
+## 10. Plain-text metafield filters are broken on the Dutch storefront (2026-09-20)
 
-**This supersedes a first, wrong write-up of this item.** That version blamed only the Dutch locale and advised waiting for a reindex. Both were wrong: the damage is wider, and this project has already established that this index does not self-heal and cannot be forced (see item 4, "Actual root cause", and the `ob-metaobject-liquid-traps` memory).
+**Third and corrected write-up.** Two earlier versions of this item were wrong and are replaced: the first blamed a lagging Dutch reindex and advised waiting; the second additionally claimed the colour filter was dead. **The colour filter is fine** — it renders `radio` inputs (`swatch-input__input`), not checkboxes, and a checkbox-only selector counted zero. Re-measured type-agnostically below.
 
-Measured live right after Nick's full Akeneo re-sync. English is the shop's primary locale, Dutch is secondary and published. Dutch is served at the root path; `/nl/` is a 404 and `/en/` is the alternate.
+English is the shop's primary locale, Dutch is secondary and published. Dutch is served at the root path; `/nl/` is a 404, `/en/` is the alternate.
 
-| Facet | Dutch (root) | English (`/en`) | Underlying data |
+`/collections/all`, same theme and template, counting every `input[name^="filter."]`:
+
+| Facet | Source | Dutch (root) | English (`/en`) |
 |---|---|---|---|
-| Kleur (`custom.filtercolors`, variant) | **0 values** | **0 values** | intact: 8634 variant metafields, `PUBLIC_READ`, 15 ACTIVE colour entries with correct `label_nl` |
-| Category (`custom.shopify_originalbrands_category`) | 7 values / **16 products** | 31 values / 564 products | intact: definition `PUBLIC_READ`, 564 metafields attached |
-| Gender (`custom.genderid`) | 3 values / **17 products** | 4 values / 565 products | intact: 565 metafields attached |
-| Activities (metaobject) | 7 values / 747 | 7 values / 747 | intact, but see the `hiking` label below |
-| Merk (vendor) | 11 / 565 | 11 / 565 | fine |
+| Category | `custom.shopify_originalbrands_category` — **plain text** | 7 values / **16 products** | 31 / 564 |
+| Gender | `custom.genderid` — **plain text** | 3 values / **17 products** | 4 / 565 |
+| Maat | `akeneo.available_erp_sizes` — **plain text** | 70 values / **330** | 70 / 3452 |
+| Kleur | `custom.filtercolors` — metaobject reference | 15 / 1345 | 15 / 1345 |
+| Activities | `custom.activities` — metaobject reference | 7 / 747 | 7 / 747 |
+| Merk | `vendor` — native field | 11 / 565 | 11 / 565 |
 
-**The product-metafield definitions are NOT orphaned.** All report `access.storefront: PUBLIC_READ`, the right `metafieldsCount`, and `useAsCollectionCondition: true`. So this is not the metaobject-style definition orphaning from item 4 at the *definition* level — it is the storefront filter index itself.
+**The correlation is exact: every plain-text metafield facet is broken or degraded on Dutch, and every metaobject-reference facet plus the native vendor field is identical on both locales.** Metaobject references are GIDs and carry no locale-scoped text; plain-text metafield values are translatable content, so the secondary locale needs its own indexed copy and evidently has not got one for the newly synced products. This is the same structural weakness item 7 already described from the label angle — those three fields are plain text with no metaobject behind them.
 
-**Sentinel test (the method item 4 established as the only reliable one).** One product's category metafield was set to `ZZZSENTINEL` via the Admin API and polled for 11 minutes: it never appeared in the facet on **either** locale. The value was restored to `Slipper` afterwards. So the index is not tracking live edits at all right now — the Dutch/English split is a property of the index, not of the product data.
+The definitions themselves are healthy: `access.storefront: PUBLIC_READ`, 564/565 metafields attached, `useAsCollectionCondition: true`. So this is not the definition-orphaning of item 4 at the product-metafield level.
 
-**`hiking` renders English again.** The `hiking` metaobject entry holds `label_nl` = `Wandelen`, but the facet renders `Hiking` on both locales, while sibling entries (`swimming` → `Zwemmen`, `cycling` → `Fietsen`) resolve correctly. Item 4 names this exact symptom as the first thing to check when facets go English, and warns that **any Akeneo mapping change re-breaks it**. A mapping change did happen in this sync: the `custom.activities` product definition is now `list.metaobject_reference` (it used to be a single reference — which is what item 5 asked for).
+**Sentinel test** (the method item 4 established as the only reliable one): one product's category metafield was set to `ZZZSENTINEL` via the Admin API and polled for 11 minutes. It appeared in **neither** locale's facet. Restored to `Slipper` afterwards. So the filter index is not taking live edits at the moment, and the Dutch/English split is a property of the index, not of the product data.
 
-**Do not "wait for a reindex".** Forcing a reindex and waiting were both tried in the earlier case and did nothing; only deleting and re-creating the field worked. The same lever here is far more expensive and must not be pulled unilaterally: `custom.filtercolors` carries 8634 variant values and `custom.shopify_originalbrands_category` is the condition behind the three needs-collections. Agree the approach with Nick first. Cheaper things to try before that: re-save each filter in Search & Discovery, and re-run the sync now that the definition change has settled.
+**Do not simply wait.** Item 4 records that waiting and a forced reindex both achieved nothing in the earlier case. Worth trying before anything destructive: re-save each filter in Search & Discovery, and re-run the sync now that the definition change has settled. The structural fixes worth discussing with Nick are making Dutch the primary locale, or moving category/gender onto metaobjects the way colours and activities already are.
 
-**Important:** smart-collection rules read the stored metafield value, not the filter index, so the D19 menu/collection plan is unaffected by all of this. It is a storefront-filter problem only.
+**Separately, one activity label regressed.** The `hiking` entry (`gid://shopify/Metaobject/226176467053`, ACTIVE) holds `label_nl` = `Wandelen`, and the facet carries exactly that GID, yet the storefront renders `Hiking`. Sibling entries resolve correctly from the same loop (`cycling` → `Fietsen`, `swimming` → `Zwemmen`), so `snippets/ob-facet-value-label.liquid` is working and `entry.label_nl` is coming back empty for this one entry — the failure mode item 4 documents, now affecting a single entry. Fix per item 4 is to delete and re-create the field and re-write the values, about two minutes. A mapping change did occur in this sync: `custom.activities` is now `list.metaobject_reference`, where it used to be a single reference (which is what item 5 asked for).
+
+**Important:** smart-collection rules read the stored metafield value, not the filter index, so the D19 menu and collection plan is unaffected by all of this. It is a storefront-filter problem only.
 
 ## 11. The re-sync is only partly applied, and production differs from the CSV
 
