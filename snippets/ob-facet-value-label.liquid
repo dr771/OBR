@@ -27,14 +27,39 @@
 
   Output is already HTML-escaped — callers MUST NOT escape it again.
 
+  Two plain-text facets are also translated here, for a different reason —
+  see the "Plain-text facets" block below.
+
   Accepts:
   - value: {Object} a filter value object (from facets.liquid)
+  - param_name: {String} the owning filter's `param_name`, used to scope the
+    plain-text mappings to the right facet. Callers MUST pass it.
 
   Usage:
   {%- capture value_label -%}
-    {%- render 'ob-facet-value-label', value: value -%}
+    {%- render 'ob-facet-value-label', value: value, param_name: filter.param_name -%}
   {%- endcapture -%}
 {% endcomment %}
+{%- comment -%}
+  Plain-text facets: Geslacht (`custom.genderid`) and Producttype
+  (`product_type`) arrive from Akeneo in English and there is no metaobject to
+  read a Dutch label from — the value IS the label. Until Nick's sync sends
+  Dutch values (NICK.md item 7), they are mapped here.
+
+  This is a stopgap, deliberately chosen over renaming the values in Search &
+  Discovery: that route has failed on this shop before (it is the whole reason
+  this snippet exists). The mapping is self-healing — once the sync sends
+  `Vrouwen`, no case matches and the value passes through unchanged.
+
+  Only values whose Dutch form DIFFERS are listed. `Unisex`, `Sport` and
+  `Fashion` are identical in Dutch and are left alone. `Sneaker` as a product
+  type is deliberately NOT mapped: it sits on exactly one product (the Sneaker
+  Lab cleaner, which is not footwear) and is a data error — leaving it in
+  English keeps it visible instead of dressing it up as a real category.
+
+  Scoped by `param_name` so a value like "Men" can never be rewritten on some
+  other facet that happens to carry the same string.
+{%- endcomment -%}
 {%- comment -%}
   Five Liquid traps, every one confirmed live by instrumenting the rendered
   page. Keep this snippet exactly as written — each looks harmless and each
@@ -114,4 +139,18 @@
 {%- if ob_resolved_label == '' -%}
   {%- assign ob_resolved_label = value.label -%}
 {%- endif -%}
+
+{%- comment -%} Plain-text facets — see the note at the top. {%- endcomment -%}
+{%- if param_name contains 'custom.genderid' -%}
+  {%- case ob_resolved_label -%}
+    {%- when 'Women' -%}{%- assign ob_resolved_label = 'Vrouwen' -%}
+    {%- when 'Men' -%}{%- assign ob_resolved_label = 'Mannen' -%}
+    {%- when 'Kids' -%}{%- assign ob_resolved_label = 'Kinderen' -%}
+  {%- endcase -%}
+{%- elsif param_name contains 'product_type' -%}
+  {%- case ob_resolved_label -%}
+    {%- when 'Shoe' -%}{%- assign ob_resolved_label = 'Schoenen' -%}
+  {%- endcase -%}
+{%- endif -%}
+
 {{- ob_resolved_label | escape -}}

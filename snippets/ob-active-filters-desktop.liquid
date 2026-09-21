@@ -51,7 +51,7 @@
       {%- endif -%}
       {%- for value in filter.active_values -%}
         {%- capture ob_value_label -%}
-          {%- render 'ob-facet-value-label', value: value -%}
+          {%- render 'ob-facet-value-label', value: value, param_name: filter.param_name -%}
         {%- endcapture -%}
         <facet-remove>
           <a

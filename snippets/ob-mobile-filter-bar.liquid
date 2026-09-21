@@ -114,7 +114,7 @@
                         itself, not from Shopify's filter index — see ob-facet-value-label.
                       {%- endcomment -%}
                       {%- capture ob_value_label -%}
-                        {%- render 'ob-facet-value-label', value: value -%}
+                        {%- render 'ob-facet-value-label', value: value, param_name: filter.param_name -%}
                       {%- endcapture -%}
                       <li>
                         {%- if filter_kind == 'color' -%}
