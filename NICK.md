@@ -256,52 +256,33 @@ The definitions themselves are healthy: `access.storefront: PUBLIC_READ`, 564/56
 
 **Important:** smart-collection rules read the stored metafield value, not the filter index, so the D19 menu and collection plan is unaffected by all of this. It is a storefront-filter problem only.
 
-## 11. The re-sync is only partly applied, and production differs from the CSV
+## 11. Nick's 2026-09-21 update landed — the storefront filter index is stale — RESOLVED on Nick's side
 
-**Quantified against the CSV, 2026-09-20** (564 products carrying a category value, 31 distinct values). Three generations of values coexist in one field:
+**Verdict: Nick is right.** He sent a dev vocabulary list (`cats-dev.csv`, 28 code/label pairs) and said TEST now matches PROD. Spot-checked 2026-09-21 against the real metafield on the product, not the index:
 
-| State | Products | Values |
+| Storefront facet shows | Real `Shopify_Originalbrands_Category` in admin | Product |
 |---|---|---|
-| Already the CSV's Dutch label | 90 (16%) | Hemden 20, Truien 20, Broeken 14, Kousen 10, Shorten 10, Headware 5, accessoires 3, Vesten 3, Leggings 2, Bovenkleding 1, Ondergoed 1, Teenslippers 1 |
-| Still the raw Akeneo code | 345 (61%) | Slipper 90, Sneaker 80, Sandal 50, boots 26, Ballerina 20, pants 20, vest 18, Clogg 14, Shirt 13, top 5, dress 3, Legging 3, buttonupshirt 1, onepiece 1, swimwear 1 |
-| **In no vocabulary at all** | 129 (23%) | **Teenslipper 111**, Handschoenen 14, Rokjes 3, Outdoor 1 |
+| `Slipper` (78) | **Slippers** | FitFlop Gen-Ff Edge Metal Detail Leather Cross Slides |
+| `Teenslipper` (100) | **Teenslippers** | FitFlop Lulu Glitz Canvas Toe Post Sandals |
+| `Sandal` (46) | **Sandalen** | FitFlop Lulu Alto Linen Sandals |
+| `vest` (18) | **Vesten** | Juicy Couture Iccle Outline Cropped Hoodie |
 
-**The sync was NOT half-finished — it completed, and this mixed state is its actual output.** Verified 2026-09-20 from `updatedAt`: 548 of 565 products were written on Friday 2026-09-18, and the final batch interleaves both generations within seconds — `Truien` at 14:22:13 and `Sneaker` at 14:22:31, 18 seconds apart, same run. (17 products were last touched 2026-09-14 and the sync did not reach them; one 2026-09-20 timestamp is a sentinel test write of ours, since restored.) So the question is not "did it finish" but "why did it write three different vocabularies".
+Four of four code buckets hold the correct Dutch label. **The data is converted; the storefront filter index has not caught up.**
 
-**The split is by brand, not by time.** Category values per vendor:
+**How far behind it is.** The Search & Discovery admin values list (a fresher read of the same index) already shows 28 near-clean Dutch values; the storefront facet still shows 38, of which 412 of 564 products (73%) sit under a stale raw code. The two lists disagree in both directions — the admin list carries `Badmode`, `Jurken`, `One-piece`, which the storefront does not have at all — so the index is mid-refresh, not simply old.
 
-| Vendor | Products | Values written |
-|---|---|---|
-| **Odlo** | 92 | almost entirely the new Dutch labels — Truien 20, Hemden 17, Broeken 14, Handschoenen 14, Kousen 9, Shorten 5, Vesten 3, accessoires 3, Bovenkleding 1, Leggings 1, Ondergoed 1 (stragglers: Legging 1, Shirt 1, Headware 2) |
-| **FitFlop** | 379 | entirely old codes/orphans — Teenslipper 111, Slipper 79, Sneaker 78, Sandal 50, boots 26, Ballerina 20, Clogg 14. Exactly **one** product carries the new `Teenslippers` |
-| **Juicy Couture** | 70 | mixed — raw codes (pants 20, vest 18, top 5, dress 3, Shirt 9, buttonupshirt 1, swimwear 1, onepiece 1) alongside new labels (Shorten 5, Rokjes 3) |
+**Do not diagnose category data off the facet until it settles.** Use the product metafield in admin, or a GraphQL read. This is the same class of failure as items 4 and 10: the index, not the data.
 
-`Teenslipper` (111, all FitFlop) is neither the code (`toepost`) nor the label (`Teenslippers`). `Handschoenen` (14, all Odlo) is neither the code (`gloves`) nor the label — and the shop's spelling is **correct** where the CSV's `Handsschoenen` carries a typo. `Rokjes` (3, Juicy) vs the CSV's `Rokken`.
+**One real data error remains:** `Outdoor` (1 product, Hi-Tec Mauna Wp Womens walking shoe) is verified in the admin as a genuine stored value and appears in no column of `cats-dev.csv`.
 
-Six CSV entries have no product on dev at all: `gloves`, `pyjama`, `skirt`, `robe`, `jacket`, `skipants`.
+**Superseded:** the 2026-09-20 analysis in this item measured the dev shop against the *live* CSV and counted 129 products (23%) as "in no vocabulary". `cats-dev.csv` explains all but one of them — `Teenslipper` is a dev **code** (→ `Teenslippers`), `Handschoenen` and `Rokjes` are dev **labels** (`gloves`, `skirt`). The dev and live vocabularies genuinely differ; that was the missing reference, and the "brand-dependent mapping" theory was an artefact of it.
 
-**The question for Nick is therefore narrow:** the same completed run wrote new Dutch labels onto Odlo's products and left FitFlop's on the old values. Why is the mapping brand- or family-dependent? And which Akeneo environment feeds dev, given his note that the CSV lists production options and "test can differ slightly" — a 23% orphan rate is not slightly.
+### Still open for Nick (vocabulary quality, not sync)
 
-Until one of those is answered, **do not build the D19 sub-collections on this field** — the menu would silently drop 23% of the catalog. Vendor (11 clean values, matching) and the existing product-type collections are unaffected and remain safe to build on.
+1. **`Outdoor`** on the Hi-Tec product is in no vocabulary block.
+2. **`shirt` and `buttonupshirt` both map to `Hemden`** — the collision is real in the data; the two can never be separated in a menu or collection.
+3. **Gender and product type were not touched**: still `Men`/`Women`/`Unisex`/`Kids` and `Shoe`/`Fashion`/`Sport`/`Sneaker`, not the CSV's `W/M/U/K/B/G` and `shoe/sport/fashion`. `Sneaker` as a product type is 1 product (the Sneaker Lab cleaner) and is itself wrong.
+4. Label errors in `cats-dev.csv`: `Shorten` (not a Dutch word — `Shorts` or `Korte broeken`), `Ballerinas` (should be `Ballerina's`), `Headware` (English and misspelt), `Bovenkleding` for `top` (means outerwear, not a top), `Rokjes` (diminutive; live uses `Rokken`).
+5. **Dev and live vocabularies differ.** Worth aligning them, or the dev shop cannot validate anything vocabulary-dependent before go-live.
 
-
-Distinct category values on `/en` (the current index) show old codes and new Dutch labels side by side:
-
-| Old value (count) | New value (count) |
-|---|---|
-| Teenslipper (111) | Teenslippers (1) |
-| Shirt (13) + buttonupshirt (1) | Hemden (20) |
-| pants (20) | Broeken (14) |
-| vest (18) | Vesten (3) |
-| Legging (3) | Leggings (2) |
-| top (5) | Bovenkleding (1) |
-
-Fully migrated: `shorts` → Shorten (10), `sweater` → Truien (20), `skirt` → **Rokjes** (3). Untouched: Sandal (50), Slipper (90), Sneaker (80), boots (26), Ballerina (20), Clogg (14), Handschoenen (14), Kousen (10), Headware (5), accessoires (3), dress (3), Ondergoed (1), onepiece (1), swimwear (1), Outdoor (1).
-
-Points to raise:
-
-1. **`skirt` is `Rokjes` live but `Rokken` in the CSV Nick sent.** Production does not match his own list.
-2. **`shirt` and `buttonupshirt` both map to `Hemden`** — the collision is now real in the data, and the two cannot be separated in a menu or collection.
-3. **`Outdoor` (1 product) is in no vocabulary block at all.**
-4. **Gender and product type were not touched**: still `Men`/`Women`/`Unisex`/`Kids` and `Shoe`/`Fashion`/`Sport`/`Sneaker`, not the CSV's `W/M/U/K/B/G` and `shoe/sport/fashion`.
-5. Label errors still in the CSV: `Handsschoenen` (double s), `Shorten` (not a Dutch word), `Ballerinas` (should be `Ballerina's`), `Headware` (English and misspelt), `Bovenkleding` for `top` (means outerwear, not a top).
+**D19 sub-collections are now unblocked in principle** — smart-collection rules read the stored metafield, not the filter index, so they will match the correct Dutch labels today even while the facet still shows codes. Build against `cats-dev.csv`, not against what the filter displays.
