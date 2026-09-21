@@ -256,33 +256,63 @@ The definitions themselves are healthy: `access.storefront: PUBLIC_READ`, 564/56
 
 **Important:** smart-collection rules read the stored metafield value, not the filter index, so the D19 menu and collection plan is unaffected by all of this. It is a storefront-filter problem only.
 
-## 11. Nick's 2026-09-21 update landed — the storefront filter index is stale — RESOLVED on Nick's side
+## 11. Category data is correct — the storefront filter index is stale because the sync never touches the product — ROOT CAUSE FOUND 2026-09-21
 
-**Verdict: Nick is right.** He sent a dev vocabulary list (`cats-dev.csv`, 28 code/label pairs) and said TEST now matches PROD. Spot-checked 2026-09-21 against the real metafield on the product, not the index:
+**Nick's data is fine.** He sent `cats-dev.csv` (28 code/label pairs, the Akeneo **dev** vocabulary) and said TEST now matches PROD. Verified against the real metafield in admin, not the index:
 
-| Storefront facet shows | Real `Shopify_Originalbrands_Category` in admin | Product |
+| Facet shows | Actually stored | Product |
 |---|---|---|
-| `Slipper` (78) | **Slippers** | FitFlop Gen-Ff Edge Metal Detail Leather Cross Slides |
-| `Teenslipper` (100) | **Teenslippers** | FitFlop Lulu Glitz Canvas Toe Post Sandals |
-| `Sandal` (46) | **Sandalen** | FitFlop Lulu Alto Linen Sandals |
-| `vest` (18) | **Vesten** | Juicy Couture Iccle Outline Cropped Hoodie |
+| `boots` (24) | **Laarzen** | FitFlop F-Luma Boot Stretch Suede |
+| `pants` (16) | **Broeken** | Juicy Couture Stretch Denim Low Rise Flare Jeans |
+| `top` (3) | **Bovenkleding** | Juicy Couture Mia Boatneck Top |
+| `top` (3) | **Bovenkleding** | Juicy Couture Jersey Babey Bandeau Top |
+| `onepiece` (1) | **One-piece** | Juicy Couture Applique Terry Ronjon Romper |
+| `Slipper` / `Teenslipper` / `Sandal` / `vest` | Slippers / Teenslippers / Sandalen / Vesten | 4 further products |
 
-Four of four code buckets hold the correct Dutch label. **The data is converted; the storefront filter index has not caught up.**
+The values the facet shows — `boots`, `pants`, `top`, `dress`, `Slipper`, `Sandal`, `Teenslipper`, `vest`, `swimwear`, `onepiece`, `buttonupshirt`, `Clogg`, `Ballerina`, `Legging`, `Shirt`, `Sneaker`, `accessoires` — **exist on no product any more.**
 
-**How far behind it is.** The Search & Discovery admin values list (a fresher read of the same index) already shows 28 near-clean Dutch values; the storefront facet still shows 38, of which 412 of 564 products (73%) sit under a stale raw code. The two lists disagree in both directions — the admin list carries `Badmode`, `Jurken`, `One-piece`, which the storefront does not have at all — so the index is mid-refresh, not simply old.
+### Root cause
 
-**Do not diagnose category data off the facet until it settles.** Use the product metafield in admin, or a GraphQL read. This is the same class of failure as items 4 and 10: the index, not the data.
+**Writing a product metafield through the Admin API does not refresh that product's storefront filter index entry. Saving the product does.**
 
-**One real data error remains:** `Outdoor` (1 product, Hi-Tec Mauna Wp Womens walking shoe) is verified in the admin as a genuine stored value and appears in no column of `cats-dev.csv`.
+Proven by experiment: the romper stored `One-piece`, the facet listed `onepiece (1)` and had no `One-piece` at all. One tag added, product saved — and **within 15 seconds** `onepiece` was gone and `One-piece (1)` was there. The tag was then removed again.
 
-**Superseded:** the 2026-09-20 analysis in this item measured the dev shop against the *live* CSV and counted 129 products (23%) as "in no vocabulary". `cats-dev.csv` explains all but one of them — `Teenslipper` is a dev **code** (→ `Teenslippers`), `Handschoenen` and `Rokjes` are dev **labels** (`gloves`, `skirt`). The dev and live vocabularies genuinely differ; that was the missing reference, and the "brand-dependent mapping" theory was an artefact of it.
+So Nick's sync writes the metafields correctly and never touches the product, which leaves the whole catalogue's facet frozen on the previous generation of values. This is not a one-off: **every future sync will do the same** until his connector saves the product (or issues a `productUpdate`) after writing metafields.
 
-### Still open for Nick (vocabulary quality, not sync)
+### What does not fix it — do not retry these
 
-1. **`Outdoor`** on the Hi-Tec product is in no vocabulary block.
-2. **`shirt` and `buttonupshirt` both map to `Hemden`** — the collision is real in the data; the two can never be separated in a menu or collection.
-3. **Gender and product type were not touched**: still `Men`/`Women`/`Unisex`/`Kids` and `Shoe`/`Fashion`/`Sport`/`Sneaker`, not the CSV's `W/M/U/K/B/G` and `shoe/sport/fashion`. `Sneaker` as a product type is 1 product (the Sneaker Lab cleaner) and is itself wrong.
-4. Label errors in `cats-dev.csv`: `Shorten` (not a Dutch word — `Shorts` or `Korte broeken`), `Ballerinas` (should be `Ballerina's`), `Headware` (English and misspelt), `Bovenkleding` for `top` (means outerwear, not a top), `Rokjes` (diminutive; live uses `Rokken`).
-5. **Dev and live vocabularies differ.** Worth aligning them, or the dev shop cannot validate anything vocabulary-dependent before go-live.
+All three were tried on 2026-09-21 and changed nothing:
 
-**D19 sub-collections are now unblocked in principle** — smart-collection rules read the stored metafield, not the filter index, so they will match the correct Dutch labels today even while the facet still shows codes. Build against `cats-dev.csv`, not against what the filter displays.
+1. Waiting. There is no background job that catches up.
+2. Deleting and re-creating the **metafield definition** ("Delete field only", values preserved, re-adopted via the unstructured-metafields route). The facet came back with the identical 38 values and identical counts.
+3. Deleting and re-creating the **Search & Discovery filter**. Same.
+
+The index is keyed to the product's search document, not to the definition or the filter config. This is a different failure mode from item 4 (metaobject field orphaned by a definition rewrite) — the delete/re-create cure does not transfer.
+
+### Diagnostic trap, for next time
+
+Do not sample a bucket whose old code is a **prefix** of the new label. `Slipper`→`Slippers`, `Sandal`→`Sandalen`, `vest`→`Vesten`, `Teenslipper`→`Teenslippers` all are, and a first-result sample there proves nothing — the filter could simply be prefix-matching. Use `boots`→`Laarzen`, `pants`→`Broeken` or `top`→`Bovenkleding`.
+
+### The fix on our side
+
+Touch all 565 products once. Prefer a **bulk tag add + remove from the product list** over opening products individually: saving a product in the admin UI also clears the pending Shopify-taxonomy category suggestion and writes `Uncategorized` (observed on the romper; an untouched sibling still shows `Dresses in Clothing · Suggested`).
+
+### What to raise with Nick
+
+1. **The connector must save the product after writing its metafields**, otherwise every sync leaves the storefront filters showing the previous vocabulary. This is the important one.
+2. **`Outdoor`** (1 product, Hi-Tec Mauna Wp Womens walking shoe) is a genuine stored value that appears in no column of `cats-dev.csv`.
+3. **`shirt` and `buttonupshirt` both map to `Hemden`** — the collision is real in the data; the two can never be separated in a menu or collection.
+4. **Gender and product type were not touched**: still `Men`/`Women`/`Unisex`/`Kids` and `Shoe`/`Fashion`/`Sport`/`Sneaker`, not the CSV's `W/M/U/K/B/G` and `shoe/sport/fashion`. `Sneaker` as a product type is 1 product (the Sneaker Lab cleaner) and is itself wrong.
+5. Label errors in `cats-dev.csv`: `Shorten` (not a Dutch word — `Shorts` or `Korte broeken`), `Ballerinas` (should be `Ballerina's`), `Headware` (English and misspelt), `Bovenkleding` for `top` (means outerwear, not a top), `Rokjes` (diminutive; live uses `Rokken`).
+6. **Dev and live vocabularies differ.** Worth aligning them, or the dev shop cannot validate anything vocabulary-dependent before go-live.
+
+### Consequence for D19
+
+**Unblocked.** Smart-collection rules read the stored metafield value, not the filter index, so the category sub-collections will match the correct Dutch labels today even while the facet still shows codes. Build against `cats-dev.csv`.
+
+**Superseded:** the 2026-09-20 analysis in this item measured dev against the *live* CSV and counted 129 products (23%) as "in no vocabulary". `cats-dev.csv` explains all but one — `Teenslipper` is a dev **code**, `Handschoenen` and `Rokjes` are dev **labels**. The "brand-dependent mapping" theory was an artefact of the wrong reference.
+
+### Admin state changed while diagnosing (2026-09-21)
+
+- The `custom.shopify_originalbrands_category` definition was deleted and re-created. New id `252273426541` (was `226161426541`); name, key, type, validation, collection-condition, storefront access and pinning are identical.
+- The Search & Discovery **Category** filter was deleted with it and re-created (new id `53265956973`). It now sits **last** in the filter order; it used to be first. Label was later renamed by the owner.
