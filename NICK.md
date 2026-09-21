@@ -315,6 +315,28 @@ These are no longer index artefacts — they were verified as genuinely stored v
 
 Spot-verified: Odlo Tights Short Essential Sprinter really stores `Legging`. The four raw codes sit on Odlo, Pas de Monaco, Holster and Sneaker Lab products — the brands with the fewest SKUs, which suggests the sync skipped a tail rather than a whole brand.
 
+### Message sent to Nick (NL, 2026-09-21)
+
+> Hoi Nick,
+>
+> Twee dingen over de categorieën.
+>
+> **1.** De nieuwe waarden staan goed op de producten, maar de filters in de shop bleven de oude tonen. Oorzaak: een metafield dat via de API wordt geschreven, ververst de zoekindex van het product niet — dat gebeurt pas als het *product zelf* wordt opgeslagen. Ik heb nu alle 565 producten even opnieuw laten opslaan, en binnen twee minuten klopte alles.
+>
+> Kun je de connector zo aanpassen dat hij na het schrijven van de metafields ook het product opslaat (een `productUpdate`)? Anders lopen de filters na elke sync weer achter op de data.
+>
+> **2.** Nu de filters kloppen, blijven er 12 producten over met een oude of onbekende waarde:
+>
+> - `Shirt` (4) → moet `Hemden` zijn
+> - `Legging` (3) → `Leggings`
+> - `Slipper` (2) → `Slippers`
+> - `Sneaker` (2) → `Sneakers`
+> - `Outdoor` (1) → staat in geen enkele lijst
+>
+> Het gaat om Odlo, Pas de Monaco, Holster en Sneaker Lab.
+>
+> Groeten
+
 ### What to raise with Nick
 
 1. **The connector must save the product after writing its metafields**, otherwise every sync leaves the storefront filters showing the previous vocabulary. This is the important one — we can clear it by hand once, but not after every sync.
