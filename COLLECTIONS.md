@@ -4,15 +4,48 @@
 
 ### Categories
 
-- Headware
-- Kousen
-- Legging
-- Ondergoed
-- Outdoor
-- Sandal
-- Shirt
-- Slipper
-- Sneaker
+Live Admin API scan on 2026-09-21: **565 active products**, of which **564** have
+`custom.shopify_originalbrands_category`. The stored metafield currently contains
+28 distinct values:
+
+| Stored value | Products | Note |
+|---|---:|---|
+| Accessoires | 3 | Valid `cats-dev.csv` label |
+| Badmode | 1 | Valid label |
+| Ballerinas | 20 | Valid label; storefront title should be `Ballerina's` |
+| Bovenkleding | 6 | Valid label; review wording with Nick (`top` maps here) |
+| Broeken | 34 | Valid label |
+| Handschoenen | 14 | Valid label |
+| Headware | 5 | Valid label; English/misspelt source label, present as stored |
+| Hemden | 30 | Valid label; both `shirt` and `buttonupshirt` map here |
+| Instappers | 14 | Valid label |
+| Jurken | 3 | Valid label |
+| Kousen | 10 | Valid label |
+| Laarzen | 26 | Valid label |
+| Legging | 3 | Stale/incorrect value; should be `Leggings` |
+| Leggings | 2 | Valid label |
+| Ondergoed | 1 | Valid label |
+| One-piece | 1 | Valid label |
+| Outdoor | 1 | Invalid: absent from both columns of `cats-dev.csv` |
+| Rokjes | 3 | Valid label; storefront title should be `Rokken` |
+| Sandalen | 50 | Valid label |
+| Shirt | 4 | Stale/incorrect value; should be `Hemden` |
+| Shorten | 10 | Valid source label; storefront title should be `Shorts` |
+| Slipper | 2 | Stale/incorrect value; should be `Slippers` |
+| Slippers | 88 | Valid label |
+| Sneaker | 2 | Stale/incorrect value; should be `Sneakers` |
+| Sneakers | 78 | Valid label |
+| Teenslippers | 112 | Valid label |
+| Truien | 20 | Valid label |
+| Vesten | 21 | Valid label |
+| *(missing)* | 1 | Active product without this metafield |
+
+Four valid dev-vocabulary labels currently have zero products: `Pyjama's`,
+`Badjassen`, `Jassen`, and `Skibroeken`. The 12 products on `Shirt`, `Legging`,
+`Slipper`, `Sneaker`, or `Outdoor` are tracked with Nick in `NICK.md` #11.
+Until the feed is corrected, any approved category collection that should contain
+those products must OR the stale value with its canonical label; `Outdoor` needs a
+merchandising decision rather than an inferred mapping.
 
 ### Activities
 
@@ -64,7 +97,7 @@ Rank resolves that. It is the Collection metafield `custom.breadcrumb_rank` (int
 
 | Rank | Band | Collections |
 |---|---|---|
-| 5 | Product sub-type (planned, playbook D19) | the per-category sub-collections behind the two-level menu — `Sandalen`, `Teenslippers`, `Slippers`, `Sneakers`, `Laarzen`, … They locate a product more precisely than `Schoenen`, so they **must** rank below 10 or the breadcrumb keeps naming the parent. Assign 5 at creation, not later. |
+| 5 | Product sub-type and activity | the live second-level collections behind the two-level menu — `Sandalen`, `Teenslippers`, `Slippers`, `Sneakers`, `Laarzen`, `Hardlopen`, `Training`, … They locate a product more precisely than a parent collection, so they rank below 10. |
 | 10 | Product type | `Schoenen`, `Kleding`, `Accessoires` |
 | 20 | Occasion | `Fashion & Lifestyle`, `Sport & Training`, `Outdoor & Werk` |
 | 30 | Gender | `Dames`, `Heren`, `Kinderen` |
@@ -93,20 +126,151 @@ For breadcrumbs, rank is only the fallback: when a shopper reaches a product fro
 
 ## Current scan baseline
 
-| Vendor | Needs-collection |
-|---|---|
-| Odlo | Sport & Training |
-| RH+ | Sport & Training (vendor string unverified — not synced yet) |
-| Nike Swim | Sport & Training |
-| Sweaty Betty | Sport & Training (provisional — may leave the feed) |
-| Hi-Tec | Outdoor & Werk |
-| Magnum | Outdoor & Werk (vendor string unverified — not synced yet) |
-| Juicy Couture | Fashion & Lifestyle |
-| Pas dé Monacó | Fashion & Lifestyle |
-| Irasuto Studios | Fashion & Lifestyle |
-| FitFlop | None — comfort footwear, reachable via Schoenen + its Merken brand page |
-| Holster | None — comfort footwear, reachable via Schoenen + its Merken brand page |
-| Loewenweiss | None — comfort footwear, reachable via Schoenen + its Merken brand page |
-| Sneaker Lab | None — care products, reachable via Accessoires + its Merken brand page |
+Live Admin API audit on 2026-09-21: **565 active products**, 11 distinct live
+vendor strings, and no vendor outside the approved baseline. The live special
+collections still use the documented OR rule sets and currently contain:
+
+- Sport & Training: 98 products
+- Outdoor & Werk: 2 products
+- Fashion & Lifestyle: 74 products
+
+| Vendor | Live products | Needs-collection |
+|---|---:|---|
+| Odlo | 92 | Sport & Training |
+| RH+ | 0 | Sport & Training (vendor string unverified — not synced yet) |
+| Nike Swim | 3 | Sport & Training |
+| Sweaty Betty | 3 | Sport & Training (provisional — may leave the feed) |
+| Hi-Tec | 2 | Outdoor & Werk |
+| Magnum | 0 | Outdoor & Werk (vendor string unverified — not synced yet) |
+| Juicy Couture | 70 | Fashion & Lifestyle |
+| Pas dé Monacó | 3 | Fashion & Lifestyle |
+| Irasuto Studios | 1 | Fashion & Lifestyle |
+| FitFlop | 379 | None — comfort footwear, reachable via Schoenen + its Merken brand page |
+| Holster | 3 | None — comfort footwear, reachable via Schoenen + its Merken brand page |
+| Loewenweiss | 8 | None — comfort footwear, reachable via Schoenen + its Merken brand page |
+| Sneaker Lab | 1 | None — care products, reachable via Accessoires + its Merken brand page |
 
 Every activity value is still assigned to a metaobject and every category value above is still real product data, but as of 2026-09-03 neither list controls membership of the three needs-collections — see "Special collections."
+
+## Two-level main navigation
+
+Implemented in the dev shop on 2026-09-21. The Main menu uses resource-linked
+collection/page items rather than hard-coded HTTP links. All 24 new smart
+collections are published to the Online Store, sort by best selling, and carry
+`custom.breadcrumb_rank = 5`. The existing `Accessoires` collection was converted
+in place to a smart collection, retains its URL, and carries rank 10.
+
+**One deliberate exception:** `Outdoor & Werk`'s `Magnum` child is a plain `HTTP`
+item pointing at `#`, added same-day once Magnum's SKUs still hadn't synced (see
+`NICK.md`). There is no Magnum collection yet to resource-link to. Replace it with
+a real `COLLECTION` item (same pattern as `Hi-Tec`'s child) the moment Magnum syncs
+and its vendor collection exists — until then this is the one menu item that isn't
+resource-linked.
+
+Desktop rendering uses Dawn's compact `Dropdown` menu type. Fine-pointer desktop
+devices open and close the dropdowns on hover; touch devices and keyboard users
+retain an explicit disclosure control. Every top-level label is a real link to
+the parent destination, identical to the first `Alles ...` child target; the
+adjacent caret opens the submenu for keyboard users. The hover enhancement lives
+in `assets/details-disclosure.js`; the menu tree itself remains Shopify Admin data.
+
+### Smart collection rules and verified counts
+
+| Parent | Collection | Handle | Included source value(s) | Products |
+|---|---|---|---|---:|
+| Sport & Training | Hardlopen | `hardlopen` | Activities: `Running` OR `Hardlopen` | 41 |
+| Sport & Training | Training | `training` | Activities: `Training` | 85 |
+| Sport & Training | Wandelen | `wandelen` | Activities: `Wandelen` | 80 |
+| Sport & Training | Fietsen | `fietsen` | Activities: `Fietsen` | 16 |
+| Sport & Training | Skiën & snowboard | `skien-snowboard` | Activities: `Skiën & Snowboard` | 25 |
+| Sport & Training | Zwemmen | `zwemmen` | Activities: `Zwemmen` | 4 |
+| Schoenen | Sandalen | `sandalen` | Category: `Sandalen` | 50 |
+| Schoenen | Teenslippers | `teenslippers` | Category: `Teenslippers` | 112 |
+| Schoenen | Slippers | `slippers` | Category: `Slippers` OR `Slipper` | 90 |
+| Schoenen | Sneakers | `sneakers` | Category: `Sneakers` | 78 |
+| Schoenen | Laarzen | `laarzen` | Category: `Laarzen` | 26 |
+| Schoenen | Ballerina's | `ballerinas` | Category: `Ballerinas` | 20 |
+| Schoenen | Instappers | `instappers` | Category: `Instappers` | 14 |
+| Kleding | Broeken | `broeken` | Category: `Broeken` | 34 |
+| Kleding | Truien | `truien` | Category: `Truien` | 20 |
+| Kleding | Vesten | `vesten` | Category: `Vesten` | 21 |
+| Kleding | Shirts & tops | `shirts-tops` | Category: `Hemden` OR `Bovenkleding` OR `Shirt` | 40 |
+| Kleding | Shorts | `shorts` | Category: `Shorten` | 10 |
+| Kleding | Leggings | `leggings` | Category: `Leggings` OR `Legging` | 5 |
+| Kleding | Jurken & rokken | `jurken-rokken` | Category: `Jurken` OR `Rokjes` | 6 |
+| Accessoires | Handschoenen | `handschoenen` | Category: `Handschoenen` | 14 |
+| Accessoires | Kousen | `kousen` | Category: `Kousen` | 10 |
+| Accessoires | Hoofddeksels | `hoofddeksels` | Category: `Headware` | 5 |
+| Accessoires | Overige accessoires | `overige-accessoires` | Category: `Accessoires` | 3 |
+
+The parent `Accessoires` collection contains the OR-union of `Handschoenen`,
+`Kousen`, `Headware`, and `Accessoires`: **32 products**. `Sneaker` remains out of
+the `Sneakers` collection until Nick normalizes or confirms that ambiguous value;
+the intentionally merged stale singular values are shown explicitly in the table.
+
+All 24 of these smart collections shipped 2026-09-21 with an empty `descriptionHtml`
+(only the top-level/needs/brand/gender collections had one). Descriptions were
+written the same day, one short Dutch paragraph per collection, sourced from each
+collection's actual vendor composition (checked live via the Admin API rather than
+assumed from the category name) — e.g. `Sandalen`/`Teenslippers`/`Sneakers`/`Laarzen`/
+`Ballerina's`/`Instappers` are 100% FitFlop, `Slippers` mixes in Löwenweiss, and the
+`Sport & Training` sub-collections (`Hardlopen`, `Training`, `Wandelen`, `Fietsen`,
+`Skiën & snowboard`) are effectively all Odlo.
+
+### Main menu structure
+
+```text
+Sport & Training ▾
+├─ Alles voor sport & training
+├─ Hardlopen
+├─ Training
+├─ Wandelen
+├─ Fietsen
+├─ Skiën & snowboard
+└─ Zwemmen
+
+Outdoor & Werk
+├─ Alles voor outdoor & werk
+├─ Hi-Tec
+└─ Magnum (temp. # link, geen collectie tot Akeneo-sync)
+
+Fashion & Lifestyle
+├─ Alles voor fashion & lifestyle
+├─ Juicy Couture
+├─ Pas dé Monacó
+└─ Irasuto Studios
+
+Schoenen ▾
+├─ Alle schoenen
+├─ Sandalen
+├─ Teenslippers
+├─ Slippers
+├─ Sneakers
+├─ Laarzen
+├─ Ballerina's
+└─ Instappers
+
+Kleding ▾
+├─ Alle kleding
+├─ Broeken
+├─ Truien
+├─ Vesten
+├─ Shirts & tops
+├─ Shorts
+├─ Leggings
+└─ Jurken & rokken
+
+Accessoires ▾
+├─ Alle accessoires
+├─ Handschoenen
+├─ Kousen
+├─ Hoofddeksels
+└─ Overige accessoires
+
+Merken ▾
+├─ Alle merken
+└─ 11 huidige merken, alfabetisch
+
+Solden
+└─ voorlopig empty. Drin lassen!
+```

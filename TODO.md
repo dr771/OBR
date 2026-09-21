@@ -1,6 +1,5 @@
 
 Filter: categories
-- normalize?
 - use for separate horizontal filter?
 - use for accessouires collection?
 ============

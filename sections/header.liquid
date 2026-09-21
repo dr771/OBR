@@ -61,27 +61,18 @@
       white-space: nowrap;
     }
 
-    .header__inline-menu > .list-menu--inline > li > :is(
-      .header__menu-item,
-      header-menu > details > .header__menu-item
-    ) {
+    .header__inline-menu .header__top-level-link {
       color: rgba(var(--color-foreground), 0.75);
       transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .header__inline-menu > .list-menu--inline > li > :is(
-      .header__menu-item,
-      header-menu > details > .header__menu-item
-    ) > span {
+    .header__inline-menu .header__top-level-link > span {
       position: relative;
       display: inline-block;
       text-decoration: none;
     }
 
-    .header__inline-menu > .list-menu--inline > li > :is(
-      .header__menu-item,
-      header-menu > details > .header__menu-item
-    ) > span::after {
+    .header__inline-menu .header__top-level-link > span::after {
       position: absolute;
       inset-inline-start: 0;
       inset-block-end: -0.6rem;
@@ -92,40 +83,62 @@
       transition: inline-size 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .header__inline-menu > .list-menu--inline > li > :is(
-      .header__menu-item,
-      header-menu > details > .header__menu-item
-    ):is(:hover, :focus-visible) {
+    .header__inline-menu .header__top-level-link:is(:hover, :focus-visible),
+    .header__inline-menu .header__menu-parent:is(:hover, :focus-within, .header__menu-parent--active)
+      > .header__top-level-link {
       color: #0f172a;
     }
 
-    .header__inline-menu > .list-menu--inline > li > :is(
-      .header__menu-item,
-      header-menu > details > .header__menu-item
-    ):is(:hover, :focus-visible) > span,
-    .header__inline-menu > .list-menu--inline > li > :is(
-      .header__menu-item,
-      header-menu > details > .header__menu-item
-    ) > .header__active-menu-item {
+    .header__inline-menu .header__top-level-link:is(:hover, :focus-visible) > span,
+    .header__inline-menu .header__top-level-link > .header__active-menu-item,
+    .header__inline-menu .header__menu-parent:is(:hover, :focus-within, .header__menu-parent--active)
+      > .header__top-level-link
+      > span {
       color: #0f172a;
       text-decoration: none;
     }
 
-    .header__inline-menu > .list-menu--inline > li > :is(
-      .header__menu-item,
-      header-menu > details > .header__menu-item
-    ):is(:hover, :focus-visible) > span::after,
-    .header__inline-menu > .list-menu--inline > li > :is(
-      .header__menu-item[aria-current='page'],
-      header-menu > details > .header__menu-item
-    ) > .header__active-menu-item::after,
-    .header__inline-menu > .list-menu--inline > li > header-menu > details[open] > .header__menu-item > span::after {
+    .header__inline-menu .header__top-level-link:is(:hover, :focus-visible, [aria-current='page']) > span::after,
+    .header__inline-menu .header__top-level-link > .header__active-menu-item::after,
+    .header__inline-menu .header__menu-parent:is(:hover, :focus-within, .header__menu-parent--active)
+      > .header__top-level-link
+      > span::after {
       inline-size: 100%;
     }
 
-    .header__inline-menu > .list-menu--inline > li > header-menu > details[open] > .header__menu-item {
+    /* OB: sub-level dropdown links get the same blue underline treatment as
+       the top-level nav (same span::after bar, same color/thickness/offset). */
+    .header__submenu .header__menu-item {
+      color: rgba(var(--color-foreground), 0.75);
+      transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .header__submenu .header__menu-item > span {
+      position: relative;
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .header__submenu .header__menu-item > span::after {
+      position: absolute;
+      inset-inline-start: 0;
+      inset-block-end: -0.6rem;
+      inline-size: 0;
+      block-size: 0.2rem;
+      background-color: #38b6ff;
+      content: '';
+      transition: inline-size 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .header__submenu .header__menu-item:is(:hover, :focus-visible) > span,
+    .header__submenu .header__menu-item > .header__active-menu-item {
       color: #0f172a;
       text-decoration: none;
+    }
+
+    .header__submenu .header__menu-item:is(:hover, :focus-visible, [aria-current='page']) > span::after,
+    .header__submenu .header__menu-item > .header__active-menu-item::after {
+      inline-size: 100%;
     }
 
     .js .header-localization:not(.menu-drawer__localization) .localization-form__select.localization-selector--compact {
@@ -163,10 +176,7 @@
   }
 
   @media screen and (min-width: 1250px) and (max-width: 1379px) {
-    .header--middle-left:not(.drawer-menu) .header__inline-menu > .list-menu--inline > li > :is(
-      .header__menu-item,
-      header-menu > details > .header__menu-item
-    ) {
+    .header--middle-left:not(.drawer-menu) .header__inline-menu .header__top-level-link {
       padding-inline: 0.8rem;
       font-size: 1.3rem;
     }
@@ -359,7 +369,7 @@
     {%- liquid
       if section.settings.menu != blank
         if section.settings.menu_type_desktop == 'dropdown'
-          render 'header-dropdown-menu'
+          render 'header-dropdown-menu', section: section
         elsif section.settings.menu_type_desktop != 'drawer'
           render 'header-mega-menu'
         endif
