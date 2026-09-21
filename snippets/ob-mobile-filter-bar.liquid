@@ -81,7 +81,7 @@
                   assign filter_kind = 'color'
                 endif
               -%}
-              {%- if filter_kind == bar_kind -%}
+              {%- if filter_kind == bar_kind and filter.values.size > 1 -%}
                 <div
                   id="Details-Bar-{{ filter.param_name | escape }}-{{ section.id }}"
                   class="js-filter ob-mobile-bar__filter"
