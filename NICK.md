@@ -256,7 +256,7 @@ The definitions themselves are healthy: `access.storefront: PUBLIC_READ`, 564/56
 
 **Important:** smart-collection rules read the stored metafield value, not the filter index, so the D19 menu and collection plan is unaffected by all of this. It is a storefront-filter problem only.
 
-## 11. Category data is correct — the storefront filter index is stale because the sync never touches the product — ROOT CAUSE FOUND 2026-09-21
+## 11. Category facet fixed by touching all products — root cause is that the sync never saves the product (2026-09-21)
 
 **Nick's data is fine.** He sent `cats-dev.csv` (28 code/label pairs, the Akeneo **dev** vocabulary) and said TEST now matches PROD. Verified against the real metafield in admin, not the index:
 
@@ -293,14 +293,32 @@ The index is keyed to the product's search document, not to the definition or th
 
 Do not sample a bucket whose old code is a **prefix** of the new label. `Slipper`→`Slippers`, `Sandal`→`Sandalen`, `vest`→`Vesten`, `Teenslipper`→`Teenslippers` all are, and a first-result sample there proves nothing — the filter could simply be prefix-matching. Use `boots`→`Laarzen`, `pants`→`Broeken` or `top`→`Bovenkleding`.
 
-### The fix on our side
+### Done on our side 2026-09-21 — facet is clean
 
-Touch all 565 products once. Prefer a **bulk tag add + remove from the product list** over opening products individually: saving a product in the admin UI also clears the pending Shopify-taxonomy category suggestion and writes `Uncategorized` (observed on the romper; an untouched sibling still shows `Dresses in Clothing · Suggested`).
+All 565 products were touched via the product list: select the page checkbox → **Select all in this store** → Actions → **Add tags** `ob-reindex-touch` → Save, then the same path with **Remove tags**. Each bulk run is a server-side job over all 565, not page-by-page.
+
+The facet converged in about two minutes: stale values 17 → 13 → 9 → 8 → 4, stale products 412 → 361 → 269 → 71 → 11. It now lists **28 values over 564 products**, matching the Search & Discovery admin list exactly.
+
+**Use the bulk route, not individual saves.** Opening a product and saving it clears the pending Shopify-taxonomy category suggestion and writes `Uncategorized` (observed on the romper). The bulk tag job does not — the Odlo Sprinter still shows `Tights in Activewear Pants · Suggested` afterwards. One product, the Juicy Couture Applique Terry Ronjon Romper, was saved individually during the experiment and now reads `Uncategorized`; nothing else was affected.
+
+### What the clean facet exposes: 12 products with real data errors
+
+These are no longer index artefacts — they were verified as genuinely stored values after the touch:
+
+| Value | Products | Should be |
+|---|---|---|
+| `Shirt` | 4 | `Hemden` |
+| `Legging` | 3 | `Leggings` |
+| `Slipper` | 2 | `Slippers` |
+| `Sneaker` | 2 | `Sneakers` |
+| `Outdoor` | 1 | not in `cats-dev.csv` at all |
+
+Spot-verified: Odlo Tights Short Essential Sprinter really stores `Legging`. The four raw codes sit on Odlo, Pas de Monaco, Holster and Sneaker Lab products — the brands with the fewest SKUs, which suggests the sync skipped a tail rather than a whole brand.
 
 ### What to raise with Nick
 
-1. **The connector must save the product after writing its metafields**, otherwise every sync leaves the storefront filters showing the previous vocabulary. This is the important one.
-2. **`Outdoor`** (1 product, Hi-Tec Mauna Wp Womens walking shoe) is a genuine stored value that appears in no column of `cats-dev.csv`.
+1. **The connector must save the product after writing its metafields**, otherwise every sync leaves the storefront filters showing the previous vocabulary. This is the important one — we can clear it by hand once, but not after every sync.
+2. **12 products were missed by the normalisation** — `Shirt` 4, `Legging` 3, `Slipper` 2, `Sneaker` 2 still carry the raw code, and `Outdoor` 1 (Hi-Tec Mauna Wp Womens walking shoe) is in no column of `cats-dev.csv`.
 3. **`shirt` and `buttonupshirt` both map to `Hemden`** — the collision is real in the data; the two can never be separated in a menu or collection.
 4. **Gender and product type were not touched**: still `Men`/`Women`/`Unisex`/`Kids` and `Shoe`/`Fashion`/`Sport`/`Sneaker`, not the CSV's `W/M/U/K/B/G` and `shoe/sport/fashion`. `Sneaker` as a product type is 1 product (the Sneaker Lab cleaner) and is itself wrong.
 5. Label errors in `cats-dev.csv`: `Shorten` (not a Dutch word — `Shorts` or `Korte broeken`), `Ballerinas` (should be `Ballerina's`), `Headware` (English and misspelt), `Bovenkleding` for `top` (means outerwear, not a top), `Rokjes` (diminutive; live uses `Rokken`).
