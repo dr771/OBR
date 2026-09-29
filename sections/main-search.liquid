@@ -16,6 +16,12 @@
 
 <script src="{{ 'main-search.js' | asset_url }}" defer="defer"></script>
 
+{%- comment -%}
+  Marks search results as a listing for the PDP back link ("Terug naar
+  zoekresultaten"); see ob-breadcrumb.js.
+{%- endcomment -%}
+<div hidden data-ob-listing-context data-ob-listing-kind="search"></div>
+
 <style>
   .template-search__header {
     margin-bottom: 3rem;

@@ -63,7 +63,9 @@
     },
     "breadcrumb": {
       "label": "Kruimelpad",
-      "home": "Home"
+      "home": "Home",
+      "back_to": "Terug naar {{ name }}",
+      "back_to_search": "Terug naar zoekresultaten"
     }
   },
   "newsletter": {

@@ -1,24 +1,27 @@
 {% comment %}
-  OB: PDP breadcrumb trail, matched to the Bolt reference.
+  OB: PDP back link — "← Terug naar Ballerina's" (the Zalando pattern). A
+  shopper who wants another item wants to go back where they were, not pick a
+  level out of a trail. The full trail still exists for crawlers, as
+  BreadcrumbList JSON-LD at the bottom of this snippet.
 
-  Which collection the trail names is resolved from three sources, in order:
+  Where the link points is resolved from three sources, in order:
 
   1. Shopify's `collection` routing global. Only populated on
      /collections/<handle>/products/<slug> URLs, which this theme deliberately
      never links to (product URLs stay clean), so in practice this is blank —
      but it is correct when present, so it stays first.
-  2. The collection the shopper browsed earlier in this tab, recorded by
-     `ob-breadcrumb.js` and applied by the inline resolver below. Used only when
-     the product is actually in it, so a stale context can never caption a trail
-     with a collection the product does not belong to.
+  2. The listing the shopper left for this product in this tab, recorded by
+     `ob-breadcrumb.js` and applied by the inline resolver below: a collection
+     (only when the product is actually in it, so a stale context can never
+     caption the link with a collection the product does not belong to) or a
+     search. Its query string travels along, so filters survive the return.
   3. The lowest `custom.breadcrumb_rank` collection the product belongs to.
      Rank is merchant data on the collection (product-type < occasion <
      audience < brand); unset sorts last. This exists because Liquid's
      `product.collections` order is neither documented nor configurable — the
      broadest collection was winning every trail.
 
-  Separators are decorative and marked aria-hidden, so a screen reader reads
-  "Home, Schoenen, Loewenweiss Diva slipper" rather than interleaved chevrons.
+  With no collection at all, the link goes home.
 
   Accepts:
   - product: {Object} product object (optional; falls back to the global)
@@ -45,6 +48,15 @@
       endif
     endfor
   endunless
+
+  if ob_collection != blank and ob_collection.handle != blank
+    assign ob_back_url = ob_collection.url
+    assign ob_back_label = 'general.breadcrumb.back_to' | t: name: ob_collection.title
+  else
+    assign ob_back_url = routes.root_url
+    assign ob_home_label = 'general.breadcrumb.home' | t
+    assign ob_back_label = 'general.breadcrumb.back_to' | t: name: ob_home_label
+  endif
 -%}
 
 {%- capture ob_collections_json -%}
@@ -56,32 +68,18 @@
   aria-label="{{ 'general.breadcrumb.label' | t }}"
   data-ob-breadcrumb
   data-ob-collections="{{ ob_collections_json | strip | escape }}"
+  data-ob-search-url="{{ routes.search_url }}"
+  data-ob-back-template="{{ 'general.breadcrumb.back_to' | t: name: '__OB_NAME__' }}"
+  data-ob-back-search="{{ 'general.breadcrumb.back_to_search' | t }}"
 >
-  <ol class="ob-breadcrumb__list">
-    <li class="ob-breadcrumb__item">
-      <a class="ob-breadcrumb__link" href="{{ routes.root_url }}">{{ 'general.breadcrumb.home' | t }}</a>
-      {%- render 'ob-icon', icon: 'chevron-right', class: 'ob-breadcrumb__sep' -%}
-    </li>
-
-    {%- if ob_collection != blank and ob_collection.handle != blank -%}
-      <li class="ob-breadcrumb__item">
-        <a
-          class="ob-breadcrumb__link"
-          href="{{ ob_collection.url }}"
-          data-ob-breadcrumb-collection
-        >{{ ob_collection.title }}</a>
-        {%- render 'ob-icon', icon: 'chevron-right', class: 'ob-breadcrumb__sep' -%}
-      </li>
-    {%- endif -%}
-
-    <li class="ob-breadcrumb__item">
-      <span class="ob-breadcrumb__current" aria-current="page">{{ ob_product.title | escape }}</span>
-    </li>
-  </ol>
+  <a class="ob-breadcrumb__back" href="{{ ob_back_url }}" data-ob-breadcrumb-back>
+    {%- render 'ob-icon', icon: 'arrow-left', class: 'ob-breadcrumb__back-icon' -%}
+    <span class="ob-breadcrumb__back-label" data-ob-breadcrumb-label>{{ ob_back_label }}</span>
+  </a>
 </nav>
 
 <script>
-  // Pre-paint breadcrumb resolution. Deliberately inline and synchronous, and
+  // Pre-paint back-link resolution. Deliberately inline and synchronous, and
   // deliberately NOT in ob-breadcrumb.js: a deferred asset turns this into a
   // race that it loses whenever the fetch costs more than the parse-to-paint
   // gap. Measured at 300ms latency, the wrong collection stayed on screen for
@@ -89,28 +87,43 @@
   // pdp-breadcrumb-walked-path design doc. Moving this into the deferred file
   // silently reintroduces that flicker.
   //
-  // The remembered value is untrusted: only its handle is used, and only to
-  // look up a title/URL that Liquid rendered above. Nothing from storage is
-  // ever written into the DOM.
+  // The remembered value is untrusted: only a collection handle (looked up
+  // against the list Liquid rendered above) and a query string are used. The
+  // link's path always comes from Liquid, and text goes in via textContent.
   (function () {
     try {
       var nav = document.querySelector('[data-ob-breadcrumb]');
       if (!nav) return;
 
-      var link = nav.querySelector('[data-ob-breadcrumb-collection]');
-      if (!link) return;
+      var link = nav.querySelector('[data-ob-breadcrumb-back]');
+      var label = nav.querySelector('[data-ob-breadcrumb-label]');
+      if (!link || !label) return;
 
       var raw = sessionStorage.getItem('ob:breadcrumb-collection');
       if (!raw) return;
 
       var remembered = JSON.parse(raw);
-      if (!remembered || !remembered.handle) return;
+      if (!remembered) return;
 
+      var search = typeof remembered.search === 'string' ? remembered.search : '';
+      if (search && search.charAt(0) !== '?') search = '';
+
+      if (remembered.kind === 'search') {
+        link.setAttribute('href', nav.getAttribute('data-ob-search-url') + search);
+        label.textContent = nav.getAttribute('data-ob-back-search');
+        return;
+      }
+
+      // `kind` is absent on records written before the back link shipped;
+      // those were always collections.
+      if (!remembered.handle) return;
       var candidates = JSON.parse(nav.getAttribute('data-ob-collections') || '[]');
       for (var i = 0; i < candidates.length; i++) {
         if (candidates[i].h === remembered.handle) {
-          link.textContent = candidates[i].t;
-          link.setAttribute('href', candidates[i].u);
+          link.setAttribute('href', candidates[i].u + search);
+          label.textContent = nav
+            .getAttribute('data-ob-back-template')
+            .replace('__OB_NAME__', candidates[i].t);
           return;
         }
       }
@@ -119,4 +132,30 @@
       // modes). The server-rendered ranked collection stands.
     }
   })();
+</script>
+
+{%- liquid
+  assign ob_ld_position = 2
+  if ob_collection != blank and ob_collection.handle != blank
+    capture ob_ld_ancestors
+      render 'ob-menu-trail', for_collection: ob_collection, format: 'jsonld', start: 2
+    endcapture
+    assign ob_ld_ancestor_count = ob_ld_ancestors | split: '"@type"' | size | minus: 1
+    assign ob_ld_position = ob_ld_position | plus: ob_ld_ancestor_count
+  endif
+-%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type":"ListItem","position":1,"name":{{ 'general.breadcrumb.home' | t | json }},"item":{{ shop.url | append: routes.root_url | json }}},
+      {%- if ob_collection != blank and ob_collection.handle != blank -%}
+        {{ ob_ld_ancestors }}
+        {"@type":"ListItem","position":{{ ob_ld_position }},"name":{{ ob_collection.title | json }},"item":{{ shop.url | append: ob_collection.url | json }}},
+        {%- assign ob_ld_position = ob_ld_position | plus: 1 -%}
+      {%- endif -%}
+      {"@type":"ListItem","position":{{ ob_ld_position }},"name":{{ ob_product.title | json }},"item":{{ shop.url | append: ob_product.url | json }}}
+    ]
+  }
 </script>

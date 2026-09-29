@@ -1,8 +1,13 @@
-# pdp-breadcrumb Specification
+## RENAMED Requirements
 
-## Purpose
-Defines the breadcrumb trail above the product section, giving shoppers their position in the catalogue and a one-click route back to the collection they arrived from.
-## Requirements
+- FROM: `### Requirement: PDP renders a breadcrumb trail above the product section`
+- TO: `### Requirement: PDP renders a single back link above the product section`
+
+- FROM: `### Requirement: Breadcrumb names the collection the shopper actually browsed`
+- TO: `### Requirement: Back link returns to the listing the shopper actually browsed`
+
+## MODIFIED Requirements
+
 ### Requirement: PDP renders a single back link above the product section
 The PDP SHALL render, above the product section, a navigation landmark containing exactly one visible link that returns the shopper to a listing, labelled "Terug naar <listing name>" in the storefront language, with a leading directional arrow that is hidden from assistive technology. The PDP SHALL NOT render a multi-entry visible trail or a visible entry for the current product. When no listing can be resolved, the link SHALL return to the shop home instead of rendering empty.
 
@@ -80,6 +85,8 @@ Resolution SHALL NOT depend on the shape of the product URL: product URLs SHALL 
 - **WHEN** a shopper opens a product from a collection listing
 - **THEN** the resulting product URL contains no collection path segment
 
+## ADDED Requirements
+
 ### Requirement: Returning to the listing restores the shopper's place
 When the page the shopper navigated from is the same listing, at the same address, that the back link points to, activating the back link SHALL return through the browser's history rather than loading the listing again, so the browser can restore the shopper's scroll position and any page state it preserves. In every other case the back link SHALL navigate normally to its destination. Modified activations (opening in a new tab or window) SHALL always behave as a normal link.
 
@@ -111,3 +118,8 @@ The PDP SHALL emit `BreadcrumbList` structured data describing the full path fro
 - **WHEN** a shopper with a remembered search opens a product
 - **THEN** the structured data still describes the server-resolved collection path, not the search
 
+## REMOVED Requirements
+
+### Requirement: Breadcrumb presentation follows the approved reference
+**Reason**: It pinned measured appearance values (font size, line height, gaps) for a multi-entry trail that no longer exists. Per the project's altitude rule, appearance is recorded in CI-STYLE-TOKENS.md and not specified. The behavioral parts (arrow hidden from assistive technology, no horizontal overflow) moved into "PDP renders a single back link above the product section".
+**Migration**: None. The styling lives in `assets/component-ob-pdp.css`.

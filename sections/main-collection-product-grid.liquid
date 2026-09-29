@@ -3,19 +3,17 @@
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'component-ob-plp.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'ob-plp.js' | asset_url }}" defer="defer"></script>
-<script src="{{ 'ob-breadcrumb.js' | asset_url }}" defer="defer"></script>
-
 {%- comment -%}
-  Records this collection as the shopper's browsing context, so the PDP
-  breadcrumb can name it. Search results deliberately do not do this: a query is
-  not a collection, so a shopper arriving from search gets the ranked default.
+  Marks this page as a listing, so ob-breadcrumb.js (loaded from theme.liquid)
+  records it as the place the PDP back link returns to. main-search.liquid
+  carries the search equivalent.
 {%- endcomment -%}
 <div
   hidden
-  data-ob-collection-context
-  data-ob-collection-handle="{{ collection.handle }}"
-  data-ob-collection-title="{{ collection.title | escape }}"
-  data-ob-collection-url="{{ collection.url }}"
+  data-ob-listing-context
+  data-ob-listing-kind="collection"
+  data-ob-listing-handle="{{ collection.handle }}"
+  data-ob-listing-title="{{ collection.title | escape }}"
 ></div>
 
 {% if section.settings.image_shape == 'blob' %}

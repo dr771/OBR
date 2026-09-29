@@ -13,7 +13,11 @@
   endif
 -%}
 
-{%- render 'ob-collection-hero', title: collection.title, subheading: ob_subheading -%}
+{%- render 'ob-collection-hero',
+  title: collection.title,
+  subheading: ob_subheading,
+  trail_collection: collection
+-%}
 
 {% schema %}
 {

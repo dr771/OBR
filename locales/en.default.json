@@ -63,7 +63,9 @@
     },
     "breadcrumb": {
       "label": "Breadcrumb",
-      "home": "Home"
+      "home": "Home",
+      "back_to": "Back to {{ name }}",
+      "back_to_search": "Back to search results"
     }
   },
   "newsletter": {

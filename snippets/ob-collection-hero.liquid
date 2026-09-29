@@ -16,6 +16,10 @@
     count in its own filter/sort bar
   - extra_content: {String} optional pre-rendered HTML (e.g. a capture),
     inserted after the title/subheading/meta row, still inside the tint
+  - trail_collection: {Object} optional; the collection this hero heads.
+    When given, the breadcrumb shows its main-menu ancestors (ob-menu-trail)
+    between Home and the title. Deliberately not named `collection`, because
+    that global would leak in on callers that omit it.
 
   Usage:
   {% render 'ob-collection-hero', title: collection.title, subheading: collection.description %}
@@ -27,6 +31,13 @@
     <nav class="ob-collection-hero__breadcrumb" aria-label="{{ 'general.breadcrumb.label' | t }}">
       <a class="ob-collection-hero__breadcrumb-link" href="{{ routes.root_url }}">{{ 'general.breadcrumb.home' | t }}</a>
       {%- render 'ob-icon', icon: 'chevron-right', class: 'ob-collection-hero__breadcrumb-sep' -%}
+      {%- if trail_collection != blank -%}
+        {%- render 'ob-menu-trail',
+          for_collection: trail_collection,
+          link_class: 'ob-collection-hero__breadcrumb-link',
+          sep_class: 'ob-collection-hero__breadcrumb-sep'
+        -%}
+      {%- endif -%}
       <span class="ob-collection-hero__breadcrumb-current" aria-current="page">{{ title }}</span>
     </nav>
 

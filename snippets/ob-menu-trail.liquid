@@ -1,0 +1,97 @@
+{% comment %}
+  OB: a collection's ancestors in the main navigation, so a breadcrumb can
+  show where a category sits (Home › Schoenen › Ballerina's) without inventing
+  a collection hierarchy Shopify doesn't have. Shared by the collection hero
+  (visible trail) and the PDP breadcrumb (BreadcrumbList JSON-LD).
+
+  Rules (see the ob-collection-hero spec):
+  - The first occurrence in menu order wins. Brands listed under both an
+    occasion parent and Merken take the occasion parent, and menu order alone
+    decides it.
+  - A child whose url equals its parent's is the "Alles voor …" self-link, not
+    an occurrence, so it is skipped.
+  - Matched on the linked collection's handle, not the url, so a locale prefix
+    (/en/collections/…) can't cause a miss.
+  - A top-level match, or no match, emits nothing: the caller renders
+    Home › title.
+
+  Outputs only the ancestors, never the collection itself.
+
+  Accepts:
+  - for_collection: {Object} the collection to place
+  - format: {String} 'html' (default) | 'jsonld'
+  - link_class / sep_class: {String} html format: classes for each ancestor
+    link and the chevron after it
+  - start: {Number} jsonld format: position of the first emitted ListItem.
+    Each item is followed by a comma, so the caller appends the rest.
+
+  Usage:
+  {% render 'ob-menu-trail', for_collection: collection, link_class: 'x__link', sep_class: 'x__sep' %}
+{% endcomment %}
+
+{%- liquid
+  assign ob_target = for_collection.handle
+  assign ob_found = false
+  assign ob_depth = 0
+
+  if ob_target != blank
+    for ob_l1 in linklists['main-menu'].links
+      if ob_l1.type == 'collection_link' and ob_l1.object.handle == ob_target
+        assign ob_found = true
+        assign ob_depth = 1
+        break
+      endif
+
+      for ob_l2 in ob_l1.links
+        if ob_l2.url == ob_l1.url
+          continue
+        endif
+        if ob_l2.type == 'collection_link' and ob_l2.object.handle == ob_target
+          assign ob_found = true
+          assign ob_a1 = ob_l1
+          assign ob_depth = 2
+          break
+        endif
+
+        for ob_l3 in ob_l2.links
+          if ob_l3.url == ob_l2.url
+            continue
+          endif
+          if ob_l3.type == 'collection_link' and ob_l3.object.handle == ob_target
+            assign ob_found = true
+            assign ob_a1 = ob_l1
+            assign ob_a2 = ob_l2
+            assign ob_depth = 3
+            break
+          endif
+        endfor
+
+        if ob_found
+          break
+        endif
+      endfor
+
+      if ob_found
+        break
+      endif
+    endfor
+  endif
+
+  assign ob_position = start | default: 1
+-%}
+
+{%- if ob_depth > 1 -%}
+  {%- if format == 'jsonld' -%}
+    {"@type":"ListItem","position":{{ ob_position }},"name":{{ ob_a1.title | json }},"item":{{ shop.url | append: ob_a1.url | json }}},
+    {%- if ob_depth == 3 -%}
+      {"@type":"ListItem","position":{{ ob_position | plus: 1 }},"name":{{ ob_a2.title | json }},"item":{{ shop.url | append: ob_a2.url | json }}},
+    {%- endif -%}
+  {%- else -%}
+    <a class="{{ link_class }}" href="{{ ob_a1.url }}">{{ ob_a1.title | escape }}</a>
+    {%- render 'ob-icon', icon: 'chevron-right', class: sep_class -%}
+    {%- if ob_depth == 3 -%}
+      <a class="{{ link_class }}" href="{{ ob_a2.url }}">{{ ob_a2.title | escape }}</a>
+      {%- render 'ob-icon', icon: 'chevron-right', class: sep_class -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
