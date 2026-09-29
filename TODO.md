@@ -1,20 +1,24 @@
-
-Filter: categories
-- use for separate horizontal filter?
-- use for accessouires collection?
+- redirects URL's from ob.nl 
+-- waiting for drupal export
 ============
 
-Mega Menu ?
-- 
+===
+PLP
+-
 
+PDP 
+- add besorgin & retour accordeon
+
+===
+
+Desktop Filter: categories
+- use for separate horizontal filter? - not now
+
+============
 SOLDEN page
-- automatisieren: fake items erstellen?
-
-MOb
-- dropdowns styles in homepage
 
 ============
-
+ 
 Redesign-/UX-Audit-Anleitung - used by codex
 
 ===
