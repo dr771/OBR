@@ -26,6 +26,9 @@
           <div id="Details-Mobile-SortBy-{{ section.id }}" class="ob-mobile-bar__sort js-filter" data-index="bar-sort">
             <label for="SortBy-mobile" class="visually-hidden">{{ 'products.facets.sort_by_label' | t }}</label>
             <div class="select">
+              <span class="ob-mobile-bar__sort-label" aria-hidden="true">
+                {{- 'products.facets.sort_by_label' | t | remove: ':' -}}
+              </span>
               <select
                 name="sort_by"
                 class="select__select"
@@ -68,13 +71,13 @@
 
       {%- if enable_filtering -%}
         <div id="ObMobileBarPanel-{{ section.id }}" class="ob-mobile-bar__panel" data-ob-bar-panel>
-          {%- assign bar_kinds = 'type,size,color' | split: ',' -%}
+          {%- assign bar_kinds = 'gender,size,color' | split: ',' -%}
           {%- for bar_kind in bar_kinds -%}
             {%- for filter in results.filters -%}
               {%- liquid
                 assign filter_kind = 'generic'
-                if filter.param_name contains 'product_type'
-                  assign filter_kind = 'type'
+                if filter.param_name contains 'custom.genderid'
+                  assign filter_kind = 'gender'
                 elsif filter.param_name contains 'available_erp_sizes'
                   assign filter_kind = 'size'
                 elsif filter.param_name contains 'filtercolors'
@@ -88,8 +91,8 @@
                   data-index="bar-{{ bar_kind }}"
                 >
                   <h2 class="ob-mobile-bar__row-heading caption-large text-body">
-                    {%- if filter_kind == 'type' -%}
-                      {{- 'products.facets.type_label' | t -}}
+                    {%- if filter_kind == 'gender' -%}
+                      {{- filter.label | escape -}}
                     {%- else -%}
                       {%- render 'ob-option-meta', option_name: filter.param_name, field: 'label' -%}
                     {%- endif -%}
@@ -166,7 +169,7 @@
           {%- for filter in results.filters -%}
             {%- liquid
               assign has_bar_row = false
-              if filter.param_name contains 'product_type' or filter.param_name contains 'available_erp_sizes' or filter.param_name contains 'filtercolors'
+              if filter.param_name contains 'custom.genderid' or filter.param_name contains 'available_erp_sizes' or filter.param_name contains 'filtercolors'
                 assign has_bar_row = true
               endif
             -%}

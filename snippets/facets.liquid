@@ -921,7 +921,7 @@
       {%- liquid
         assign has_mobile_bar_row = false
         if filter_type != 'drawer'
-          if filter.param_name contains 'product_type' or filter.param_name contains 'available_erp_sizes' or filter.param_name contains 'filtercolors'
+          if filter.param_name contains 'custom.genderid' or filter.param_name contains 'available_erp_sizes' or filter.param_name contains 'filtercolors'
             assign has_mobile_bar_row = true
           endif
         endif

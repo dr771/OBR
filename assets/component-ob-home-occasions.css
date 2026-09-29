@@ -149,6 +149,16 @@
   opacity: 1;
 }
 
+/* Touch has no hover: below 750px the description is simply part of the
+   card, so a tap never plays a reveal on its way to the collection. */
+@media screen and (max-width: 749px) {
+  .ob-home-occasions__card-desc {
+    max-height: none;
+    opacity: 1;
+    transition: none;
+  }
+}
+
 .ob-home-occasions__card-cta {
   display: inline-flex;
   align-items: center;

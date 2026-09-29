@@ -1674,22 +1674,48 @@ input.mobile-facets__checkbox {
   border-inline-end: 0.1rem solid rgba(var(--color-foreground), 0.12);
 }
 
+/* The visible half reads "Sorteer op", matching the "Verfijn op" toggle
+   beside it; the native select sits invisibly on top of it so a tap still
+   opens the OS picker with the current sort preselected. Its own box (and
+   Dawn's focus box-shadow on it) never paints. */
 .ob-mobile-bar__sort .select {
-  width: 100%;
-  height: 100%;
-}
-
-.ob-mobile-bar__sort .select__select {
+  display: flex;
+  align-items: center;
   width: 100%;
   height: 100%;
   min-height: 4.8rem;
-  padding: 1.2rem 3.2rem 1.2rem 1.6rem;
-  border: 0;
-  background: transparent;
+  padding: 1.2rem 4rem 1.2rem 0;
+}
+
+.ob-mobile-bar__sort-label,
+.ob-mobile-bar__toggle {
+  color: rgb(var(--color-foreground));
   font-size: 1.4rem;
   font-weight: 500;
-  line-height: normal;
+  line-height: 2rem;
   letter-spacing: normal;
+}
+
+.ob-mobile-bar__sort .select__select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  opacity: 0;
+  /* 16px keeps iOS from zooming the page when the select takes focus. */
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+.ob-mobile-bar__sort .select .svg-wrapper {
+  right: 1.6rem;
+  pointer-events: none;
+}
+
+.ob-mobile-bar__sort .select:has(.select__select:focus-visible) .ob-mobile-bar__sort-label {
+  outline: 0.2rem solid #1e9fe6;
+  outline-offset: 0.3rem;
 }
 
 .ob-mobile-bar__sort .select::before,
@@ -1705,12 +1731,7 @@ input.mobile-facets__checkbox {
   padding: 1.2rem 1.6rem;
   border: 0;
   background: transparent;
-  color: rgb(var(--color-foreground));
   font-family: inherit;
-  font-size: 1.6rem;
-  font-weight: 600;
-  line-height: 2.4rem;
-  letter-spacing: normal;
   cursor: pointer;
 }
 
@@ -1726,7 +1747,7 @@ input.mobile-facets__checkbox {
 }
 
 .ob-mobile-bar__panel {
-  padding-inline: 1.5rem;
+  padding-inline: 0;
 }
 
 .ob-mobile-bar__row-heading {
@@ -1743,7 +1764,9 @@ input.mobile-facets__checkbox {
   display: flex;
   flex-wrap: nowrap;
   gap: 0.8rem;
-  margin: 0;
+  /* The 0.3rem inline padding is room for the focus outline; the negative
+     margin cancels it so the first box sits on the page gutter. */
+  margin: 0 -0.3rem;
   padding: 0.3rem 0.3rem 1.1rem;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
@@ -1772,7 +1795,7 @@ input.mobile-facets__checkbox {
   cursor: pointer;
 }
 
-.ob-mobile-bar__row--type .ob-mobile-bar__box {
+.ob-mobile-bar__row--gender .ob-mobile-bar__box {
   min-height: 3.2rem;
 }
 
