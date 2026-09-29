@@ -1,0 +1,42 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-ob-swatches.css' | asset_url | stylesheet_tag }}
+{{ 'component-ob-brand-media.css' | asset_url | stylesheet_tag }}
+{{ 'section-ob-recently-viewed.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ob-card-swatches.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'ob-recently-viewed.js' | asset_url }}" defer="defer"></script>
+
+<div
+  class="ob-recently-viewed page-width"
+  data-section-id="{{ section.id }}"
+  data-product-handle="{{ product.handle }}"
+  data-products-path="{{ routes.root_url }}products/"
+  hidden
+>
+  <h2 class="ob-recently-viewed__heading">{{ 'products.product.recently_viewed' | t }}</h2>
+  <ul class="grid product-grid grid--4-col-desktop grid--2-col-tablet-down" role="list"></ul>
+  <template class="ob-recently-viewed__card">
+    <li class="grid__item">
+      {% render 'card-product',
+        card_product: product,
+        media_aspect_ratio: 'square',
+        show_secondary_image: true,
+        show_vendor: false,
+        show_rating: false,
+        skip_styles: true,
+        section_id: section.id,
+        product_view_context: 'recently_viewed'
+      %}
+    </li>
+  </template>
+</div>
+
+{% schema %}
+{
+  "name": "Recently viewed products",
+  "tag": "section",
+  "class": "section ob-recently-viewed-section",
+  "settings": [],
+  "presets": [{ "name": "Recently viewed products" }]
+}
+{% endschema %}

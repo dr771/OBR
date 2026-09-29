@@ -93,6 +93,10 @@
   .ob-pdp .product__info-wrapper {
     padding-top: 0.8rem;
   }
+
+  .ob-pdp .product {
+    overflow-x: clip;
+  }
 }
 
 /* -------------------------------------------------------------- breadcrumb */
@@ -101,6 +105,12 @@
   max-width: var(--ob-pdp-max-width);
   margin-inline: auto;
   padding: 2.8rem var(--ob-pdp-inset) 1.6rem;
+}
+
+@media screen and (max-width: 749px) {
+  .ob-breadcrumb {
+    padding-top: 1rem;
+  }
 }
 
 /* One back link, not a trail (breadcrumb-back-link). Muted at rest like the
@@ -465,6 +475,47 @@
 
 .ob-pdp .product-form__buttons {
   margin-top: 3.2rem;
+}
+
+@media screen and (max-width: 749px) {
+  /* Dawn's reveal animation leaves a transform on this ancestor, which would
+     otherwise make the fixed row follow the information column while scrolling. */
+  .ob-pdp .product__info-wrapper.scroll-trigger.animate--slide-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  body:has(.ob-pdp) {
+    padding-bottom: calc(8.1rem + env(safe-area-inset-bottom));
+  }
+
+  .ob-pdp .product-form__buttons {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 9;
+    max-width: none;
+    margin: 0;
+    padding: 1.2rem 1.6rem calc(1.2rem + env(safe-area-inset-bottom));
+    background: var(--ob-pdp-surface);
+    border-top: 0.1rem solid var(--ob-pdp-line);
+    box-shadow: 0 -0.6rem 1.8rem rgba(15, 23, 42, 0.06);
+  }
+
+  body:has(menu-drawer > details[open], cart-drawer.active) .ob-pdp .product-form__buttons {
+    visibility: hidden;
+  }
+
+  .ob-pdp .product-form__error-message-wrapper:not([hidden]) {
+    position: fixed;
+    inset: auto 1.6rem calc(8.1rem + env(safe-area-inset-bottom));
+    z-index: 10;
+    padding: 1rem 1.6rem;
+    background: var(--ob-pdp-surface);
+    border: 0.1rem solid var(--ob-pdp-line-strong);
+    border-radius: 0.8rem;
+    box-shadow: 0 0.4rem 1.2rem rgba(15, 23, 42, 0.1);
+  }
 }
 
 .ob-pdp .product-form__submit {

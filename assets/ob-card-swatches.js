@@ -15,6 +15,9 @@
 (function () {
   'use strict';
 
+  if (window.obCardSwatchesReady) return;
+  window.obCardSwatchesReady = true;
+
   var hoverMediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
   /*

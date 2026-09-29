@@ -35,11 +35,20 @@ fi
 TMPDIR=$(mktemp -d)
 trap 'rm -rf "$TMPDIR"' EXIT
 
+if python3 --version >/dev/null 2>&1; then
+  PYTHON=python3
+elif python --version >/dev/null 2>&1; then
+  PYTHON=python
+else
+  echo "ABORTED: Python is required to compare JSON templates." >&2
+  exit 1
+fi
+
 normalize_json() {
   # Strips Shopify's auto-generated comment header (if present) and
   # reformats with sorted keys, so a pure formatting difference never
   # trips the check — only real content differences do.
-  python3 -c "
+  "$PYTHON" -c "
 import json, re, sys
 raw = open(sys.argv[1], encoding='utf-8').read()
 raw = re.sub(r'^\s*/\*.*?\*/\s*', '', raw, flags=re.DOTALL)
@@ -63,8 +72,16 @@ for f in "$@"; do
         echo "  (not found live — treating as a new file, nothing to compare)"
         continue
       fi
+      if ! git show "HEAD:$f" > "$TMPDIR/baseline.json"; then
+        echo "ABORTED: no Git baseline for $f; cannot distinguish live settings from intended edits." >&2
+        exit 1
+      fi
       LIVE_NORM=$(normalize_json "$TMPDIR/$f")
-      LOCAL_NORM=$(normalize_json "$f")
+      if "$PYTHON" scripts/check-theme-json-merge.py "$TMPDIR/baseline.json" "$TMPDIR/$f" "$f"; then
+        LOCAL_NORM="$LIVE_NORM"
+      else
+        LOCAL_NORM=$(normalize_json "$f")
+      fi
       if [ "$LIVE_NORM" != "$LOCAL_NORM" ]; then
         {
           echo ""
@@ -79,7 +96,7 @@ for f in "$@"; do
         } >&2
         exit 1
       fi
-      echo "  OK: matches live, no drift."
+      echo "  OK: every live-only setting is preserved in the local file."
       ;;
   esac
 done

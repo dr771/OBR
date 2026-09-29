@@ -124,6 +124,7 @@
       "description": "Description",
       "details_heading": "Product details",
       "materials_maintenance_heading": "Materials & maintenance",
+      "recently_viewed": "Recently viewed",
       "inventory_in_stock": "In stock",
       "inventory_in_stock_show_count": "{{ quantity }} in stock",
       "inventory_low_stock": "Low stock",
