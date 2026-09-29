@@ -115,7 +115,8 @@ linking to its real collection (`sport-training`, `outdoor-werk`,
 merchant-uploaded image, a numbered eyebrow, the collection's own title as
 the card heading, and a permanently visible scrim ensuring the overlaid text
 stays legible against any photo at rest, not only on hover. Each card MAY
-carry a merchant-editable short description that reveals on hover/focus.
+carry a merchant-editable short description that reveals on hover/focus
+from 750px up and is always visible below 750px.
 Each collection's product membership SHALL be determined by vendor-based OR
 conditions (see `COLLECTIONS.md`), not by activity/category metafields, so
 the three collections stay mutually exclusive regardless of how a product's
@@ -142,11 +143,19 @@ own activity tags are set.
   collection, determined solely by its vendor, never by its activity tags.
 
 #### Scenario: Short description reveals on hover or focus
-- **WHEN** an occasion block has a non-blank `short_desc` setting and a
-  shopper hovers or keyboard-focuses that card
+- **WHEN** an occasion block has a non-blank `short_desc` setting, the
+  viewport is 750px or wider, and a shopper hovers or keyboard-focuses that
+  card
 - **THEN** the description SHALL transition from zero height and zero
   opacity to visible, matching bolt.host's own reveal pattern, and SHALL
   return to hidden when the card is no longer hovered or focused.
+
+#### Scenario: Short description is static on mobile
+- **WHEN** an occasion block has a non-blank `short_desc` setting and the
+  viewport is narrower than 750px
+- **THEN** the description SHALL be visible at rest with no reveal
+  transition, since touch has no hover and a tap navigates to the
+  collection.
 
 #### Scenario: No dead reveal space when the description is blank
 - **WHEN** an occasion block's `short_desc` setting is blank
