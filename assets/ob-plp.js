@@ -138,6 +138,39 @@
   });
 })();
 
+/*
+  Single colour mode renders the Kleur row as radios, and a checked radio
+  ignores a second tap natively. Remember the pre-tap state and clear it
+  ourselves, so a colour deselects like the Gender and Maat checkboxes.
+*/
+(() => {
+  const ROW_RADIO = '.ob-mobile-bar__row--color input[type="radio"]';
+  const radioFor = (target) => {
+    const label = target.closest('label');
+    return target.closest(ROW_RADIO) || (label && label.control && label.control.matches(ROW_RADIO) ? label.control : null);
+  };
+
+  document.addEventListener(
+    'pointerdown',
+    (event) => {
+      const radio = radioFor(event.target);
+      if (radio) radio.dataset.obWasChecked = String(radio.checked);
+    },
+    true,
+  );
+
+  document.addEventListener('click', (event) => {
+    if (!event.target.matches(ROW_RADIO)) return;
+    const radio = event.target;
+    const wasChecked = radio.dataset.obWasChecked === 'true';
+    delete radio.dataset.obWasChecked;
+    if (!wasChecked) return;
+
+    radio.checked = false;
+    radio.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+})();
+
 (() => {
   const button = document.querySelector('.ob-summon-filters');
   const panel = button && document.getElementById(button.dataset.obSummonTarget);

@@ -1658,10 +1658,11 @@ input.mobile-facets__checkbox {
   scroll-margin-top: 8rem;
 }
 
+/* No top hairline: the bar sits flush under the collection hero's border. */
 .ob-mobile-bar__toolbar {
   display: flex;
   align-items: stretch;
-  border-block: 0.1rem solid rgba(var(--color-foreground), 0.12);
+  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.12);
 }
 
 .ob-mobile-bar__sort,
@@ -1713,11 +1714,6 @@ input.mobile-facets__checkbox {
   pointer-events: none;
 }
 
-.ob-mobile-bar__sort .select:has(.select__select:focus-visible) .ob-mobile-bar__sort-label {
-  outline: 0.2rem solid #1e9fe6;
-  outline-offset: 0.3rem;
-}
-
 .ob-mobile-bar__sort .select::before,
 .ob-mobile-bar__sort .select::after {
   display: none;
@@ -1746,12 +1742,19 @@ input.mobile-facets__checkbox {
   display: none;
 }
 
+/*
+  Vertical rhythm: 1.5rem from the toolbar hairline to the first heading, and
+  1.5rem from the last visible thing of a row (its boxes, or its scrollbar
+  where a classic one takes space) to the next heading. The inline script in
+  ob-mobile-filter-bar flags rows whose scrollbar takes space; the row's own
+  1.1rem bottom padding counts toward the gap when there is none.
+*/
 .ob-mobile-bar__panel {
-  padding-inline: 0;
+  padding: 1.5rem 0 0;
 }
 
 .ob-mobile-bar__row-heading {
-  margin: 1.2rem 0 0.4rem;
+  margin: 0 0 0.4rem;
   color: rgba(var(--color-foreground), 0.75);
   font-size: 1.4rem;
   font-weight: 600;
@@ -1766,12 +1769,25 @@ input.mobile-facets__checkbox {
   gap: 0.8rem;
   /* The 0.3rem inline padding is room for the focus outline; the negative
      margin cancels it so the first box sits on the page gutter. */
-  margin: 0 -0.3rem;
+  margin: 0 -0.3rem 0.4rem;
   padding: 0.3rem 0.3rem 1.1rem;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
   scrollbar-width: thin;
   -webkit-overflow-scrolling: touch;
+}
+
+.ob-mobile-bar__row.has-scrollbar {
+  margin-bottom: 1.5rem;
+}
+
+/* The grid's own 1.5rem top margin follows; the last row adds 0.2rem to it. */
+.ob-mobile-bar__filter:last-of-type > .ob-mobile-bar__row {
+  margin-bottom: -0.9rem;
+}
+
+.ob-mobile-bar__filter:last-of-type > .ob-mobile-bar__row.has-scrollbar {
+  margin-bottom: 0.2rem;
 }
 
 .ob-mobile-bar__row > li {
@@ -1870,6 +1886,17 @@ input.mobile-facets__checkbox {
 @media screen and (max-width: 749px) {
   .facets-container {
     display: block;
+  }
+
+  .facets-vertical .facets-container {
+    padding-top: 0;
+  }
+
+  /* Dawn's -1.2rem bottom margin cancels its drawer pills' own spacing. Once
+     a bar filter is active this row turns visible while empty, and that
+     margin pulled the grid up against the last filter row. */
+  .active-facets-mobile {
+    margin-bottom: 0;
   }
 
   .facets-container > .product-count {

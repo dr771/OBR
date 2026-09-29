@@ -204,5 +204,23 @@
         /* Storage blocked: retain the server-rendered open default. */
       }
     })();
+
+    /* A classic (space-taking) scrollbar appears only on rows that overflow.
+       Flag those rows so the gap to the next row is measured from the
+       scrollbar rather than the boxes; overlay scrollbars never get the flag.
+       Runs inline so the first paint already has the right spacing. */
+    (function () {
+      var bar = document.getElementById('ObMobileBarPanel-{{ section.id }}');
+      bar = bar && bar.closest('.ob-mobile-bar');
+      if (!bar) return;
+      var mark = function () {
+        bar.querySelectorAll('.ob-mobile-bar__row').forEach(function (row) {
+          row.classList.toggle('has-scrollbar', row.offsetHeight - row.clientHeight > 0);
+        });
+      };
+      mark();
+      new MutationObserver(mark).observe(bar, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
+      window.addEventListener('resize', mark);
+    })();
   </script>
 {%- endif -%}

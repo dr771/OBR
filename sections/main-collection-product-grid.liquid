@@ -38,9 +38,22 @@
   <script src="{{ 'quick-order-list.js' | asset_url }}" defer="defer"></script>
 {%- endif -%}
 
+{%- liquid
+  comment
+    On mobile the filter bar sits flush under the collection hero, whose
+    bottom border stands in for the bar's own top hairline.
+  endcomment
+  assign mobile_padding_top = section.settings.padding_top | times: 0.75 | round: 0
+  if section.settings.filter_type != 'drawer'
+    if section.settings.enable_filtering or section.settings.enable_sorting
+      assign mobile_padding_top = 0
+    endif
+  endif
+-%}
+
 {%- style -%}
   .section-{{ section.id }}-padding {
-    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-top: {{ mobile_padding_top }}px;
     padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
   }
 
