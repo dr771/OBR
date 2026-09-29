@@ -205,17 +205,17 @@
       }
     })();
 
-    /* A classic (space-taking) scrollbar appears only on rows that overflow.
-       Flag those rows so the gap to the next row is measured from the
-       scrollbar rather than the boxes; overlay scrollbars never get the flag.
-       Runs inline so the first paint already has the right spacing. */
+    /* Only rows that overflow show a scrollbar - a classic one below the
+       row, an overlay one (Android) inside its bottom padding. Flag those
+       rows so the gap to the next row is measured from the scrollbar rather
+       than the boxes. Runs inline so the first paint has the right spacing. */
     (function () {
       var bar = document.getElementById('ObMobileBarPanel-{{ section.id }}');
       bar = bar && bar.closest('.ob-mobile-bar');
       if (!bar) return;
       var mark = function () {
         bar.querySelectorAll('.ob-mobile-bar__row').forEach(function (row) {
-          row.classList.toggle('has-scrollbar', row.offsetHeight - row.clientHeight > 0);
+          row.classList.toggle('has-scrollbar', row.scrollWidth > row.clientWidth + 1);
         });
       };
       mark();

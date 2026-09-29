@@ -1745,9 +1745,9 @@ input.mobile-facets__checkbox {
 /*
   Vertical rhythm: 1.5rem from the toolbar hairline to the first heading, and
   1.5rem from the last visible thing of a row (its boxes, or its scrollbar
-  where a classic one takes space) to the next heading. The inline script in
-  ob-mobile-filter-bar flags rows whose scrollbar takes space; the row's own
-  1.1rem bottom padding counts toward the gap when there is none.
+  when the row overflows) to the next heading. The inline script in
+  ob-mobile-filter-bar flags overflowing rows; without a scrollbar the row's
+  own 1.1rem bottom padding counts toward the gap.
 */
 .ob-mobile-bar__panel {
   padding: 1.5rem 0 0;
@@ -1877,6 +1877,20 @@ input.mobile-facets__checkbox {
   margin: 0;
   opacity: 0;
   cursor: pointer;
+}
+
+/* Touch keeps :hover on the last tapped chip, and Dawn's 2px hover ring
+   reads as "selected" - so a deselected colour looked still active. */
+@media (hover: none) {
+  .ob-mobile-bar__row--color .swatch-input__input:hover + .swatch-input__label,
+  .ob-mobile-bar__row--color .swatch-input__input + .swatch-input__label:hover {
+    outline: none;
+  }
+
+  .ob-mobile-bar__row--color .swatch-input__input:checked:hover + .swatch-input__label,
+  .ob-mobile-bar__row--color .swatch-input__input:checked + .swatch-input__label:hover {
+    outline: 0.1rem solid rgb(var(--color-foreground));
+  }
 }
 
 .ob-mobile-bar__row--color .ob-color-facet-option.disabled {
