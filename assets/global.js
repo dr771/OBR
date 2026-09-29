@@ -419,6 +419,40 @@ Shopify.CountryProvinceSelector.prototype = {
   },
 };
 
+function enableDrawerSwipeToClose(drawer, surfaceSelector, direction, isOpen, close) {
+  let start = null;
+
+  drawer.addEventListener('touchstart', (event) => {
+    start = null;
+    if (!isOpen() || event.touches.length !== 1) return;
+
+    const surface = event.target.closest(surfaceSelector);
+    if (!surface || !drawer.contains(surface)) return;
+
+    // A horizontal rail inside a drawer owns its own swipe gesture.
+    for (let element = event.target; element && element !== surface; element = element.parentElement) {
+      const overflow = getComputedStyle(element).overflowX;
+      if (/^(auto|scroll)$/.test(overflow) && element.scrollWidth > element.clientWidth + 1) return;
+    }
+
+    start = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+  }, { passive: true });
+
+  drawer.addEventListener('touchend', (event) => {
+    if (!start || event.changedTouches.length !== 1 || !isOpen()) return;
+
+    const dx = event.changedTouches[0].clientX - start.x;
+    const dy = event.changedTouches[0].clientY - start.y;
+    start = null;
+    if (dx * direction < 72 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+
+    event.preventDefault(); // Suppress a synthetic click on a link after the swipe.
+    close(event);
+  }, { passive: false });
+
+  drawer.addEventListener('touchcancel', () => { start = null; }, { passive: true });
+}
+
 class MenuDrawer extends HTMLElement {
   constructor() {
     super();
@@ -428,6 +462,13 @@ class MenuDrawer extends HTMLElement {
     this.addEventListener('keyup', this.onKeyUp.bind(this));
     this.addEventListener('focusout', this.onFocusOut.bind(this));
     this.bindEvents();
+    enableDrawerSwipeToClose(
+      this,
+      '.menu-drawer',
+      -1,
+      () => this.mainDetailsToggle.classList.contains('menu-opening'),
+      (event) => this.closeMenuDrawer(event, this.mainDetailsToggle.querySelector('summary'))
+    );
   }
 
   bindEvents() {
@@ -505,7 +546,7 @@ class MenuDrawer extends HTMLElement {
     removeTrapFocus(elementToFocus);
     this.closeAnimation(this.mainDetailsToggle);
 
-    if (event instanceof KeyboardEvent) elementToFocus?.setAttribute('aria-expanded', false);
+    elementToFocus?.setAttribute('aria-expanded', false);
   }
 
   onFocusOut() {
