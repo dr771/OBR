@@ -65,6 +65,7 @@
       "label": "Kruimelpad",
       "home": "Home",
       "back_to": "Terug naar {{ name }}",
+      "quick_links": "Snel naar",
       "back_to_search": "Terug naar zoekresultaten"
     }
   },

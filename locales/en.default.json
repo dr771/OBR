@@ -65,6 +65,7 @@
       "label": "Breadcrumb",
       "home": "Home",
       "back_to": "Back to {{ name }}",
+      "quick_links": "Quick links",
       "back_to_search": "Back to search results"
     }
   },

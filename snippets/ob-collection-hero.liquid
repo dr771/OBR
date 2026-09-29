@@ -16,6 +16,9 @@
     count in its own filter/sort bar
   - extra_content: {String} optional pre-rendered HTML (e.g. a capture),
     inserted after the title/subheading/meta row, still inside the tint
+  - links_content: {String} optional pre-rendered <li> pills (ob-menu-trail
+    format 'links'), shown as a quick-link nav on the right of the title row
+    at desktop and as one scrolling row below it on mobile
   - trail_collection: {Object} optional; the collection this hero heads.
     When given, the breadcrumb shows its main-menu ancestors (ob-menu-trail)
     between Home and the title. Deliberately not named `collection`, because
@@ -50,6 +53,28 @@
       </div>
       {%- if meta != blank -%}
         <div class="ob-collection-hero__meta">{{ meta }}</div>
+      {%- endif -%}
+      {%- if links_content != blank -%}
+        <nav class="ob-collection-hero__links" aria-label="{{ 'general.breadcrumb.quick_links' | t }}">
+          <ul class="ob-collection-hero__links-list" role="list" data-ob-hero-links>
+            {{ links_content }}
+          </ul>
+        </nav>
+        <script>
+          // Mobile: bring the current pill into view before first paint. Sets
+          // the list's own scrollLeft, never scrollIntoView, which would also
+          // scroll the page vertically.
+          (function () {
+            var lists = document.querySelectorAll('[data-ob-hero-links]');
+            var list = lists[lists.length - 1];
+            var current = list && list.querySelector('[aria-current="page"]');
+            if (!current || list.scrollWidth <= list.clientWidth) return;
+            var item = current.parentElement;
+            if (item.offsetLeft + item.offsetWidth > list.clientWidth) {
+              list.scrollLeft = item.offsetLeft - parseFloat(getComputedStyle(list).paddingLeft);
+            }
+          })();
+        </script>
       {%- endif -%}
     </div>
 

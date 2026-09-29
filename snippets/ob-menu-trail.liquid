@@ -2,7 +2,9 @@
   OB: a collection's ancestors in the main navigation, so a breadcrumb can
   show where a category sits (Home › Schoenen › Ballerina's) without inventing
   a collection hierarchy Shopify doesn't have. Shared by the collection hero
-  (visible trail) and the PDP breadcrumb (BreadcrumbList JSON-LD).
+  (visible trail + quick links) and the PDP breadcrumb (BreadcrumbList
+  JSON-LD). One walk for all three, so the quick links can never disagree
+  with the breadcrumb about where a collection sits.
 
   Rules (see the ob-collection-hero spec):
   - The first occurrence in menu order wins. Brands listed under both an
@@ -15,11 +17,19 @@
   - A top-level match, or no match, emits nothing: the caller renders
     Home › title.
 
-  Outputs only the ancestors, never the collection itself.
+  html/jsonld output only the ancestors, never the collection itself.
+
+  links output (plp-subcollection-links spec): the collection's menu group
+  as <li><a> pills. The group is the matched item when it has children of
+  its own, otherwise its parent. First comes the group's "Alle …" self-link
+  (or the group itself), then every other child that links to a collection
+  with products, so placeholders (`#`) and empty collections drop out. The
+  viewed collection gets aria-current. Emits nothing when fewer than two
+  pills remain; the caller wraps the <ul>/<nav>.
 
   Accepts:
   - for_collection: {Object} the collection to place
-  - format: {String} 'html' (default) | 'jsonld'
+  - format: {String} 'html' (default) | 'jsonld' | 'links'
   - link_class / sep_class: {String} html format: classes for each ancestor
     link and the chevron after it
   - start: {Number} jsonld format: position of the first emitted ListItem.
@@ -39,6 +49,7 @@
       if ob_l1.type == 'collection_link' and ob_l1.object.handle == ob_target
         assign ob_found = true
         assign ob_depth = 1
+        assign ob_match = ob_l1
         break
       endif
 
@@ -50,6 +61,7 @@
           assign ob_found = true
           assign ob_a1 = ob_l1
           assign ob_depth = 2
+          assign ob_match = ob_l2
           break
         endif
 
@@ -62,6 +74,7 @@
             assign ob_a1 = ob_l1
             assign ob_a2 = ob_l2
             assign ob_depth = 3
+            assign ob_match = ob_l3
             break
           endif
         endfor
@@ -80,7 +93,50 @@
   assign ob_position = start | default: 1
 -%}
 
-{%- if ob_depth > 1 -%}
+{%- if format == 'links' -%}
+  {%- liquid
+    assign ob_group = nil
+    if ob_found
+      for ob_child in ob_match.links
+        if ob_child.url != ob_match.url
+          assign ob_group = ob_match
+          break
+        endif
+      endfor
+      if ob_group == nil
+        if ob_depth == 2
+          assign ob_group = ob_a1
+        elsif ob_depth == 3
+          assign ob_group = ob_a2
+        endif
+      endif
+    endif
+
+    assign ob_pill_count = 0
+    if ob_group != nil
+      assign ob_all = ob_group
+      for ob_child in ob_group.links
+        if ob_child.url == ob_group.url
+          assign ob_all = ob_child
+          break
+        endif
+      endfor
+    endif
+  -%}
+  {%- if ob_group != nil -%}
+    {%- capture ob_pills -%}
+      {%- assign ob_pill_count = 1 -%}
+      <li><a class="{{ link_class }}" href="{{ ob_all.url }}"{% if ob_all.object.handle == ob_target %} aria-current="page"{% endif %}>{{ ob_all.title | escape }}</a></li>
+      {%- for ob_child in ob_group.links -%}
+        {%- if ob_child.url == ob_group.url -%}{%- continue -%}{%- endif -%}
+        {%- if ob_child.type != 'collection_link' or ob_child.object.all_products_count < 1 -%}{%- continue -%}{%- endif -%}
+        {%- assign ob_pill_count = ob_pill_count | plus: 1 -%}
+        <li><a class="{{ link_class }}" href="{{ ob_child.url }}"{% if ob_child.object.handle == ob_target %} aria-current="page"{% endif %}>{{ ob_child.title | escape }}</a></li>
+      {%- endfor -%}
+    {%- endcapture -%}
+    {%- if ob_pill_count > 1 -%}{{ ob_pills }}{%- endif -%}
+  {%- endif -%}
+{%- elsif ob_depth > 1 -%}
   {%- if format == 'jsonld' -%}
     {"@type":"ListItem","position":{{ ob_position }},"name":{{ ob_a1.title | json }},"item":{{ shop.url | append: ob_a1.url | json }}},
     {%- if ob_depth == 3 -%}

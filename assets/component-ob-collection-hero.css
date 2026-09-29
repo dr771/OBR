@@ -90,6 +90,75 @@
   white-space: nowrap;
 }
 
+/*
+  Quick links to the collection's main-menu group (plp-subcollection-links).
+  Pill look measured off the bolt.host reference; hover takes the AA-safe
+  accent, and the current collection is the one filled pill (the reference
+  has no current state). Below 990px the list is one scrolling row that
+  bleeds to the viewport edge, so a pill cut at the screen edge signals that
+  the row scrolls; the negative margin matches .page-width's own gutter.
+*/
+.ob-collection-hero__links {
+  margin-top: 1.6rem;
+}
+
+.ob-collection-hero__links-list {
+  position: relative; /* offsetParent for the inline scroll-into-view script */
+  display: flex;
+  gap: 0.8rem;
+  margin: 0 -1.5rem;
+  padding: 0 1.5rem;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.ob-collection-hero__links-list::-webkit-scrollbar {
+  display: none;
+}
+
+.ob-collection-hero__links-list > li {
+  flex: none;
+  margin: 0;
+}
+
+.ob-collection-hero__link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.8rem 1.6rem;
+  border: 0.1rem solid rgba(15, 23, 42, 0.15);
+  border-radius: 999.9rem;
+  background: #fff;
+  color: #0f172a;
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 2rem;
+  letter-spacing: normal;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color var(--duration-short) ease, color var(--duration-short) ease,
+    background-color var(--duration-short) ease;
+}
+
+.ob-collection-hero__link:hover,
+.ob-collection-hero__link:focus-visible {
+  border-color: #0d80c4;
+  color: #0d80c4;
+}
+
+.ob-collection-hero__link[aria-current='page'] {
+  border-color: #0f172a;
+  background: #0f172a;
+  color: #fff;
+}
+
+@media screen and (min-width: 750px) {
+  .ob-collection-hero__links-list {
+    margin: 0 -5rem;
+    padding: 0 5rem;
+  }
+}
+
 @media screen and (min-width: 990px) {
   .ob-collection-hero .page-width {
     padding-top: 5.6rem;
@@ -115,5 +184,18 @@
   .ob-collection-hero__meta {
     font-size: 1.4rem;
     padding-bottom: 0.8rem;
+  }
+
+  .ob-collection-hero__links {
+    flex: 0 1 52rem;
+    margin: 0 0 0 4rem;
+  }
+
+  .ob-collection-hero__links-list {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
   }
 }

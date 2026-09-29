@@ -13,10 +13,20 @@
   endif
 -%}
 
+{%- capture ob_quick_links -%}
+  {%- render 'ob-menu-trail',
+    for_collection: collection,
+    format: 'links',
+    link_class: 'ob-collection-hero__link'
+  -%}
+{%- endcapture -%}
+{%- assign ob_quick_links = ob_quick_links | strip -%}
+
 {%- render 'ob-collection-hero',
   title: collection.title,
   subheading: ob_subheading,
-  trail_collection: collection
+  trail_collection: collection,
+  links_content: ob_quick_links
 -%}
 
 {% schema %}
