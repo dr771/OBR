@@ -707,6 +707,10 @@
   color: var(--ob-pdp-ink-muted);
 }
 
+.ob-pdp .product__accordion .accordion__content a {
+  color: var(--ob-pdp-accent-ink);
+}
+
 .ob-pdp .product__accordion .icon-caret {
   width: 1.6rem;
   height: 1.6rem;
