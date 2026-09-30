@@ -1,4 +1,6 @@
 {{ 'section-main-page.css' | asset_url | stylesheet_tag }}
+{{ 'component-ob-content-page.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ob-content-nav.js' | asset_url }}" defer="defer"></script>
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -14,14 +16,74 @@
   }
 {%- endstyle -%}
 
-<div class="page-width page-width--narrow section-{{ section.id }}-padding">
-  <h1 class="main-page-title page-title h0{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
-    {{ page.title | escape }}
-  </h1>
-  <div class="rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
-    {{ page.content }}
+{%- comment -%}
+  OB: only content-rich pages (body wrapped in .ob-content, see
+  assets/component-ob-content-page.css) get the PLP's tinted hero
+  (snippets/ob-collection-hero); their opening <p class="ob-content__lead">
+  is lifted into the hero as the subheading and removed from the body, so
+  the intro is still authored in the page editor. Every other page keeps
+  Dawn's original narrow title + rich-text layout.
+{%- endcomment -%}
+{%- liquid
+  assign ob_content = page.content
+  assign ob_styled = false
+  comment
+    Exact wrapper class only: ob-content__contact etc. also start with
+    'ob-content' and must not switch a short page to the hero layout.
+  endcomment
+  if ob_content contains 'class="ob-content ' or ob_content contains 'class="ob-content"'
+    assign ob_styled = true
+  endif
+  assign ob_lead = blank
+  assign ob_lead_open = '<p class="ob-content__lead">'
+  if ob_styled and ob_content contains ob_lead_open
+    assign ob_lead = ob_content | split: ob_lead_open | last | split: '</p>' | first
+    assign ob_content = ob_content | remove_first: ob_lead_open | remove_first: ob_lead | remove_first: '</p>'
+  endif
+-%}
+
+{%- if ob_styled -%}
+  {%- comment -%}
+    Sidebar layout: below 990px the sidebar nav becomes the hero's pill row
+    (same as the PLP quick links), so the chips stay inside the tinted hero.
+    The pills are lifted from the body's own nav, so there is one source.
+  {%- endcomment -%}
+  {%- assign ob_nav_items = blank -%}
+  {%- if ob_content contains 'ob-content--aside' and ob_content contains '<nav class="ob-content__nav"' -%}
+    {%- assign ob_nav_items = ob_content | split: '<nav class="ob-content__nav"' | last | split: '</nav>' | first | split: '<ul>' | last | split: '</ul>' | first | replace: '<a href', '<a class="ob-collection-hero__link" href' | strip -%}
+  {%- endif -%}
+
+  <div class="ob-content-hero{% if ob_nav_items != blank %} ob-content-hero--nav{% endif %}">
+    {%- render 'ob-collection-hero', title: page.title, subheading: ob_lead, links_content: ob_nav_items -%}
   </div>
-</div>
+
+  <div class="page-width ob-main-page section-{{ section.id }}-padding">
+    <div class="rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      {{ ob_content }}
+    </div>
+  </div>
+{%- else -%}
+  {%- comment -%}
+    Short pages: no tinted hero, but the same breadcrumb + H1 as the
+    PLP/PDP/FAQ and the ob-content reading typography (.ob-page).
+  {%- endcomment -%}
+  {{ 'component-ob-collection-hero.css' | asset_url | stylesheet_tag }}
+  <div class="page-width page-width--narrow ob-page section-{{ section.id }}-padding">
+    <nav class="ob-collection-hero__breadcrumb" aria-label="{{ 'general.breadcrumb.label' | t }}">
+      <a class="ob-collection-hero__breadcrumb-link" href="{{ routes.root_url }}">{{ 'general.breadcrumb.home' | t }}</a>
+      {%- render 'ob-icon', icon: 'chevron-right', class: 'ob-collection-hero__breadcrumb-sep' -%}
+      <span class="ob-collection-hero__breadcrumb-current" aria-current="page">{{ page.title | escape }}</span>
+    </nav>
+    <h1 class="main-page-title page-title{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+      {{ page.title | escape }}
+    </h1>
+    {%- if page.content != blank -%}
+      <div class="rte ob-page__body{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+        {{ page.content }}
+      </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}
 
 {% schema %}
 {

@@ -189,6 +189,64 @@ drawer's own CSS scoping mirrors this: `.cart-drawer .foo` for the drawer,
 `cart-items .foo` for the page (its own wrapper custom element, distinct
 from `<cart-drawer>`) — see `component-ob-cart-page.css`.
 
+## Content pages — `ob-content` (2026-09-30)
+
+Text/content pages (FAQ, verzending-en-retour, …) are plain HTML page bodies
+styled by the theme: `assets/component-ob-content-page.css` (loaded by
+`sections/main-page.liquid`) + `assets/ob-content-nav.js` (scroll-spy). The
+file header of the CSS holds the **markup contract** — copy the structure from
+the FAQ page (`/pages/veelgestelde-vragen`), don't reinvent it. Values:
+
+- **Opt-in, not for every page:** only a body wrapped in `.ob-content` (i.e.
+  one with enough content to earn it) switches `main-page` to the PLP's tinted
+  hero (`ob-collection-hero`: breadcrumb, serif title, subheading). The body's
+  opening `<p class="ob-content__lead">` is lifted into the hero as the
+  subheading. The switch is the exact wrapper class (`class="ob-content"` or
+  `class="ob-content …"`) — `ob-content__contact` alone must not trigger it.
+- **Short pages (`.ob-page`, everything else incl. contact):** no tint, Dawn's
+  narrow `72.6rem` column, but the same breadcrumb and H1 as PLP/FAQ (serif
+  600, `3.6rem/3.78rem`, `6rem/6.3rem` ≥990px) and the reading typography
+  (body `1.6rem/1.65` `#334155`, serif `2.6rem` h2, Inter 600 h3, accent-ink
+  links). The contact card works here too (Klantenservice page).
+- **Layout under the hero:** left edge = hero/header edge (`.page-width`).
+  `.ob-content` is `96rem` max; `--aside` is a `24rem` sidebar + `88rem`
+  column. Answer text is capped at `72ch` either way. Smooth anchor scrolling
+  is on under `prefers-reduced-motion: no-preference`.
+- **Sidebar nav (`--aside`, ≥990px):** `24rem` column, `6rem` gap, sticky at
+  `top: 10rem`, a hairline rail with muted links; the current section
+  (`aria-current`, set by the scroll-spy) gets ink text, 600 weight and a
+  `#1e9fe6` rail segment. Below 990px, or without `--aside`, the same nav is
+  a pill row (`999.9rem`, `rgba(15,23,42,.15)` border, accent hover).
+- **Section heading with icon chip:** serif (`--font-heading-family`) 600,
+  `2.6rem/1.2`, `-0.01em`, after a `4.4rem` round `#f1f5f9` chip with a 22px
+  stroke icon in `#1e9fe6` (paths from `snippets/ob-icon.liquid`; page bodies
+  can't `render` snippets, so the SVG is inlined). Sections are `8rem` apart;
+  the targeted section's chip pops once (`:target`).
+- **Accordion:** native `<details>`, no JS. Summary Inter 600 `1.6rem`, hairline
+  `#e2e8f0` rows, border-drawn chevron; body `1.5rem/1.65` `#334155`, links
+  accent-ink underlined.
+- **Contact card (closing CTA) — owner likes it, reuse it.** `.ob-content__contact`:
+  `#f1f5f9` panel, `1.6rem` radius, `3.2rem` padding (`4rem` ≥750px), two
+  columns ≥750px (serif question heading + muted sentence | label/value
+  `ul.ob-content__contact-list` > `li` > `span.ob-content__contact-label` +
+  plain `tel:`/`mailto:` link), then a full-width row with
+  `class="button ob-button--cta"` → `/pages/contact`. Markup contract in the
+  CSS file header; as a body's first child it drops its top margin.
+- **Editing rule:** the CSS/JS are theme files (no `<style>` in bodies), but
+  the body is still structured HTML (`<details>`, `<nav>`, ids, inline SVG).
+  A real WYSIWYG save (tested 2026-09-30) keeps `details/summary`, `nav`,
+  `section`, `aside`, `ul/li/span`, classes, ids and inline SVG; it drops
+  `aria-*`. Typing inside the text is fine; restructuring blocks is safer in
+  "Show HTML". **The real trap is a stale editor:** after a body is written
+  via Admin API, the Admin editor can still show the *old* body from its
+  IndexedDB `apollo-caches` (even after a hard reload), and Save then writes
+  that old body back. The agent that writes the body clears that cache and
+  verifies the editor — see CLAUDE.md, "Page-body writes via API". The hero lifts the body's opening
+  `<p class="ob-content__lead">` — if that wrapper is lost the paragraph just
+  stays in the body (soft failure), it doesn't break the page.
+- **Shop-side:** the page bodies live in the shop, not in git — see
+  MIGRATION-TO-LIVE.md (content pages).
+
 ## Where this doesn't apply
 
 - The full `/cart` page's own line-item table/layout (product rows, quantity

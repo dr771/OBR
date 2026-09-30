@@ -1,0 +1,492 @@
+/*
+  ob-content-page — house style for text/content pages (FAQ, shipping &
+  returns, …) rendered by sections/main-page.liquid from the page body.
+
+  Opt-in: only bodies wrapped in `.ob-content` get this. sections/main-page.liquid
+  then renders the PLP's tinted hero (ob-collection-hero) with the page title and
+  the body's opening <p class="ob-content__lead"> as subheading; every other page
+  keeps Dawn's original narrow title + rich-text layout.
+
+  Body markup contract (page body is plain HTML, no Liquid):
+
+    <div class="ob-content ob-content--aside">        <!-- --aside = sidebar nav -->
+      <p class="ob-content__lead">…</p>
+      <div class="ob-content__layout">
+        <nav class="ob-content__nav" aria-label="…"><ul><li><a href="#x">…</a></li></ul></nav>
+        <div class="ob-content__main">
+          <section class="ob-content__section" id="x">
+            <h2 class="ob-content__heading"><span class="ob-content__icon" aria-hidden="true"><svg …/></span><span>Titel</span></h2>
+            <details class="ob-content__item"><summary>Vraag</summary><div class="ob-content__body">…</div></details>
+          </section>
+          <aside class="ob-content__contact">…</aside>
+        </div>
+      </div>
+    </div>
+
+  Without `--aside` the nav renders as a pill row above the sections at every
+  width. The sidebar only exists >=990px; below that it is the same pill row.
+  Scroll-spy (aria-current on the active link) lives in assets/ob-content-nav.js.
+  Values are documented in CI-STYLE-TOKENS.md ("Content pages").
+*/
+
+/* Sidebar layout: the pills live in the hero below 990px, the sidebar from 990px. */
+@media screen and (max-width: 989px) {
+  body:has(.ob-content-hero--nav) .ob-content--aside .ob-content__nav {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .ob-content-hero--nav .ob-collection-hero__links {
+    display: none;
+  }
+}
+
+/* Styled bodies: left edge = hero/header edge. */
+.ob-content {
+  padding-top: 2.4rem;
+  max-width: 96rem;
+}
+
+.ob-content--aside {
+  max-width: none;
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+  html:has(.ob-content) {
+    scroll-behavior: smooth;
+  }
+}
+
+.ob-content {
+  --ob-content-ink: #0f172a;
+  --ob-content-ink-light: #334155;
+  --ob-content-muted: #64748b;
+  --ob-content-line: #e2e8f0;
+  --ob-content-tint: #f1f5f9;
+  --ob-content-accent-ink: #0d80c4;
+  --ob-content-accent-icon: #1e9fe6;
+  font-family: var(--font-body-family);
+  color: var(--ob-content-ink);
+  text-align: left;
+}
+
+.ob-content .ob-content__lead {
+  margin: 0 0 2.4rem;
+  max-width: 72ch;
+  font-size: 1.6rem;
+  line-height: 1.6;
+  color: var(--ob-content-muted);
+}
+
+/* ---- navigation: pill row (all widths), sidebar list (aside, >=990px) ---- */
+
+.ob-content .ob-content__nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin: 0 0 6rem;
+  padding: 0;
+  list-style: none;
+}
+
+.ob-content .ob-content__nav li {
+  margin: 0;
+  padding: 0;
+}
+
+.ob-content .ob-content__nav a {
+  display: inline-block;
+  padding: 0.8rem 1.6rem;
+  border: 0.1rem solid rgba(15, 23, 42, 0.15);
+  border-radius: 999.9rem;
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ob-content-ink);
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.ob-content .ob-content__nav a:hover,
+.ob-content .ob-content__nav a:focus-visible {
+  border-color: var(--ob-content-accent-ink);
+  color: var(--ob-content-accent-ink);
+}
+
+@media screen and (min-width: 990px) {
+  .ob-content--aside .ob-content__layout {
+    display: grid;
+    grid-template-columns: 24rem minmax(0, 88rem);
+    column-gap: 6rem;
+    align-items: start;
+  }
+
+  .ob-content--aside .ob-content__nav {
+    position: sticky;
+    top: 10rem;
+  }
+
+  .ob-content--aside .ob-content__nav ul {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 0;
+    margin: 0;
+    border-left: 0.1rem solid var(--ob-content-line);
+  }
+
+  .ob-content--aside .ob-content__nav a {
+    display: block;
+    margin-left: -0.1rem;
+    padding: 1rem 0 1rem 1.8rem;
+    border: 0;
+    border-left: 0.2rem solid transparent;
+    border-radius: 0;
+    color: var(--ob-content-muted);
+  }
+
+  .ob-content--aside .ob-content__nav a:hover,
+  .ob-content--aside .ob-content__nav a:focus-visible {
+    border-left-color: var(--ob-content-line);
+    color: var(--ob-content-ink);
+  }
+
+  .ob-content--aside .ob-content__nav a[aria-current='true'] {
+    border-left-color: var(--ob-content-accent-icon);
+    color: var(--ob-content-ink);
+    font-weight: 600;
+  }
+}
+
+/* ---- sections ---- */
+
+.ob-content .ob-content__section {
+  margin: 0 0 8rem;
+  scroll-margin-top: 12rem;
+}
+
+.ob-content .ob-content__heading {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  margin: 0 0 2rem;
+  font-family: var(--font-heading-family);
+  font-size: 2.6rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ob-content-ink);
+}
+
+.ob-content .ob-content__icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  border-radius: 50%;
+  background: var(--ob-content-tint);
+  color: var(--ob-content-accent-icon);
+}
+
+.ob-content .ob-content__section:target .ob-content__icon {
+  animation: ob-content-pop 0.7s ease-out;
+}
+
+@keyframes ob-content-pop {
+  0% { transform: scale(1); background: #dbeffd; }
+  40% { transform: scale(1.18); background: #dbeffd; }
+  100% { transform: scale(1); }
+}
+
+/* ---- accordion (native <details>, no JS) ---- */
+
+.ob-content .ob-content__item {
+  border-bottom: 0.1rem solid var(--ob-content-line);
+}
+
+.ob-content .ob-content__item:first-of-type {
+  border-top: 0.1rem solid var(--ob-content-line);
+}
+
+.ob-content .ob-content__item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  padding: 1.8rem 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ob-content-ink);
+  cursor: pointer;
+  list-style: none;
+}
+
+.ob-content .ob-content__item summary::-webkit-details-marker {
+  display: none;
+}
+
+.ob-content .ob-content__item summary::after {
+  content: '';
+  flex: none;
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-right: 0.4rem;
+  border-right: 0.2rem solid var(--ob-content-muted);
+  border-bottom: 0.2rem solid var(--ob-content-muted);
+  transform: rotate(45deg) translate(-0.15rem, -0.15rem);
+  transition: transform 0.2s;
+}
+
+.ob-content .ob-content__item[open] summary::after {
+  transform: rotate(225deg) translate(-0.15rem, -0.15rem);
+}
+
+.ob-content .ob-content__item summary:hover {
+  color: var(--ob-content-accent-ink);
+}
+
+.ob-content .ob-content__item summary:focus-visible {
+  outline: 0.2rem solid var(--ob-content-accent-ink);
+  outline-offset: 0.2rem;
+  border-radius: 0.4rem;
+}
+
+.ob-content .ob-content__body {
+  padding: 0 0 2rem;
+  max-width: 72ch;
+  font-size: 1.5rem;
+  line-height: 1.65;
+  color: var(--ob-content-ink-light);
+}
+
+.ob-content .ob-content__body p {
+  margin: 0 0 1.2rem;
+}
+
+.ob-content .ob-content__body p:last-child,
+.ob-content .ob-content__body ul:last-child {
+  margin-bottom: 0;
+}
+
+.ob-content .ob-content__body strong {
+  font-weight: 600;
+  color: var(--ob-content-ink);
+}
+
+.ob-content .ob-content__body ul {
+  margin: 0 0 1.2rem;
+  padding-left: 2rem;
+}
+
+.ob-content .ob-content__body li {
+  margin: 0 0 0.4rem;
+  padding-left: 0.2rem;
+}
+
+.ob-content .ob-content__body a {
+  color: var(--ob-content-accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+.ob-content .ob-content__body a:hover {
+  color: var(--ob-content-ink);
+}
+
+.ob-content .ob-content__note {
+  color: var(--ob-content-muted);
+  font-size: 1.4rem;
+}
+
+/* ---- contact card (closing CTA) ----
+   Usable in .ob-content bodies and on short pages (.ob-page). Markup uses
+   ul/li/span, verified to survive a rich-text editor save (the tag may be
+   aside or div; styling is class-only):
+     <aside class="ob-content__contact">
+       <div><h2>…</h2><p>…</p></div>
+       <ul class="ob-content__contact-list">
+         <li><span class="ob-content__contact-label">In Nederland</span><a href="tel:…">…</a></li>
+       </ul>
+       <a class="button ob-button--cta" href="/pages/contact">…</a>
+     </aside>
+*/
+
+:is(.ob-content, .ob-page) .ob-content__contact {
+  display: grid;
+  gap: 2rem;
+  margin-top: 5.6rem;
+  padding: 3.2rem;
+  border-radius: 1.6rem;
+  background: var(--ob-content-tint);
+}
+
+:is(.ob-content, .ob-page) .ob-content__contact:first-child {
+  margin-top: 0;
+}
+
+:is(.ob-content, .ob-page) .ob-content__contact h2 {
+  margin: 0 0 0.8rem;
+  font-family: var(--font-heading-family);
+  font-size: 2.6rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ob-content-ink);
+}
+
+:is(.ob-content, .ob-page) .ob-content__contact p {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: var(--ob-content-ink-light);
+}
+
+:is(.ob-content, .ob-page) .ob-content__contact-list {
+  display: grid;
+  gap: 1.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:is(.ob-content, .ob-page) .ob-content__contact-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+}
+
+:is(.ob-content, .ob-page) .ob-content__contact-label {
+  font-size: 1.3rem;
+  color: var(--ob-content-muted);
+}
+
+:is(.ob-content, .ob-page) .ob-content__contact-list a {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--ob-content-ink);
+  text-decoration: none;
+}
+
+:is(.ob-content, .ob-page) .ob-content__contact-list a:hover {
+  color: var(--ob-content-accent-ink);
+}
+
+:is(.ob-content, .ob-page) .ob-content__contact .button {
+  justify-self: start;
+  text-decoration: none;
+}
+
+@media screen and (min-width: 750px) {
+  :is(.ob-content, .ob-page) .ob-content__contact {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    padding: 4rem;
+  }
+
+  :is(.ob-content, .ob-page) .ob-content__contact .button {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---- short pages (no .ob-content): breadcrumb + H1 + reading typography ---- */
+
+.ob-page {
+  --ob-content-ink: #0f172a;
+  --ob-content-ink-light: #334155;
+  --ob-content-muted: #64748b;
+  --ob-content-line: #e2e8f0;
+  --ob-content-tint: #f1f5f9;
+  --ob-content-accent-ink: #0d80c4;
+  text-align: left;
+}
+
+.ob-page .main-page-title {
+  margin: 1.6rem 0 3.2rem;
+  font-family: var(--font-heading-family);
+  font-size: 3.6rem;
+  font-weight: 600;
+  line-height: 3.78rem;
+  letter-spacing: -0.01em;
+  color: var(--ob-content-ink);
+}
+
+@media screen and (min-width: 990px) {
+  .ob-page .main-page-title {
+    margin-bottom: 4rem;
+    font-size: 6rem;
+    line-height: 6.3rem;
+  }
+}
+
+.ob-page__body {
+  font-size: 1.6rem;
+  line-height: 1.65;
+  color: var(--ob-content-ink-light);
+}
+
+.ob-page__body p {
+  margin: 0 0 1.4rem;
+}
+
+.ob-page__body h2 {
+  margin: 4rem 0 1.2rem;
+  font-family: var(--font-heading-family);
+  font-size: 2.6rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ob-content-ink);
+}
+
+.ob-page__body h3 {
+  margin: 3.2rem 0 0.8rem;
+  font-family: var(--font-body-family);
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: normal;
+  color: var(--ob-content-ink);
+}
+
+.ob-page__body > :first-child,
+.ob-page__body > :first-child > :first-child {
+  margin-top: 0;
+}
+
+.ob-page__body strong {
+  font-weight: 600;
+  color: var(--ob-content-ink);
+}
+
+.ob-page__body ul:not([class]),
+.ob-page__body ol {
+  margin: 0 0 1.4rem;
+  padding-left: 2rem;
+}
+
+.ob-page__body ul:not([class]) > li,
+.ob-page__body ol > li {
+  margin: 0 0 0.4rem;
+}
+
+.ob-page__body a:not(.button):not(.ob-content__contact-list a) {
+  color: var(--ob-content-accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+.ob-page__body a:not(.button):not(.ob-content__contact-list a):hover {
+  color: var(--ob-content-ink);
+}
+
+@media screen and (prefers-reduced-motion: reduce) {
+  .ob-content * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

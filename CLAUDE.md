@@ -48,6 +48,8 @@ verification, and still make the approved change on theme `148245381229`.
 
 **Store-identity gate for admin writes.** Before every Shopify Admin API mutation, retrieve the connected shop and proceed only when it is **Original Brands DEV** with the exact domain `original-brands-dev.myshopify.com`. This protects the shared connector from an accidental shop switch while keeping collection, navigation, metafield, and other shop-data work in the Admin API.
 
+**Page-body writes via API — the agent clears the editor cache, not the owner.** The Admin page editor initialises from its IndexedDB `apollo-caches`, not from the server, so after a `pageUpdate` it can show the *old* body even after a hard reload — and the owner's next Save silently reverts the API change (happened 2026-09-30 on the FAQ). So, as part of every task that writes a page body via API, before reporting done: (1) re-read the body via API right before writing, in case the owner edited it in Admin; (2) after writing, on an `admin.shopify.com` tab in the owner's Chrome run `indexedDB.deleteDatabase('apollo-caches')`, reload the page's editor, and confirm it shows the new content; (3) tell the owner in one line that any *other* browser/machine where that page's editor was opened (e.g. the other machine) still needs a reload after clearing the same cache — the agent can only clear the Chrome it controls. Never ask the owner to remember this unprompted.
+
 ## OpenSpec CLI
 
 The Hard Rules below assume `openspec` is on PATH. The npm package is **`@fission-ai/openspec`** — *not* `openspec` (that name is an unrelated 2019 stub at v0.0.0, and `openspec-cli` / `@openspec/cli` don't exist). On a fresh machine:
