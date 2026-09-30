@@ -56,19 +56,20 @@ The add-to-cart control SHALL be 5.6rem tall with a fully rounded radius, the pr
 - **THEN** the add-to-cart button still occupies the row correctly without a gap where the wishlist control would sit
 
 ### Requirement: Configured collapsible detail panels use the reference treatment
-Where collapsible detail panels are configured for a product, they SHALL render as a stack, each closed by a 1px hairline bottom rule, with triggers at 1.4rem semibold on 1.6rem vertical padding and bodies at 1.4rem on a 2.275rem line in muted ink, and each trigger SHALL carry a chevron that reflects its panel's state. A product with no collapsible panels configured SHALL render its description as plain body copy without an empty panel or a stray rule.
 
-Note: the reference shows four named panels (`Productdetails`, `Materiaal & onderhoud`, `Pasvorm & maatadvies`, `Bezorging & retour`). Their copy is merchant content that does not exist yet, so this change ships the treatment and leaves the panels unconfigured rather than inventing product claims.
+PDP detail accordions SHALL render as a consistent stack in the information column. Each trigger SHALL carry a chevron that reflects its panel's state. A product-specific panel with no source content SHALL be omitted without an empty panel or stray divider, while the shop-wide delivery and returns panel remains available.
 
-#### Scenario: Product has collapsible panels configured
+Note: the reference shows four named panels. `Productdetails` and `Materiaal & onderhoud` use Akeneo-synced product content, `Bezorging & retour` uses shared merchant-managed template content, and `Pasvorm & maatadvies` remains unconfigured until its product data exists.
 
-- **WHEN** a product's PDP renders one or more configured collapsible panels
-- **THEN** each carries the reference's rule, trigger type and chevron, and toggling one updates its chevron
+#### Scenario: Product has description and materials content
 
-#### Scenario: Product has no collapsible panels configured
+- **WHEN** a PDP renders its product-specific accordions and the shared delivery and returns panel
+- **THEN** they form one visually consistent stack whose triggers and chevrons respond to toggling
 
-- **WHEN** a product has only a description and no collapsible panels
-- **THEN** the description renders as plain body copy and no empty panel or orphaned hairline rule appears
+#### Scenario: A product-specific field is blank
+
+- **WHEN** a PDP lacks description or materials content
+- **THEN** that product-specific panel is omitted without an orphaned divider, while the delivery and returns panel still renders
 
 #### Scenario: Keyboard user operates a panel
 
