@@ -1,18 +1,27 @@
 - redirects URL's from ob.nl 
 -- waiting for drupal export
 ============
-
+Content pages from ob.nl?
+- Over Original Brands
+Artikelen retourneren
+Klantenservice
+Levering
+Veelgestelde vragen
+Wie we zijn
 ===
-PLP
--
+Schrijf je nu in op onze nieuwsbrief en ontvang 10% korting op jouw eerste bestelling.
+===
+Trusted Shops badge
+===
+to top arrow
+===
+Blog?
 
 PDP 
 - add besorgin & retour accordeon
 
-===
 
-Desktop Filter: categories
-- use for separate horizontal filter? - not now
+
 
 ============
 SOLDEN page
