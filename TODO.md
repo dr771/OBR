@@ -1,13 +1,16 @@
-- redirects URL's from ob.nl 
--- waiting for drupal export
+BUG - back from PDP/wishlist after show more: same position!
+
+BUG - wishlist shows no reduced badge!
+
+BUG - warum https://original-brands-dev.myshopify.com/products/fitflop-lulu-leather-toepost?variant=45841872846957 is NOT under blue in filter??
+-- es ist, aber zeigt another blue...
+
+===
+FEAT - redirects URL's from ob.nl 
+-- export ist da!
+-- g console ist da!
 ============
-Content pages from ob.nl?
-- Over Original Brands
-Artikelen retourneren
-Klantenservice
-Levering
-Veelgestelde vragen
-Wie we zijn
+
 ===
 Schrijf je nu in op onze nieuwsbrief en ontvang 10% korting op jouw eerste bestelling.
 ===
@@ -15,18 +18,14 @@ Trusted Shops badge
 ===
 to top arrow
 ===
-Blog?
+BLOG!!!
 
 PDP 
-- add besorgin & retour accordeon
-
-
-
+- vert abstand after header
 
 ============
-SOLDEN page
-
-============
+Crawl: stopped for good. Only FitFlop product URLs map to products (532 of 587 match exactly); other brands' product URLs go to the brand collection, and the old SEO titles are not captured.
+=============
  
 Redesign-/UX-Audit-Anleitung - used by codex
 
