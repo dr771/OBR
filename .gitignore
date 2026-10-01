@@ -31,3 +31,5 @@ node_modules
 *.zip
 # Scratch measurement artifacts from proto-conversion work
 .tmp-pdp/
+# Legacy Drupal customer export + cleaned lists -- personal data, never commit
+drupal-customers*
