@@ -1,8 +1,5 @@
-# plp-sale-badges Specification
+## MODIFIED Requirements
 
-## Purpose
-Defines the sale label on shared product-card surfaces so shoppers see the actual whole percentage saving while the existing card badge placement and visual treatment remain unchanged.
-## Requirements
 ### Requirement: Product-card sale badges state the rounded-down discount
 Every shared product-card sale badge SHALL state the reduction of the color the card currently shows, computed per variant as `floor((compare_at_price - price) * 100 / compare_at_price)` over that color's available variants (all available variants for a product with no color option), not from product-level price fields. An available variant that is not reduced counts as 0. When every such variant has the same percentage the badge SHALL display `-N%`; when they differ it SHALL display the largest percentage behind a translatable "up to" prefix (`tot -N%` in Dutch), so the badge never understates or overstates against the card's "vanaf" price. The badge SHALL be visible only while the shown color has an available variant whose compare-at price is greater than its price, and SHALL follow in-card color selection. The percentage label SHALL replace the generic translated sale word.
 
@@ -29,22 +26,3 @@ Every shared product-card sale badge SHALL state the reduction of the color the 
 #### Scenario: Card renders outside a collection grid
 - **WHEN** `card-product.liquid` renders the product in search, a featured collection, related products, or another shared card surface
 - **THEN** its sale badge follows the same rule as on the PLP
-
-### Requirement: Product-card merchandising badges use distinct colour roles
-On shared product cards, the sale badge SHALL use the brand accent `#38B6FF` with white text, while the bestseller badge SHALL use `#121212` with white text. Their existing placement, padding, border, and radius SHALL remain unchanged.
-
-#### Scenario: Collection contains sale and bestseller products
-- **WHEN** both badge types are visible in the same product grid
-- **THEN** sale reads as a blue pill and bestseller reads as a black pill
-
-### Requirement: Product-card current sale amount uses the brand accent
-When a product card is on sale, its current payable amount SHALL use the global `--ob-accent` token at full opacity and semibold weight 600 while its struck-through compare-at amount retains the existing regular weight and muted grey treatment. A regular non-sale product amount SHALL retain its normal card price colour and weight.
-
-#### Scenario: Product card renders sale pricing
-- **WHEN** the card displays both current and compare-at amounts
-- **THEN** the current amount is blue at weight 600 and the compare-at amount remains regular-weight grey and struck through
-
-#### Scenario: Product card renders regular pricing
-- **WHEN** the card has no valid higher compare-at amount
-- **THEN** its price retains the existing card ink colour
-

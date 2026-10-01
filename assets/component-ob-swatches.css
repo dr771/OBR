@@ -510,6 +510,12 @@
   border-color: #66666612;
 }
 
+/* A reduced colour's chip always carries an accent-tinted edge, at rest too,
+   so the colour the sale belongs to stands out from the full-price ones. */
+.card-wrapper.product-card-wrapper .ob-card-swatch[data-ob-sale-label] {
+  border-color: color-mix(in srgb, var(--ob-accent) 60%, transparent);
+}
+
 .card-wrapper.product-card-wrapper .ob-card-swatch:focus-visible {
   outline: 0.2rem solid rgb(var(--color-foreground));
   outline-offset: -0.2rem;
@@ -582,6 +588,18 @@
   font-weight: 500;
   line-height: 1.4rem;
   letter-spacing: normal;
+}
+
+/* The badge follows the shown colour (ob-card-swatches.js); Dawn's `.badge`
+   display would otherwise override the hidden attribute. */
+.card-wrapper.product-card-wrapper .badge--sale[hidden] {
+  display: none;
+}
+
+/* "tot" before a ranged discount: lowercase and a step smaller than the value. */
+.card-wrapper.product-card-wrapper .ob-sale-badge__prefix {
+  font-size: 0.9rem;
+  text-transform: none;
 }
 
 /* Wishlist King's collection heart matches the approved Bolt card control. */

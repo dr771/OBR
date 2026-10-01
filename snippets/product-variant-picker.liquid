@@ -107,7 +107,9 @@
           %}
           {%- if option_kind == 'color' and ob_single_row_options -%}
               </div>
-              {% render 'ob-option-rail-controls', previous_label: 'Vorige kleuren tonen', next_label: 'Meer kleuren tonen' %}
+              {%- assign rail_previous_label = 'products.product.colors_previous' | t -%}
+              {%- assign rail_next_label = 'products.product.colors_next' | t -%}
+              {% render 'ob-option-rail-controls', previous_label: rail_previous_label, next_label: rail_next_label %}
             </div>
           {%- endif -%}
         </fieldset>
@@ -139,7 +141,9 @@
           {%- if option_kind == 'size' -%}
             </div>
             {%- if ob_single_row_options -%}
-              {% render 'ob-option-rail-controls', previous_label: 'Vorige maten tonen', next_label: 'Meer maten tonen' %}
+              {%- assign rail_previous_label = 'products.product.sizes_previous' | t -%}
+              {%- assign rail_next_label = 'products.product.sizes_next' | t -%}
+              {% render 'ob-option-rail-controls', previous_label: rail_previous_label, next_label: rail_next_label %}
             {%- endif -%}
             </div>
           {%- endif -%}

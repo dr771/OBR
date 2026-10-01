@@ -198,6 +198,12 @@
       "duties_and_taxes_included": "Douanerechten en belastingen inbegrepen.",
       "size_guide": "Maatadvies",
       "bestseller": "Bestseller",
+      "sale_up_to": "tot",
+      "color_label": "Kleur: {{ color }}",
+      "colors_previous": "Vorige kleuren tonen",
+      "colors_next": "Meer kleuren tonen",
+      "sizes_previous": "Vorige maten tonen",
+      "sizes_next": "Meer maten tonen",
       "size_guide_pending": "De maattabel voor deze productgroep wordt binnenkort toegevoegd."
     },
     "modal": {

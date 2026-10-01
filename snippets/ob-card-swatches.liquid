@@ -8,11 +8,18 @@
 
   Accepts:
   - card_product: {Object} Product Liquid object
+  - card_variant: {Object} The variant the card represents (optional; defaults
+    to selected_or_first_available_variant). Its color is the active chip.
+  - card_has_reduced: {Boolean} The product has an available reduced variant,
+    so each color is checked for one (optional)
+  - card_size_values: {String} Sizes the listing is filtered to, as `|37|38|`
+    (optional); with card_size_index, the size option's zero-based index
 
   Usage:
-  {% render 'ob-card-swatches', card_product: card_product %}
+  {% render 'ob-card-swatches', card_product: card_product, card_variant: card_variant %}
 {% endcomment %}
 {%- liquid
+  assign card_variant = card_variant | default: card_product.selected_or_first_available_variant
   assign swatch_visual_mode = settings.ob_plp_card_swatch_style | default: 'color'
   assign color_option = null
   for option in card_product.options_with_values
@@ -51,13 +58,13 @@
   assign media_codes = media_codes | split: '@@'
 
   comment
-    Default second shot for the card's CURRENT image (selected_or_first_available_variant).
+    Default second shot for the card's CURRENT image (the card variant).
     Color swatches (below) carry their own per-color swap2, but a single/no-color
     product renders no swatch row at all, so ensureHoverImage() in JS has nothing to
     read — this fallback holder is what it falls back to in that case.
   endcomment
   assign default_swap2_media = null
-  assign default_variant = card_product.selected_or_first_available_variant
+  assign default_variant = card_variant
   if default_variant.featured_image
     capture default_color_code
       render 'ob-media-color-code', image_src: default_variant.featured_image.src
@@ -94,28 +101,79 @@
   {%- endcomment -%}
   <div class="ob-card-swatches" data-ob-card-swatches data-ob-option-rail-shell>
     <div class="ob-card-swatches__rail" data-ob-option-rail data-ob-option-rail-step="item">
+    {%- assign color_index = color_option.position | minus: 1 -%}
+    {%- assign active_color = card_variant.options[color_index] -%}
+    {%- assign size_filtered = false -%}
+    {%- if card_size_values != blank and card_size_index != blank -%}
+      {%- assign size_filtered = true -%}
+    {%- endif -%}
     {%- for value in color_option.values -%}
       {%- liquid
+        comment
+          swatch_variant: this color's first variant (image, fill). sale_variant:
+          its first available reduced variant — only looked for when the
+          product has one. size_variant: this color in a size the listing is
+          filtered to — only looked for under a size filter. The chip links to
+          the filtered size first, then the reduced variant, then the first.
+          The badge label is per color.
+        endcomment
         assign swatch_variant = null
+        assign sale_variant = null
+        assign size_variant = null
         for variant in card_product.variants
-          case color_option.position
-            when 1
-              if variant.option1 == value.name
-                assign swatch_variant = variant
-              endif
-            when 2
-              if variant.option2 == value.name
-                assign swatch_variant = variant
-              endif
-            when 3
-              if variant.option3 == value.name
-                assign swatch_variant = variant
-              endif
-          endcase
-          if swatch_variant
-            break
+          if variant.options[color_index] != value.name
+            continue
           endif
+          unless swatch_variant
+            assign swatch_variant = variant
+          endunless
+          if variant.available
+            if card_has_reduced and sale_variant == null and variant.compare_at_price > variant.price
+              assign sale_variant = variant
+            endif
+            if size_filtered and size_variant == null
+              assign size_token = '|' | append: variant.options[card_size_index] | append: '|'
+              if card_size_values contains size_token
+                assign size_variant = variant
+              endif
+            endif
+          endif
+
+          assign keep_scanning = false
+          if card_has_reduced and sale_variant == null
+            assign keep_scanning = true
+          endif
+          if size_filtered and size_variant == null
+            assign keep_scanning = true
+          endif
+          unless keep_scanning
+            break
+          endunless
         endfor
+
+        assign chip_variant = size_variant | default: sale_variant | default: swatch_variant
+        assign sale_label = blank
+        if sale_variant
+          capture sale_label
+            render 'ob-sale-label', product: card_product, option_index: color_index, option_value: value.name
+          endcapture
+          assign sale_label = sale_label | strip
+        endif
+        assign sale_range = false
+        if sale_label contains '~'
+          assign sale_range = true
+          assign sale_label = sale_label | remove: '~'
+        endif
+
+        comment
+          The active chip links to the card variant itself, so re-selecting it
+          never moves the link off a size the listing was filtered to.
+        endcomment
+        assign chip_active = false
+        if value.name == active_color
+          assign chip_active = true
+          assign chip_variant = card_variant
+        endif
       -%}
       {%- liquid
         comment
@@ -164,12 +222,14 @@
       -%}
       <button
         type="button"
-        class="ob-card-swatch{% if swatch_fill != blank %} ob-card-swatch--color{% else %} ob-card-swatch--image{% endif %}{% if value.selected %} ob-card-swatch--active{% endif %}{% if chip_unavailable %} ob-card-swatch--unavailable{% endif %}"
-        aria-label="Kleur: {{ value_name_escaped }}"
-        aria-pressed="{% if value.selected %}true{% else %}false{% endif %}"
+        class="ob-card-swatch{% if swatch_fill != blank %} ob-card-swatch--color{% else %} ob-card-swatch--image{% endif %}{% if chip_active %} ob-card-swatch--active{% endif %}{% if chip_unavailable %} ob-card-swatch--unavailable{% endif %}"
+        aria-label="{{ 'products.product.color_label' | t: color: value.name | escape }}"
+        aria-pressed="{% if chip_active %}true{% else %}false{% endif %}"
         data-ob-swatch-name="{{ value_name_escaped }}"
         {% if swatch_fill != blank %}style="--ob-card-swatch-fill: {{ swatch_fill }};"{% endif %}
-        {% if swatch_variant %}data-ob-variant-id="{{ swatch_variant.id }}"{% endif %}
+        {% if chip_variant %}data-ob-variant-id="{{ chip_variant.id }}"{% endif %}
+        {% if sale_label != blank %}data-ob-sale-label="{{ sale_label }}"{% endif %}
+        {% if sale_range %}data-ob-sale-range{% endif %}
         {% if swatch_variant.featured_image %}
           data-ob-swap-src="{{ swatch_variant.featured_image | image_url: width: 533 }}"
           data-ob-swap-srcset="{{ swatch_variant.featured_image | image_url: width: 360 }} 360w, {{ swatch_variant.featured_image | image_url: width: 533 }} 533w, {{ swatch_variant.featured_image | image_url: width: 720 }} 720w"
@@ -194,9 +254,11 @@
       </button>
     {%- endfor -%}
     </div>
+    {%- assign colors_previous_label = 'products.product.colors_previous' | t -%}
+    {%- assign colors_next_label = 'products.product.colors_next' | t -%}
     {% render 'ob-option-rail-controls',
-      previous_label: 'Vorige kleuren tonen',
-      next_label: 'Meer kleuren tonen',
+      previous_label: colors_previous_label,
+      next_label: colors_next_label,
       class_root: 'ob-card-swatches__button'
     %}
   </div>

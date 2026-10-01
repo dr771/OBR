@@ -198,6 +198,12 @@
       "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
       "size_guide": "Size guide",
       "bestseller": "Bestseller",
+      "sale_up_to": "up to",
+      "color_label": "Color: {{ color }}",
+      "colors_previous": "Show previous colors",
+      "colors_next": "Show more colors",
+      "sizes_previous": "Show previous sizes",
+      "sizes_next": "Show more sizes",
       "size_guide_pending": "The size guide for this product group is coming soon."
     },
     "modal": {

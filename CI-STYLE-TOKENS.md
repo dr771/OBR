@@ -247,6 +247,14 @@ the FAQ page (`/pages/veelgestelde-vragen`), don't reinvent it. Values:
 - **Shop-side:** the page bodies live in the shop, not in git — see
   MIGRATION-TO-LIVE.md (content pages).
 
+## Product-card sale cues (2026-10-01)
+
+Descriptive, in `assets/component-ob-swatches.css`:
+
+- **Reduced colour chip:** `border-color: color-mix(in srgb, var(--ob-accent) 60%, transparent)` in every state, at rest too. It uses the 0.1rem border every chip already reserves, so chip geometry does not change.
+- **Ranged badge prefix** (`.ob-sale-badge__prefix`, the translated "tot"): `0.9rem`, `text-transform: none`, against the badge value's `1.1rem` uppercase.
+- A sale badge hidden by chip selection needs `.badge--sale[hidden] { display: none }`: Dawn's `.badge` display overrides the `hidden` attribute.
+
 ## Where this doesn't apply
 
 - The full `/cart` page's own line-item table/layout (product rows, quantity

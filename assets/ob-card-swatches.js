@@ -125,6 +125,26 @@
       });
     }
 
+    // The sale badge belongs to the shown color: a product reduced in only
+    // some colors renders it (possibly hidden) and each reduced chip carries
+    // its own label. Cards with no reduction have no such badge — a no-op.
+    // The translated "up to" prefix rides on the badge as a data attribute and
+    // is only written for a color whose sizes are reduced by different
+    // amounts. A hidden badge is emptied, not just hidden: the product link
+    // names it via aria-labelledby, which reads hidden text too.
+    var saleLabel = swatch.dataset.obSaleLabel || '';
+    var saleRange = !!saleLabel && swatch.hasAttribute('data-ob-sale-range');
+    card.querySelectorAll('.card__badge .badge--sale').forEach(function (badge) {
+      badge.hidden = !saleLabel;
+      var value = badge.querySelector('.ob-sale-badge__value');
+      var prefix = badge.querySelector('.ob-sale-badge__prefix');
+      if (value) value.textContent = saleLabel;
+      if (prefix) {
+        prefix.hidden = !saleRange;
+        prefix.textContent = saleRange ? badge.dataset.obSalePrefix || '' : '';
+      }
+    });
+
     // Selection updates a pair that was already created by desktop image
     // hover, but never creates one on touch-only input.
     ensureHoverImage(card, false);

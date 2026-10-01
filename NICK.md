@@ -360,3 +360,11 @@ Spot-verified: Odlo Tights Short Essential Sprinter really stores `Legging`. The
 ## 12. Legacy URL export from the Drupal site, for the redirect map (requested 2026-09-29)
 
 The old site has no `sitemap.xml`, so the redirect map needs the URL inventory from Drupal itself. Asked Nick for a CSV export of the `path_alias` and `redirect` tables (and whether Drupal products carry Akeneo item/colour codes), plus Search Console access. Plan and URL shapes: MIGRATION-TO-LIVE.md §5.
+
+## 13. Compare-at price is written as `0.00` instead of left empty (found 2026-10-01)
+
+Of 8,551 variants read from the storefront, 8,272 carry `compareAtPrice: 0.00` and only 270 are `null`. Nick's intent is that only real sale variants have a compare-at price (currently 8 variants of FitFlop Lulu, Metallic Cosmic Blue, at 90.00). The zeros are not harmless: the Admin filter `is_price_reduced:true` matches 550 of 566 products, and a product-level compare-at reads 0 for a partly reduced product.
+
+- **Ask:** write `null` when a variant has no compare-at price, and never a compare-at equal to the price (one variant of Pas de Monaco Redaur had 70.00 / 70.00; cleared by hand).
+- **Workarounds in place:** the Solden collection rule is `compare-at price > 0`, and the theme treats a compare-at of 0 or not above the price as "not reduced" (`snippets/ob-sale-label.liquid`, `snippets/card-product.liquid`).
+- **Also worth confirming:** per-size prices inside one reduced colour differ in the test data (45.00 to 87.30). The card shows `tot -50%` for that; if real data is uniform per colour it shows the plain percentage.
