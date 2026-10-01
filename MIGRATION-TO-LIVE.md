@@ -95,12 +95,12 @@ These do **not** travel with a theme export, and bare auto-created metafields ar
 - [ ] Canonical/domain settings, sitemap, robots.
 - [ ] **Content pages (FAQ etc.) are shop data, not theme files.** Their bodies use the theme's `ob-content` classes (see CI-STYLE-TOKENS.md, "Content pages"), so on the live shop recreate each page with the same handle (`veelgestelde-vragen`, …) and paste the body HTML — the theme must ship first or the pages render unstyled. Page bodies are not in git; the FAQ source HTML lives only in the dev shop until exported.
 
-- [ ] **Send the relaunch greeting email to the imported customers** (owner request 2026-10-01). From the live shop only, after the customer import (section 3), to the segment `customer_tags CONTAINS 'drupal-import'`. Use a neutral salutation instead of the first name: that field holds a username for 305 accounts and initials, all-caps text or a company name for many others. The list is old and was never verified, so expect bounces and unsubscribes on the first send. Afterwards the owner decides whether these customers stay subscribed for regular newsletters.
 ## 6. Go-live
 
 - [ ] Remove the storefront password on the live shop.
 - [ ] Domain pointed at the live shop.
 - [ ] Analytics / consent banner / newsletter wired up.
+- [ ] **Send the relaunch greeting email to the imported customers** (owner request 2026-10-01). From the live shop only, after the customer import (section 3), to the segment `customer_tags CONTAINS 'drupal-import'`. Use a neutral salutation instead of the first name: that field holds a username for 305 accounts and initials, all-caps text or a company name for many others. The list is old and was never verified, so expect bounces and unsubscribes on the first send. Afterwards the owner decides whether these customers stay subscribed for regular newsletters.
 
 ---
 
@@ -112,10 +112,10 @@ The recurring theme: **a theme copy carries only the theme.** Everything below l
 |---|---|---|
 | Liquid, CSS, JS, spec docs | ✅ (git) | us |
 | Products, variants, media, metafield *values* | ❌ | Nick / Akeneo |
-| Customers (legacy Drupal accounts), customer-accounts version | ❌ | cleaned CSV import in admin, section 3 |
 | Metafield & metaobject *definitions* (+ storefront access) | ❌ | Nick / Akeneo |
 | Metaobject entry ACTIVE/DRAFT status | ❌ | Nick / Akeneo |
 | Search & Discovery filter config | ❌ | by hand in admin |
 | Collections, publication state, menus, collection metafield values | ❌ | by hand/API after catalog sync |
 | Shipping zones/rates | ❌ | by hand in admin |
+| Customers (legacy Drupal accounts), customer-accounts version | ❌ | cleaned CSV import in admin, section 3 |
 | Theme settings (`settings_data.json`) | ⚠️ only if pushed | us |
