@@ -33,3 +33,7 @@ node_modules
 .tmp-pdp/
 # Legacy Drupal customer export + cleaned lists -- personal data, never commit
 drupal-customers*
+
+# Redirect map: per-shop catalog dumps are regenerated inputs
+redirects/catalog-*.json
+redirects/redirects-*.csv

@@ -380,7 +380,7 @@ Apparel + footwear, sale-heavy merchandising (visible strikethrough pricing, "So
 ## Open questions before scoping for real
 
 1. Akeneo attribute set — does it mirror SB's schema (`[color]`, `[bottoms_size]` style keys), or is Original Brands' Akeneo instance/catalog structured differently? Don't assume; check the actual export.
-2. Redirect/URL-consolidation strategy for legacy per-variant product pages (the current Drupal-ish site gives each color/size combo its own URL) — same class of problem SB solved, but the URL scheme differs (Drupal-ish slugs, not Magento `.html`).
+2. Redirect/URL-consolidation strategy for legacy per-variant product pages (**now worked out in SEO-REDIRECTS.md and BLOG.md, 2026-10-01**) (the current Drupal-ish site gives each color/size combo its own URL) — same class of problem SB solved, but the URL scheme differs (Drupal-ish slugs, not Magento `.html`).
 3. Brand identity scope, per client note: likely just a logo + maybe a primary color — confirm before any `header-animated-logo`-style bespoke work is considered (and per the ledger above, probably don't build that here either).
 4. **Discount amount for newsletter signup** (raised by Melissa, marketing analysis 2026-08-10) — fixed € amount or %? Not yet decided.
 5. **Popup trigger/timing** (raised by Melissa) — immediate on entry, exit-intent, or after a scroll/time threshold? Needs deciding alongside the newsletter-popup capability above, and must stay clear of the cookie-consent banner (Frontend Feature Audit skip-it list).

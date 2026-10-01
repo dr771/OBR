@@ -185,8 +185,8 @@ in `assets/details-disclosure.js`; the menu tree itself remains Shopify Admin da
 | Sport & Training | Skiën & snowboard | `skien-snowboard` | Activities: `Skiën & Snowboard` | 25 |
 | Sport & Training | Zwemmen | `zwemmen` | Activities: `Zwemmen` | 4 |
 | Schoenen | Sandalen | `sandalen` | Category: `Sandalen` | 50 |
-| Schoenen | Teenslippers | `teenslippers` | Category: `Teenslippers` | 112 |
-| Schoenen | Slippers | `slippers` | Category: `Slippers` OR `Slipper` | 90 |
+| Schoenen | Slippers | `slippers` | Category: `Teenslippers` | 112 |
+| Schoenen | Slides & pantoffels | `slides` | Category: `Slippers` OR `Slipper` | 90 |
 | Schoenen | Sneakers | `sneakers` | Category: `Sneakers` | 78 |
 | Schoenen | Laarzen | `laarzen` | Category: `Laarzen` | 26 |
 | Schoenen | Ballerina's | `ballerinas` | Category: `Ballerinas` | 20 |
@@ -217,6 +217,55 @@ assumed from the category name) — e.g. `Sandalen`/`Teenslippers`/`Sneakers`/`L
 `Sport & Training` sub-collections (`Hardlopen`, `Training`, `Wandelen`, `Fietsen`,
 `Skiën & snowboard`) are effectively all Odlo.
 
+### Brand sub-collections (third menu level)
+
+Created in the dev shop on 2026-10-01 (17 collections) for the redirect map ([SEO-REDIRECTS.md](SEO-REDIRECTS.md)): the old
+site's brand × type pages carry most of its search traffic, and a filtered collection URL is
+canonicalised to its parent, so the top ones are real collections. **The handle is the old Drupal
+slug**, so `/nl/fitflop-sandalen` redirects 1:1 to `/collections/fitflop-sandalen`. All are smart
+collections with **AND** logic (vendor plus one more condition), published to the Online Store,
+sorted by best selling, with no `breadcrumb_rank` (a product in one of these is always also in a
+rank-5 collection, which keeps winning the PDP fallback).
+
+| Brand | Menu title | Handle | Second condition | Products |
+|---|---|---|---|---:|
+| FitFlop | Slippers | `fitflop-slippers` | Category: `Teenslippers` | 112 |
+| FitFlop | Slides | `fitflop-slides` | Category: `Slippers` | 79 |
+| FitFlop | Sandalen | `fitflop-sandalen` | Category: `Sandalen` | 50 |
+| FitFlop | Sneakers | `fitflop-sneakers` | Category: `Sneakers` | 78 |
+| FitFlop | Enkellaarzen | `fitflop-enkellaarzen` | Category: `Laarzen` | 26 |
+| FitFlop | Pantoffels | `fitflop-pantoffels` | none — **manual** collection, owner picks the products | 0 |
+| FitFlop | Ballerina's & loafers | `fitflop-ballerinas` | Category: `Ballerinas` | 20 |
+| FitFlop | Dames | `fitflop-dames` | Gender: `Women` | 345 |
+| FitFlop | Heren | `fitflop-heren` | Gender: `Men` | 34 |
+| FitFlop | Outlet | `fitflop-outlet` | Price reduced AND compare-at price > 0 | 1 |
+| Juicy Couture | Broeken | `juicy-couture-pants` | Category: `Broeken` | 20 |
+| Juicy Couture | Hoodies | `juicy-couture-hoodies` | Category: `Vesten` | 18 |
+| Juicy Couture | Shorts | `juicy-couture-shorts` | Category: `Shorten` | 5 |
+| Odlo | Running | `odlo-running` | Activities: `Running` | 37 |
+| Odlo | Fietsen | `odlo-cycling` | Activities: `Fietsen` | 16 |
+| Odlo | Wintersport | `odlo-wintersport` | Activities: `Skiën & Snowboard` | 24 |
+| Odlo | Outdoor | `odlo-outdoor` | Activities: `Wandelen` | 77 |
+
+- **Storefront names follow the old site, not the Akeneo category** — see "Naming: Slippers, Slides,
+  Pantoffels" below. Read the rule column, not the title.
+- **A smart collection is all-AND or all-OR**, so "vendor AND (A OR B)" cannot be expressed. That is
+  why there is no Juicy Couture tops collection (`Hemden` OR `Bovenkleding`), no Odlo Dames/Heren
+  (`Women` OR `Unisex`), and why `fitflop-slides` omits the stale `Slipper` value. Those old pages
+  redirect to the brand collection.
+- **`fitflop-pantoffels` is manual** (3,739 clicks on the old page, no Akeneo value to key on). It
+  is empty until the owner adds products in Admin, and its menu pill stays hidden while it is.
+- **Not created:** every Hi-Tec sub-page (two products synced, and hiking/trail/snow have no
+  matching Akeneo value), and Odlo underwear/warm/active-wear (no matching value).
+- **On dev these overlap heavily with existing collections** (`fitflop-sandalen` equals `sandalen`
+  while FitFlop is the only brand with sandals). They diverge once Holster, Hi-Tec and Magnum sync.
+
+They are nested under each brand in `main-menu`, with an `Alles van <merk>` self-link first. Juicy
+Couture's children are nested under **both** of its menu occurrences: the hero pills and breadcrumb
+follow the first occurrence (Fashion & Lifestyle), so children only under Merken would not show. No
+theme change was needed — `ob-menu-trail` already treats a matched item with children as its own
+group, so a brand page shows its sub-collections and a sub-collection shows its brand's group.
+
 ### Main menu structure
 
 ```text
@@ -236,15 +285,15 @@ Outdoor & Werk
 
 Fashion & Lifestyle
 ├─ Alles voor fashion & lifestyle
-├─ Juicy Couture
+├─ Juicy Couture ▾ (Alles van Juicy Couture, Broeken, Hoodies, Shorts)
 ├─ Pas dé Monacó
 └─ Irasuto Studios
 
 Schoenen ▾
 ├─ Alle schoenen
 ├─ Sandalen
-├─ Teenslippers
-├─ Slippers
+├─ Slippers (Akeneo: Teenslippers)
+├─ Slides & pantoffels (Akeneo: Slippers)
 ├─ Sneakers
 ├─ Laarzen
 ├─ Ballerina's
@@ -269,8 +318,47 @@ Accessoires ▾
 
 Merken ▾
 ├─ Alle merken
-└─ 11 huidige merken, alfabetisch
+└─ 11 huidige merken, alfabetisch; FitFlop, Juicy Couture en Odlo met een derde niveau
+   (zie "Brand sub-collections")
 
 Solden
 └─ voorlopig empty. Drin lassen!
 ```
+
+## Naming: Slippers, Slides, Pantoffels (open for discussion with the OB team)
+
+**Problem.** The old site and Akeneo use the same words for different shoes. On the old site
+"FitFlop Slippers" are toe-post sandals; Akeneo calls those `Teenslippers`. Akeneo's `Slippers`
+are slides plus Löwenweiss wool house slippers. "Pantoffels" was an old-site page with no Akeneo
+value at all.
+
+**State on dev since 2026-10-01** (owner decisions, shop data only, reversible in Admin):
+
+| Storefront name | Handle | Akeneo value | Was |
+|---|---|---|---|
+| Slippers | `slippers` | `Teenslippers` | Teenslippers, `teenslippers` (old handle redirects) |
+| Slides & pantoffels | `slides` | `Slippers`, `Slipper` | Slippers, `slippers` |
+| FitFlop Slippers | `fitflop-slippers` | FitFlop + `Teenslippers` | new |
+| FitFlop Slides | `fitflop-slides` | FitFlop + `Slippers` | new |
+| FitFlop Pantoffels | `fitflop-pantoffels` | none, manual, empty | new |
+
+**Reasons.**
+
+- "FitFlop slippers" is the old site's biggest search term (8,553 clicks, 502k impressions in 16
+  months). The page that inherits that traffic should carry that name.
+- One word should mean one thing across the menu, so Schoenen was renamed to match FitFlop rather
+  than leaving Teenslippers / Slippers there.
+- "Slides & pantoffels", not plain "Slides", because the collection also holds the Löwenweiss
+  house slippers.
+- Pantoffels is manual because no Akeneo value identifies them; the old page had 3,739 clicks.
+
+**Open for the team.**
+
+- Is "Slippers" for toe-posts right for Dutch **and** Belgian shoppers, or should it stay
+  Teenslippers in the generic Schoenen menu?
+- Should Akeneo get a real `Pantoffels` category (and `Slides`), so these collections fill
+  themselves? That would replace the manual collection and split "Slides & pantoffels".
+- The Akeneo values are unchanged, so the PLP "Category" filter still shows the Akeneo wording.
+
+Reverting is a title/handle change on two collections and two menu labels; the redirect map only
+depends on the `fitflop-*` handles.

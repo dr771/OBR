@@ -357,9 +357,11 @@ Spot-verified: Odlo Tights Short Essential Sprinter really stores `Legging`. The
 - The `custom.shopify_originalbrands_category` definition was deleted and re-created. New id `252273426541` (was `226161426541`); name, key, type, validation, collection-condition, storefront access and pinning are identical.
 - The Search & Discovery **Category** filter was deleted with it and re-created (new id `53265956973`). It now sits **last** in the filter order; it used to be first. Label was later renamed by the owner.
 
-## 12. Legacy URL export from the Drupal site, for the redirect map (requested 2026-09-29)
+## 12. Legacy URL export from the Drupal site, for the redirect map (requested 2026-09-29, received 2026-10-01 — closed)
 
-The old site has no `sitemap.xml`, so the redirect map needs the URL inventory from Drupal itself. Asked Nick for a CSV export of the `path_alias` and `redirect` tables (and whether Drupal products carry Akeneo item/colour codes), plus Search Console access. Plan and URL shapes: MIGRATION-TO-LIVE.md §5.
+**Received:** `drupal_url_aliases.csv` (aliases only, no `redirect` table, no Akeneo codes) and Search Console access. Nothing further is asked of Nick: the item/colour codes are read from the old product pages instead. See SEO-REDIRECTS.md.
+
+The old site has no `sitemap.xml`, so the redirect map needs the URL inventory from Drupal itself. Asked Nick for a CSV export of the `path_alias` and `redirect` tables (and whether Drupal products carry Akeneo item/colour codes), plus Search Console access. Plan and URL shapes: SEO-REDIRECTS.md.
 
 ## 13. Compare-at price is written as `0.00` instead of left empty (found 2026-10-01)
 
