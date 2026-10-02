@@ -22,9 +22,10 @@
   links output (plp-subcollection-links spec): the collection's menu group
   as <li><a> pills. The group is the matched item when it has children of
   its own, otherwise its parent. First comes the group's "Alle …" self-link
-  (or the group itself), then every other child that links to a collection
-  with products, so placeholders (`#`) and empty collections drop out. The
-  viewed collection gets aria-current. Emits nothing when fewer than two
+  (or the group itself), left out on the group's own page, where it would
+  link to the page being viewed. Then every other child that links to a
+  collection with products, so placeholders (`#`) and empty collections drop
+  out. The viewed collection gets aria-current. Emits nothing when fewer than two
   pills remain; the caller wraps the <ul>/<nav>.
 
   Accepts:
@@ -125,8 +126,10 @@
   -%}
   {%- if ob_group != nil -%}
     {%- capture ob_pills -%}
-      {%- assign ob_pill_count = 1 -%}
-      <li><a class="{{ link_class }}" href="{{ ob_all.url }}"{% if ob_all.object.handle == ob_target %} aria-current="page"{% endif %}>{{ ob_all.title | escape }}</a></li>
+      {%- unless ob_all.object.handle == ob_target -%}
+        {%- assign ob_pill_count = 1 -%}
+        <li><a class="{{ link_class }}" href="{{ ob_all.url }}">{{ ob_all.title | escape }}</a></li>
+      {%- endunless -%}
       {%- for ob_child in ob_group.links -%}
         {%- if ob_child.url == ob_group.url -%}{%- continue -%}{%- endif -%}
         {%- if ob_child.type != 'collection_link' or ob_child.object.all_products_count < 1 -%}{%- continue -%}{%- endif -%}

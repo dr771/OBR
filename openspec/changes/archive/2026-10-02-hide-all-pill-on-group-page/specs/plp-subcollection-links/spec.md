@@ -1,8 +1,5 @@
-# plp-subcollection-links Specification
+## MODIFIED Requirements
 
-## Purpose
-TBD - created by archiving change plp-subcollection-links. Update Purpose after archive.
-## Requirements
 ### Requirement: Collection hero links to the collection's menu group
 A collection page's hero SHALL render a navigation landmark of links to the collection's group in the `main-menu` navigation. The collection's position in the menu SHALL be resolved by the same rule as the hero breadcrumb (first occurrence in menu order, matched on the linked collection, "All …" self-links not counting as occurrences), so the links and the breadcrumb always agree.
 
@@ -37,11 +34,3 @@ A child SHALL be shown only when it links to a collection that contains at least
 #### Scenario: Assistive technology reads the links
 - **WHEN** a screen reader encounters the link row
 - **THEN** it is exposed as a navigation landmark with a localized label, and a link to the current collection, when present, is announced as the current page
-
-### Requirement: Mobile link row stays a single row
-Below the desktop breakpoint the link row SHALL stay on a single line that scrolls horizontally, and SHALL NOT introduce horizontal page overflow. When the current link would start outside the visible part of the row, it SHALL be scrolled into view on load without moving the page's vertical scroll position.
-
-#### Scenario: Current link is far along the row
-- **WHEN** a visitor opens `/collections/instappers` on a 390px-wide viewport
-- **THEN** the link row is one line tall, the page does not scroll sideways, and "Instappers" is visible without the visitor scrolling the row
-

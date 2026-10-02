@@ -75,6 +75,14 @@
                   tabindex="-1"
                 >
                   {%- for childlink in link.links -%}
+                    {%- comment -%}
+                      The "Alles voor …/Alle …" self-link exists for the drawer, where a
+                      parent only toggles. Here every parent is a real link beside its
+                      own caret toggle, so skip it on both levels.
+                    {%- endcomment -%}
+                    {%- if childlink.url == link.url -%}
+                      {%- continue -%}
+                    {%- endif -%}
                     <li>
                       {%- if childlink.links == blank -%}
                         <a
@@ -94,19 +102,40 @@
                           </span>
                         </a>
                       {%- else -%}
-                        <details id="Details-HeaderSubMenu-{{ link.handle }}-{{ childlink.handle }}">
-                          <summary
+                        <div class="header__submenu-parent">
+                          <a
                             id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
-                            class="header__menu-item link link--text list-menu__item focus-inset caption-large"
+                            href="{{ childlink.url }}"
+                            class="header__menu-item list-menu__item link link--text focus-inset caption-large"
+                            {% if childlink.current %}
+                              aria-current="page"
+                            {% endif %}
                           >
-                            <span>{{ childlink.title | escape }}</span>
-                            {{- 'icon-caret.svg' | inline_asset_content -}}
-                          </summary>
+                            <span
+                              {%- if childlink.current %}
+                                class="header__active-menu-item"
+                              {% endif %}
+                            >
+                              {{- childlink.title | escape -}}
+                            </span>
+                          </a>
+                          <details id="Details-HeaderSubMenu-{{ link.handle }}-{{ childlink.handle }}">
+                            <summary
+                              id="HeaderMenuToggle-{{ link.handle }}-{{ childlink.handle }}"
+                              class="header__flyout-toggle focus-inset"
+                              aria-labelledby="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                              aria-controls="HeaderMenu-SubMenuList-{{ link.handle }}-{{ childlink.handle }}"
+                            >
+                              {{- 'icon-caret.svg' | inline_asset_content -}}
+                            </summary>
                           <ul
                             id="HeaderMenu-SubMenuList-{{ link.handle }}-{{ childlink.handle }}"
                             class="header__submenu list-menu motion-reduce"
                           >
                             {%- for grandchildlink in childlink.links -%}
+                              {%- if grandchildlink.url == childlink.url -%}
+                                {%- continue -%}
+                              {%- endif -%}
                               <li>
                                 <a
                                   id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
@@ -127,7 +156,8 @@
                               </li>
                             {%- endfor -%}
                           </ul>
-                        </details>
+                          </details>
+                        </div>
                       {%- endif -%}
                     </li>
                   {%- endfor -%}

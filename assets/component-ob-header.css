@@ -21,6 +21,42 @@
   box-shadow: 0 1px 0 rgba(15, 23, 42, 0.08);
 }
 
+/* Drawer parent row: label link + its own arrow zone that opens the submenu
+   panel. The row stays unpositioned so the panel keeps the drawer as its
+   containing block. */
+.menu-drawer__menu li.menu-drawer__split {
+  display: flex;
+  align-items: stretch;
+}
+
+.menu-drawer__split > .menu-drawer__menu-item {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.menu-drawer__split > details {
+  flex: 0 0 auto;
+}
+
+.menu-drawer__split-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 6rem;
+  height: 100%;
+  border-left: 0.1rem solid rgba(var(--color-foreground), 0.08);
+  cursor: pointer;
+}
+
+.menu-drawer__split-toggle:hover,
+.menu-drawer__split-toggle:focus {
+  background-color: rgba(var(--color-foreground), 0.04);
+}
+
+.menu-drawer__split-toggle .svg-wrapper {
+  width: 15px;
+}
+
 @media screen and (max-width: 989px) {
   header.header {
     padding-top: 1px;
@@ -116,6 +152,70 @@
   .header .header__submenu .header__menu-item:hover,
   .header .header__submenu .header__menu-item:hover span {
     text-decoration: none;
+  }
+
+  .header__dropdown-menu .header__submenu details {
+    position: relative;
+  }
+
+  /* A second-level item with children: its label is a link, the caret beside it
+     toggles the flyout, and the flyout anchors to the whole row. */
+  .header__submenu-parent {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .header__submenu-parent > .header__menu-item {
+    flex: 1 1 auto;
+    padding-right: 0.6rem;
+  }
+
+  .header__dropdown-menu .header__submenu .header__submenu-parent > details {
+    position: static;
+    display: flex;
+  }
+
+  .header__flyout-toggle {
+    display: flex;
+    align-items: center;
+    padding: 0 2.4rem 0 0.6rem;
+    color: rgba(var(--color-foreground), 0.75);
+    cursor: pointer;
+  }
+
+  .header__flyout-toggle .icon-caret {
+    position: static;
+    margin: 0;
+  }
+
+  .header__dropdown-menu .header__submenu details > summary .icon-caret {
+    transform: rotate(-90deg);
+  }
+
+  .header__dropdown-menu .header__submenu .header__submenu {
+    position: absolute;
+    top: -1rem;
+    left: 100%;
+    width: max-content;
+    min-width: 20rem;
+    max-width: 28rem;
+    margin: 0;
+    background: rgb(var(--color-background));
+    border: var(--popup-border-width) solid rgba(var(--color-foreground), var(--popup-border-opacity));
+    border-radius: var(--popup-corner-radius);
+    box-shadow: var(--popup-shadow-horizontal-offset) var(--popup-shadow-vertical-offset) var(--popup-shadow-blur-radius)
+      rgba(var(--color-shadow), var(--popup-shadow-opacity));
+    z-index: 1;
+  }
+
+  .header__dropdown-menu .header__submenu details[data-opens-left] > .header__submenu {
+    left: auto;
+    right: 100%;
+  }
+
+  .header__dropdown-menu .header__submenu details[data-opens-left] > summary .icon-caret {
+    transform: rotate(90deg);
   }
 
   @media (prefers-reduced-motion: no-preference) {

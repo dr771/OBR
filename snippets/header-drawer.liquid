@@ -22,19 +22,32 @@
           <nav class="menu-drawer__navigation">
             <ul class="menu-drawer__menu has-submenu list-menu" role="list">
               {%- for link in section.settings.menu.links -%}
-                <li>
+                {%- comment -%}
+                  A parent row is split: the label is a link to the parent itself (its
+                  page shows the children as hero pills), the arrow beside it is the
+                  summary that opens the submenu panel. The menu's "Alles voor …/Alle …"
+                  self-links are therefore skipped here, as in the desktop dropdown.
+                {%- endcomment -%}
+                <li{% if link.links != blank %} class="menu-drawer__split"{% endif %}>
                   {%- if link.links != blank -%}
+                    <a
+                      id="HeaderDrawer-{{ link.handle }}"
+                      href="{{ link.url }}"
+                      class="menu-drawer__menu-item list-menu__item link link--text focus-inset{% if link.current or link.child_active %} menu-drawer__menu-item--active{% endif %}"
+                      {% if link.current %}
+                        aria-current="page"
+                      {% endif %}
+                    >
+                      {{ link.title | escape }}
+                    </a>
                     <details id="Details-menu-drawer-menu-item-{{ forloop.index }}">
                       <summary
-                        id="HeaderDrawer-{{ link.handle }}"
-                        class="menu-drawer__menu-item list-menu__item link link--text focus-inset{% if link.child_active %} menu-drawer__menu-item--active{% endif %}"
+                        id="HeaderDrawerToggle-{{ link.handle }}"
+                        class="menu-drawer__split-toggle link link--text focus-inset"
+                        aria-labelledby="HeaderDrawer-{{ link.handle }}"
                       >
-                        {{ link.title | escape }}
                         <span class="svg-wrapper">
                           {{- 'icon-arrow.svg' | inline_asset_content -}}
-                        </span>
-                        <span class="svg-wrapper">
-                          {{- 'icon-caret.svg' | inline_asset_content -}}
                         </span>
                       </summary>
                       <div
@@ -51,7 +64,10 @@
                           </button>
                           <ul class="menu-drawer__menu list-menu" role="list" tabindex="-1">
                             {%- for childlink in link.links -%}
-                              <li>
+                              {%- if childlink.url == link.url -%}
+                                {%- continue -%}
+                              {%- endif -%}
+                              <li{% if childlink.links != blank %} class="menu-drawer__split"{% endif %}>
                                 {%- if childlink.links == blank -%}
                                   <a
                                     id="HeaderDrawer-{{ link.handle }}-{{ childlink.handle }}"
@@ -64,17 +80,24 @@
                                     {{ childlink.title | escape }}
                                   </a>
                                 {%- else -%}
+                                  <a
+                                    id="HeaderDrawer-{{ link.handle }}-{{ childlink.handle }}"
+                                    href="{{ childlink.url }}"
+                                    class="menu-drawer__menu-item link link--text list-menu__item focus-inset{% if childlink.current or childlink.child_active %} menu-drawer__menu-item--active{% endif %}"
+                                    {% if childlink.current %}
+                                      aria-current="page"
+                                    {% endif %}
+                                  >
+                                    {{ childlink.title | escape }}
+                                  </a>
                                   <details id="Details-menu-drawer-{{ link.handle }}-{{ childlink.handle }}">
                                     <summary
-                                      id="HeaderDrawer-{{ link.handle }}-{{ childlink.handle }}"
-                                      class="menu-drawer__menu-item link link--text list-menu__item focus-inset"
+                                      id="HeaderDrawerToggle-{{ link.handle }}-{{ childlink.handle }}"
+                                      class="menu-drawer__split-toggle link link--text focus-inset"
+                                      aria-labelledby="HeaderDrawer-{{ link.handle }}-{{ childlink.handle }}"
                                     >
-                                      {{ childlink.title | escape }}
                                       <span class="svg-wrapper">
                                         {{- 'icon-arrow.svg' | inline_asset_content -}}
-                                      </span>
-                                      <span class="svg-wrapper">
-                                        {{- 'icon-caret.svg' | inline_asset_content -}}
                                       </span>
                                     </summary>
                                     <div
@@ -96,6 +119,9 @@
                                         tabindex="-1"
                                       >
                                         {%- for grandchildlink in childlink.links -%}
+                                          {%- if grandchildlink.url == childlink.url -%}
+                                            {%- continue -%}
+                                          {%- endif -%}
                                           <li>
                                             <a
                                               id="HeaderDrawer-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
