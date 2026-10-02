@@ -69,13 +69,6 @@ const SUB_COLLECTIONS = new Set([
   'fitflop-dames',
   'fitflop-heren',
   'fitflop-outlet',
-  'juicy-couture-pants',
-  'juicy-couture-hoodies',
-  'juicy-couture-shorts',
-  'odlo-running',
-  'odlo-cycling',
-  'odlo-wintersport',
-  'odlo-outdoor',
 ]);
 const EXACT = {
   '/klantenservice': '/pages/klantenservice',

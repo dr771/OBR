@@ -16,9 +16,9 @@ Dry run on dev: **3,180 redirect rows**. By old page type, with 16-month search 
 
 | Rule | Old pages | Clicks | Target |
 |---|---:|---:|---|
-| sub-collection | 20 | 19,778 | the brand × type collection under the same slug |
+| sub-collection | 13 | 19,640 | the brand × type collection under the same slug |
 | blog-post | 22 | 12,464 | `/blogs/inspiratie/<post>` (blog not created yet) |
-| brand | 84 | 2,890 | the brand collection |
+| brand | 91 | 3,028 | the brand collection |
 | fallback | 184 | 2,150 | `/pages/merken` (dropped or not-yet-synced brands) |
 | sale | 23 | 1,020 | `/collections/solden` |
 | exact | 18 | 515 | CMS pages, policies, search |
@@ -40,8 +40,10 @@ Dry run on dev: **3,180 redirect rows**. By old page type, with 16-month search 
 - **Where the traffic is** (Search Console, 16 months, 42.7k clicks): the top 10 URLs carry 76%, the
   top 100 carry 97%. Category/brand pages ≈ 27k, blog ≈ 10k, homepage 2.6k, products ≈ 470 (1%).
   FitFlop sub-pages lead: `fitflop-slippers` 8,553, `fitflop-pantoffels` 3,739, `fitflop-dames`
-  2,027, `fitflop-sandalen` 1,649, `fitflop-sneakers` 1,245, `fitflop-outlet` 1,203. The best
-  non-FitFlop sub-page has 127.
+  2,077, `fitflop-sandalen` 1,649, `fitflop-sneakers` 1,245, `fitflop-outlet` 1,213,
+  `fitflop-heren` 632, then `fitflop-ballerinas` 204, `fitflop-enkellaarzen` 191, `fitflop-slides`
+  129. The best non-FitFlop sub-pages: `odlo-outlet` 129, `juicy-couture-all` 110,
+  `odlo-underwear` 90, `juicy-couture-pants` 67.
 - **Product match key.** The export has no Akeneo codes, only `/article/<id>`. The old site's image
   path `…/product/<pid>/color/<article id>/image/A6H_646 (01)/…` holds `<item>_<colour>`, which is
   the Shopify SKU prefix `A6H__646__<size>`. Listing pages carry these paths for every colour they
@@ -62,8 +64,11 @@ Dry run on dev: **3,180 redirect rows**. By old page type, with 16-month search 
 ## Decisions
 
 - **Top brand × type pages are real collections under the old slug**, not filtered URLs: a filtered
-  collection URL is canonicalised to its parent and loses its own title and ranking. Scope: FitFlop,
-  Odlo, Juicy Couture. Table and rules in [COLLECTIONS.md](COLLECTIONS.md).
+  collection URL is canonicalised to its parent and loses its own title and ranking. Scope:
+  **FitFlop only** (10 collections, about 19,600 clicks). Juicy Couture and Odlo sub-collections
+  existed for a day and were deleted on 2026-10-02: their old pages had 125 and 13 clicks in 16
+  months, so they redirect to the brand collection and the menu keeps a single third level. Table
+  and rules in [COLLECTIONS.md](COLLECTIONS.md).
 - **Dropped brands go to `/pages/merken`**, never the homepage (Google treats a blanket homepage
   redirect as a soft 404).
 - **Products are matched on item/colour code, never on slug text**, and land on
@@ -111,8 +116,8 @@ Dry run on dev: **3,180 redirect rows**. By old page type, with 16-month search 
 
 - [ ] Recreate the collections and menu on the live shop with the same handles
   ([MIGRATION-TO-LIVE.md](MIGRATION-TO-LIVE.md) §3).
-- [ ] Add newly synced brands to `BRANDS` in the generator (RH+, Magnum, Mechanix) and create the
-  sub-collections left out on dev (Hi-Tec).
+- [ ] Add newly synced brands to `BRANDS` in the generator (RH+, Magnum, Mechanix) and decide
+  Hi-Tec sub-collections by their old-page clicks (none exist on dev).
 - [ ] Dump the live catalog to `redirects/catalog-live.json` and run
   `node scripts/build-redirects.js live`. Product rows must come from this run.
 - [ ] Review `review-live.csv`, then import `redirects-live.csv` (Admin → Navigation → URL

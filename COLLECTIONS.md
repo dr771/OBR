@@ -219,9 +219,12 @@ assumed from the category name) — e.g. `Sandalen`/`Teenslippers`/`Sneakers`/`L
 
 ### Brand sub-collections (third menu level)
 
-Created in the dev shop on 2026-10-01 (17 collections) for the redirect map ([SEO-REDIRECTS.md](SEO-REDIRECTS.md)): the old
+Created in the dev shop on 2026-10-01 for the redirect map ([SEO-REDIRECTS.md](SEO-REDIRECTS.md)): the old
 site's brand × type pages carry most of its search traffic, and a filtered collection URL is
-canonicalised to its parent, so the top ones are real collections. **The handle is the old Drupal
+canonicalised to its parent, so the top ones are real collections. **FitFlop only (10
+collections).** Seven Juicy Couture and Odlo sub-collections were created the same day and deleted
+on 2026-10-02 (owner decision): their old pages had 125 and 13 search clicks in 16 months against
+FitFlop's 19,600, and the menu should carry one third level, not three. **The handle is the old Drupal
 slug**, so `/nl/fitflop-sandalen` redirects 1:1 to `/collections/fitflop-sandalen`. All are smart
 collections with **AND** logic (vendor plus one more condition), published to the Online Store,
 sorted by best selling, with no `breadcrumb_rank` (a product in one of these is always also in a
@@ -239,32 +242,25 @@ rank-5 collection, which keeps winning the PDP fallback).
 | FitFlop | Dames | `fitflop-dames` | Gender: `Women` | 345 |
 | FitFlop | Heren | `fitflop-heren` | Gender: `Men` | 34 |
 | FitFlop | Outlet | `fitflop-outlet` | Price reduced AND compare-at price > 0 | 1 |
-| Juicy Couture | Broeken | `juicy-couture-pants` | Category: `Broeken` | 20 |
-| Juicy Couture | Hoodies | `juicy-couture-hoodies` | Category: `Vesten` | 18 |
-| Juicy Couture | Shorts | `juicy-couture-shorts` | Category: `Shorten` | 5 |
-| Odlo | Running | `odlo-running` | Activities: `Running` | 37 |
-| Odlo | Fietsen | `odlo-cycling` | Activities: `Fietsen` | 16 |
-| Odlo | Wintersport | `odlo-wintersport` | Activities: `Skiën & Snowboard` | 24 |
-| Odlo | Outdoor | `odlo-outdoor` | Activities: `Wandelen` | 77 |
 
 - **Storefront names follow the old site, not the Akeneo category** — see "Naming: Slippers, Slides,
   Pantoffels" below. Read the rule column, not the title.
 - **A smart collection is all-AND or all-OR**, so "vendor AND (A OR B)" cannot be expressed. That is
-  why there is no Juicy Couture tops collection (`Hemden` OR `Bovenkleding`), no Odlo Dames/Heren
-  (`Women` OR `Unisex`), and why `fitflop-slides` omits the stale `Slipper` value. Those old pages
-  redirect to the brand collection.
+  why `fitflop-slides` omits the stale `Slipper` value.
 - **`fitflop-pantoffels` is manual** (3,739 clicks on the old page, no Akeneo value to key on). It
   is empty until the owner adds products in Admin, and its menu pill stays hidden while it is.
-- **Not created:** every Hi-Tec sub-page (two products synced, and hiking/trail/snow have no
-  matching Akeneo value), and Odlo underwear/warm/active-wear (no matching value).
+- **No sub-collections for any other brand on dev.** Every other brand's old sub-pages redirect to
+  the brand collection. Hi-Tec was never created (two products synced, and hiking/trail/snow have
+  no matching Akeneo value); decide it at launch by the same click test. Old-page clicks, for when this is reconsidered: Juicy Couture `-pants` 67,
+  `-hoodies` 39, `-shorts` 19; Odlo `-outlet` 129, `-underwear` 90, `-dames` 23, `-heren` 21,
+  `-running` 10. Odlo's activity pages are also covered by the Sport & Training sub-collections,
+  which are effectively all Odlo.
 - **On dev these overlap heavily with existing collections** (`fitflop-sandalen` equals `sandalen`
   while FitFlop is the only brand with sandals). They diverge once Holster, Hi-Tec and Magnum sync.
 
-They are nested under each brand in `main-menu`, with an `Alles van <merk>` self-link first. Juicy
-Couture's children are nested under **both** of its menu occurrences: the hero pills and breadcrumb
-follow the first occurrence (Fashion & Lifestyle), so children only under Merken would not show. No
-theme change was needed — `ob-menu-trail` already treats a matched item with children as its own
-group, so a brand page shows its sub-collections and a sub-collection shows its brand's group.
+They are nested under FitFlop in `main-menu` (Merken), with an `Alles van FitFlop` self-link first.
+No theme change was needed — `ob-menu-trail` already treats a matched item with children as its own
+group, so the brand page shows its sub-collections and a sub-collection shows the brand's group.
 
 ### Main menu structure
 
@@ -285,7 +281,7 @@ Outdoor & Werk
 
 Fashion & Lifestyle
 ├─ Alles voor fashion & lifestyle
-├─ Juicy Couture ▾ (Alles van Juicy Couture, Broeken, Hoodies, Shorts)
+├─ Juicy Couture
 ├─ Pas dé Monacó
 └─ Irasuto Studios
 
@@ -318,7 +314,7 @@ Accessoires ▾
 
 Merken ▾
 ├─ Alle merken
-└─ 11 huidige merken, alfabetisch; FitFlop, Juicy Couture en Odlo met een derde niveau
+└─ 11 huidige merken, alfabetisch; alleen FitFlop met een derde niveau
    (zie "Brand sub-collections")
 
 Solden

@@ -37,7 +37,7 @@ clicks_16m;old_path;target;rule
 71;/outlet-garmont-wandelschoenen-50-korting;/collections/solden;sale
 71;/rh-kledij;/pages/merken;fallback
 69;/fitflop;/collections/fitflop;brand
-67;/juicy-couture-pants;/collections/juicy-couture-pants;sub-collection
+67;/juicy-couture-pants;/collections/juicy-couture;brand
 62;/zoeken;/search;exact
 59;/Juicy-Couture;/collections/juicy-couture;brand
 58;/hi-tec-sneakers;/collections/hi-tec;brand
@@ -55,7 +55,7 @@ clicks_16m;old_path;target;rule
 41;/merken/uyn;/pages/merken;fallback
 40;/briko-fietsbrillen;/pages/merken;fallback
 40;/holster-australi;/collections/holster;brand
-39;/juicy-couture-hoodies;/collections/juicy-couture-hoodies;sub-collection
+39;/juicy-couture-hoodies;/collections/juicy-couture;brand
 36;/fitflop-enkellaarzen-outlet;/collections/fitflop-outlet;brand-outlet
 35;/klantenservice;/pages/klantenservice;exact
 34;/blog/dune-london/dune-london-schoenen-en-handtassen;/blogs/inspiratie/dune-london-schoenen-en-handtassen;blog-post
@@ -85,7 +85,7 @@ clicks_16m;old_path;target;rule
 21;/odlo-heren;/collections/odlo;brand
 21;/sidi-outlet-0;/collections/solden;sale
 20;/over-santini;/pages/merken;fallback
-19;/juicy-couture-shorts;/collections/juicy-couture-shorts;sub-collection
+19;/juicy-couture-shorts;/collections/juicy-couture;brand
 19;/regenlaarzen-promo-fitflop;/collections/fitflop;brand
 18;/magnum;/pages/merken;fallback
 17;/fitflop-surfa-vrouw-en-nina;/collections/fitflop;brand
@@ -104,7 +104,7 @@ clicks_16m;old_path;target;rule
 12;/merken/buffalo-london;/pages/merken;fallback
 10;/briko-skihelmen;/pages/merken;fallback
 10;/fitflop-slippers-outlet;/collections/fitflop-outlet;brand-outlet
-10;/odlo-running;/collections/odlo-running;sub-collection
+10;/odlo-running;/collections/odlo;brand
 9;/buffalo-heren;/pages/merken;fallback
 9;/merken/rhp;/pages/merken;fallback
 9;/merken/sweaty-betty;/collections/sweaty-betty;brand
@@ -146,7 +146,7 @@ clicks_16m;old_path;target;rule
 3;/heren-garmont;/pages/merken;fallback
 3;/lowenweiss;/collections/loewenweiss;brand
 3;/merken/luella-grey-london;/pages/merken;fallback
-3;/odlo-outdoor;/collections/odlo-outdoor;sub-collection
+3;/odlo-outdoor;/collections/odlo;brand
 3;/over-cr7;/pages/merken;fallback
 3;/over-uyn;/pages/merken;fallback
 3;/sidi-accessoires;/pages/merken;fallback
@@ -321,8 +321,8 @@ clicks_16m;old_path;target;rule
 0;/odlo-active-wear;/collections/odlo;brand
 0;/odlo-aw25;/collections/odlo;brand
 0;/odlo-bereid-je-nog-snel-voor-op-de-aankomende-marathons;/collections/odlo;brand
-0;/odlo-cycling;/collections/odlo-cycling;sub-collection
-0;/odlo-wintersport;/collections/odlo-wintersport;sub-collection
+0;/odlo-cycling;/collections/odlo;brand
+0;/odlo-wintersport;/collections/odlo;brand
 0;/optin;/pages/merken;fallback
 0;/outdoor-leisure-garmont;/pages/merken;fallback
 0;/outlet-suomy;/collections/solden;sale
