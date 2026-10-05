@@ -251,7 +251,7 @@ the FAQ page (`/pages/veelgestelde-vragen`), don't reinvent it. Values:
 
 Descriptive, in `assets/component-ob-swatches.css`:
 
-- **Reduced colour chip:** `border-color: color-mix(in srgb, var(--ob-accent) 60%, transparent)` in every state, at rest too. It uses the 0.1rem border every chip already reserves, so chip geometry does not change.
+- **Reduced colour chip (2026-10-05):** `[data-ob-sale-label]` retains `color-mix(in srgb, var(--ob-accent) 60%, transparent)` as its 0.1rem border. Default uses `--ob-product-photo-surface` (`#f1f5f9`); hover, active and keyboard focus use white. Active adds a 0.1rem inner pseudo-element edge over the photo for an apparent 2px border without changing chip/image geometry. Fine-pointer hover hides that inner edge, keeping the hovered chip's border thin. Existing persistent hover/focus/click selection and all full-price chip styles remain unchanged across shared cards.
 - **Ranged badge prefix** (`.ob-sale-badge__prefix`, the translated "tot"): `0.9rem`, `text-transform: none`, against the badge value's `1.1rem` uppercase.
 - A sale badge hidden by chip selection needs `.badge--sale[hidden] { display: none }`: Dawn's `.badge` display overrides the `hidden` attribute.
 

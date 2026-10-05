@@ -514,6 +514,31 @@
    so the colour the sale belongs to stands out from the full-price ones. */
 .card-wrapper.product-card-wrapper .ob-card-swatch[data-ob-sale-label] {
   border-color: color-mix(in srgb, var(--ob-accent) 60%, transparent);
+  background-color: var(--ob-product-photo-surface);
+}
+
+.card-wrapper.product-card-wrapper .ob-card-swatch[data-ob-sale-label].ob-card-swatch--active,
+.card-wrapper.product-card-wrapper .ob-card-swatch[data-ob-sale-label]:hover,
+.card-wrapper.product-card-wrapper .ob-card-swatch[data-ob-sale-label]:focus-visible {
+  background-color: #fff;
+}
+
+/* Add the selected edge over the photo without resizing the chip or image. */
+.card-wrapper.product-card-wrapper .ob-card-swatch[data-ob-sale-label].ob-card-swatch--active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border: 0.1rem solid color-mix(in srgb, var(--ob-accent) 60%, transparent);
+  border-radius: 0.4rem;
+  pointer-events: none;
+}
+
+/* Hover still selects the colour; show the thin edge until the pointer leaves. */
+@media (hover: hover) and (pointer: fine) {
+  .card-wrapper.product-card-wrapper .ob-card-swatch[data-ob-sale-label]:hover::after {
+    content: none;
+  }
 }
 
 .card-wrapper.product-card-wrapper .ob-card-swatch:focus-visible {
