@@ -155,6 +155,17 @@
 
 .ob-article__inner {
   max-width: 96rem;
+  margin: 0 auto;
+}
+
+/* Header, running text and footer share one centred reading column; the
+   hero image, splits and figures use the full width of the inner column. */
+.ob-article__header,
+.ob-article__footer,
+.article-template__social-sharing {
+  max-width: 72rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .ob-article__header {
@@ -163,7 +174,6 @@
 
 .ob-article .ob-article__title {
   margin: 1.6rem 0 0;
-  max-width: 22em;
   font-family: var(--font-heading-family);
   font-size: 3.2rem;
   font-weight: 600;
@@ -204,9 +214,10 @@
   height: auto;
 }
 
-/* Running text keeps a readable measure; splits and figures use the full column. */
-.ob-article__content > :is(p, ul, ol, h2, h3, blockquote) {
-  max-width: 72ch;
+.ob-article .ob-article__content > :is(p, ul, ol, h2, h3, blockquote) {
+  max-width: 72rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .ob-article__content img {
@@ -224,9 +235,10 @@
   width: 100%;
 }
 
-.ob-article__content p:has(> img, > a > img) {
+.ob-article .ob-article__content > p:has(> img, > a > img) {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 1.2rem;
   max-width: none;
   margin: 2.4rem 0;
