@@ -254,9 +254,8 @@ Descriptive, in `assets/component-ob-blog.css`; the file header holds the articl
 - **Overview:** the PLP's tinted hero with the blog tags as its pill row; cards in 1/2/3 columns
   (750px, 990px), image `16 / 10` cover on `#f1f5f9` with `1.2rem` radius, tag line `1.3rem` muted,
   title Inter 600 `1.8rem`, excerpt `1.5rem` `#334155`. The whole card is the title link.
-- **Article:** `.ob-page` breadcrumb and reading typography, centred column `96rem` for hero image,
-  splits and figures, with header, running text and footer in a centred `72rem` reading column
-  (text stays left-aligned); title serif 600 `3.2rem` (`4.4rem` from 990px), smaller than a page H1 because post
+- **Article:** `.ob-page` breadcrumb and reading typography, one centred `96rem` column for everything (header, hero image,
+  running text, splits, footer), text left-aligned, so no stepped edges; title serif 600 `3.2rem` (`4.4rem` from 990px), smaller than a page H1 because post
   titles run long. Image/text splits are two columns from 750px. No date, no author.
 
 ## Product-card sale cues (2026-10-01)
