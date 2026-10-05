@@ -1,3 +1,5 @@
+BUG - same border on reduced chips: active vs hover
+
 BUG - back from PDP/wishlist after show more: same position!
 
 BUG - wishlist shows no reduced badge!
@@ -7,8 +9,7 @@ BUG - warum https://original-brands-dev.myshopify.com/products/fitflop-lulu-leat
 
 ===
 FEAT - redirects URL's from ob.nl 
--- export ist da!
--- g console ist da!
+- wait for full catalog
 ============
 
 ===
