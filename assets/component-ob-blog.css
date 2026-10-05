@@ -1,0 +1,338 @@
+/*
+  ob-blog — blog overview (sections/main-blog.liquid) and article page
+  (sections/main-article.liquid).
+
+  The overview reuses the PLP's tinted hero (ob-collection-hero) with the blog
+  tags as its pill row. The article reuses the short-page reading typography
+  from component-ob-content-page.css (.ob-page / .ob-page__body); this file
+  only adds what is blog-specific.
+
+  Article body markup contract (bodies are plain HTML written via the Admin
+  API or the article editor, no Liquid):
+
+    <div class="ob-article__split [ob-article__split--image-first]">
+      <div class="ob-article__split-text">…</div>
+      <figure class="ob-article__figure"><img …></figure>
+    </div>
+    <figure class="ob-article__figure"><img …></figure>
+    <div class="ob-article__gallery"><figure class="ob-article__figure">…</figure>…</div>
+
+  The text always comes first in the source; --image-first only swaps the
+  columns from 750px. A <p> holding several <img> lays them out in one row.
+*/
+
+/* ---- overview ---- */
+
+.ob-blog {
+  padding-top: 3.2rem;
+  padding-bottom: 5.6rem;
+}
+
+.ob-blog__grid {
+  display: grid;
+  gap: 4rem 2.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ob-blog-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.ob-blog-card__media {
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 1.2rem;
+  background: #f1f5f9;
+}
+
+.ob-blog-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-long) ease;
+}
+
+.ob-blog-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding-top: 1.6rem;
+}
+
+.ob-blog-card__tag {
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #64748b;
+}
+
+.ob-blog-card .ob-blog-card__title {
+  margin: 0;
+  font-family: var(--font-body-family);
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: normal;
+  color: #0f172a;
+}
+
+.ob-blog-card__title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* The title link covers the whole card. */
+.ob-blog-card__title a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.ob-blog-card__title a:focus-visible {
+  outline: none;
+}
+
+.ob-blog-card:has(.ob-blog-card__title a:focus-visible) {
+  outline: 0.2rem solid #0d80c4;
+  outline-offset: 0.4rem;
+  border-radius: 1.2rem;
+}
+
+.ob-blog-card__excerpt {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: #334155;
+}
+
+@media (hover: hover) {
+  .ob-blog-card:hover .ob-blog-card__media img {
+    transform: scale(1.03);
+  }
+
+  .ob-blog-card:hover .ob-blog-card__title {
+    color: #0d80c4;
+  }
+}
+
+.ob-blog__empty {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #334155;
+}
+
+@media screen and (min-width: 750px) {
+  .ob-blog__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .ob-blog {
+    padding-top: 4.8rem;
+    padding-bottom: 8rem;
+  }
+
+  .ob-blog__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5.6rem 3.2rem;
+  }
+}
+
+/* ---- article ---- */
+
+.ob-article {
+  padding-top: 3.2rem;
+  padding-bottom: 5.6rem;
+}
+
+.ob-article__inner {
+  max-width: 96rem;
+}
+
+.ob-article__header {
+  margin-bottom: 3.2rem;
+}
+
+.ob-article .ob-article__title {
+  margin: 1.6rem 0 0;
+  max-width: 22em;
+  font-family: var(--font-heading-family);
+  font-size: 3.2rem;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: #0f172a;
+}
+
+.ob-article__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+  margin: 1.2rem 0 0;
+  font-size: 1.4rem;
+  color: #64748b;
+}
+
+.ob-article__meta a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+.ob-article__meta a:hover {
+  color: #0f172a;
+}
+
+.ob-article__hero {
+  margin: 0 0 3.2rem;
+  overflow: hidden;
+  border-radius: 1.6rem;
+  background: #f1f5f9;
+}
+
+.ob-article__hero img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Running text keeps a readable measure; splits and figures use the full column. */
+.ob-article__content > :is(p, ul, ol, h2, h3, blockquote) {
+  max-width: 72ch;
+}
+
+.ob-article__content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 1.2rem;
+}
+
+.ob-article__content .ob-article__figure {
+  margin: 3.2rem 0;
+}
+
+.ob-article__content .ob-article__figure img {
+  display: block;
+  width: 100%;
+}
+
+.ob-article__content p:has(> img, > a > img) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  max-width: none;
+  margin: 2.4rem 0;
+}
+
+.ob-article__content p:has(> img, > a > img) > :is(img, a) {
+  flex: 1 1 14rem;
+  min-width: 0;
+  max-width: 44rem;
+}
+
+.ob-article__content p > a > img {
+  display: block;
+  width: 100%;
+}
+
+.ob-article__split {
+  display: grid;
+  gap: 2.4rem;
+  margin: 2.4rem 0 4rem;
+}
+
+.ob-article__content .ob-article__split .ob-article__figure {
+  margin: 0;
+}
+
+.ob-article__split-text > :first-child {
+  margin-top: 0;
+}
+
+.ob-article__split-text > :last-child {
+  margin-bottom: 0;
+}
+
+.ob-article__gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1.2rem;
+  margin: 3.2rem 0;
+}
+
+.ob-article__content .ob-article__gallery .ob-article__figure {
+  margin: 0;
+}
+
+.ob-article__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+  margin-top: 4.8rem;
+  padding-top: 2.4rem;
+  border-top: 0.1rem solid #e2e8f0;
+}
+
+.ob-article__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.ob-article__back:hover {
+  color: #0d80c4;
+}
+
+.ob-article__back-icon {
+  width: 1.6rem;
+  height: 1.6rem;
+  transform: rotate(180deg);
+}
+
+@media screen and (min-width: 750px) {
+  .ob-article__split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .ob-article__split--image-first .ob-article__figure {
+    order: -1;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .ob-article {
+    padding-top: 4.8rem;
+    padding-bottom: 8rem;
+  }
+
+  .ob-article .ob-article__title {
+    font-size: 4.4rem;
+  }
+
+  .ob-article__header,
+  .ob-article__hero {
+    margin-bottom: 4rem;
+  }
+}
+
+@media screen and (prefers-reduced-motion: reduce) {
+  .ob-blog-card__media img {
+    transition: none;
+  }
+}

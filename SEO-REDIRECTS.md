@@ -103,7 +103,7 @@ Dry run on dev: **3,180 redirect rows**. By old page type, with 16-month search 
 - [ ] **Owner: decide whether to resume the crawl** (ask the old site's admin for a whitelist or an
   export, or crawl slowly at night). Without it, non-FitFlop product URLs go to the brand collection
   and the old pages' SEO titles and descriptions are not captured.
-- [ ] **Create the blog and its posts** — see [BLOG.md](BLOG.md). 12,464 clicks point at it.
+- [x] **Create the blog and its posts** (done 2026-10-05, 14 posts; the rest is in `redirects/overrides.csv`) — see [BLOG.md](BLOG.md). 12,464 clicks point at it.
 - [ ] **Build the 404 fallback**: an unmapped old path should offer a search on its slug words
   instead of a dead end. Shopify redirects are exact-match only, so this catches the rest.
 - [ ] **Publish `/pages/contact`** (unpublished on dev; the map points at it) and check the two

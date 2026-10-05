@@ -247,6 +247,17 @@ the FAQ page (`/pages/veelgestelde-vragen`), don't reinvent it. Values:
 - **Shop-side:** the page bodies live in the shop, not in git — see
   MIGRATION-TO-LIVE.md (content pages).
 
+## Blog (2026-10-05)
+
+Descriptive, in `assets/component-ob-blog.css`; the file header holds the article body markup contract.
+
+- **Overview:** the PLP's tinted hero with the blog tags as its pill row; cards in 1/2/3 columns
+  (750px, 990px), image `16 / 10` cover on `#f1f5f9` with `1.2rem` radius, tag line `1.3rem` muted,
+  title Inter 600 `1.8rem`, excerpt `1.5rem` `#334155`. The whole card is the title link.
+- **Article:** `.ob-page` breadcrumb and reading typography, column `96rem`, running text capped
+  at `72ch`; title serif 600 `3.2rem` (`4.4rem` from 990px), smaller than a page H1 because post
+  titles run long. Image/text splits are two columns from 750px. No date, no author.
+
 ## Product-card sale cues (2026-10-01)
 
 Descriptive, in `assets/component-ob-swatches.css`:

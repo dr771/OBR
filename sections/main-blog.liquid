@@ -1,48 +1,69 @@
-{{ 'component-article-card.css' | asset_url | stylesheet_tag }}
-{{ 'component-card.css' | asset_url | stylesheet_tag }}
-{{ 'section-main-blog.css' | asset_url | stylesheet_tag }}
+{{ 'component-ob-blog.css' | asset_url | stylesheet_tag }}
 
-{%- style -%}
-  .section-{{ section.id }}-padding {
-    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
-    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
-  }
+{%- comment -%}
+  OB: blog overview. Reuses the PLP's tinted hero; the blog's tags are its
+  pill row (the old site's blog categories, see BLOG.md). A tag's URL handle
+  must stay the old category slug, so the pills link by `tag | handle`.
+  The section settings below are Dawn's and kept so templates/blog.json stays
+  valid; only show_image is still read.
+{%- endcomment -%}
+{%- capture ob_tag_links -%}
+  {%- if blog.all_tags.size > 0 -%}
+    <li><a class="ob-collection-hero__link" href="{{ blog.url }}"{% unless current_tags %} aria-current="page"{% endunless %}>{{ 'blogs.article.all_posts' | t }}</a></li>
+    {%- for tag in blog.all_tags -%}
+      <li><a class="ob-collection-hero__link" href="{{ blog.url }}/tagged/{{ tag | handle }}"{% if current_tags contains tag %} aria-current="page"{% endif %}>{{ tag | escape }}</a></li>
+    {%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
 
-  @media screen and (min-width: 750px) {
-    .section-{{ section.id }}-padding {
-      padding-top: {{ section.settings.padding_top }}px;
-      padding-bottom: {{ section.settings.padding_bottom }}px;
-    }
-  }
-{%- endstyle -%}
+{%- render 'ob-collection-hero', title: blog.title, links_content: ob_tag_links -%}
 
-{%- paginate blog.articles by 6 -%}
-  <div class="main-blog page-width section-{{ section.id }}-padding">
-    <h1 class="title--primary{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
-      {{ blog.title | escape }}
-    </h1>
-
-    <div class="blog-articles {% if section.settings.layout == 'collage' %}blog-articles--collage{% endif %}">
-      {%- for article in blog.articles -%}
-        <div
-          class="blog-articles__article article{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
-          {% if settings.animations_reveal_on_scroll %}
-            data-cascade
-            style="--animation-order: {{ forloop.index }};"
-          {% endif %}
-        >
-          {%- render 'article-card',
-            article: article,
-            media_height: section.settings.image_height,
-            media_aspect_ratio: article.image.aspect_ratio,
-            show_image: section.settings.show_image,
-            show_date: section.settings.show_date,
-            show_author: section.settings.show_author,
-            show_excerpt: true
+{%- paginate blog.articles by 24 -%}
+  <div class="ob-blog page-width">
+    {%- if blog.articles.size > 0 -%}
+      <ul class="ob-blog__grid" role="list">
+        {%- for article in blog.articles -%}
+          {%- liquid
+            assign ob_card_image = blank
+            unless article.image
+              if article.content contains '<img'
+                assign ob_card_image = article.content | split: '<img' | slice: 1 | first | split: 'src="' | last | split: '"' | first
+              endif
+            endunless
           -%}
-        </div>
-      {%- endfor -%}
-    </div>
+          <li class="ob-blog-card">
+            {%- if section.settings.show_image -%}
+              <div class="ob-blog-card__media">
+                {%- if article.image -%}
+                  <img
+                    srcset="{{ article.image | image_url: width: 400 }} 400w, {{ article.image | image_url: width: 800 }} 800w"
+                    sizes="(min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw"
+                    src="{{ article.image | image_url: width: 800 }}"
+                    alt=""
+                    width="{{ article.image.width }}"
+                    height="{{ article.image.height }}"
+                    loading="{% if forloop.index > 3 %}lazy{% else %}eager{% endif %}"
+                  >
+                {%- elsif ob_card_image != blank -%}
+                  <img src="{{ ob_card_image }}{% unless ob_card_image contains '?' %}?width=800{% endunless %}" alt="" width="800" height="500" loading="lazy">
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+            <div class="ob-blog-card__body">
+              {%- if article.tags.size > 0 -%}
+                <span class="ob-blog-card__tag">{{ article.tags | first | escape }}</span>
+              {%- endif -%}
+              <h2 class="ob-blog-card__title">
+                <a href="{{ article.url }}">{{ article.title | escape }}</a>
+              </h2>
+              <p class="ob-blog-card__excerpt">{{ article.excerpt_or_content | replace: '</', ' </' | strip_html | truncatewords: 24 }}</p>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- else -%}
+      <p class="ob-blog__empty">{{ 'blogs.article.no_posts' | t }}</p>
+    {%- endif -%}
 
     {%- if paginate.pages > 1 -%}
       {%- render 'pagination', paginate: paginate -%}

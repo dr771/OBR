@@ -107,6 +107,8 @@
       "message": "Reactie",
       "post": "Plaats een reactie",
       "back_to_blog": "Terug naar blog",
+      "all_posts": "Alle",
+      "no_posts": "Nog geen berichten.",
       "share": "Dit artikelen delen",
       "success": "Je reactie is geplaatst! Bedankt!",
       "success_moderated": "Je reactie is geplaatst. Wij publiceren het zo; onze blog wordt gemodereerd."

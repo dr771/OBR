@@ -19,7 +19,7 @@ Trusted Shops badge
 ===
 to top arrow
 ===
-BLOG!!!
+BLOG: built 2026-10-05, see BLOG.md
 
 PDP 
 - vert abstand after header

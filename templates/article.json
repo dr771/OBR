@@ -12,7 +12,7 @@
         "title": {
           "type": "title",
           "settings": {
-            "blog_show_date": true,
+            "blog_show_date": false,
             "blog_show_author": false
           }
         },
@@ -23,15 +23,17 @@
           }
         },
         "content": {
-          "type": "content"
+          "type": "content",
+          "settings": {}
         }
       },
       "block_order": [
-        "featured_image",
         "title",
-        "share",
-        "content"
-      ]
+        "featured_image",
+        "content",
+        "share"
+      ],
+      "settings": {}
     }
   },
   "order": [
