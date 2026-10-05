@@ -463,6 +463,12 @@
   color: var(--ob-content-ink);
 }
 
+/* Bold inside a link keeps the link colour, whichever tag wraps the other. */
+.ob-page__body a strong,
+.ob-content .ob-content__body a strong {
+  color: inherit;
+}
+
 .ob-page__body ul:not([class]),
 .ob-page__body ol {
   margin: 0 0 1.4rem;
