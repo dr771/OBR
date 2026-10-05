@@ -13,6 +13,7 @@ skills-lock.json
 
 # ...except the OpenSpec slash commands/skills, which are project tooling (matches SweatyBetty)
 !.claude/commands/
+!.claude/settings.json
 !.claude/skills/
 .claude/skills/*
 !.claude/skills/openspec-*/

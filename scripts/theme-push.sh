@@ -11,8 +11,8 @@
 # products_per_page, show_vendor, and image_ratio back to Dawn's Day-1
 # defaults, because the local copy of the *whole file* was stale relative to
 # what was actually configured live. See CLAUDE.md's "Theme settings are
-# protected deployment state" Hard Rule and the feedback_pull_before_theme_push
-# memory. This script makes the required pull-and-diff step automatic instead
+# protected deployment state" Hard Rule and GOTCHAS.md
+# (Shopify CLI and pushing). This script makes the required pull-and-diff step automatic instead
 # of relying on a human or an agent remembering to do it by hand.
 #
 # Usage: scripts/theme-push.sh <file> [<file> ...]
