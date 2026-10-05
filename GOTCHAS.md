@@ -10,6 +10,7 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 - **Font weights need loaded faces.** `layout/theme.liquid` loads body 500/600 via `font_modify`; any weight without a face renders at the nearest loaded one while `getComputedStyle` reports the declared value. Check `[...document.fonts].map(f => f.family + ' ' + f.weight + ' ' + f.status)`. The heading font (`type_header_font | font_face`) loads only its configured weight.
 - Dawn's `base.css` has `div:empty { display: none }`: an empty decorative div (a scrim) needs a two-class selector plus an explicit `display: block`.
 - **PDP rules that silently win or survive a restyle** (find them with a winning-rule dump, not by eye):
+  - The breadcrumb owns the PDP's top spacing: `product-info.ob-pdp` overrides Dawn's section-class top padding, which otherwise adds 36px from 750px. Its nav uses flex to avoid the inline link's baseline strut adding asymmetric whitespace.
   - `.product--medium:not(.product--no-media) .product__media-wrapper` is 0,3,0 because `:not()` counts as a class. Use `.ob-pdp .product:not(.product--no-media) .product__media-wrapper`.
   - `.product-media-container .media` sizes by a `padding-top` ratio hack, and `aspect-ratio` doesn't remove it. Zero `padding-top` explicitly.
   - `.thumbnail-list` has an explicit `grid-template-columns: repeat(5, 1fr)`; `grid-auto-columns` only sizes implicit tracks, so set `grid-template-columns: none` first. `.thumbnail-list.slider--tablet-up .thumbnail-list__item.slider__slide` (0,4,0) also pins a percentage item width.

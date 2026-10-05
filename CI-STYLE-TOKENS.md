@@ -108,6 +108,12 @@ provenance rule — same caveat applies to this file).
 
 ## Links (inline text, not buttons)
 
+PDP back-link spacing (`component-ob-pdp.css`, 2026-10-05): the breadcrumb owns
+2.1rem top / 1.9rem bottom below 750px (1px optical shift down, following Android
+review) and equal 2.4rem gaps from 750px. The product
+section's top padding is suppressed and the nav uses flex, preventing Dawn's
+section gap and inline baseline spacing from unbalancing the two sides.
+
 Consistent pattern across the codebase: muted/ink at rest → accent or full
 ink on hover, mostly no default browser underline unless the link is a
 "trigger" affordance inside running text.
