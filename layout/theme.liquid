@@ -306,6 +306,7 @@
     {{ 'component-ob-buttons.css' | asset_url | stylesheet_tag }}
     {{ 'component-ob-typography.css' | asset_url | stylesheet_tag }}
     {{ 'component-ob-wishlist.css' | asset_url | stylesheet_tag }}
+    {{ 'component-ob-scroll-top.css' | asset_url | stylesheet_tag }}
     {%- if request.path contains '/apps/wishlist' -%}
       {{ 'component-ob-swatches.css' | asset_url | stylesheet_tag }}
       {{ 'component-ob-option-rail.css' | asset_url | stylesheet_tag }}
@@ -381,6 +382,8 @@
 
     {% sections 'footer-group' %}
 
+    {% render 'ob-scroll-top' %}
+
     <ul hidden>
       <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>
       <li id="a11y-new-window-message">{{ 'accessibility.link_messages.new_window' | t }}</li>
@@ -446,5 +449,7 @@
       <script src="{{ 'ob-wishlist-page-rails.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
     <script src="{{ 'ob-cart-discount.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'ob-scroll-top.js' | asset_url }}" defer="defer"></script>
+    {% render 'ob-trustbadge' %}
   </body>
 </html>

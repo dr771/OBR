@@ -1,0 +1,79 @@
+/* Floating site chrome (floating-trust-and-scroll-top spec): the scroll-to-top button
+   bottom-right and the Trusted Shops badge bottom-left.
+
+   z-index 8 for both is deliberate: below the mobile PDP purchase bar and the cart CTA
+   dock (9), the sticky header (10) and the drawers (1000+), so all of those cover them. */
+.ob-scroll-top {
+  position: fixed;
+  right: 1.5rem;
+  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ob-button-radius);
+  background-color: var(--ob-button-background);
+  color: var(--ob-button-text);
+  box-shadow: 0 0.4rem 1.2rem rgba(15, 23, 42, 0.18);
+  cursor: pointer;
+  transition: background-color 200ms ease;
+  animation: ob-scroll-top-in 200ms ease;
+}
+
+.ob-scroll-top[hidden] {
+  display: none;
+}
+
+.ob-scroll-top:is(:hover, :focus-visible) {
+  background-color: var(--ob-button-background-hover);
+}
+
+.ob-scroll-top:focus-visible {
+  outline: 0.2rem solid var(--ob-button-background);
+  outline-offset: 0.2rem;
+}
+
+.ob-scroll-top .icon-caret {
+  width: 1.4rem;
+  height: auto;
+  transform: rotate(180deg);
+}
+
+@keyframes ob-scroll-top-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.8rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-scroll-top {
+    animation: none;
+  }
+}
+
+/* Same breakpoint and bar height as the fixed bars themselves (component-ob-pdp.css,
+   component-ob-cart-page.css). */
+@media screen and (max-width: 749px) {
+  body:has(.ob-pdp) .ob-scroll-top,
+  body:has(.ob-cart-cta-dock.is-stuck) .ob-scroll-top {
+    bottom: calc(8.1rem + 1.2rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* The Trusted Shops widget sets an inline z-index of 2147483647 on its container; the id
+   prefix is its only stable hook (inner class names are hashed). */
+[id^='trustbadge-container-'] {
+  z-index: 8 !important;
+}
+
+/* Belt and braces on top of the z-index: the mobile menu drawer and the cart drawer already
+   cover both. The mobile filter panel is inline (ob-mobile-bar), not an overlay. */
+body:has(header-drawer > details[open], cart-drawer.active, predictive-search[open])
+  :is(.ob-scroll-top, [id^='trustbadge-container-']) {
+  visibility: hidden;
+}

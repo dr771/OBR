@@ -99,6 +99,12 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 - Windows: run `npx` through PowerShell (Git Bash breaks on the space in `C:\Program Files`). Chrome is at `C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`. When MCP can't connect and the user is away, take screenshots with a headless instance on a scratch profile and no debugging port (`--headless=new --user-data-dir=<scratch> --screenshot=…`) instead of killing their Chrome.
 - macOS: if `npx` fails with EPERM on `~/.npm/_cacache`, point it at a writable cache (`npm_config_cache=/private/tmp/npm-cache`).
 
+## Trusted Shops trustbadge
+
+- **The widget sets an inline `z-index: 2147483647`** on `div#trustbadge-container-<hash>`, which it appends to `<body>`. Left alone it floats over the cart drawer and the mobile menu. `assets/component-ob-scroll-top.css` overrides it with `[id^='trustbadge-container-'] { z-index: 8 !important }`. The id prefix is the only stable hook; the inner elements have hashed class names, so the badge's position can only be changed through the script's `data-*` attributes (`data-mobile-y-offset`, `data-desktop-position`, …), not from CSS. If the badge suddenly covers a drawer, check whether Trusted Shops renamed the container.
+- **The y-offset is added to the widget's own 10px bottom margin** (20px on desktop). An offset of 60 left the badge 11px inside the 81px PDP purchase bar; 84 clears it.
+- **The header's mobile menu is `header-drawer > details[open]`** (measured 2026-10-05). A `menu-drawer > details[open]` selector does not match it; there, `menu-drawer` is only the id and class of the panel inside. The PDP purchase-bar rule in `component-ob-pdp.css` uses the `menu-drawer` form; the menu still covers the bar, because the header's z-index is higher.
+
 ## mockup/ (reference only)
 
 - `Home-v2.png` was rendered at a ~1321px viewport: 1 draft px = 1.4171 CSS px. Render at 1320px and downscale to 932px to overlay.

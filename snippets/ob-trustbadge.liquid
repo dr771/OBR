@@ -1,0 +1,41 @@
+{% comment %}
+  Trusted Shops trustbadge (floating-trust-and-scroll-top spec): bottom-left, opposite
+  ob-scroll-top. Theme-snippet integration for the dev shop only — the official Trusted
+  Shops Shopify app replaces this at live migration (see MIGRATION-TO-LIVE.md).
+
+  The widget appends div#trustbadge-container-<hash> to <body> with an inline
+  z-index of 2147483647; component-ob-scroll-top.css pulls that below the fixed bars and
+  drawers. The mobile y-offset is chosen here because the widget's inner fixed element
+  only has hashed class names: on templates with a fixed bottom bar (PDP purchase bar,
+  cart CTA dock) the badge is lifted above it.
+{% endcomment %}
+{%- liquid
+  assign ob_ts_id = 'XEF6A9A6375D0B95B950D0A48C758ABA3'
+  assign ob_ts_mobile_offset = 0
+  if template.name == 'product' or template.name == 'cart'
+    assign ob_ts_mobile_offset = 84
+  endif
+-%}
+{%- unless request.design_mode -%}
+  <script
+    async
+    charset="UTF-8"
+    data-desktop-y-offset="0"
+    data-mobile-y-offset="{{ ob_ts_mobile_offset }}"
+    data-desktop-disable-reviews="false"
+    data-desktop-enable-custom="false"
+    data-desktop-position="left"
+    data-desktop-custom-width="156"
+    data-desktop-enable-fadeout="false"
+    data-disable-mobile="false"
+    data-disable-trustbadge="false"
+    data-mobile-custom-width="156"
+    data-mobile-disable-reviews="false"
+    data-mobile-enable-custom="false"
+    data-mobile-position="left"
+    data-mobile-enable-topbar="false"
+    data-mobile-enable-fadeout="true"
+    data-color-scheme="light"
+    src="https://widgets.trustedshops.com/js/{{ ob_ts_id }}.js"
+  ></script>
+{%- endunless -%}

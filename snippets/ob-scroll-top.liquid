@@ -1,0 +1,7 @@
+{% comment %}
+  Scroll-to-top button (floating-trust-and-scroll-top spec): bottom-right, opposite the
+  Trusted Shops badge. Revealed by assets/ob-scroll-top.js once the page is scrolled.
+{% endcomment %}
+<button type="button" class="ob-scroll-top" aria-label="Naar boven" data-ob-scroll-top hidden>
+  {{- 'icon-caret.svg' | inline_asset_content -}}
+</button>
