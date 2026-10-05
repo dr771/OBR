@@ -27,6 +27,7 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 - `CartDrawer.renderContents()` doesn't update the outer `cart-drawer.is-empty`; custom AJAX adds from an empty drawer must toggle it from `parsedState.item_count`.
 - The cart drawer's markup is in every page's DOM, including `/cart`, and shares class names with it (`cart__empty-text`, `cart__login-title`, `cart__login-paragraph`). Scope verification queries to `main …` or `.cart-drawer …`.
 - Touch keeps `:hover` on a tapped chip. Suppress hover-only tooltips and rings under `@media (hover: none)` and keep `:focus-visible` for keyboards.
+- **Android overlay scrollbars** draw inside a row's bottom padding and take no layout space, so spacing keyed on `offsetHeight - clientHeight` is 0 there. Key it on overflow (`scrollWidth > clientWidth`). Dawn's `.active-facets` has `margin: 0 -1.2rem -1.2rem` at ≤989px, which pulls the grid up 12px once any filter is active. Scripted `el.click()` doesn't set `:hover`; use real clicks in `mobile,touch` emulation.
 - To preview CSS on the live storefront through DevTools, append the `<style>` to `document.body`: section inline styles later in `<body>` beat the same specificity injected into `<head>`.
 
 ## Liquid
@@ -35,6 +36,7 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 - `render` doesn't accept filters on parameter values (`title: x | default: y` is a syntax error); precompute into a variable.
 - `section.blocks | where: 'settings.x'` returns empty on Shopify's Block drop; loop and test instead.
 - `card_product.url` can already contain `variant` plus `_pos`/`_fid`/`_ss`; retarget with `URL.searchParams.set('variant', id)`.
+- `variant=` in a card's `product.url` means Shopify narrowed the variant, by a variant-level filter **or** a search query that matched a variant (`q=redaur` adds none; a SKU or colour name adds that variant). Card logic that picks its own variant must yield whenever it is present. Detecting only `filter.v.*` made a search for a full-price colour show the reduced one. A plain-name search that stays on a non-sale variant is Shopify's match, not a bug.
 - Loewenweiss SKUs use hyphens inside multi-part colour codes (`192-953`), media filenames use underscores (`192_953`); normalise before matching.
 - **Metaobjects read from Liquid fail silently:**
   1. `shop.metaobjects[variable]` is nil; name the type statically.
@@ -55,7 +57,9 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 - A variant-level filter narrows `selected_or_first_available_variant` and `featured_media`, so a colour filter swaps the card photo natively (playbook D3).
 - The Akeneo sync writes compare-at `0.00`, not null, on non-reduced variants, so read sale state per variant (NICK.md #13). The collection rule `Compare-at price is set` matches only when all variants have a value (0 included); `is not set` matches when any is blank. Neither proves a discount.
 - `menuUpdate` replaces the whole tree: read it and resend every unchanged item with its `id`. Use item type `COLLECTIONS` for the all-collections page.
+- **Page editor survival (TinyMCE):** `aside`, `ul/li/span`, classes, ids, `details/summary`, `nav` and inline SVG survive a Save (`viewBox` is lowercased but renders); `aria-*` attributes are dropped. `dl/dt/dd` was never tested. The stale-body revert after an API write is the Apollo cache, handled by the CLAUDE.md rule; "Show HTML" can't be toggled through DevTools MCP clicks, so write bodies with `pageUpdate`.
 - `collectionCreate` through raw GraphQL can leave the collection unpublished on Online Store; verify and call `publishablePublish` if needed.
+- **Bulk customer import goes through Admin → Customers → Import** (CSV upload via chrome-devtools `upload_file`): the Shopify connector refuses `bulkOperationRunMutation` by policy, and the block only shows after the JSONL is staged. Diff the CSV header against the dialog's current sample template (it gained `Accepts WhatsApp Marketing`). ~9k rows take ~12 min, with the dialog at "0% uploaded" for the first minutes; poll `job(id:) { done }` (id in the `CustomerImportSubmit` response), not `wait_for` (it returns the whole 50-row page). To change an imported batch, re-import with "Overwrite existing customers" ticked; a handful of fixes fit one aliased `customerUpdate`. `customersCount(query:)` silently ignores its filter; verify with `customers(first:, query:)`. `get_network_request` dumps Admin session cookies, so pass `responseFilePath`. Check Messaging → Automations first so no welcome automation fires on the batch.
 - `deliveryProfileUpdate`: new zones go in `profile.locationGroupsToUpdate`; `profileLocationGroups` silently no-ops.
 - The Shopify connector caps the wrapper-level `first` argument at 50.
 - The claude.ai Shopify connector is one connection for whichever store it was last connected to. If `get-shop-info` errors with "re-authorization" or names another shop, reconnect it to the target store in claude.ai → Settings → Connectors; retrying doesn't help. The store-identity gate is in CLAUDE.md.
