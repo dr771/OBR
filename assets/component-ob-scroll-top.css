@@ -69,7 +69,10 @@
 /* 648px is the Trusted Shops widget's own mobile breakpoint. On desktop the arrow's right
    edge follows the badge's (20px); on mobile the arrow is centred under the 68px badge
    (10px + (68 - 44) / 2). The mobile badge waits for ob-scroll-top.js's reveal point
-   (home: past the brand marquee, elsewhere: footer approaching) and for the arrow. */
+   (home: past the brand marquee, elsewhere: footer approaching) and for the arrow.
+
+   The badge is hidden with display, never visibility: the widget's inner buttons set
+   visibility: visible themselves, so a hidden container still shows them. */
 @media screen and (max-width: 648px) {
   .ob-scroll-top {
     right: 2.2rem;
@@ -77,7 +80,7 @@
 
   html:not(.ob-trustbadge-reveal) [id^='trustbadge-container-'],
   body:has(.ob-scroll-top[hidden]) [id^='trustbadge-container-'] {
-    visibility: hidden;
+    display: none;
   }
 }
 
@@ -87,7 +90,7 @@
 @media screen and (min-width: 649px) and (max-width: 749px) {
   body:has(.ob-pdp) [id^='trustbadge-container-'],
   body:has(.ob-cart-cta-dock.is-stuck) [id^='trustbadge-container-'] {
-    visibility: hidden;
+    display: none;
   }
 }
 
@@ -99,7 +102,11 @@
 
 /* Belt and braces on top of the z-index: the mobile menu drawer and the cart drawer already
    cover both. The mobile filter panel is inline (ob-mobile-bar), not an overlay. */
-body:has(header-drawer > details[open], cart-drawer.active, predictive-search[open])
-  :is(.ob-scroll-top, [id^='trustbadge-container-']) {
+body:has(header-drawer > details[open], cart-drawer.active, predictive-search[open]) .ob-scroll-top {
   visibility: hidden;
+}
+
+body:has(header-drawer > details[open], cart-drawer.active, predictive-search[open])
+  [id^='trustbadge-container-'] {
+  display: none;
 }
