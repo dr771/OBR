@@ -66,14 +66,16 @@
   }
 }
 
-/* 648px is the Trusted Shops widget's own mobile breakpoint. The arrow's right edge follows
-   the badge's (10px on mobile, 20px on desktop), and on mobile the badge only shows
-   once the arrow does: on the first viewport the hero already carries the TS logo. */
+/* 648px is the Trusted Shops widget's own mobile breakpoint. On desktop the arrow's right
+   edge follows the badge's (20px); on mobile the arrow is centred under the 68px badge
+   (10px + (68 - 44) / 2). The mobile badge waits for ob-scroll-top.js's reveal point
+   (home: past the brand marquee, elsewhere: footer approaching) and for the arrow. */
 @media screen and (max-width: 648px) {
   .ob-scroll-top {
-    right: 1rem;
+    right: 2.2rem;
   }
 
+  html:not(.ob-trustbadge-reveal) [id^='trustbadge-container-'],
   body:has(.ob-scroll-top[hidden]) [id^='trustbadge-container-'] {
     visibility: hidden;
   }

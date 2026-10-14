@@ -2,10 +2,21 @@
   const button = document.querySelector('[data-ob-scroll-top]');
   if (!button) return;
 
+  // Mobile Trusted Shops badge reveal (component-ob-scroll-top.css): on home once the brand
+  // marquee has left the top of the viewport, elsewhere when the footer is within half a
+  // viewport below it.
+  const badgeRevealed = () => {
+    const marquee = document.querySelector('.ob-home-marquee');
+    if (marquee) return marquee.getBoundingClientRect().bottom < 0;
+    const footer = document.querySelector('footer.footer');
+    return Boolean(footer) && footer.getBoundingClientRect().top < window.innerHeight * 1.5;
+  };
+
   let ticking = false;
   const update = () => {
     ticking = false;
     button.hidden = window.scrollY < window.innerHeight;
+    document.documentElement.classList.toggle('ob-trustbadge-reveal', badgeRevealed());
   };
 
   window.addEventListener(

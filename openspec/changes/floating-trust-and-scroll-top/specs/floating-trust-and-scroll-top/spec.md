@@ -5,22 +5,26 @@ Show the shop's Trusted Shops trustbadge and a scroll-to-top control on every st
 ## ADDED Requirements
 
 ### Requirement: Trustbadge stacks above the scroll-to-top control
-The storefront SHALL show the Trusted Shops trustbadge for the shop's Trusted Shops ID. The scroll-to-top control SHALL be anchored to the bottom-right corner, and the trustbadge SHALL sit at the right edge above it, with the right edges of both aligned. A bottom-left badge covered the left edge of the page content. The two boxes SHALL NOT intersect at any viewport width. The trustbadge SHALL NOT be injected while the page is rendered inside the theme editor.
+The storefront SHALL show the Trusted Shops trustbadge for the shop's Trusted Shops ID. The scroll-to-top control SHALL be anchored to the bottom-right corner, and the trustbadge SHALL sit at the right edge above it (right edges aligned on desktop, the control centred under the badge on mobile). A bottom-left badge covered the left edge of the page content. The two boxes SHALL NOT intersect at any viewport width. The trustbadge SHALL NOT be injected while the page is rendered inside the theme editor.
 
 #### Scenario: Shopper views any page after scrolling
 - **WHEN** a storefront page has loaded and the shopper has scrolled further than about one viewport height
 - **THEN** the scroll-to-top control is in the bottom-right corner, the trustbadge is above it at the same right edge, and their boxes do not intersect
 
-### Requirement: Mobile trustbadge waits for the scroll-to-top control
-On viewports where the trustbadge uses its mobile layout, the trustbadge SHALL be hidden while the scroll-to-top control is hidden, so it does not cover the first viewport (where the home hero already shows the Trusted Shops logo). The widget's own mobile fadeout SHALL stay disabled, because it hides the badge once the page scrolls.
+### Requirement: Mobile trustbadge appears late in the page
+On viewports where the trustbadge uses its mobile layout, the trustbadge SHALL stay hidden until a reveal point: on the homepage, once the brand marquee has scrolled out above the viewport; on every other page, once the footer is within about half a viewport below the visible area. It SHALL also stay hidden while the scroll-to-top control is hidden. The home hero already shows the Trusted Shops logo, and the badge must not cover content earlier in the page. The widget's own mobile fadeout SHALL stay disabled, because it hides the badge once the page scrolls.
 
-#### Scenario: Mobile shopper on the first viewport
-- **WHEN** a shopper on a narrow viewport has scrolled less than about one viewport height
-- **THEN** neither the trustbadge nor the scroll-to-top control is visible
+#### Scenario: Mobile shopper on the homepage before the marquee
+- **WHEN** a shopper on a narrow viewport is on the homepage and the brand marquee is still in or below the viewport
+- **THEN** the trustbadge is not visible, even if the scroll-to-top control already is
 
-#### Scenario: Mobile shopper scrolls down
-- **WHEN** the shopper scrolls further than about one viewport height
-- **THEN** the scroll-to-top control and the trustbadge above it both appear and stay visible while scrolling
+#### Scenario: Mobile shopper past the marquee
+- **WHEN** the brand marquee has scrolled out above the viewport
+- **THEN** the trustbadge appears above the scroll-to-top control and stays visible while scrolling further down
+
+#### Scenario: Mobile shopper on another page
+- **WHEN** a shopper on a narrow viewport scrolls a non-home page and the footer is still more than about half a viewport below the visible area
+- **THEN** the trustbadge is not visible; it appears once the footer comes within that distance
 
 ### Requirement: Floating elements stay clear of fixed bottom bars
 On viewports where the PDP mobile purchase bar or the stuck cart-page checkout dock is shown, the trustbadge and the scroll-to-top control SHALL both sit above that bar, so neither covers its buttons.
