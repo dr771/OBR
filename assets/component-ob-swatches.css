@@ -406,6 +406,10 @@
     surface token their tiles use and can derive from it.
   */
   --ob-product-photo-surface: #f1f5f9;
+  /* Wishlist King gives its card heart z-index 9, above the floating scroll-to-top
+     arrow and Trusted Shops badge (8). Isolating the card keeps every z-index inside
+     it local. The chip tooltip is appended to <body>, so it is unaffected. */
+  isolation: isolate;
 }
 
 .card-wrapper.product-card-wrapper .card__inner.gradient {

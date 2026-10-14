@@ -13,7 +13,7 @@ body {
 
 .ob-scroll-top {
   position: fixed;
-  right: 2rem;
+  right: 2.2rem;
   bottom: var(--ob-scroll-top-bottom);
   z-index: 8;
   display: flex;
@@ -73,30 +73,15 @@ body {
   }
 }
 
-/* 648px is the Trusted Shops widget's own mobile breakpoint. On desktop the arrow's right
-   edge follows the badge's (20px); on mobile the arrow is centred under the 68px badge
-   (10px + (68 - 44) / 2). The mobile badge waits for ob-scroll-top.js's reveal point
-   (home: past the brand marquee, elsewhere: footer approaching) and for the arrow.
+/* 648px is the Trusted Shops widget's own mobile breakpoint. The mobile badge waits for
+   ob-scroll-top.js's reveal point (home: past the brand marquee, elsewhere: footer
+   approaching) and for the arrow.
 
    The badge is hidden with display, never visibility: the widget's inner buttons set
    visibility: visible themselves, so a hidden container still shows them. */
 @media screen and (max-width: 648px) {
-  .ob-scroll-top {
-    right: 2.2rem;
-  }
-
   html:not(.ob-trustbadge-reveal) [id^='trustbadge-container-'],
   body:has(.ob-scroll-top[hidden]) [id^='trustbadge-container-'] {
-    display: none;
-  }
-}
-
-/* Between the widget's breakpoint and the bars' one the badge is in its desktop layout
-   (54px + 20px from the bottom) while the bar is fixed and the arrow lifted, so it
-   would sit behind the bar and under the arrow. Hide it there. */
-@media screen and (min-width: 649px) and (max-width: 749px) {
-  body:has(.ob-pdp) [id^='trustbadge-container-'],
-  body:has(.ob-cart-cta-dock.is-stuck) [id^='trustbadge-container-'] {
     display: none;
   }
 }
@@ -107,7 +92,10 @@ body {
   z-index: 8 !important;
 }
 
-/* The badge's fixed box is the parent of the minimized button, whose id prefix is stable.
+/* ob-scroll-top.js gives every width the widget's compact badge (68px wide, 10px from the
+   right edge), so the arrow (right: 2.2rem) is centred under it.
+
+   The badge's fixed box is the parent of the minimized button, whose id prefix is stable.
    Its bottom (an !important inset from the widget) is overridden to sit 1.5rem above the
    arrow's 4.4rem box. The data-*-y-offset values in ob-trustbadge.liquid give the same
    result and are only the fallback if this hook stops matching. */

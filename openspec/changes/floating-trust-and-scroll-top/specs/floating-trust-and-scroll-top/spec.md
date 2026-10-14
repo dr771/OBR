@@ -5,7 +5,7 @@ Show the shop's Trusted Shops trustbadge and a scroll-to-top control on every st
 ## ADDED Requirements
 
 ### Requirement: Trustbadge stacks above the scroll-to-top control
-The storefront SHALL show the Trusted Shops trustbadge for the shop's Trusted Shops ID. The scroll-to-top control SHALL be anchored to the bottom-right corner, and the trustbadge SHALL sit at the right edge above it (right edges aligned on desktop, the control centred under the badge on mobile). A bottom-left badge covered the left edge of the page content. The two boxes SHALL NOT intersect at any viewport width. The trustbadge SHALL NOT be injected while the page is rendered inside the theme editor.
+The storefront SHALL show the Trusted Shops trustbadge for the shop's Trusted Shops ID. The scroll-to-top control SHALL be anchored to the bottom-right corner, and the trustbadge SHALL sit at the right edge above it (right edges aligned on desktop, the control centred under the badge on mobile). A bottom-left badge covered the left edge of the page content. The trustbadge SHALL use the widget's compact variant (seal, rating and toggle, no text labels) at every viewport width. The two boxes SHALL NOT intersect at any viewport width, and page content such as the product-card wishlist hearts SHALL NOT paint over either of them. The trustbadge SHALL NOT be injected while the page is rendered inside the theme editor.
 
 #### Scenario: Shopper views any page after scrolling
 - **WHEN** a storefront page has loaded and the shopper has scrolled further than about one viewport height
@@ -34,8 +34,8 @@ On viewports where the PDP mobile purchase bar or the stuck cart-page checkout d
 - **THEN** the trustbadge and the scroll-to-top control are positioned above the bar and do not intersect it
 
 #### Scenario: Tablet width with a fixed bar
-- **WHEN** the viewport is wide enough for the trustbadge's desktop layout but the PDP purchase bar or the stuck cart dock is still fixed at the bottom
-- **THEN** the trustbadge is hidden rather than overlapping the bar or the lifted scroll-to-top control
+- **WHEN** the viewport is wider than the trustbadge's mobile breakpoint but the PDP purchase bar or the stuck cart dock is still fixed at the bottom
+- **THEN** the trustbadge sits above the lifted scroll-to-top control and does not intersect the bar or the control
 
 #### Scenario: Mobile cart page with stuck checkout dock
 - **WHEN** the cart-page checkout dock is fixed at the bottom on a narrow viewport
