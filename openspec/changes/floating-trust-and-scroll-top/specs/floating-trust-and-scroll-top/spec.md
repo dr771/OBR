@@ -4,11 +4,15 @@ Show the shop's Trusted Shops trustbadge and a scroll-to-top control on every st
 
 ## ADDED Requirements
 
-### Requirement: Trustbadge and scroll-to-top occupy opposite bottom corners
-The storefront SHALL show the Trusted Shops trustbadge for the shop's Trusted Shops ID anchored to the bottom-left corner. The scroll-to-top control SHALL be anchored to the bottom-right corner, so the two never overlap at any viewport width. The trustbadge SHALL NOT be injected while the page is rendered inside the theme editor.
+### Requirement: Trustbadge and scroll-to-top never overlap
+The storefront SHALL show the Trusted Shops trustbadge for the shop's Trusted Shops ID. The scroll-to-top control SHALL be anchored to the bottom-right corner. On desktop the trustbadge SHALL sit at the right edge above the scroll-to-top control, because the desktop badge in the bottom-left corner covered the left edge of the page content. On mobile the trustbadge SHALL sit in the bottom-left corner. The two boxes SHALL NOT intersect at any viewport width. The trustbadge SHALL NOT be injected while the page is rendered inside the theme editor.
 
-#### Scenario: Shopper views any page on desktop or mobile
-- **WHEN** a storefront page has loaded and the shopper has scrolled down
+#### Scenario: Shopper views any page on desktop
+- **WHEN** a storefront page has loaded on a desktop viewport and the shopper has scrolled down
+- **THEN** the scroll-to-top control is in the bottom-right corner, the trustbadge is at the right edge above it, and their boxes do not intersect
+
+#### Scenario: Shopper views any page on mobile
+- **WHEN** a storefront page has loaded on a narrow viewport and the shopper has scrolled down
 - **THEN** the trustbadge is in the bottom-left corner, the scroll-to-top control is in the bottom-right corner, and their boxes do not intersect
 
 ### Requirement: Floating elements stay clear of fixed bottom bars

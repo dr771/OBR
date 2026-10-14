@@ -1,7 +1,8 @@
 {% comment %}
-  Trusted Shops trustbadge (floating-trust-and-scroll-top spec): bottom-left, opposite
-  ob-scroll-top. Theme-snippet integration for the dev shop only — the official Trusted
-  Shops Shopify app replaces this at live migration (see MIGRATION-TO-LIVE.md).
+  Trusted Shops trustbadge (floating-trust-and-scroll-top spec): desktop bottom-right,
+  stacked above ob-scroll-top (bottom-left covered the page-width content's left edge);
+  mobile bottom-left, opposite the arrow. Theme-snippet integration for the dev shop
+  only — the official Trusted Shops Shopify app replaces this at live migration (see MIGRATION-TO-LIVE.md).
 
   The widget appends div#trustbadge-container-<hash> to <body> with an inline
   z-index of 2147483647; component-ob-scroll-top.css pulls that below the fixed bars and
@@ -20,11 +21,11 @@
   <script
     async
     charset="UTF-8"
-    data-desktop-y-offset="0"
+    data-desktop-y-offset="20"
     data-mobile-y-offset="{{ ob_ts_mobile_offset }}"
     data-desktop-disable-reviews="false"
     data-desktop-enable-custom="false"
-    data-desktop-position="left"
+    data-desktop-position="right"
     data-desktop-custom-width="156"
     data-desktop-enable-fadeout="false"
     data-disable-mobile="false"

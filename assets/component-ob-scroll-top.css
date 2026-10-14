@@ -1,5 +1,6 @@
 /* Floating site chrome (floating-trust-and-scroll-top spec): the scroll-to-top button
-   bottom-right and the Trusted Shops badge bottom-left.
+   bottom-right and the Trusted Shops badge (bottom-left on mobile, stacked above the
+   button on desktop; position set by snippets/ob-trustbadge.liquid).
 
    z-index 8 for both is deliberate: below the mobile PDP purchase bar and the cart CTA
    dock (9), the sticky header (10) and the drawers (1000+), so all of those cover them. */

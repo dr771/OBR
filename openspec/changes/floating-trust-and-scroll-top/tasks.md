@@ -1,6 +1,6 @@
 ## 1. Trustbadge
 
-- [x] 1.1 Create `snippets/ob-trustbadge.liquid`: TSID assign, data-attribute script embed (left on desktop + mobile, mobile fadeout), per-template mobile y-offset for `product`/`cart`, skipped in `request.design_mode`
+- [x] 1.1 Create `snippets/ob-trustbadge.liquid`: TSID assign, data-attribute script embed (right on desktop (y-offset 20, stacked above the arrow), left on mobile, mobile fadeout), per-template mobile y-offset for `product`/`cart`, skipped in `request.design_mode`
 - [x] 1.2 Render it in `layout/theme.liquid` before `</body>`
 
 ## 2. Scroll-to-top

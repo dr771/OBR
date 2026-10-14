@@ -4,7 +4,7 @@ The old Drupal shop showed a Trusted Shops trustbadge (4.49★ from ~2400 review
 
 ## What Changes
 
-- Add the Trusted Shops trustbadge site-wide as a theme script snippet with the existing shop TSID, placed in the bottom-left corner.
+- Add the Trusted Shops trustbadge site-wide as a theme script snippet with the existing shop TSID, placed bottom-left on mobile and at the right edge above the scroll-to-top button on desktop.
 - Add a scroll-to-top button site-wide in the bottom-right corner. It is shown only after the shopper has scrolled.
 - On viewports where a fixed purchase or checkout bar is shown, lift both elements above it.
 - Keep both from floating over the cart drawer, mobile menu and predictive search.
