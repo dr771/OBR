@@ -1,13 +1,20 @@
 /* Floating site chrome (floating-trust-and-scroll-top spec): the scroll-to-top button
-   bottom-right with the Trusted Shops badge stacked above it (badge position set by
-   snippets/ob-trustbadge.liquid).
+   bottom-right with the Trusted Shops badge stacked above it.
 
    z-index 8 for both is deliberate: below the mobile PDP purchase bar and the cart CTA
-   dock (9), the sticky header (10) and the drawers (1000+), so all of those cover them. */
+   dock (9), the sticky header (10) and the drawers (1000+), so all of those cover them.
+
+   --ob-scroll-top-bottom is the arrow's bottom edge; the badge is stacked from it, so
+   both move together. That includes env(safe-area-inset-bottom), which Android Chrome
+   (edge to edge) reports only while its toolbar is hidden. */
+body {
+  --ob-scroll-top-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+}
+
 .ob-scroll-top {
   position: fixed;
   right: 2rem;
-  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  bottom: var(--ob-scroll-top-bottom);
   z-index: 8;
   display: flex;
   align-items: center;
@@ -60,9 +67,9 @@
 /* Same breakpoint and bar height as the fixed bars themselves (component-ob-pdp.css,
    component-ob-cart-page.css). */
 @media screen and (max-width: 749px) {
-  body:has(.ob-pdp) .ob-scroll-top,
-  body:has(.ob-cart-cta-dock.is-stuck) .ob-scroll-top {
-    bottom: calc(8.1rem + 1.2rem + env(safe-area-inset-bottom, 0px));
+  body:has(.ob-pdp),
+  body:has(.ob-cart-cta-dock.is-stuck) {
+    --ob-scroll-top-bottom: calc(8.1rem + 1.2rem + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -98,6 +105,14 @@
    prefix is its only stable hook (inner class names are hashed). */
 [id^='trustbadge-container-'] {
   z-index: 8 !important;
+}
+
+/* The badge's fixed box is the parent of the minimized button, whose id prefix is stable.
+   Its bottom (an !important inset from the widget) is overridden to sit 1.5rem above the
+   arrow's 4.4rem box. The data-*-y-offset values in ob-trustbadge.liquid give the same
+   result and are only the fallback if this hook stops matching. */
+[id^='trustbadge-container-'] :has(> [id^='minimized-trustbadge-']) {
+  bottom: calc(var(--ob-scroll-top-bottom) + 4.4rem + 1.5rem) !important;
 }
 
 /* Belt and braces on top of the z-index: the mobile menu drawer and the cart drawer already

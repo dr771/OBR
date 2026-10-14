@@ -7,6 +7,8 @@
 
   Offsets: the widget's own bottom is 54px on desktop and 10px on mobile (its mobile
   layout applies up to 648px). Each offset puts the badge 15px above the arrow's top edge.
+  They are a fallback: component-ob-scroll-top.css overrides the badge's bottom from the
+  arrow's position, so the two also stay apart when the safe-area inset changes.
 
   The widget appends div#trustbadge-container-<hash> to <body> with an inline
   z-index of 2147483647; component-ob-scroll-top.css pulls that below the fixed bars and
