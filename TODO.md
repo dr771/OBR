@@ -1,5 +1,5 @@
-BUG - same border on reduced chips: active vs hover
 
+===
 BUG - back from PDP/wishlist after show more: same position!
 
 BUG - wishlist shows no reduced badge!
@@ -12,17 +12,8 @@ FEAT - redirects URL's from ob.nl
 - wait for full catalog
 ============
 
-===
+=== POPUP!
 Schrijf je nu in op onze nieuwsbrief en ontvang 10% korting op jouw eerste bestelling.
-===
-Trusted Shops badge
-===
-to top arrow
-===
-BLOG: built 2026-10-05, see BLOG.md
-
-PDP 
-- vert abstand after header
 
 ============
 Crawl: stopped for good. Only FitFlop product URLs map to products (532 of 587 match exactly); other brands' product URLs go to the brand collection, and the old SEO titles are not captured.
