@@ -1,12 +1,12 @@
 /* Floating site chrome (floating-trust-and-scroll-top spec): the scroll-to-top button
-   bottom-right and the Trusted Shops badge (bottom-left on mobile, stacked above the
-   button on desktop; position set by snippets/ob-trustbadge.liquid).
+   bottom-right with the Trusted Shops badge stacked above it (badge position set by
+   snippets/ob-trustbadge.liquid).
 
    z-index 8 for both is deliberate: below the mobile PDP purchase bar and the cart CTA
    dock (9), the sticky header (10) and the drawers (1000+), so all of those cover them. */
 .ob-scroll-top {
   position: fixed;
-  right: 1.5rem;
+  right: 2rem;
   bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
   z-index: 8;
   display: flex;
@@ -63,6 +63,29 @@
   body:has(.ob-pdp) .ob-scroll-top,
   body:has(.ob-cart-cta-dock.is-stuck) .ob-scroll-top {
     bottom: calc(8.1rem + 1.2rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* 648px is the Trusted Shops widget's own mobile breakpoint. The arrow's right edge follows
+   the badge's (10px on mobile, 20px on desktop), and on mobile the badge only shows
+   once the arrow does: on the first viewport the hero already carries the TS logo. */
+@media screen and (max-width: 648px) {
+  .ob-scroll-top {
+    right: 1rem;
+  }
+
+  body:has(.ob-scroll-top[hidden]) [id^='trustbadge-container-'] {
+    visibility: hidden;
+  }
+}
+
+/* Between the widget's breakpoint and the bars' one the badge is in its desktop layout
+   (54px + 20px from the bottom) while the bar is fixed and the arrow lifted, so it
+   would sit behind the bar and under the arrow. Hide it there. */
+@media screen and (min-width: 649px) and (max-width: 749px) {
+  body:has(.ob-pdp) [id^='trustbadge-container-'],
+  body:has(.ob-cart-cta-dock.is-stuck) [id^='trustbadge-container-'] {
+    visibility: hidden;
   }
 }
 

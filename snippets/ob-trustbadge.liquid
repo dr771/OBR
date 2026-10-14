@@ -1,20 +1,26 @@
 {% comment %}
-  Trusted Shops trustbadge (floating-trust-and-scroll-top spec): desktop bottom-right,
-  stacked above ob-scroll-top (bottom-left covered the page-width content's left edge);
-  mobile bottom-left, opposite the arrow. Theme-snippet integration for the dev shop
-  only — the official Trusted Shops Shopify app replaces this at live migration (see MIGRATION-TO-LIVE.md).
+  Trusted Shops trustbadge (floating-trust-and-scroll-top spec): right edge, stacked
+  above ob-scroll-top (bottom-left covered the page-width content's left edge). On mobile
+  it is hidden until the arrow appears (component-ob-scroll-top.css). Theme-snippet
+  integration for the dev shop only — the official Trusted Shops Shopify app replaces
+  this at live migration (see MIGRATION-TO-LIVE.md).
+
+  Offsets: the widget's own bottom is 54px on desktop and 10px on mobile (its mobile
+  layout applies up to 648px). Each offset puts the badge 15px above the arrow's top edge.
 
   The widget appends div#trustbadge-container-<hash> to <body> with an inline
   z-index of 2147483647; component-ob-scroll-top.css pulls that below the fixed bars and
   drawers. The mobile y-offset is chosen here because the widget's inner fixed element
   only has hashed class names: on templates with a fixed bottom bar (PDP purchase bar,
-  cart CTA dock) the badge is lifted above it.
+  cart CTA dock) the arrow is lifted above it, and the badge with it.
+  Mobile fadeout stays off: the widget's fadeout hides the badge once the page scrolls
+  and only shows it again at the very top, the opposite of what the stack needs.
 {% endcomment %}
 {%- liquid
   assign ob_ts_id = 'XEF6A9A6375D0B95B950D0A48C758ABA3'
-  assign ob_ts_mobile_offset = 0
+  assign ob_ts_mobile_offset = 64
   if template.name == 'product' or template.name == 'cart'
-    assign ob_ts_mobile_offset = 84
+    assign ob_ts_mobile_offset = 142
   endif
 -%}
 {%- unless request.design_mode -%}
@@ -33,9 +39,9 @@
     data-mobile-custom-width="156"
     data-mobile-disable-reviews="false"
     data-mobile-enable-custom="false"
-    data-mobile-position="left"
+    data-mobile-position="right"
     data-mobile-enable-topbar="false"
-    data-mobile-enable-fadeout="true"
+    data-mobile-enable-fadeout="false"
     data-color-scheme="light"
     src="https://widgets.trustedshops.com/js/{{ ob_ts_id }}.js"
   ></script>

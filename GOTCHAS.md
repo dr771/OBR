@@ -102,7 +102,9 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 ## Trusted Shops trustbadge
 
 - **The widget sets an inline `z-index: 2147483647`** on `div#trustbadge-container-<hash>`, which it appends to `<body>`. Left alone it floats over the cart drawer and the mobile menu. `assets/component-ob-scroll-top.css` overrides it with `[id^='trustbadge-container-'] { z-index: 8 !important }`. The id prefix is the only stable hook; the inner elements have hashed class names, so the badge's position can only be changed through the script's `data-*` attributes (`data-mobile-y-offset`, `data-desktop-position`, …), not from CSS. If the badge suddenly covers a drawer, check whether Trusted Shops renamed the container.
-- **The y-offset is added to the widget's own 10px bottom margin** (20px on desktop). An offset of 60 left the badge 11px inside the 81px PDP purchase bar; 84 clears it.
+- **The y-offset is added to the widget's own bottom: 10px on mobile, 54px on desktop** (measured on the badge's fixed element, 2026-10-14). An offset of 60 left the mobile badge 11px inside the 81px PDP purchase bar.
+- **The widget's mobile layout is `(max-width: 648px)`**, not the theme's 749px. Between 649 and 749px it uses its desktop size and offsets while the theme's mobile bars are fixed.
+- **`data-mobile-enable-fadeout="true"` hides the badge as soon as the page scrolls down** and only shows it again within 10px of the top. It does not mean "fade in after scrolling". For "show only after scrolling", hide the container from CSS instead.
 - **The header's mobile menu is `header-drawer > details[open]`** (measured 2026-10-05). A `menu-drawer > details[open]` selector does not match it; there, `menu-drawer` is only the id and class of the panel inside. The PDP purchase-bar rule in `component-ob-pdp.css` uses the `menu-drawer` form; the menu still covers the bar, because the header's z-index is higher.
 
 ## mockup/ (reference only)
