@@ -205,10 +205,10 @@ details[open].menu-opening > .menu-drawer__submenu {
   margin: 0;
 }
 
-.menu-drawer__account account-icon > .svg-wrapper {
+.menu-drawer__account .svg-wrapper {
   height: 2rem;
   width: 2rem;
-  margin-right: 1rem;
+  margin-right: 1.2rem;
 }
 
 .menu-drawer__account shop-user-avatar {
@@ -217,7 +217,7 @@ details[open].menu-opening > .menu-drawer__submenu {
   margin-left: -0.45rem;
 }
 
-.menu-drawer__account:hover account-icon > .svg-wrapper {
+.menu-drawer__account:hover .svg-wrapper {
   transform: scale(1.07);
 }
 
