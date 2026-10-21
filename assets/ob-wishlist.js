@@ -26,6 +26,138 @@
   }
   window.obWkReady = obWkReady;
 
+  // Size values in storefront order, the JS twin of ob-option-value-order:
+  // all-numeric values (EU shoe sizes) ascending, letter sizes in semantic
+  // order (XXXL reads as 3XL), anything unrecognised appended in source order.
+  var LETTER_SIZES = ['3XS', 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL', '6XL'];
+
+  function normalizeLetterSize(value) {
+    return String(value || '')
+      .trim()
+      .toUpperCase()
+      .replace(/^X{3,}(S|L)$/, function (match, end) {
+        return match.length - 1 + 'X' + end;
+      });
+  }
+
+  window.obSortSizeValues = function (values) {
+    var numeric =
+      values.length > 0 &&
+      values.every(function (value) {
+        return /^\d+([.,]\d+)?$/.test(String(value).trim());
+      });
+    function rank(value) {
+      if (numeric) return parseFloat(String(value).trim().replace(',', '.'));
+      var index = LETTER_SIZES.indexOf(normalizeLetterSize(value));
+      return index === -1 ? Infinity : index;
+    }
+    return values
+      .map(function (value, index) {
+        return { value: value, index: index, rank: rank(value) };
+      })
+      .sort(function (a, b) {
+        return a.rank - b.rank || a.index - b.index;
+      })
+      .map(function (entry) {
+        return entry.value;
+      });
+  };
+
+  function optionKindFromName(name) {
+    var lower = String(name || '').toLowerCase();
+    if (lower.indexOf('size') !== -1 || lower.indexOf('maat') !== -1) return 'size';
+    if (lower.indexOf('color') !== -1 || lower.indexOf('colour') !== -1 || lower.indexOf('kleur') !== -1) return 'color';
+    return 'other';
+  }
+
+  // The variant a wishlist entry starts on: the given colour (any colour when
+  // blank) with its first available size in storefront order. WK can only
+  // store whole variants, so a colour without a size cannot be saved.
+  window.obWishlistStartVariant = function (product, colorValue) {
+    if (!product || !product.variants || !product.variants.length) return null;
+    var options = (product.options || []).map(function (option) {
+      return typeof option === 'string' ? option : option.name;
+    });
+    var colorIndex = -1;
+    var sizeIndex = -1;
+    options.forEach(function (name, index) {
+      var kind = optionKindFromName(name);
+      if (kind === 'color' && colorIndex === -1) colorIndex = index;
+      if (kind === 'size' && sizeIndex === -1) sizeIndex = index;
+    });
+
+    var color = String(colorValue || '').trim();
+    var candidates = product.variants.filter(function (variant) {
+      return !color || colorIndex === -1 || String(variant.options[colorIndex] || '').trim() === color;
+    });
+    var available = candidates.filter(function (variant) {
+      return variant.available;
+    });
+    if (available.length) candidates = available;
+    if (!candidates.length) return null;
+    if (sizeIndex === -1) return candidates[0];
+
+    var firstSize = window.obSortSizeValues(
+      candidates.map(function (variant) {
+        return variant.options[sizeIndex];
+      })
+    )[0];
+    return (
+      candidates.filter(function (variant) {
+        return variant.options[sizeIndex] === firstSize;
+      })[0] || candidates[0]
+    );
+  };
+
+  // PLP / search card heart. WK's injected floating button saves the product
+  // without a variant, so the wishlist opened on the product's first colour
+  // with no size, whatever colour the card showed. An add goes through WK's
+  // own API instead, with the card's shown colour and its first available
+  // size; removing (a filled heart) stays WK's own click. Fails open to WK's
+  // click when the card has no product link or WK's API is missing.
+  obWkReady(function (wk) {
+    if (typeof wk.addWishlistItem !== 'function') return;
+    document.addEventListener(
+      'click',
+      function (evt) {
+        var button = evt.target.closest && evt.target.closest('.card-wrapper wk-button.wk-floating button');
+        if (!button || button.classList.contains('wk-selected')) return;
+        var cardWrapper = button.closest('.card-wrapper');
+        var link = cardWrapper && cardWrapper.querySelector('a[href*="/products/"]');
+        var match = link && link.getAttribute('href').match(/\/products\/([^/?#]+)/);
+        if (!match) return;
+
+        evt.preventDefault();
+        evt.stopImmediatePropagation();
+        var handle = decodeURIComponent(match[1]);
+        var chip = cardWrapper.querySelector('.ob-card-swatch--active[data-ob-swatch-name]');
+        var colorValue = chip ? chip.dataset.obSwatchName : '';
+
+        fetch('/products/' + encodeURIComponent(handle) + '.js')
+          .then(function (res) {
+            if (!res.ok) throw new Error('product fetch failed');
+            return res.json();
+          })
+          .then(
+            function (product) {
+              return window.obWishlistStartVariant(product, colorValue);
+            },
+            function () {
+              // fail open: save the product the way WK's own button would
+              return null;
+            }
+          )
+          .then(function (variant) {
+            return wk.addWishlistItem(variant ? { productHandle: handle, variantId: variant.id } : { productHandle: handle });
+          })
+          .catch(function () {
+            // WK logs and revalidates a failed add itself
+          });
+      },
+      true
+    );
+  });
+
   // Anchored bracket-key option parser patch. Fixes WK's getInputOption/
   // getFormOptions when a Shopify option name itself contains brackets
   // (Akeneo keys like "[color]"), which produce input names such as

@@ -167,10 +167,23 @@
     grid.className = 'product-form__input--size-grid';
     grid.setAttribute('role', 'radiogroup');
 
-    var index = 0;
-    Array.prototype.forEach.call(select.options, function (option) {
-      if (option.disabled) return;
+    // Storefront size order, as on the PDP (Akeneo's own order is scrambled).
+    var options = Array.prototype.filter.call(select.options, function (option) {
+      return !option.disabled;
+    });
+    if (typeof window.obSortSizeValues === 'function') {
+      var sortedValues = window.obSortSizeValues(
+        options.map(function (option) {
+          return option.value;
+        })
+      );
+      options.sort(function (a, b) {
+        return sortedValues.indexOf(a.value) - sortedValues.indexOf(b.value);
+      });
+    }
 
+    var index = 0;
+    options.forEach(function (option) {
       var id = namePrefix + '-' + index;
       index += 1;
       var radio = document.createElement('input');
@@ -295,22 +308,63 @@
     queueWkTask({ run: run });
   };
 
-  function wireRail(shell, select) {
+  function queueSelectValue(select, value) {
+    queueWkTask({
+      select: select,
+      run: function () {
+        if (!select.isConnected) return;
+        select.value = value;
+        if (select.value !== value) return;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+      },
+    });
+  }
+
+  // onPick runs after the change is queued (colour rails use it to fill in a
+  // missing size).
+  function wireRail(shell, select, onPick) {
     shell.addEventListener('change', function (evt) {
       var radio = evt.target;
       if (!radio || radio.type !== 'radio') return;
-      var value = radio.value;
       var card = shell.closest('.wk-product-card');
       if (card) card.classList.add('ob-wishlist-card--syncing');
-      queueWkTask({
-        select: select,
-        run: function () {
-          if (!select.isConnected) return;
-          select.value = value;
-          if (select.value !== value) return;
-          select.dispatchEvent(new Event('change', { bubbles: true }));
-        },
-      });
+      queueSelectValue(select, radio.value);
+      if (onPick) {
+        try {
+          onPick(radio.value);
+        } catch (e) {
+          // fail open: the colour still changes, the size stays unchosen
+        }
+      }
+    });
+  }
+
+  function isRealOptionValue(product, position, value) {
+    var option = product && product.options && product.options[position - 1];
+    return !!(
+      option &&
+      option.values &&
+      option.values.some(function (v) {
+        return String(v).trim() === String(value || '').trim();
+      })
+    );
+  }
+
+  // WK only shows a colour's photo, price and add-to-cart once a size is
+  // chosen too, so picking a colour on an item that has no size yet (saved
+  // from a PLP heart before the heart saved variants) also picks that
+  // colour's first available size, the same start variant the PLP heart uses.
+  function fillMissingSize(product, size, colorValue) {
+    if (!size || typeof window.obWishlistStartVariant !== 'function') return;
+    if (isRealOptionValue(product, size.position, size.select.value)) return;
+
+    var variant = window.obWishlistStartVariant(product, colorValue);
+    var sizeValue = variant && variant['option' + size.position];
+    if (!sizeValue) return;
+
+    queueSelectValue(size.select, sizeValue);
+    size.grid.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+      if (radio.value === sizeValue) radio.checked = true;
     });
   }
 
@@ -391,6 +445,9 @@
     var otherContainer = document.createElement('div');
     otherContainer.className = 'ob-wishlist-rails';
 
+    // Set once the size grid exists; the colour rail's handler reads it later.
+    var size = null;
+
     pickers.forEach(function (picker, index) {
       if (picker.classList.contains('wk-single-option')) return;
       var select = picker.querySelector('select');
@@ -406,7 +463,16 @@
         var shell = isColor
           ? buildColorRail(select, product, position, namePrefix)
           : buildSizeGrid(select, namePrefix);
-        wireRail(shell, select);
+        if (kind === 'size' && !size) size = { select: select, position: position, grid: shell };
+        wireRail(
+          shell,
+          select,
+          isColor
+            ? function (colorValue) {
+                fillMissingSize(product, size, colorValue);
+              }
+            : null
+        );
         (isColor ? colorContainer : otherContainer).appendChild(shell);
       } catch (e) {
         // fail open: this option keeps its native dropdown, nothing else built

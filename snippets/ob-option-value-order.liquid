@@ -34,7 +34,8 @@
     assign letter_sizes = '3XS|XXS|XS|S|M|L|XL|XXL|3XL|4XL|5XL|6XL' | split: '|'
     for letter_size in letter_sizes
       for value in option.values
-        assign value_label = value | strip | upcase
+        # Akeneo also writes the long forms (XXXL, XXXXL); compare them as 3XL, 4XL.
+        assign value_label = value | strip | upcase | replace: 'XXXXXXL', '6XL' | replace: 'XXXXXL', '5XL' | replace: 'XXXXL', '4XL' | replace: 'XXXL', '3XL' | replace: 'XXXS', '3XS'
         if value_label == letter_size
           if has_output
             echo ','
