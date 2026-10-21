@@ -1,6 +1,7 @@
 {% comment %}
   Returns the original zero-based indexes of a ProductOptionValue array in the
-  storefront order for a recognized Akeneo size family. Unknown values are
+  storefront order for a recognized Akeneo size family. Tops/bottoms: letter
+  sizes first, then numbered sizes (W32, 38) ascending. Unknown values are
   appended in their original relative order; unknown families stay entirely in
   source order. Keeping indexes lets product-variant-options reuse the original
   drops and all Dawn metadata unchanged.
@@ -37,6 +38,24 @@
         # Akeneo also writes the long forms (XXXL, XXXXL); compare them as 3XL, 4XL.
         assign value_label = value | strip | upcase | replace: 'XXXXXXL', '6XL' | replace: 'XXXXXL', '5XL' | replace: 'XXXXL', '4XL' | replace: 'XXXL', '3XL' | replace: 'XXXS', '3XS'
         if value_label == letter_size
+          if has_output
+            echo ','
+          endif
+          echo forloop.index0
+          assign emitted_indexes = emitted_indexes | append: forloop.index0 | append: '|'
+          assign has_output = true
+        endif
+      endfor
+    endfor
+
+    # Numbered clothing sizes after the letters: waist sizes (W25, W32) and
+    # plain EU clothing sizes (36, 38), ascending.
+    for numeric_size in (1..100)
+      assign numeric_label = numeric_size | append: ''
+      assign waist_label = numeric_label | prepend: 'W'
+      for value in option.values
+        assign value_label = value | strip | upcase
+        if value_label == numeric_label or value_label == waist_label
           if has_output
             echo ','
           endif

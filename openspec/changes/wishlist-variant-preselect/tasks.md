@@ -23,3 +23,4 @@
 
 - [x] 5.1 Live: Juicy PDP sizes `XXS … XXL XXXL XXXXL`; wishlist placeholder entry → Bright Pink picks XXS, photo/price/CTA follow; search-card heart on Sugar Swizzle saved Sugar Swizzle / L (middle) without memory; filled heart still removes; after a real PDP click on M: trousers M, hoodie M, shoes still 39 / 43 (middle); wishlist size keypress remembered
 - [x] 5.2 Live: with M remembered for `bottoms_size`, trousers PDP linked to Bright Pink/XXXXL opens Bright Pink/M (URL and cart id follow); hoodie opens M; Lulu keeps 35
+- [x] 5.3 PDP order/median/filter/cart rules (isolated browser context, empty memory): jeans `W25…W34` opens W28; trackpant linked to XXL opens L; Lulu opens 39; listing filtered to M opens M with L remembered; kept cart/wishlist variant unchanged; no focus ring; memory stays empty after preselects

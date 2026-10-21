@@ -88,6 +88,12 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 - `<wishlist-page>` always renders its own `.wk-header` chrome; it is hidden via CSS because no attribute suppresses it.
 - **WK drops changes made while a save is in flight.** Every option change, add and remove PUTs to `api.appmate.io` and re-renders from the server answer (~0.4–0.9s). A second change inside that window sends no request at all: the `<select>` keeps the new value (lit committed nothing new) while the hidden `input[name=id]`, the price and add-to-cart stay on the previous variant. Calling `removeWishlistItem` for several items in parallel also drops all but one. Read the resolved variant from `input[name=id]`, not from the selects, and serialize API calls with a wait between them. The standalone page does this in `ob-wishlist-page-rails.js` (a `fetch` wrapper counts WK's appmate and Storefront GraphQL requests; WK stays busy through the GraphQL phase after the appmate calls). WK's CTA adds to the cart from its own JS and then navigates, so `preventDefault` in a late submit listener does not stop a test add, and with move-to-cart on it also removes the item from the wishlist.
 
+## Size preselects (`ob-size-memory.js`)
+
+- **`input.click()` on a radio fires a trusted `change`.** The click is synthetic, but the change its activation behaviour fires has `isTrusted: true`, so an `isTrusted` guard does not tell a scripted preselect from a shopper's pick. Set `checked` and dispatch `new Event('change')` instead.
+- **Dawn focuses the changed option after every variant re-render** (`product-info.js` `renderProductInfo`). After a scripted change that shows a keyboard focus ring and can scroll the picker into view; `skipNextFocusOf` swallows that one call.
+- **Test size memory in an isolated browser context** (MCP `new_page` with `isolatedContext`, background). The owner's browser shares `localStorage` across tabs, so parallel browsing there mixes their picks with test results.
+
 ## Shopify CLI and pushing
 
 - A silent `theme push` hang is an expired session with an invisible device-code prompt. Redirect output to a log (`> push.log 2>&1`) instead of piping to `tail`, and have the user open the link. Always pass `--store=original-brands-dev.myshopify.com`.
@@ -126,3 +132,8 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 - `Home-v2.png` was rendered at a ~1321px viewport: 1 draft px = 1.4171 CSS px. Render at 1320px and downscale to 932px to overlay.
 - The OB logo SVG's ink fills only the top 56% of its authored viewBox; use `viewBox="5 0 1387 204"`, and `viewBox="631 0 209 204"` for the footer flower mark. Check `getBBox()` against the viewBox on both axes.
 - Seamless marquee: space items with `margin-inline-end`, not flex `gap`, so `translateX(-50%)` lands exactly. To fit text wordmarks in one row use `zoom` (changes layout width), not `transform: scale()`. Class selectors don't reach `<use>` shadow trees, so set the fill on the outer `<svg>`.
+
+## Shopify Forms newsletter popup
+
+- Shopify Forms renders the popup in an open shadow root without exposed parts; theme CSS cannot reach the teaser heading or fixed root. assets/ob-newsletter-popup.js adopts a stylesheet using data-current-step/data-position and data-testid hooks instead of hashed classes, and gives the host z-index 8 to contain the app's inline 2147483647 below drawers.
+
