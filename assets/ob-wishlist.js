@@ -70,9 +70,75 @@
     return 'other';
   }
 
+  // The shopper's own size choices, per size system (the raw Akeneo key, e.g.
+  // `shoe_size_eu`, `tops_size`), most recent wins. Only trusted clicks on a
+  // size option count (PDP picker, wishlist size grid), never a value the
+  // theme preselected. Kept in this browser only; storage failures just mean
+  // nothing is remembered.
+  var SIZE_MEMORY_KEY = 'ob-size-memory';
+
+  function readSizeMemory() {
+    try {
+      var stored = JSON.parse(window.localStorage.getItem(SIZE_MEMORY_KEY) || '{}');
+      return stored && typeof stored === 'object' ? stored : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  document.addEventListener('change', function (evt) {
+    var input = evt.target;
+    if (!evt.isTrusted || !input || input.type !== 'radio' || !input.checked) return;
+    var key = input.dataset && input.dataset.optionName;
+    if (!key || optionKindFromName(key) !== 'size') return;
+    try {
+      var memory = readSizeMemory();
+      memory[key] = { value: input.value, time: Date.now() };
+      window.localStorage.setItem(SIZE_MEMORY_KEY, JSON.stringify(memory));
+    } catch (e) {
+      // fail open: this choice is just not remembered
+    }
+  });
+
+  function isLetterSize(value) {
+    return LETTER_SIZES.indexOf(normalizeLetterSize(value)) !== -1;
+  }
+
+  // A remembered size this product offers: the same size system first, then
+  // (for letter sizes) the latest letter size from another system, since tops
+  // and bottoms usually share it. Numeric sizes never cross systems: shoe 40
+  // says nothing about a numeric clothing size 40.
+  function rememberedSize(sizeKey, sizes) {
+    var memory = readSizeMemory();
+    function offered(value) {
+      var normalized = normalizeLetterSize(value);
+      return sizes.filter(function (size) {
+        return normalizeLetterSize(size) === normalized;
+      })[0];
+    }
+    var own = memory[sizeKey] && offered(memory[sizeKey].value);
+    if (own) return own;
+    if (!sizes.every(isLetterSize)) return null;
+    var others = Object.keys(memory)
+      .filter(function (key) {
+        return key !== sizeKey && memory[key] && isLetterSize(memory[key].value);
+      })
+      .sort(function (a, b) {
+        return (memory[b].time || 0) - (memory[a].time || 0);
+      });
+    for (var i = 0; i < others.length; i += 1) {
+      var match = offered(memory[others[i]].value);
+      if (match) return match;
+    }
+    return null;
+  }
+
   // The variant a wishlist entry starts on: the given colour (any colour when
-  // blank) with its first available size in storefront order. WK can only
-  // store whole variants, so a colour without a size cannot be saved.
+  // blank) with the shopper's remembered size when that colour has it
+  // available, otherwise the middle of its available sizes in storefront
+  // order (lower middle for an even count), which is closer to most shoppers
+  // than the smallest. WK can only store whole variants, so a colour without
+  // a size cannot be saved.
   window.obWishlistStartVariant = function (product, colorValue) {
     if (!product || !product.variants || !product.variants.length) return null;
     var options = (product.options || []).map(function (option) {
@@ -97,14 +163,19 @@
     if (!candidates.length) return null;
     if (sizeIndex === -1) return candidates[0];
 
-    var firstSize = window.obSortSizeValues(
-      candidates.map(function (variant) {
-        return variant.options[sizeIndex];
-      })
-    )[0];
+    var sizes = window.obSortSizeValues(
+      candidates
+        .map(function (variant) {
+          return variant.options[sizeIndex];
+        })
+        .filter(function (size, index, all) {
+          return all.indexOf(size) === index;
+        })
+    );
+    var startSize = rememberedSize(options[sizeIndex], sizes) || sizes[Math.floor((sizes.length - 1) / 2)];
     return (
       candidates.filter(function (variant) {
-        return variant.options[sizeIndex] === firstSize;
+        return variant.options[sizeIndex] === startSize;
       })[0] || candidates[0]
     );
   };

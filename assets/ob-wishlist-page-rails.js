@@ -192,6 +192,8 @@
       radio.name = namePrefix;
       radio.value = option.value;
       radio.className = 'visually-hidden';
+      // Same attribute as the PDP picker, so ob-wishlist.js remembers the pick.
+      radio.dataset.optionName = optionKeyFromSelect(select);
       if (option.value === select.value) radio.checked = true;
 
       var label = document.createElement('label');

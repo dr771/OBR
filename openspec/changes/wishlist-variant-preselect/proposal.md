@@ -4,8 +4,8 @@ Wishlist King can only store a whole variant (colour and size), never a colour a
 
 ## What Changes
 
-- The card heart adds through WK's API with the shown colour's first available size (storefront size order) instead of WK's variant-less add. Removing through a filled heart stays WK's own.
-- On the wishlist page, picking a colour on an item without a chosen size also picks that colour's first available size, so photo, price, badge and add-to-cart follow at once.
+- The card heart adds through WK's API with the shown colour and a start size: the shopper's last chosen size for that size system (letter sizes also across systems), else the middle available size instead of WK's variant-less add. Removing through a filled heart stays WK's own.
+- On the wishlist page, picking a colour on an item without a chosen size also picks that colour's start size, so photo, price, badge and add-to-cart follow at once.
 - The wishlist page's size grid renders in the PDP's size order.
 - The PDP size order (and its JS twin) recognises Akeneo's long letter forms `XXXS`, `XXXL`, `XXXXL` as `3XS`, `3XL`, `4XL`; Juicy Couture's sizes used to land unsorted at the end.
 
