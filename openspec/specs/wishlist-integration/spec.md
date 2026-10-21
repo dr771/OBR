@@ -217,3 +217,88 @@ The page header (title, login/share controls) SHALL use the theme's body font fa
 - **WHEN** the cart drawer or `/cart` page renders its wishlist cross-sell
 - **THEN** its layout, dropdown sizing, CTA styling, and remove control remain exactly as previously shipped, unaffected by the standalone page's restyling
 
+### Requirement: Standalone wishlist cards carry the product-card photo badge
+Each card on the standalone `/apps/wishlist` page SHALL show the shared product card's photo badge over its image: a sold-out badge when the product has no available variant, otherwise a sale badge when what the card shows is reduced. Percentages SHALL follow the product-card rule, `floor((compare_at_price - price) * 100 / compare_at_price)` per variant, with a variant whose compare-at price is unset, 0 or not above its price counting as 0. The scope SHALL be the variant WK has resolved for the card (the one whose price it displays and add-to-cart posts); before WK resolves one, it SHALL be the available variants matching the options chosen so far, ignoring WK's placeholder value. One percentage across the scope SHALL display as `-N%`; differing percentages SHALL display the largest behind the translatable "up to" prefix. The badge SHALL be hidden when the scope has no reduction and SHALL follow every option change on the card. It SHALL be derived from the product's own data and MUST NOT change WK's selection, price or add-to-cart behaviour; when the product data cannot be loaded the card SHALL render without a badge.
+
+#### Scenario: Saved variant is reduced
+- **WHEN** a card's resolved variant costs EUR 63 with a compare-at price of EUR 90
+- **THEN** the card's photo shows `-30%`
+
+#### Scenario: Item saved without a variant
+- **WHEN** a product saved from a PLP heart has one colour reduced by 30% and another at full price, and no option is chosen yet
+- **THEN** the card shows `tot -30%`
+
+#### Scenario: Shopper picks a full-price size
+- **WHEN** a shopper selects a size whose variant is not reduced on a card showing a sale badge
+- **THEN** the badge hides once WK shows that variant's price, and returns when a reduced size is selected again
+
+#### Scenario: Product is not on sale
+- **WHEN** no variant in the card's scope is reduced
+- **THEN** no badge renders
+
+### Requirement: Standalone wishlist option changes are never dropped
+On the standalone `/apps/wishlist` page, WK ignores an option change, add-to-cart or remove that arrives while it is still saving a previous one. The page SHALL therefore hand rail changes and the themed remove action to WK one at a time, each only once WK has finished the previous save, and a newer chip click on the same option SHALL replace a queued one, so the last chip the shopper clicked is the selection WK ends up with. A clicked chip SHALL stay selected while its change waits. While a card's change is pending, its price and badge SHALL read as updating. An add-to-cart submitted while any change is pending or being saved SHALL wait, with a visible loading state on its button, and SHALL then post the variant WK resolved from the final selection. If WK's requests never go quiet the queue SHALL proceed after a bounded wait rather than block the page.
+
+#### Scenario: Shopper clicks several sizes quickly
+- **WHEN** a shopper clicks sizes 37, 38 and 36 within a second
+- **THEN** the 36 chip stays selected, and WK's price, badge and variant id end on 36
+
+#### Scenario: Add to cart during a save
+- **WHEN** the shopper clicks add-to-cart while the last size change is still being saved
+- **THEN** the button shows a spinner and the cart receives the variant of the last clicked size
+
+#### Scenario: Remove during a save
+- **WHEN** the shopper removes an item while a change on any card is still being saved
+- **THEN** the item is removed once that save has finished
+
+### Requirement: Wishlist entries start on a whole variant
+Because WK stores only whole variants, a wishlist entry SHALL start on the colour the shopper saw with a start size chosen from that colour's available sizes (all of its sizes when none is available): the size the shopper last chose for the same size system (the raw size option key, e.g. `shoe_size_eu`) when the colour offers it; otherwise, when every offered size is a letter size, the most recent letter size the shopper chose in another size system that the colour offers; otherwise the middle of the offered sizes in storefront size order (the PDP's order), the lower middle for an even count. Numeric sizes SHALL NOT carry across size systems. A product without a colour option SHALL use all its variants; one without a size option SHALL start on the colour's first available variant.
+
+Only the shopper's own size choices SHALL count: a size picked on the PDP picker or the standalone wishlist page's size grid by a real user interaction, never a size the theme preselected. They SHALL be kept per browser only, and unavailable storage SHALL simply mean the middle-size fallback.
+
+The PDP SHALL choose the size it opens on among the available sizes of the colour it opens with, keeping that colour and updating the selected variant as a shopper's pick would: (1) a variant linked from the cart or a wishlist SHALL stay unchanged; (2) otherwise a size the listing the shopper came from was filtered to, when offered; (3) otherwise the remembered size as above; (4) otherwise the middle available size in storefront order, not the first variant in source order. A size the PDP preselects SHALL NOT count as a shopper choice, and SHALL NOT move keyboard focus to the picker.
+
+A product card's wishlist heart (collection, search and any other shared product-card surface where WK injects it) SHALL add the item this way, using the colour the card currently shows, instead of WK's variant-less add. Removing through a filled heart SHALL remain WK's own behaviour. If the product data cannot be loaded, the heart SHALL fall back to WK's variant-less add.
+
+On the standalone wishlist page, picking a colour on an item with no chosen size (an entry saved before hearts saved variants) SHALL also pick that colour's start size the same way, so the photo, price, badge and add-to-cart follow the colour without a further click. An already chosen size SHALL NOT be changed by a colour pick. The page's size options SHALL render in storefront size order.
+
+#### Scenario: Heart on a card showing a non-default colour
+- **WHEN** a shopper selects the Sugar Swizzle chip on a card and clicks its empty heart
+- **THEN** the wishlist entry is Sugar Swizzle in its start size, not the product's first colour
+
+#### Scenario: Colour picked on an entry without a size
+- **WHEN** a wishlist entry shows the Kleur/Maat placeholders and the shopper picks Bright Pink
+- **THEN** Bright Pink's start size is selected and the card shows Bright Pink's photo, price and an enabled add-to-cart
+
+#### Scenario: Colour picked with a size already chosen
+- **WHEN** the entry already has size M and the shopper picks another colour
+- **THEN** the size stays M
+
+#### Scenario: Scrambled sizes on the wishlist page
+- **WHEN** a product's sizes arrive as `XXXXL XS S L XXXL XXL XXS XL M`
+- **THEN** the size grid shows `XXS XS S M L XL XXL XXXL XXXXL`
+
+#### Scenario: Shopper chose a size before
+- **WHEN** the shopper picked M on a trousers PDP (`bottoms_size`) and later hearts a hoodie (`tops_size`) offering XS to XL
+- **THEN** the hoodie entry starts on M
+
+#### Scenario: No size chosen yet
+- **WHEN** a shopper with no remembered shoe size hearts a shoe offered in 40 to 47
+- **THEN** the entry starts on 43
+
+#### Scenario: PDP opens with a remembered size
+- **WHEN** the shopper picked M on one trousers PDP and opens another trousers PDP linked to its Bright Pink XXXXL variant
+- **THEN** the PDP shows Bright Pink in M, and add-to-cart posts the Bright Pink M variant
+
+#### Scenario: PDP without a remembered size for its size system
+- **WHEN** only a letter size is remembered and the shopper opens a shoe PDP offering 35 to 43
+- **THEN** the PDP opens on 39
+
+#### Scenario: PDP opened from a size-filtered listing
+- **WHEN** L is remembered and the shopper opens a trousers PDP from a listing filtered to M
+- **THEN** the PDP opens on M and L stays remembered
+
+#### Scenario: PDP opened from the cart
+- **WHEN** the shopper opens a cart line's product link for size XXL
+- **THEN** the PDP stays on XXL
+
