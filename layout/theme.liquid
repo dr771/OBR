@@ -444,6 +444,14 @@
 
     <script src="{{ 'ob-wishlist.js' | asset_url }}" defer="defer"></script>
     {%- if request.path contains '/apps/wishlist' -%}
+      <script>
+        window.obWishlistBadges = {
+          upTo: {{ 'products.product.sale_up_to' | t | json }},
+          soldOut: {{ 'products.product.sold_out' | t | json }},
+          saleScheme: {{ settings.sale_badge_color_scheme | prepend: 'color-' | json }},
+          soldOutScheme: {{ settings.sold_out_badge_color_scheme | prepend: 'color-' | json }}
+        };
+      </script>
       <script src="{{ 'ob-swatch-tooltip.js' | asset_url }}" defer="defer"></script>
       <script src="{{ 'ob-option-rail.js' | asset_url }}" defer="defer"></script>
       <script src="{{ 'ob-wishlist-page-rails.js' | asset_url }}" defer="defer"></script>

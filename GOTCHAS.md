@@ -86,6 +86,7 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 - WK's page-width setting sets `.wk-page` max-width but its inner padding is hardcoded (~16px); scope header-edge fixes to `#MainContent > wishlist-page > .wk-page`.
 - The drawer remove button ships `transition: all`; override it with an explicit `background-color` transition.
 - `<wishlist-page>` always renders its own `.wk-header` chrome; it is hidden via CSS because no attribute suppresses it.
+- **WK drops changes made while a save is in flight.** Every option change, add and remove PUTs to `api.appmate.io` and re-renders from the server answer (~0.4–0.9s). A second change inside that window sends no request at all: the `<select>` keeps the new value (lit committed nothing new) while the hidden `input[name=id]`, the price and add-to-cart stay on the previous variant. Calling `removeWishlistItem` for several items in parallel also drops all but one. Read the resolved variant from `input[name=id]`, not from the selects, and serialize API calls with a wait between them.
 
 ## Shopify CLI and pushing
 

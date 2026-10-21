@@ -18,6 +18,9 @@
  * idempotent MutationObserver + requestAnimationFrame pattern already used
  * elsewhere in ob-wishlist.js. Every per-card step is try/catch guarded and
  * fails open to WK's native dropdown for that one card.
+ *
+ * The same pass also keeps the PLP card's photo badge (sale percentage or
+ * sold out) on each card, from the product JSON the rails already fetch.
  */
 (function () {
   'use strict';
@@ -294,25 +297,138 @@
     });
   }
 
+  // Sale percentage of one variant, as ob-sale-label computes it: rounded
+  // down, and 0 when the compare-at price is unset, 0 or not above the price.
+  function salePercent(variant) {
+    var compare = variant.compare_at_price || 0;
+    return compare > variant.price ? Math.floor(((compare - variant.price) * 100) / compare) : 0;
+  }
+
+  // What the photo badge says, mirroring the PLP card: sold out when nothing
+  // is available, else the sale percentage of what the card shows. Once WK
+  // has resolved a variant (its hidden id input, the variant whose price the
+  // card displays and that add-to-cart posts) that is the one; before that,
+  // the available variants matching the options chosen so far, as an "up to"
+  // value when they differ (a full-price variant counts as 0). The id wins
+  // over the selects because WK can lag a fast rail change by a render.
+  function badgeState(form, product) {
+    if (!product || !product.variants) return null;
+    if (!product.available) return { soldOut: true };
+
+    var idInput = form.querySelector('input[name="id"]');
+    var resolvedId = idInput ? Number(idInput.value) : 0;
+    var resolved = resolvedId
+      ? product.variants.filter(function (variant) {
+          return variant.id === resolvedId;
+        })
+      : [];
+    if (resolved.length) {
+      var percent = salePercent(resolved[0]);
+      return percent > 0 ? { percent: percent, range: false } : null;
+    }
+
+    // An item saved without a variant (PLP heart) selects WK's placeholder,
+    // whose value is the option label ("Kleur"), so only real values count.
+    var chosen = [];
+    form.querySelectorAll('.wk-variants wk-option-select').forEach(function (picker, index) {
+      var select = picker.querySelector('select');
+      var value = select ? (select.value || '').trim() : '';
+      var option = product.options && product.options[index];
+      var values = (option && option.values) || [];
+      var isReal = values.some(function (v) {
+        return (v || '').trim() === value;
+      });
+      if (value && isReal) chosen.push({ prop: 'option' + (index + 1), value: value });
+    });
+
+    var matching = product.variants.filter(function (variant) {
+      return chosen.every(function (option) {
+        return (variant[option.prop] || '').trim() === option.value;
+      });
+    });
+    var scope =
+      matching.length === 1
+        ? matching
+        : matching.filter(function (variant) {
+            return variant.available;
+          });
+
+    var min = -1;
+    var max = 0;
+    scope.forEach(function (variant) {
+      var percent = salePercent(variant);
+      if (min === -1 || percent < min) min = percent;
+      if (percent > max) max = percent;
+    });
+    return max > 0 ? { percent: max, range: min !== max } : null;
+  }
+
+  // The badge lives inside the photo link, so it overlays the image at the
+  // PLP card's spot. Rewritten only when its state changes: the body
+  // MutationObserver below would otherwise re-trigger itself.
+  function syncBadge(card, form, product) {
+    var link = card.querySelector('.wk-image-link');
+    if (!link) return;
+    var state = badgeState(form, product);
+    var badge = link.querySelector(':scope > .ob-wishlist-badge');
+    var key = !state ? '' : state.soldOut ? 'sold-out' : (state.range ? '~' : '') + state.percent;
+
+    if (!badge) {
+      if (!key) return;
+      badge = document.createElement('span');
+      link.appendChild(badge);
+    }
+    if (badge.dataset.obBadge === key) return;
+    badge.dataset.obBadge = key;
+    badge.hidden = !key;
+    if (!key) return;
+
+    var labels = window.obWishlistBadges || {};
+    badge.className =
+      'ob-wishlist-badge badge ' +
+      (state.soldOut ? 'ob-wishlist-badge--sold-out ' + (labels.soldOutScheme || '') : 'badge--sale ' + (labels.saleScheme || ''));
+    badge.textContent = '';
+    if (state.soldOut) {
+      badge.textContent = labels.soldOut || '';
+      return;
+    }
+    if (state.range && labels.upTo) {
+      var prefix = document.createElement('span');
+      prefix.className = 'ob-sale-badge__prefix';
+      prefix.textContent = labels.upTo;
+      badge.appendChild(prefix);
+      badge.appendChild(document.createTextNode(' '));
+    }
+    var value = document.createElement('span');
+    value.className = 'ob-sale-badge__value';
+    value.textContent = '-' + state.percent + '%';
+    badge.appendChild(value);
+  }
+
   function scanCards(root) {
     var forms = root.querySelectorAll('.wk-product-card .wk-form');
     forms.forEach(function (form) {
       var card = form.closest('.wk-product-card');
       if (!card) return;
 
-      if (form.querySelector(':scope > .ob-wishlist-rails') || card.querySelector(':scope > .ob-wishlist-color-rail')) {
-        syncForm(card, form);
-        return;
-      }
+      var built = !!(form.querySelector(':scope > .ob-wishlist-rails') || card.querySelector(':scope > .ob-wishlist-color-rail'));
+      if (built) syncForm(card, form);
 
       var handle = handleFromCard(card);
       if (!handle) return;
 
       fetchProduct(handle).then(function (product) {
+        if (!built) {
+          try {
+            buildRailsForForm(card, form, product);
+          } catch (e) {
+            // fail open: card keeps its native dropdowns
+          }
+        }
         try {
-          buildRailsForForm(card, form, product);
+          syncBadge(card, form, product);
         } catch (e) {
-          // fail open: card keeps its native dropdowns
+          // fail open: card shows no badge
         }
       });
     });
@@ -333,7 +449,15 @@
       });
     }
 
-    new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true, attributes: true });
+    // characterData: a size change can leave every attribute alone, WK only
+    // rewrites the price text, and the badge has to follow it.
+    new MutationObserver(schedule).observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      characterData: true,
+    });
+    document.addEventListener('change', schedule);
     schedule();
   });
 })();

@@ -268,7 +268,7 @@
        render anywhere else in the theme. Strip a trailing 3-letter code so
        "€100,00 EUR" reads "€100,00". */
     function stripCurrencySuffix(root) {
-      root.querySelectorAll('.wk-current-price').forEach(function (el) {
+      root.querySelectorAll('.wk-current-price, .wk-compare-price').forEach(function (el) {
         var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
         var node;
         while ((node = walker.nextNode())) {

@@ -50,6 +50,43 @@
   mix-blend-mode: multiply;
 }
 
+/* Photo badge (ob-wishlist-page-rails.js) — the PLP card's sale / sold-out
+   pill and its top-left spot over the image. */
+#MainContent > wishlist-page .wk-image-link {
+  position: relative;
+}
+
+#MainContent > wishlist-page .ob-wishlist-badge {
+  position: absolute;
+  top: 1.3rem;
+  left: 1rem;
+  z-index: 1;
+  font-family: var(--font-body-family);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.5rem;
+  letter-spacing: normal;
+  text-transform: uppercase;
+}
+
+#MainContent > wishlist-page .ob-wishlist-badge[hidden] {
+  display: none;
+}
+
+#MainContent > wishlist-page .ob-wishlist-badge.badge--sale {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: var(--ob-accent);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.4rem;
+}
+
+#MainContent > wishlist-page .ob-wishlist-badge .ob-sale-badge__prefix {
+  font-size: 0.9rem;
+  text-transform: none;
+}
+
 /* Colour rail — sits directly under the main photo, matching the PLP layout
    (assets/ob-wishlist-page-rails.js inserts it as a sibling of .wk-image-link,
    before .wk-meta; size/other option rails stay with the form, see below) */
@@ -97,6 +134,21 @@
   color: rgb(var(--color-foreground));
   opacity: 0.8;
   text-align: left;
+}
+
+/* Sale pricing as on the PLP card: accent current amount, muted struck-through compare-at. */
+#MainContent > wishlist-page .wk-current-price.wk-sale {
+  color: var(--ob-accent);
+  font-weight: 600;
+  opacity: 1;
+}
+
+#MainContent > wishlist-page .wk-compare-price {
+  font-family: var(--font-body-family);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: rgba(var(--color-foreground), 0.75);
+  opacity: 0.8;
 }
 
 /* Variant dropdowns — cart-drawer cross-sell's compact tokens. Always one row:
