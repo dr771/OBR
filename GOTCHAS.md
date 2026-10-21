@@ -136,4 +136,5 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 ## Shopify Forms newsletter popup
 
 - Shopify Forms renders the popup in an open shadow root without exposed parts; theme CSS cannot reach the teaser heading or fixed root. assets/ob-newsletter-popup.js adopts a stylesheet using data-current-step/data-position and data-testid hooks instead of hashed classes, and gives the host z-index 8 to contain the app's inline 2147483647 below drawers.
-
+- After a theme push, unversioned CDN asset URLs (even with an arbitrary verify query) can serve the previous JS. Verify with the current asset_url-generated ?v= URL from freshly rendered HTML; the newsletter size update otherwise measured 14.3px instead of the deployed 12.1px.
+- If Chrome DevTools Page.captureScreenshot stalls on a background storefront tab, select_page with bringToFront: true before retrying; foreground captures completed normally after the background capture timed out.

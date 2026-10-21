@@ -9,13 +9,26 @@
 
     [data-current-step="tease"][data-position="bottom-right"] {
       right: 70px !important;
+      bottom: calc(var(--ob-scroll-top-bottom, 1.5rem) + 2.2rem) !important;
+      transform: translateY(50%) !important;
+      padding-block: 0 !important;
       max-width: calc(100vw - 70px);
       box-sizing: border-box;
+    }
+
+    button[data-testid="form-teaser"] {
+      padding: 5px 14px;
+      border: 1px solid #38b6ff47;
     }
 
     [data-testid="form-teaser"] h3 {
       font-family: var(--font-body-family, Inter, sans-serif);
       font-size-adjust: from-font;
+      font-size: calc(var(--heading-font-size) * 0.55);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: #0d80c4;
     }
   `);
 

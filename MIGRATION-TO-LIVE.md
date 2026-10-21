@@ -117,3 +117,5 @@ The recurring theme: **a theme copy carries only the theme.** Everything below l
 | Shipping zones/rates | ❌ | by hand in admin |
 | Customers (legacy Drupal accounts), customer-accounts version | ❌ | cleaned CSV import in admin, section 3 |
 | Theme settings (`settings_data.json`) | ⚠️ only if pushed | us |
+
+- [ ] Recreate the newsletter popup in Shopify Forms and enable its theme app embed on the live shop; forms and signup/discount settings are shop data. The theme's ob-newsletter-popup.js styles floating bottom-right teasers independently of the form ID.

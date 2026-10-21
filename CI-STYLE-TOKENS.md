@@ -283,3 +283,7 @@ Descriptive, in `assets/component-ob-swatches.css`:
   measured-to-the-pixel values from the approved Bolt prototype — those
   files are the source of truth for their surfaces; this doc only extracts
   the *reusable cross-component conventions*, not every measured value.
+
+## Newsletter popup teaser
+
+- The Shopify Forms small teaser uses uppercase Inter/body typography at calc(var(--heading-font-size) * 0.55), weight 600, 1px letter spacing and #0d80c4 text, 5px 14px padding, a 1px solid #38b6ff47 border, and a 70px right inset to clear the compact Trusted Shops badge. Its vertical centre follows --ob-scroll-top-bottom plus half the 44px back-to-top button height. The shadow host sits at z-index 8 so the cart drawer covers the app's otherwise maximum-z-index content (assets/ob-newsletter-popup.js).
