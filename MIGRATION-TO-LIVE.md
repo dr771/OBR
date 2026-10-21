@@ -16,6 +16,7 @@ Status legend: `[ ]` todo · `[x]` done · `[~]` in progress/partially known
   { metaobjects(type: "filtercolors", first: 50) { edges { node {
     handle capabilities { publishable { status } } } } } }
   ```
+  **Lasting fix, as done on dev 2026-10-21:** after the first live sync, set any DRAFT entries ACTIVE, then switch the `publishable` capability **off** on every sync-managed definition (`metaobjectDefinitionUpdate` → `capabilities: { publishable: { enabled: false } }`). Entries then have no status and new ones can never arrive DRAFT. Re-check after any sync that re-creates a definition (`POST-SYNC-CHECK.md` §3).
 - [ ] Confirm the outstanding `NICK.md` data fixes landed on live (colour tagging, hexcodes, Dutch labels) rather than only on dev.
 
 ## 2. Custom data definitions

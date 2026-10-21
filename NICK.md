@@ -6,7 +6,9 @@ Ordered by impact.
 
 ---
 
-## 1. Metaobject entries arrive DRAFT — RESOLVED, no action for Nick
+## 1. Metaobject entries arrive DRAFT — RESOLVED structurally 2026-10-21, no action for Nick
+
+**2026-10-21: the `publishable` capability is now OFF on both definitions** (`filtercolors`, `activities`). Entries have no DRAFT/ACTIVE status any more and are always visible; a test entry created without a status came back `publishable: null`, which is exactly how the connector creates them. This came about because it had silently recurred: 5 entries created by syncs after 2026-08-11 were DRAFT and hidden from the filters — `print` (32 FitFlop variants), `multicolor` (14 FitFlop), `transparant` (2 Nike Swim), `sb_hardlopen` and `sb_lifestyle` (1 Odlo product each). All 5 were set ACTIVE first, then the capability was switched off. The risk named in option 2 below did not apply: the connector evidently sends no status, otherwise its entries would not have arrived DRAFT. Watch for it anyway: if a sync ever reports errors on metaobject writes, or `capabilities.publishable.enabled` is `true` again (the connector re-creating the definition), this is the place to look.
 
 **Corrected attribution (2026-08-11, per Nick).** This is **not an Akeneo sync bug**. It's a Shopify platform default: any metaobject definition with the `publishable` capability enabled makes *new API-created entries* DRAFT unless the creating request explicitly sets `capabilities.publishable.status: ACTIVE`. Nick hit and fixed this on the SweatyBetty project already; it was recorded there in July and I failed to check that before writing it up here as a defect. Both OB definitions have `capabilities.publishable.enabled: true`, which is what exposes the default.
 
@@ -117,6 +119,14 @@ Things that did **not** work: writing a sentinel value (never propagated), waiti
 **Standing risk:** any future Akeneo *mapping* change re-breaks this the same way. Routine value syncs appear unaffected (not yet observed across one). If the facets suddenly render English again, this is the first thing to check — and the fix above takes about two minutes.
 
 Note `label` and `display_label` are **gone** — Nick's connector deleted them when the mapping changed. The Dutch text now exists only in `label_nl`, so there is no second copy to backfill from if that field is ever pruned.
+
+### Recurrence 2026-10-21 — and the definition-rewrite theory does not hold
+
+Kleur rendered `black`/`blue`/… again; Activities stayed Dutch. API values were all correct, entries untouched since 2026-08-31. Fixed with the three steps above (18 entries), live-verified. When it broke is unknown: the colour facet shows chips only, the label is in a tooltip and screen-reader text, so nobody sees it break. `image_asset` and `image` are not new and are not the trigger.
+
+Straight after the fix, every operation a sync can perform was run against the working `filtercolors` definition, checking the rendered facet after each: disable the `publishable` capability; create a field; delete an empty field; change `label_nl`'s own definition (description); switch `displayNameKey` away and back; `metaobjectUpsert` an existing entry with all fields; create a new entry; create a field, write values to two entries, delete it (the 2026-08-31 pattern). **None of them broke `label_nl`.** So "any connector definition rewrite orphans the surviving fields" is not reproducible and should no longer be treated as the cause. What triggers the break is still unknown — the only way left to find it is to catch the moment it happens and compare with Nick's sync log.
+
+Open hypothesis, untested: the break lived in the `publishable` snapshot the storefront serves (it fits "a written sentinel never propagated"). That capability is off on both definitions since 2026-10-21 (item 1), so if it never recurs, that was likely it.
 
 **Lesson for any future field added to route around this:** verify the *storefront Liquid render*, never just the Admin API. The API reports the field correctly whether or not Liquid can read it, which is exactly how `display_label` went unnoticed for 5 days.
 
@@ -370,3 +380,25 @@ Of 8,551 variants read from the storefront, 8,272 carry `compareAtPrice: 0.00` a
 - **Ask:** write `null` when a variant has no compare-at price, and never a compare-at equal to the price (one variant of Pas de Monaco Redaur had 70.00 / 70.00; cleared by hand).
 - **Workarounds in place:** the Solden collection rule is `compare-at price > 0`, and the theme treats a compare-at of 0 or not above the price as "not reduced" (`snippets/ob-sale-label.liquid`, `snippets/card-product.liquid`).
 - **Also worth confirming:** per-size prices inside one reduced colour differ in the test data (45.00 to 87.30). The card shows `tot -50%` for that; if real data is uniform per colour it shows the plain percentage.
+
+---
+
+## 14. Two Odlo products carry SweatyBetty activity codes (found 2026-10-21)
+
+Two activity entries came from SweatyBetty's vocabulary: `SB_hardlopen` (label `Hardlopen`, brand `SB`) and `SB_lifestyle` (label `Lifestyle`, brand `SB`). They were hidden as DRAFT until 2026-10-21 (item 1). Now that they are visible, the Activities filter shows **`Lifestyle` twice** and **`Hardlopen` next to `Running`**. Each one sits on exactly one OB product, both Odlo:
+
+- `SB_hardlopen` → Odlo Socks Over The Calf Primaloft Pro
+- `SB_lifestyle` → Odlo Gloves CERAMIWARM LIGHT
+
+Most likely these two products were mapped to the SB activity codes in Akeneo by mistake. **Ask Nick:** map them to OB's `running` / `lifestyle`. The two `SB_` entries can then be deleted from the OB shop, or kept out of the OB sync if they are shared on purpose.
+
+---
+
+## 15. A marketing pallet is live as a shop product (found 2026-10-21)
+
+**Open, left as is.** Owner's read (2026-10-21): most likely a test product of Nick's. Nothing to do on our side until he confirms.
+
+`Pal Box Rica Lewis Marketing Unisex 8 kg Italië` (vendor `Rica Lewis`, created 2026-09-30) is `ACTIVE` and on the storefront: in `/collections/all` and in the Dames, Heren and Kinderen collections. It has no product type and no category. It reads like a B2B or marketing article that came in with the sync, not something a customer can buy. It is also the only `Rica Lewis` product, so the Merk filter now lists a brand with one non-product.
+
+- **Ask Nick:** should it be in the webshop feed at all? If not, exclude it in Akeneo and set it to draft or delete it in the shop. If Rica Lewis is a real new brand, which products are coming?
+- Do not assign Rica Lewis to a needs collection until that is clear (`ob-collection-maintenance`).
