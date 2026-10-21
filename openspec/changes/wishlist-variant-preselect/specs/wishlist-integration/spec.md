@@ -5,6 +5,8 @@ Because WK stores only whole variants, a wishlist entry SHALL start on the colou
 
 Only the shopper's own size choices SHALL count: a size picked on the PDP picker or the standalone wishlist page's size grid by a real user interaction, never a size the theme preselected. They SHALL be kept per browser only, and unavailable storage SHALL simply mean the middle-size fallback.
 
+The PDP SHALL open on the remembered size the same way (same size system first, letter sizes across systems) when the colour it opens with offers that size available, keeping that colour and updating the selected variant as a shopper's pick would. Without such a size it SHALL keep its usual start variant; the middle-size fallback applies to wishlist entries only. A size the PDP preselects this way SHALL NOT itself count as a shopper choice.
+
 A product card's wishlist heart (collection, search and any other shared product-card surface where WK injects it) SHALL add the item this way, using the colour the card currently shows, instead of WK's variant-less add. Removing through a filled heart SHALL remain WK's own behaviour. If the product data cannot be loaded, the heart SHALL fall back to WK's variant-less add.
 
 On the standalone wishlist page, picking a colour on an item with no chosen size (an entry saved before hearts saved variants) SHALL also pick that colour's start size the same way, so the photo, price, badge and add-to-cart follow the colour without a further click. An already chosen size SHALL NOT be changed by a colour pick. The page's size options SHALL render in storefront size order.
@@ -32,3 +34,11 @@ On the standalone wishlist page, picking a colour on an item with no chosen size
 #### Scenario: No size chosen yet
 - **WHEN** a shopper with no remembered shoe size hearts a shoe offered in 40 to 47
 - **THEN** the entry starts on 43
+
+#### Scenario: PDP opens with a remembered size
+- **WHEN** the shopper picked M on one trousers PDP and opens another trousers PDP linked to its Bright Pink XXXXL variant
+- **THEN** the PDP shows Bright Pink in M, and add-to-cart posts the Bright Pink M variant
+
+#### Scenario: PDP without a remembered size for its size system
+- **WHEN** only a letter size is remembered and the shopper opens a shoe PDP
+- **THEN** the PDP keeps its usual start variant

@@ -17,6 +17,9 @@
 
 - [x] 4.1 `ob-option-value-order` aliases `XXXXXXL`…`XXXL`, `XXXS` to the numbered forms
 
+- [x] 4.2 PDP opens on the remembered size (`ob-size-memory.js`), size helpers moved there from `ob-wishlist.js`
+
 ## 5. Verify
 
 - [x] 5.1 Live: Juicy PDP sizes `XXS … XXL XXXL XXXXL`; wishlist placeholder entry → Bright Pink picks XXS, photo/price/CTA follow; search-card heart on Sugar Swizzle saved Sugar Swizzle / L (middle) without memory; filled heart still removes; after a real PDP click on M: trousers M, hoodie M, shoes still 39 / 43 (middle); wishlist size keypress remembered
+- [x] 5.2 Live: with M remembered for `bottoms_size`, trousers PDP linked to Bright Pink/XXXXL opens Bright Pink/M (URL and cart id follow); hoodie opens M; Lulu keeps 35

@@ -26,119 +26,12 @@
   }
   window.obWkReady = obWkReady;
 
-  // Size values in storefront order, the JS twin of ob-option-value-order:
-  // all-numeric values (EU shoe sizes) ascending, letter sizes in semantic
-  // order (XXXL reads as 3XL), anything unrecognised appended in source order.
-  var LETTER_SIZES = ['3XS', 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL', '6XL'];
-
-  function normalizeLetterSize(value) {
-    return String(value || '')
-      .trim()
-      .toUpperCase()
-      .replace(/^X{3,}(S|L)$/, function (match, end) {
-        return match.length - 1 + 'X' + end;
-      });
-  }
-
-  window.obSortSizeValues = function (values) {
-    var numeric =
-      values.length > 0 &&
-      values.every(function (value) {
-        return /^\d+([.,]\d+)?$/.test(String(value).trim());
-      });
-    function rank(value) {
-      if (numeric) return parseFloat(String(value).trim().replace(',', '.'));
-      var index = LETTER_SIZES.indexOf(normalizeLetterSize(value));
-      return index === -1 ? Infinity : index;
-    }
-    return values
-      .map(function (value, index) {
-        return { value: value, index: index, rank: rank(value) };
-      })
-      .sort(function (a, b) {
-        return a.rank - b.rank || a.index - b.index;
-      })
-      .map(function (entry) {
-        return entry.value;
-      });
-  };
-
-  function optionKindFromName(name) {
-    var lower = String(name || '').toLowerCase();
-    if (lower.indexOf('size') !== -1 || lower.indexOf('maat') !== -1) return 'size';
-    if (lower.indexOf('color') !== -1 || lower.indexOf('colour') !== -1 || lower.indexOf('kleur') !== -1) return 'color';
-    return 'other';
-  }
-
-  // The shopper's own size choices, per size system (the raw Akeneo key, e.g.
-  // `shoe_size_eu`, `tops_size`), most recent wins. Only trusted clicks on a
-  // size option count (PDP picker, wishlist size grid), never a value the
-  // theme preselected. Kept in this browser only; storage failures just mean
-  // nothing is remembered.
-  var SIZE_MEMORY_KEY = 'ob-size-memory';
-
-  function readSizeMemory() {
-    try {
-      var stored = JSON.parse(window.localStorage.getItem(SIZE_MEMORY_KEY) || '{}');
-      return stored && typeof stored === 'object' ? stored : {};
-    } catch (e) {
-      return {};
-    }
-  }
-
-  document.addEventListener('change', function (evt) {
-    var input = evt.target;
-    if (!evt.isTrusted || !input || input.type !== 'radio' || !input.checked) return;
-    var key = input.dataset && input.dataset.optionName;
-    if (!key || optionKindFromName(key) !== 'size') return;
-    try {
-      var memory = readSizeMemory();
-      memory[key] = { value: input.value, time: Date.now() };
-      window.localStorage.setItem(SIZE_MEMORY_KEY, JSON.stringify(memory));
-    } catch (e) {
-      // fail open: this choice is just not remembered
-    }
-  });
-
-  function isLetterSize(value) {
-    return LETTER_SIZES.indexOf(normalizeLetterSize(value)) !== -1;
-  }
-
-  // A remembered size this product offers: the same size system first, then
-  // (for letter sizes) the latest letter size from another system, since tops
-  // and bottoms usually share it. Numeric sizes never cross systems: shoe 40
-  // says nothing about a numeric clothing size 40.
-  function rememberedSize(sizeKey, sizes) {
-    var memory = readSizeMemory();
-    function offered(value) {
-      var normalized = normalizeLetterSize(value);
-      return sizes.filter(function (size) {
-        return normalizeLetterSize(size) === normalized;
-      })[0];
-    }
-    var own = memory[sizeKey] && offered(memory[sizeKey].value);
-    if (own) return own;
-    if (!sizes.every(isLetterSize)) return null;
-    var others = Object.keys(memory)
-      .filter(function (key) {
-        return key !== sizeKey && memory[key] && isLetterSize(memory[key].value);
-      })
-      .sort(function (a, b) {
-        return (memory[b].time || 0) - (memory[a].time || 0);
-      });
-    for (var i = 0; i < others.length; i += 1) {
-      var match = offered(memory[others[i]].value);
-      if (match) return match;
-    }
-    return null;
-  }
-
   // The variant a wishlist entry starts on: the given colour (any colour when
   // blank) with the shopper's remembered size when that colour has it
   // available, otherwise the middle of its available sizes in storefront
   // order (lower middle for an even count), which is closer to most shoppers
   // than the smallest. WK can only store whole variants, so a colour without
-  // a size cannot be saved.
+  // a size cannot be saved. Size helpers live in ob-size-memory.js.
   window.obWishlistStartVariant = function (product, colorValue) {
     if (!product || !product.variants || !product.variants.length) return null;
     var options = (product.options || []).map(function (option) {
@@ -147,7 +40,7 @@
     var colorIndex = -1;
     var sizeIndex = -1;
     options.forEach(function (name, index) {
-      var kind = optionKindFromName(name);
+      var kind = window.obOptionKind(name);
       if (kind === 'color' && colorIndex === -1) colorIndex = index;
       if (kind === 'size' && sizeIndex === -1) sizeIndex = index;
     });
@@ -172,7 +65,7 @@
           return all.indexOf(size) === index;
         })
     );
-    var startSize = rememberedSize(options[sizeIndex], sizes) || sizes[Math.floor((sizes.length - 1) / 2)];
+    var startSize = window.obRememberedSize(options[sizeIndex], sizes) || sizes[Math.floor((sizes.length - 1) / 2)];
     return (
       candidates.filter(function (variant) {
         return variant.options[sizeIndex] === startSize;
@@ -183,8 +76,8 @@
   // PLP / search card heart. WK's injected floating button saves the product
   // without a variant, so the wishlist opened on the product's first colour
   // with no size, whatever colour the card showed. An add goes through WK's
-  // own API instead, with the card's shown colour and its first available
-  // size; removing (a filled heart) stays WK's own click. Fails open to WK's
+  // own API instead, with the card's shown colour and its start size (see
+  // obWishlistStartVariant); removing (a filled heart) stays WK's own click. Fails open to WK's
   // click when the card has no product link or WK's API is missing.
   obWkReady(function (wk) {
     if (typeof wk.addWishlistItem !== 'function') return;
