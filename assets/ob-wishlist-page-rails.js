@@ -192,17 +192,168 @@
     return grid;
   }
 
+  // WK saves every change in one cycle (PUT to api.appmate.io, a re-read of
+  // the wishlist, then Storefront GraphQL for the product data) and ignores
+  // any change, add or remove that arrives before the cycle ends; its render
+  // then even resets the select to the old value (see GOTCHAS.md). So WK
+  // actions go through one FIFO that runs a task only while no WK request is
+  // in flight, then waits for the cycle it starts. A newer chip click on the
+  // same option replaces its queued one, so the last click wins.
+  // Fail open: tasks run anyway after MAX_WAIT_MS of continuous traffic, and
+  // without any tracked request the queue runs every task straight away.
+  var IDLE_MS = 150;
+  var MAX_WAIT_MS = 5000;
+  var wkInflight = 0;
+  var wkQuietUntil = 0;
+  var wkBusySince = 0;
+  var wkTasks = [];
+  var wkTimer = null;
+
+  function isWkRequest(url) {
+    return /appmate\.io|\/api\/[^/]+\/graphql\.json/.test(url);
+  }
+
+  function trackWkRequests() {
+    var original = window.fetch;
+    if (typeof original !== 'function' || original.obWkTracked) return;
+    var tracked = function (input) {
+      var url = typeof input === 'string' ? input : (input && input.url) || String(input || '');
+      if (!isWkRequest(url)) return original.apply(this, arguments);
+      wkInflight += 1;
+      if (!wkBusySince) wkBusySince = Date.now();
+      return original.apply(this, arguments).finally(function () {
+        wkInflight = Math.max(0, wkInflight - 1);
+        wkQuietUntil = Date.now() + IDLE_MS;
+        scheduleWkTasks(IDLE_MS + 10);
+      });
+    };
+    tracked.obWkTracked = true;
+    window.fetch = tracked;
+  }
+
+  function wkBusy() {
+    return wkInflight > 0 || Date.now() < wkQuietUntil;
+  }
+
+  function scheduleWkTasks(delay) {
+    window.clearTimeout(wkTimer);
+    wkTimer = window.setTimeout(runWkTasks, Math.max(0, delay));
+  }
+
+  function runWkTasks() {
+    wkTimer = null;
+    var now = Date.now();
+    var stuck = wkBusySince && now - wkBusySince > MAX_WAIT_MS;
+    if (wkBusy() && !stuck) {
+      // A finishing request reschedules; this timer only covers the quiet gap
+      // and the fail-open deadline.
+      var deadline = wkBusySince ? wkBusySince + MAX_WAIT_MS - now + 10 : MAX_WAIT_MS;
+      scheduleWkTasks(wkInflight > 0 ? deadline : Math.min(deadline, wkQuietUntil - now + 10));
+      return;
+    }
+
+    var task = wkTasks.shift();
+    if (task) {
+      // WK starts its request a few ms after the event, so hold the queue for
+      // a quiet gap whether or not any request shows up.
+      wkBusySince = Date.now();
+      wkQuietUntil = wkBusySince + IDLE_MS;
+      try {
+        task.run();
+      } catch (e) {
+        // fail open: this task is dropped, the rest of the queue still runs
+      }
+      scheduleWkTasks(IDLE_MS + 10);
+      return;
+    }
+
+    wkBusySince = 0;
+    document.querySelectorAll('.ob-wishlist-card--syncing').forEach(function (card) {
+      card.classList.remove('ob-wishlist-card--syncing');
+    });
+  }
+
+  function queueWkTask(task) {
+    if (task.select) {
+      wkTasks = wkTasks.filter(function (queued) {
+        return queued.select !== task.select;
+      });
+    }
+    wkTasks.push(task);
+    if (!wkTimer) scheduleWkTasks(0);
+  }
+
+  function selectHasQueuedValue(select) {
+    return wkTasks.some(function (task) {
+      return task.select === select;
+    });
+  }
+
+  // For the cross-sell remove button in ob-wishlist.js: on this page its
+  // removeWishlistItem call waits its turn instead of being dropped.
+  window.obWkWhenIdle = function (run) {
+    queueWkTask({ run: run });
+  };
+
   function wireRail(shell, select) {
     shell.addEventListener('change', function (evt) {
       var radio = evt.target;
       if (!radio || radio.type !== 'radio') return;
-      try {
-        select.value = radio.value;
-        select.dispatchEvent(new Event('change', { bubbles: true }));
-      } catch (e) {
-        // fail open: rail selection simply doesn't propagate this time
-      }
+      var value = radio.value;
+      var card = shell.closest('.wk-product-card');
+      if (card) card.classList.add('ob-wishlist-card--syncing');
+      queueWkTask({
+        select: select,
+        run: function () {
+          if (!select.isConnected) return;
+          select.value = value;
+          if (select.value !== value) return;
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+        },
+      });
     });
+  }
+
+  // Add-to-cart posts WK's hidden variant id. While a chip change is queued
+  // or being saved that id is still the previous variant, so the submit waits
+  // behind a spinner and goes out once the queue has drained.
+  function guardCartSubmit() {
+    document.addEventListener(
+      'submit',
+      function (evt) {
+        var form = evt.target;
+        if (!form || !form.closest || !form.closest('#MainContent > wishlist-page')) return;
+        if (form.dataset.obWkSubmitReady === 'true') {
+          delete form.dataset.obWkSubmitReady;
+          return;
+        }
+        if (!wkBusy() && !wkTasks.length) return;
+
+        evt.preventDefault();
+        evt.stopImmediatePropagation();
+        var button = evt.submitter || form.querySelector('.wk-cta-button');
+        if (button) {
+          button.classList.add('ob-wk-cta--waiting');
+          button.setAttribute('aria-busy', 'true');
+        }
+
+        queueWkTask({
+          run: function () {
+            if (button) {
+              button.classList.remove('ob-wk-cta--waiting');
+              button.removeAttribute('aria-busy');
+            }
+            if (!form.isConnected) return;
+            var submitter = button && button.isConnected && button.form === form && !button.disabled ? button : null;
+            if (button && !submitter) return;
+            form.dataset.obWkSubmitReady = 'true';
+            if (submitter) form.requestSubmit(submitter);
+            else form.requestSubmit();
+          },
+        });
+      },
+      true
+    );
   }
 
   function syncRailAvailability(shell, select) {
@@ -216,6 +367,8 @@
       var disabled = !option || option.disabled;
       radio.disabled = disabled;
       radio.classList.toggle('disabled', disabled);
+      // A queued click keeps its chip: WK's render may still show the old value.
+      if (selectHasQueuedValue(select) || shell.closest('.ob-wishlist-card--syncing')) return;
       if (option && option.value === select.value && !radio.checked) radio.checked = true;
     });
   }
@@ -433,6 +586,9 @@
       });
     });
   }
+
+  trackWkRequests();
+  guardCartSubmit();
 
   window.obWkReady(function () {
     var isEnglish = (document.documentElement.lang || '').toLowerCase().indexOf('en') === 0;

@@ -18,3 +18,18 @@ Each card on the standalone `/apps/wishlist` page SHALL show the shared product 
 #### Scenario: Product is not on sale
 - **WHEN** no variant in the card's scope is reduced
 - **THEN** no badge renders
+
+### Requirement: Standalone wishlist option changes are never dropped
+On the standalone `/apps/wishlist` page, WK ignores an option change, add-to-cart or remove that arrives while it is still saving a previous one. The page SHALL therefore hand rail changes and the themed remove action to WK one at a time, each only once WK has finished the previous save, and a newer chip click on the same option SHALL replace a queued one, so the last chip the shopper clicked is the selection WK ends up with. A clicked chip SHALL stay selected while its change waits. While a card's change is pending, its price and badge SHALL read as updating. An add-to-cart submitted while any change is pending or being saved SHALL wait, with a visible loading state on its button, and SHALL then post the variant WK resolved from the final selection. If WK's requests never go quiet the queue SHALL proceed after a bounded wait rather than block the page.
+
+#### Scenario: Shopper clicks several sizes quickly
+- **WHEN** a shopper clicks sizes 37, 38 and 36 within a second
+- **THEN** the 36 chip stays selected, and WK's price, badge and variant id end on 36
+
+#### Scenario: Add to cart during a save
+- **WHEN** the shopper clicks add-to-cart while the last size change is still being saved
+- **THEN** the button shows a spinner and the cart receives the variant of the last clicked size
+
+#### Scenario: Remove during a save
+- **WHEN** the shopper removes an item while a change on any card is still being saved
+- **THEN** the item is removed once that save has finished

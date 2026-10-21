@@ -592,10 +592,16 @@
 
         var button = template.content.firstElementChild.cloneNode(true);
         button.addEventListener('click', function () {
-          try {
+          function remove() {
             if (window.WishlistKing && typeof window.WishlistKing.removeWishlistItem === 'function') {
               window.WishlistKing.removeWishlistItem({ wishlistItemId: wishlistItemId });
             }
+          }
+          try {
+            // The /apps/wishlist page queues WK calls (ob-wishlist-page-rails.js)
+            // because WK drops one made while it is still saving another.
+            if (typeof window.obWkWhenIdle === 'function') window.obWkWhenIdle(remove);
+            else remove();
           } catch (e) {
             // fail open: click is a no-op
           }

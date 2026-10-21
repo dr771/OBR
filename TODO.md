@@ -1,4 +1,4 @@
-
+finetune newsletter popup style
 ===
 BUG - back from PDP/wishlist after show more: same position!
 

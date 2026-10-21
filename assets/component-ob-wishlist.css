@@ -293,6 +293,43 @@
   }
 }
 
+/* WK is still saving an option change (ob-wishlist-page-rails.js): price and
+   badge are about to update, and add-to-cart waits behind a spinner. */
+#MainContent > wishlist-page .wk-price,
+#MainContent > wishlist-page .ob-wishlist-badge {
+  transition: opacity 150ms ease;
+}
+
+#MainContent > wishlist-page .ob-wishlist-card--syncing .wk-price,
+#MainContent > wishlist-page .ob-wishlist-card--syncing .ob-wishlist-badge {
+  opacity: 0.4;
+}
+
+#MainContent > wishlist-page .wk-cta-button.ob-wk-cta--waiting {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+#MainContent > wishlist-page .wk-cta-button.ob-wk-cta--waiting::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  margin: auto;
+  border: 0.2rem solid color-mix(in srgb, var(--ob-button-text) 35%, transparent);
+  border-top-color: var(--ob-button-text);
+  border-radius: 50%;
+  animation: ob-wk-cta-spin 700ms linear infinite;
+}
+
+@keyframes ob-wk-cta-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Page header — WK's own title/login/controls chrome, matched to theme typography */
 #MainContent > wishlist-page .wk-title {
   font-family: var(--font-body-family) !important;
