@@ -95,13 +95,13 @@
         <div class="grid__item product__media-wrapper">
           <div class="ob-pdp__gallery-badges">
             {%- render 'ob-product-badge', product: product, placement: 'gallery' -%}
+            {%- render 'ob-campaign-badge', product: product, placement: 'gallery' -%}
             <span
               id="SaleBadge-{{ section.id }}"
               class="ob-badge ob-badge--gallery ob-badge--sale{% unless selected_variant_is_on_sale %} hidden{% endunless %}"
             >
               {%- render 'ob-discount-percentage', target: product.selected_or_first_available_variant -%}
             </span>
-            {%- render 'ob-campaign-badge', product: product, placement: 'gallery' -%}
           </div>
           {% render 'product-media-gallery', variant_images: variant_images %}
         </div>

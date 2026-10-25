@@ -68,10 +68,20 @@
             "icon": "none",
             "campaign": "actie-fitflop-laarzen"
           }
+        },
+        "announcement_winter_loewenweiss": {
+          "type": "announcement",
+          "settings": {
+            "text": "Winteractie Löwenweiss: 2+1 gratis",
+            "link": "shopify://collections/loewenweiss",
+            "icon": "none",
+            "campaign": "actie-winter-loewenweiss"
+          }
         }
       },
       "block_order": [
-        "announcement_fitflop_laarzen"
+        "announcement_fitflop_laarzen",
+        "announcement_winter_loewenweiss"
       ],
       "name": "Acties Announcement bar",
       "settings": {

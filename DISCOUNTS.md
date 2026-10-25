@@ -14,7 +14,7 @@ The theme can't read Shopify discounts, only collections. That's why a visible c
 
 ## Visible campaign in 5 steps
 
-Live example on dev: [FitFlop laarzen – 2e paar -50%](https://original-brands-dev.myshopify.com/collections/actie-fitflop-laarzen) (collection `actie-fitflop-laarzen` incl. Sale, BXGY discount of the same name, promo bar message linking to Laarzen).
+Live example on dev: [FitFlop laarzen – 2e paar -50%](https://original-brands-dev.myshopify.com/collections/actie-fitflop-laarzen) (collection `actie-fitflop-laarzen` incl. Sale, BXGY discount of the same name, promo bar message linking to Laarzen), running in parallel with [Winteractie Löwenweiss – 2+1 gratis](https://original-brands-dev.myshopify.com/collections/loewenweiss).
 
 
 1. **Create Collection:** handle starts with `actie-`. Add the products (no sale items). Fill the metafields *Actie: badge-tekst* (`-20%`, `2+1`), *start*, *einde*, and optionally *prioriteit*. Publish to Online Store.

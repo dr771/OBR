@@ -453,28 +453,20 @@
   gallery image; font-size/padding scaled down to match.
 */
 /*
-  Top-left stack holding the bestseller and campaign badges (card-product.liquid),
-  so a product that is both stacks its pills instead of overlapping them.
+  Card badge column (card-product.liquid): Dawn's top-left .card__badge holds
+  the OB pills (bestseller, campaign) followed by the sale/sold-out badge, so
+  they stack in that order instead of overlapping. .ob-card-badges only groups
+  the OB pills; its children join the column.
 */
-.card-wrapper.product-card-wrapper .ob-card-badges {
-  position: absolute;
-  top: 1.2rem;
-  left: 1.2rem;
-  z-index: 2;
+.card-wrapper.product-card-wrapper .card__badge {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 0.6rem;
-  pointer-events: none;
 }
 
-/*
-  Dawn's own sale/sold-out badge (.card__badge, badge_position "top left") sits
-  in the same corner. While it is visible the stack moves below it; :has()
-  follows the sale badge's [hidden] toggle on in-card colour changes.
-*/
-.card-wrapper.product-card-wrapper:has(.card__badge .badge:not([hidden])) .ob-card-badges {
-  top: 4.6rem;
+.card-wrapper.product-card-wrapper .ob-card-badges {
+  display: contents;
 }
 
 .card-wrapper.product-card-wrapper .ob-badge--card {

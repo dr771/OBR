@@ -303,7 +303,7 @@ The load-more area has no top divider or padding: its count starts 48px below th
 ## Campaign badges and free-shipping progress (2026-10-25)
 
 - **Campaign red** `--ob-campaign: #d6260c` (base.css): the brand red `#f7391e` darkened until white badge text passes AA (white on `#f7391e` is ~4.0:1). Red keeps its playbook role as the promo accent; blue stays sale, black stays bestseller.
-- **Card campaign pill:** the bestseller pill's geometry (`0.5rem 1.3rem 0.6rem`, `1rem`/700 uppercase, 4rem radius) on `--ob-campaign`. Card stack `.ob-card-badges`: top-left `1.2rem`, column, `0.6rem` gap; moves to `top: 4.6rem` while Dawn's top-left `.card__badge` shows a badge.
+- **Card campaign pill:** the bestseller pill's geometry (`0.5rem 1.3rem 0.6rem`, `1rem`/700 uppercase, 4rem radius) on `--ob-campaign`. Card badge column: Dawn's top-left `.card__badge` as a flex column with `0.6rem` gap, order bestseller → campaign (red) → sale/sold-out (blue); the PDP gallery stack uses the same order.
 - **PDP gallery campaign pill:** the `.ob-badge--gallery` treatment on `--ob-campaign`, last in the gallery stack.
 - **Free-shipping progress:** truck icon in `--ob-accent`, `1.3rem/1.8rem` body text with the amount at 600; `0.4rem` pill track at 15% accent, accent fill with a 0.3s width transition; reached state in `#0d80c4` at 500.
 - **PDP campaign note** (`.ob-campaign-note`): `1.3rem/1.8rem` body font, 500, brand-blue ink `#0d80c4` (red read as an error), `0.8rem` below the price row. The badge itself stays campaign red.
