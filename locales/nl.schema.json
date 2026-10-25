@@ -472,6 +472,10 @@
         }
       },
       "settings": {
+        "ob_replace_others": {
+          "label": "Promobalk: vervangt andere aankondigingsbalken",
+          "info": "Zolang deze balk een bericht toont, zijn alle andere aankondigingsbalken (bv. de trustbalk) verborgen. Na afloop van de actie komen ze vanzelf terug."
+        },
         "auto_rotate": {
           "label": "Aankondigingen automatisch draaien"
         },

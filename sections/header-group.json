@@ -85,6 +85,7 @@
       ],
       "name": "Acties Announcement bar",
       "settings": {
+        "ob_replace_others": true,
         "auto_rotate": false,
         "change_slides_speed": 5,
         "color_scheme": "scheme-5",

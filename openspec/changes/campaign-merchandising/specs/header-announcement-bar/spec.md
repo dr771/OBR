@@ -36,3 +36,18 @@ The breakpoint-aware visibility rules and the single-message rule SHALL apply to
 #### Scenario: Three blocks, two in their run time on mobile
 - **WHEN** two of three blocks are visible and the viewport is below the tablet breakpoint
 - **THEN** the slider cycles between those two messages only
+
+### Requirement: A promo bar replaces the other announcement bars while it shows a message
+An announcement-bar section SHALL offer a setting that marks it as a promo bar. While a promo bar shows at least one message — evaluated with the same run-time rules, including on the shopper's clock — every other announcement-bar section SHALL be hidden, so the storefront never shows two announcement bars at once. When the promo bar shows no message (none configured, or all outside their run time), the other bars SHALL render as usual. A bar without the setting SHALL behave as before.
+
+#### Scenario: Campaign running
+- **WHEN** the promo bar has a message inside its run time
+- **THEN** the promo bar is visible and the trust bar is not
+
+#### Scenario: Campaign over on a cached page
+- **WHEN** a page rendered during the campaign is served after the campaign's end
+- **THEN** the promo bar is hidden and the trust bar is visible again
+
+#### Scenario: Promo bar placed below the trust bar
+- **WHEN** the promo bar section comes after the trust bar in the header and shows a message
+- **THEN** the trust bar is still hidden

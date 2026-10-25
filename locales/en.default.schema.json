@@ -442,6 +442,10 @@
     "announcement-bar": {
       "name": "Announcement bar",
       "settings": {
+        "ob_replace_others": {
+          "label": "Promo bar: replaces other announcement bars",
+          "info": "While this bar shows a message, every other announcement bar (e.g. the trust bar) is hidden. When its campaigns are over, they come back automatically."
+        },
         "auto_rotate": {
           "label": "Auto rotate announcements"
         },
