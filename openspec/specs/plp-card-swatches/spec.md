@@ -34,7 +34,7 @@ Each swatch chip SHALL carry a reference to that color's second color-coded medi
 
 #### Scenario: Shopper hovers a card whose active color has a second shot
 - **WHEN** a shopper on a pointer-capable device moves the pointer over the image area of a card whose selected color has a second shot
-- **THEN** that selected color's second image is inserted after the primary image and revealed without a fade
+- **THEN** that selected color's second image is inserted after the primary image and revealed
 
 #### Scenario: Shopper switches color after the pair exists
 - **WHEN** a shopper selects another color after the second image has been materialized
@@ -42,7 +42,7 @@ Each swatch chip SHALL carry a reference to that color's second color-coded medi
 
 #### Scenario: Pointer leaves the image area
 - **WHEN** the pointer moves from the card image area to its swatches, title, or outside the card
-- **THEN** the selected color's first image is shown again without a fade
+- **THEN** the selected color's first image is shown again
 
 #### Scenario: Color has only one shot
 - **WHEN** the selected color has no second media item matching its filename code

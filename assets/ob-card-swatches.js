@@ -127,9 +127,11 @@
     Warm every card's hover image before the first hover, so it is already
     decoded when the pointer reaches the photo. The image is created lazy, so
     the browser fetches it only as the card nears the viewport. Runs only on
-    hover-capable input. A MutationObserver rescans because facets, load-more
-    and recommendations insert cards after load. It watches childList only,
-    so the marker attribute set here doesn't retrigger it.
+    hover-capable input, and only after `load` plus an idle slot, so it never
+    competes with the page's own first images. A MutationObserver rescans
+    because facets, load-more and recommendations insert cards later. It
+    watches childList only, so the marker attribute set here doesn't
+    retrigger it.
   */
   var warmTimer = null;
 
@@ -142,10 +144,50 @@
     });
   }
 
-  new MutationObserver(function () {
-    if (!warmTimer) warmTimer = setTimeout(warmCards, 150);
-  }).observe(document.documentElement, { childList: true, subtree: true });
-  warmCards();
+  function startWarming() {
+    new MutationObserver(function () {
+      if (!warmTimer) warmTimer = setTimeout(warmCards, 150);
+    }).observe(document.documentElement, { childList: true, subtree: true });
+    warmCards();
+  }
+
+  function whenIdle(fn) {
+    if (window.requestIdleCallback) window.requestIdleCallback(fn, { timeout: 2000 });
+    else setTimeout(fn, 200);
+  }
+
+  if (document.readyState === 'complete') {
+    whenIdle(startWarming);
+  } else {
+    window.addEventListener(
+      'load',
+      function () {
+        whenIdle(startWarming);
+      },
+      { once: true }
+    );
+  }
+
+  /*
+    Fetch every other color's primary shot as soon as the pointer enters a
+    card, so a chip swap comes from the browser's image cache instead of
+    waiting on the network for each color. It uses the card image's own
+    `sizes`, so the browser picks the same srcset candidate the swap will
+    request. Triggered by pointer intent only: nothing is fetched on page load
+    or on touch-only input.
+  */
+  function warmSwatchImages(card) {
+    if (card.hasAttribute('data-ob-chips-warm')) return;
+    card.setAttribute('data-ob-chips-warm', '');
+    var img1 = card.querySelector('.card__media img:not(.ob-card-img2)');
+    var sizes = img1 && img1.getAttribute('sizes');
+    card.querySelectorAll('.ob-card-swatch[data-ob-swap-src]:not(.ob-card-swatch--active)').forEach(function (swatch) {
+      var img = new Image();
+      if (sizes) img.sizes = sizes;
+      img.srcset = swatch.dataset.obSwapSrcset || '';
+      img.src = swatch.dataset.obSwapSrc;
+    });
+  }
 
   function selectSwatch(swatch) {
     var card = swatch.closest('.card-wrapper');
@@ -202,20 +244,22 @@
   document.addEventListener('mouseover', function (event) {
     if (!event.target.closest) return;
     var swatch = event.target.closest('.ob-card-swatch');
-    if (swatch) {
-      selectSwatch(swatch);
-      return;
-    }
+    // Select first, so the hover image warmed below is already the new
+    // color's rather than the old one's.
+    if (swatch) selectSwatch(swatch);
 
-    // Warm the hover image as soon as the pointer enters ANY part of the
-    // card (bubbling mouseover fires well before it reaches the photo
-    // itself), instead of waiting for the geometric mousemove check below
-    // to confirm the cursor is over the media — that check fires only once
-    // the user is already basically hovering the image, leaving no lead
-    // time for the fetch. Cheap to call repeatedly: guarded by dataset.obFor.
+    // Warm the hover image and the other colors' shots as soon as the
+    // pointer enters ANY part of the card (bubbling mouseover fires well
+    // before it reaches the photo itself), instead of waiting for the
+    // geometric mousemove check below to confirm the cursor is over the
+    // media — that check fires only once the user is already basically
+    // hovering the image, leaving no lead time for the fetch. Cheap to call
+    // repeatedly: guarded by dataset.obFor and data-ob-chips-warm.
     if (!hoverMediaQuery.matches) return;
     var card = event.target.closest('.card-wrapper');
-    if (card) ensureHoverImage(card, true);
+    if (!card) return;
+    warmSwatchImages(card);
+    ensureHoverImage(card, true);
   });
 
   document.addEventListener(

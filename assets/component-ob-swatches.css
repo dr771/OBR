@@ -367,13 +367,17 @@
 }
 
 /*
-  Opacity stays instant (Dawn's generic opacity transition would flicker once
-  the lazy pair exists); transform gets its own animated transition for the
-  zoom.
+  The pair crossfades: both images fade at the same time, in both directions.
+  That is safe now because the reveal waits for data-ob-ready. Fading an image
+  that hadn't loaded yet used to flicker. The .card-wrapper prefix outranks
+  Dawn's `.card-wrapper:hover … > img + img { transition: transform }`, which
+  would otherwise drop the opacity fade while the card is hovered. Chip swaps
+  change `src`, not opacity, so they stay instant. `.motion-reduce` (base.css)
+  removes the fade for reduced-motion users.
 */
-.card__media .media.media--hover-effect > img:first-child:not(:only-child),
-.media > .ob-card-img2 {
-  transition: opacity 0s, transform var(--duration-long) ease;
+.card-wrapper .card__media .media.media--hover-effect > img:first-child:not(:only-child),
+.card-wrapper .card__media .media.media--hover-effect > img + img {
+  transition: opacity 0.25s ease, transform var(--duration-long) ease;
 }
 
 /*
