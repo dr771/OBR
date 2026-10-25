@@ -33,8 +33,16 @@
   }
 })();
 
+/*
+  Load more appends native result pages. The pages a shopper loaded and their
+  scroll offset live in this history entry's state, so returning from a PDP
+  (a fresh load whenever the bfcache misses) re-appends them and scrolls back
+  instead of dropping the shopper on the first page. Dawn's facets popstate
+  handler reads `searchParams` from the same state, so it is always kept.
+*/
 (() => {
   const SELECTOR = '[data-ob-load-more]';
+  const STATE_KEY = 'obLoadMore';
 
   const normalizeAppendedCard = (card) => {
     card.classList.remove('scroll-trigger', 'animate--slide-in', 'scroll-trigger--cancel');
@@ -47,52 +55,105 @@
     });
   };
 
+  const readState = () => (history.state && history.state[STATE_KEY]) || { pages: [] };
+
+  const writeState = (patch) => {
+    const current = history.state || {};
+    const searchParams =
+      typeof current.searchParams === 'string' ? current.searchParams : window.location.search.slice(1);
+    try {
+      history.replaceState({ ...current, searchParams, [STATE_KEY]: { ...readState(), ...patch } }, '');
+    } catch (error) {
+      /* State unavailable: load more still works, it just isn't restored. */
+    }
+  };
+
+  const fetchPage = async (nextUrl, sectionId) => {
+    const url = new URL(nextUrl, window.location.origin);
+    url.searchParams.set('section_id', sectionId);
+
+    const response = await fetch(url.toString());
+    if (!response.ok) throw new Error(`Load-more request failed (${response.status})`);
+
+    const responseDocument = new DOMParser().parseFromString(await response.text(), 'text/html');
+    const sourceGrid = responseDocument.getElementById('product-grid');
+    const cards = sourceGrid ? [...sourceGrid.children] : [];
+    if (!cards.length) throw new Error('Load-more response contains no products');
+
+    return { cards, control: responseDocument.querySelector('.ob-load-more') };
+  };
+
+  // Appends one fetched page and returns the control that replaced targetControl (null when exhausted).
+  const appendPage = ({ cards, control }, targetControl) => {
+    const targetGrid = document.getElementById('product-grid');
+    if (!targetGrid || !targetControl) throw new Error('Load-more target is missing');
+
+    const fragment = document.createDocumentFragment();
+    cards.forEach((card) => {
+      normalizeAppendedCard(card);
+      fragment.append(card);
+    });
+    targetGrid.append(fragment);
+
+    if (control) {
+      targetControl.replaceWith(control);
+      return control;
+    }
+    targetControl.remove();
+    return null;
+  };
+
+  const setBusy = (button) => {
+    const originalLabel = button.textContent;
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    button.textContent = 'Laden…';
+    return () => {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+      button.textContent = originalLabel;
+    };
+  };
+
   const loadMore = async (button) => {
     const nextUrl = button.dataset.obNextUrl;
     const sectionId = button.dataset.obSectionId;
     if (!nextUrl || !sectionId || button.disabled) return;
 
-    const originalLabel = button.textContent;
-    button.disabled = true;
-    button.setAttribute('aria-busy', 'true');
-    button.textContent = 'Laden…';
-
+    const reset = setBusy(button);
     try {
-      const url = new URL(nextUrl, window.location.origin);
-      url.searchParams.set('section_id', sectionId);
-
-      const response = await fetch(url.toString());
-      if (!response.ok) throw new Error(`Load-more request failed (${response.status})`);
-
-      const responseDocument = new DOMParser().parseFromString(await response.text(), 'text/html');
-      const sourceGrid = responseDocument.getElementById('product-grid');
-      const targetGrid = document.getElementById('product-grid');
-      const sourceControl = responseDocument.querySelector('.ob-load-more');
-      const targetControl = button.closest('.ob-load-more');
-
-      if (!sourceGrid || !targetGrid || !targetControl) throw new Error('Load-more response is incomplete');
-
-      const cards = [...sourceGrid.children];
-      if (!cards.length) throw new Error('Load-more response contains no products');
-
-      const fragment = document.createDocumentFragment();
-      cards.forEach((card) => {
-        normalizeAppendedCard(card);
-        fragment.append(card);
-      });
-      targetGrid.append(fragment);
-
-      if (sourceControl) {
-        targetControl.replaceWith(sourceControl);
-      } else {
-        targetControl.remove();
-      }
+      appendPage(await fetchPage(nextUrl, sectionId), button.closest('.ob-load-more'));
+      writeState({ pages: [...readState().pages, nextUrl] });
     } catch (error) {
       console.warn('[OB PLP] Unable to load more products.', error);
-      button.disabled = false;
-      button.removeAttribute('aria-busy');
-      button.textContent = originalLabel;
+      reset();
     }
+  };
+
+  const restore = async () => {
+    const { pages, scrollY } = readState();
+    const button = document.querySelector(SELECTOR);
+    if (!pages.length) return;
+    if (!button || pages[0] !== button.dataset.obNextUrl) {
+      writeState({ pages: [], scrollY: 0 });
+      return;
+    }
+
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    const reset = setBusy(button);
+    try {
+      const results = await Promise.all(pages.map((url) => fetchPage(url, button.dataset.obSectionId)));
+      let control = button.closest('.ob-load-more');
+      results.forEach((result) => {
+        if (control) control = appendPage(result, control);
+      });
+    } catch (error) {
+      console.warn('[OB PLP] Unable to restore loaded products.', error);
+      writeState({ pages: [], scrollY: 0 });
+      reset();
+    }
+    window.scrollTo(0, scrollY || 0);
+    if ('scrollRestoration' in history) history.scrollRestoration = 'auto';
   };
 
   document.addEventListener('click', (event) => {
@@ -100,6 +161,22 @@
     if (!button) return;
     loadMore(button);
   });
+
+  // Leaving the page (PDP click, reload): remember where the shopper was.
+  window.addEventListener('pagehide', () => {
+    if (readState().pages.length) writeState({ scrollY: window.scrollY });
+  });
+
+  // Facet history inside the page: Dawn re-renders that entry's first page.
+  window.addEventListener('popstate', () => {
+    if (readState().pages.length) writeState({ pages: [], scrollY: 0 });
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', restore, { once: true });
+  } else {
+    restore();
+  }
 })();
 
 (() => {
