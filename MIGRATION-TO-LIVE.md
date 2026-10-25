@@ -94,7 +94,7 @@ These do **not** travel with a theme export, and bare auto-created metafields ar
 
   Without the definition nothing errors — both surfaces silently fall back to each section block's own tagline setting, which is exactly the duplicated-copy state this change removed. So a live shop missing the definition looks correct but has regressed to two sources of truth.
 - [ ] **Set the free-shipping progress settings** (Theme settings → Cart → *Free-shipping progress*): threshold in EUR and the country list, matching the live free-shipping rate. Blank threshold = the cart drawer and `/cart` show no progress message. Stored in `settings_data.json`, so it does not travel with a normal push (`cart-free-shipping-progress`).
-- [ ] **Promo bar** is a second *Announcement bar* section with *Promobalk: vervangt andere aankondigingsbalken* ticked (hides the trust bar while it shows a message), added in the theme editor (`sections/header-group.json`, merchant-editable). Nothing to migrate unless a campaign is running at launch; then recreate it, with each message's *Looptijd actie* pointing at the live campaign collection.
+- [ ] **Promo bar** is a second *Announcement bar* section with *Promobalk: vervangt andere aankondigingsbalken* ticked (hides the trust bar while it shows a message), added in the theme editor (`sections/header-group.json`, merchant-editable). Nothing to migrate unless a campaign is running at launch; then recreate it, with each message's *Actiecollectie* pointing at the live campaign collection.
 
 ## 5. URLs & SEO
 

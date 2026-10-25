@@ -15,7 +15,16 @@ Afprijzingen (Solden/Outlet) komen uit het ERP/Akeneo als doorgestreepte prijs e
 
 **Black Friday en andere procentacties bij voorkeur via het ERP/Akeneo** als doorgestreepte prijs (vergelijkingsprijs), net als Solden. Dan ziet de klant overal meteen de echte prijs, en het %-label komt automatisch. Afspraken over start en einde met Nick.
 
-De werkwijze hieronder (Shopify-korting + actiecollectie) is voor acties die je zelf start, of die het ERP niet kan ("2+1"). Shopify rekent die korting pas in de winkelwagen: op de productpagina blijft de volle prijs staan, met eronder automatisch *"-15%: korting wordt verrekend in je winkelwagen"* (de tekst komt uit Actie: badge-tekst).
+De werkwijze hieronder (Shopify-korting + actiecollectie) is voor acties die je zelf start, of die het ERP niet kan ("2+1").
+
+**Badge of stil?** Het thema kan kortingen niet lezen, alleen collecties. Daarom:
+
+| Wil je… | Dan | Klant ziet |
+|---|---|---|
+| Badge, PDP-tekst en promobalk | Korting op een **actiecollectie** (stappen hieronder) | Badge overal, hint op de productpagina, korting in winkelwagen |
+| Alleen snel een korting, zonder zichtbaarheid | Korting direct op **specifieke producten** kiezen, geen collectie | Niets tot de winkelwagen |
+
+Bij een handmatige actiecollectie kies je de producten in de collectie in plaats van in de korting, dus niet dubbel. Shopify rekent die korting pas in de winkelwagen: op de productpagina blijft de volle prijs staan, met eronder automatisch *"-15%: korting wordt verrekend in je winkelwagen"* (de tekst komt uit Actie: badge-tekst).
 
 ## Een actie starten
 
@@ -36,7 +45,7 @@ De werkwijze hieronder (Shopify-korting + actiecollectie) is voor acties die je 
    - Type: *Bedrag van producten* voor -X%, *Koop X krijg Y* voor 2+1 (koop 2 uit de collectie, krijg 1 uit dezelfde collectie, 100% korting).
 3. **Promobalk (optioneel)**: Online Store → Thema's → Aanpassen → Header
    - Eenmalig (staat al klaar): een tweede sectie *Aankondigingsbalk* met een eigen kleurenschema en het vinkje **Promobalk: vervangt andere aankondigingsbalken**. Zolang de promobalk een bericht toont, verdwijnt de trustbalk (gratis verzending, levertijd, originele merken). Na de actie komt de trustbalk vanzelf terug. Er staan dus nooit twee balken tegelijk.
-   - Per bericht: tekst, link (meestal naar de actiecollectie) en bij **Looptijd actie** dezelfde collectie **kiezen met de collectiekiezer**. Het bericht verschijnt en verdwijnt dan vanzelf met de data van de collectie. De naam in de berichttekst typen is niet genoeg: zonder gekozen collectie staat het bericht er altijd.
+   - Per bericht: tekst, link (meestal naar de actiecollectie) en bij **Actiecollectie** dezelfde collectie **kiezen met de collectiekiezer**. Het bericht verschijnt en verdwijnt dan vanzelf met de data van de collectie. De naam in de berichttekst typen is niet genoeg: zonder gekozen collectie staat het bericht er altijd.
    - Geen bericht binnen de looptijd? Dan is de promobalk helemaal weg en staat de trustbalk er weer.
    - Wil je de USP's tijdens de actie toch tonen, zet ze dan als extra bericht in de promobalk.
 4. **Gratis verzending**: alleen als de drempel verandert
