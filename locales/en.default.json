@@ -200,6 +200,7 @@
       "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
       "size_guide": "Size guide",
       "bestseller": "Bestseller",
+      "campaign_note": "{{ badge }}: discount applied in your cart",
       "sale_up_to": "up to",
       "color_label": "Color: {{ color }}",
       "colors_previous": "Show previous colors",

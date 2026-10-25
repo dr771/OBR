@@ -11,6 +11,12 @@ Een actie (Black Friday, "2+1", merkweek) bestaat uit maximaal vier onderdelen d
 
 Afprijzingen (Solden/Outlet) komen uit het ERP/Akeneo als doorgestreepte prijs en krijgen automatisch het %-label. Daar hoef je niets voor te doen, en ze horen **niet** in een actiecollectie.
 
+## Eerst: kan het via het ERP?
+
+**Black Friday en andere procentacties bij voorkeur via het ERP/Akeneo** als doorgestreepte prijs (vergelijkingsprijs), net als Solden. Dan ziet de klant overal meteen de echte prijs, en het %-label komt automatisch. Afspraken over start en einde met Nick.
+
+De werkwijze hieronder (Shopify-korting + actiecollectie) is voor acties die je zelf start, of die het ERP niet kan ("2+1"). Shopify rekent die korting pas in de winkelwagen: op de productpagina blijft de volle prijs staan, met eronder automatisch *"-15%: korting wordt verrekend in je winkelwagen"* (de tekst komt uit Actie: badge-tekst).
+
 ## Een actie starten
 
 1. **Collectie aanmaken** (Producten → Collecties → Collectie maken)

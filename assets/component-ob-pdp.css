@@ -1123,3 +1123,23 @@ product-info.ob-pdp {
   line-height: 2.275rem;
   color: var(--ob-pdp-ink-muted);
 }
+
+/*
+  Campaign note under the PDP price (ob-campaign-badge placement 'note'): a
+  Shopify automatic discount only shows up in the cart, so this says so next
+  to the full price. Hidden with the campaign badge whenever the selected
+  variant shows its own sale badge (sale wins, spec campaign-badges).
+*/
+.ob-campaign-note {
+  margin: 0.8rem 0 0;
+  font-family: var(--font-body-family);
+  font-size: 1.3rem;
+  line-height: 1.8rem;
+  font-weight: 500;
+  color: var(--ob-campaign);
+}
+
+.ob-campaign-note[hidden],
+.product:has(.ob-pdp__gallery-badges .ob-badge--sale:not(.hidden)) .ob-campaign-note {
+  display: none !important;
+}

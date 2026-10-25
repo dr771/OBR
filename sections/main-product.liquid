@@ -144,6 +144,7 @@
                     </div>
                     {%- render 'ob-product-badge', product: product, placement: 'price' -%}
                   </div>
+                  {%- render 'ob-campaign-badge', product: product, placement: 'note' -%}
                   {%- if product.quantity_price_breaks_configured? -%}
                     <div class="volume-pricing-note" id="Volume-Note-{{ section.id }}">
                       <span>{{ 'products.product.volume_pricing.note' | t }}</span>

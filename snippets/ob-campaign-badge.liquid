@@ -24,7 +24,10 @@
 
   Accepts:
   - product: {Object} product object
-  - placement: {String} 'card' (default) | 'gallery'
+  - placement: {String} 'card' (default) | 'gallery' | 'note'
+    'note' is the PDP line under the price ("-15%: korting wordt verrekend in
+    je winkelwagen"): Shopify computes automatic discounts only in the cart, so
+    the price itself stays full. Same window/precedence/sale-suppression rules.
 
   Usage:
   {%- render 'ob-campaign-badge', product: card_product, placement: 'card' -%}
@@ -63,7 +66,11 @@
 {%- if ob_cb_entries != blank -%}
   {%- assign ob_cb_sorted = ob_cb_entries | split: ',' | sort -%}
   {%- assign ob_cb_shown = false -%}
-  <span class="ob-campaign-badges" data-ob-campaign-badges>
+  {%- assign ob_cb_wrapper = 'span' -%}
+  {%- if placement == 'note' -%}
+    {%- assign ob_cb_wrapper = 'div' -%}
+  {%- endif -%}
+  <{{ ob_cb_wrapper }} class="ob-campaign-badges" data-ob-campaign-badges>
     {%- for ob_cb_entry in ob_cb_sorted -%}
       {%- liquid
         assign ob_cb_index = ob_cb_entry | split: '#' | last | plus: 0
@@ -79,6 +86,24 @@
           assign ob_cb_shown = true
         endif
       -%}
+      {%- assign ob_cb_text = ob_cb_collection.metafields.custom.campaign_badge.value | strip -%}
+      {%- if placement == 'note' -%}
+        <p
+          class="ob-campaign-note"
+          {% if ob_cb_start > 0 %}
+            data-ob-window-start="{{ ob_cb_start }}"
+          {% endif %}
+          {% if ob_cb_end < 9999999999 %}
+            data-ob-window-end="{{ ob_cb_end }}"
+          {% endif %}
+          {% unless ob_cb_visible %}
+            hidden
+          {% endunless %}
+        >
+          {{- 'products.product.campaign_note' | t: badge: ob_cb_text -}}
+        </p>
+        {%- continue -%}
+      {%- endif -%}
       <span
         class="ob-badge ob-badge--campaign ob-badge--{{ placement | default: 'card' }}"
         {% if ob_cb_start > 0 %}
@@ -91,8 +116,8 @@
           hidden
         {% endunless %}
       >
-        {{- ob_cb_collection.metafields.custom.campaign_badge.value | strip | escape -}}
+        {{- ob_cb_text | escape -}}
       </span>
     {%- endfor -%}
-  </span>
+  </{{ ob_cb_wrapper }}>
 {%- endif -%}

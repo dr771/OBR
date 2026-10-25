@@ -200,6 +200,7 @@
       "duties_and_taxes_included": "Douanerechten en belastingen inbegrepen.",
       "size_guide": "Maatadvies",
       "bestseller": "Bestseller",
+      "campaign_note": "{{ badge }}: korting wordt verrekend in je winkelwagen",
       "sale_up_to": "tot",
       "color_label": "Kleur: {{ color }}",
       "colors_previous": "Vorige kleuren tonen",

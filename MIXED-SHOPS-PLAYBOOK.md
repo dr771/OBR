@@ -242,6 +242,12 @@ The three homepage "Shop per behoefte" collections (`sport-training`, `outdoor-w
 
 This also surfaced the brand-roster question below (Sweaty Betty/Nike Swim vs. RH+/Magnum) as concrete and no longer speculative.
 
+### D21 — Campaigns: ERP price first, Shopify discount only as fallback — decided 2026-10-25
+
+Shopify computes automatic discounts only in the cart and checkout. A product page or card cannot show the resulting price, so a Shopify-discount campaign shows "-15%" next to the full price. A price set in the ERP as compare-at shows a struck-through price and the real price everywhere, and gets the sale label automatically.
+
+**Decision:** Black Friday and other percentage campaigns go through the ERP/Akeneo as compare-at prices by default (if Nick can deliver start/end on time). A Shopify automatic discount on an `actie-*` collection is the fallback when marketing runs a campaign by hand, and for types the ERP can't express ("2+1"). In that case the PDP adds a note under the full price ("-15%: korting wordt verrekend in je winkelwagen", `campaign-badges`). Theme-computed prices from a `campaign_percentage` metafield were rejected: another value to keep in sync with the discount, and a mismatch would show a wrong price. Solden is excluded from campaigns, and a visible sale badge hides the campaign badge and note. Process: `CAMPAIGNS.md`.
+
 ### D20 — Dutch is the shop's primary locale, not a translation of English — decided and applied 2026-09-20
 
 The dev shop ran with `en` primary and `nl` published, although every piece of content was already written in Dutch and the EU market served `nl` at the root URL. English was nominal: `/en/` rendered the same Dutch text, and the shop had zero Dutch translations.

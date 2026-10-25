@@ -98,3 +98,18 @@ Reduced prices (compare-at from ERP/Akeneo) and campaigns SHALL never be adverti
 #### Scenario: Bestseller in a running campaign
 - **WHEN** a bestseller product is in a running campaign
 - **THEN** the bestseller and campaign badges are both visible without overlap
+
+### Requirement: The PDP says where the campaign discount is applied
+Because Shopify applies automatic discounts only in the cart, the PDP price stays at the full price while a campaign runs. Wherever the PDP gallery shows a campaign badge, the PDP SHALL also show, next to the price, a translatable note that names the badge text and states that the discount is applied in the cart. The note SHALL follow the badge's run time, precedence and sale suppression exactly, so the note and the gallery badge are always visible together or not at all.
+
+#### Scenario: Full-price variant in a running campaign
+- **WHEN** the PDP of a running-campaign product shows a variant without a sale badge
+- **THEN** the gallery shows the campaign badge and the price is followed by a note such as `-15%: korting wordt verrekend in je winkelwagen`
+
+#### Scenario: Shopper selects a reduced variant
+- **WHEN** the shopper switches to a variant whose sale badge is visible
+- **THEN** both the campaign badge and the note disappear
+
+#### Scenario: Campaign not running
+- **WHEN** no campaign of the product is inside its run time
+- **THEN** no note renders
