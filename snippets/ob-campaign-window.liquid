@@ -1,0 +1,54 @@
+{% comment %}
+  OB: the run time of a campaign collection, read from its
+  custom.campaign_starts_at / custom.campaign_ends_at date_time metafields.
+  An unset start means "already started", an unset end means "open-ended".
+  Shared by ob-campaign-badge (product badges) and announcement-bar.liquid
+  (promo messages that borrow a campaign's run time), so both read the dates
+  the same way.
+
+  Render time is only half the check: Shopify serves cached storefront HTML,
+  so 'now' here is as old as the cache entry. Callers write the window into
+  data attributes and re-check it against the shopper's clock in the browser
+  (assets/ob-campaign-window.js, and the announcement bar's inline script).
+
+  Accepts:
+  - collection: {Object} collection object
+  - output: {String} 'pair' (default) | 'attrs'
+    - 'pair': "start,end" in unix seconds; start 0 when unset, end
+      9999999999 when unset.
+    - 'attrs': ` data-ob-window-start="…" data-ob-window-end="…"` (each only
+      when set), plus ` hidden` when render time is outside the window.
+
+  Usage:
+  {%- capture window -%}{%- render 'ob-campaign-window', collection: c -%}{%- endcapture -%}
+  <div{% render 'ob-campaign-window', collection: c, output: 'attrs' %}>
+{% endcomment %}
+
+{%- liquid
+  assign ob_w_start = 0
+  assign ob_w_end = 9999999999
+
+  assign ob_w_start_value = collection.metafields.custom.campaign_starts_at.value
+  if ob_w_start_value != blank
+    assign ob_w_start = ob_w_start_value | date: '%s' | plus: 0
+  endif
+  assign ob_w_end_value = collection.metafields.custom.campaign_ends_at.value
+  if ob_w_end_value != blank
+    assign ob_w_end = ob_w_end_value | date: '%s' | plus: 0
+  endif
+
+  if output == 'attrs'
+    assign ob_w_now = 'now' | date: '%s' | plus: 0
+    if ob_w_start > 0
+      echo ' data-ob-window-start="' | append: ob_w_start | append: '"'
+    endif
+    if ob_w_end < 9999999999
+      echo ' data-ob-window-end="' | append: ob_w_end | append: '"'
+    endif
+    if ob_w_now < ob_w_start or ob_w_now >= ob_w_end
+      echo ' hidden'
+    endif
+  else
+    echo ob_w_start | append: ',' | append: ob_w_end
+  endif
+-%}

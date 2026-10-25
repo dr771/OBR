@@ -101,6 +101,7 @@
             >
               {%- render 'ob-discount-percentage', target: product.selected_or_first_available_variant -%}
             </span>
+            {%- render 'ob-campaign-badge', product: product, placement: 'gallery' -%}
           </div>
           {% render 'product-media-gallery', variant_images: variant_images %}
         </div>

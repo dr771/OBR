@@ -649,6 +649,10 @@ product-info.ob-pdp {
   color: #fff;
 }
 
+.ob-badge--gallery.ob-badge--campaign {
+  background: var(--ob-campaign);
+}
+
 .ob-badge--price {
   padding: 0.4rem 1rem;
   background: var(--ob-pdp-accent-tint);

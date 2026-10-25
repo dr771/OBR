@@ -489,6 +489,10 @@
             },
             "link": {
               "label": "Link"
+            },
+            "campaign": {
+              "label": "Campaign run time (optional)",
+              "info": "Show this message only during the campaign's run time: the start and end set on this collection (Actie: start / Actie: einde). Leave empty to always show it."
             }
           }
         }

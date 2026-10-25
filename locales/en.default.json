@@ -361,6 +361,10 @@
         "error_generic": "Something went wrong. Please try again.",
         "prefill_applied": "Discount \"{{ code }}\" applied."
       },
+      "free_shipping_progress": {
+        "remaining_html": "<strong>{{ amount }}</strong> more for free shipping",
+        "reached": "Your order ships for free"
+      },
       "summary": {
         "eyebrow": "Summary",
         "title": "Your order",

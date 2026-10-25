@@ -216,7 +216,15 @@
         >
           {%- if card_media -%}
             <div class="card__media{% if image_shape and image_shape != 'default' %} shape--{{ image_shape }} color-{{ settings.card_color_scheme }} gradient{% endif %}">
-              {%- render 'ob-product-badge', product: card_product, placement: 'card' -%}
+              {%- comment -%}
+                Top-left merchandising stack: bestseller + campaign badge, so they
+                stack instead of overlapping. Empty (and so hidden by Dawn's
+                div:empty) when neither applies. The sale badge stays bottom-left.
+              {%- endcomment -%}
+              <div class="ob-card-badges">
+                {%- render 'ob-product-badge', product: card_product, placement: 'card' -%}
+                {%- render 'ob-campaign-badge', product: card_product, placement: 'card' -%}
+              </div>
               <div class="media media--transparent media--hover-effect">
                 {% comment %}theme-check-disable ImgLazyLoading{% endcomment %}
                 <img

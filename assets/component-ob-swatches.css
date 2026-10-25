@@ -452,12 +452,33 @@
   PDP's 2.2rem since the card photo is roughly half the width of the PDP
   gallery image; font-size/padding scaled down to match.
 */
-.card-wrapper.product-card-wrapper .ob-badge--card {
-  display: inline-block;
+/*
+  Top-left stack holding the bestseller and campaign badges (card-product.liquid),
+  so a product that is both stacks its pills instead of overlapping them.
+*/
+.card-wrapper.product-card-wrapper .ob-card-badges {
   position: absolute;
   top: 1.2rem;
   left: 1.2rem;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  pointer-events: none;
+}
+
+/*
+  Dawn's own sale/sold-out badge (.card__badge, badge_position "top left") sits
+  in the same corner. While it is visible the stack moves below it; :has()
+  follows the sale badge's [hidden] toggle on in-card colour changes.
+*/
+.card-wrapper.product-card-wrapper:has(.card__badge .badge:not([hidden])) .ob-card-badges {
+  top: 4.6rem;
+}
+
+.card-wrapper.product-card-wrapper .ob-badge--card {
+  display: inline-block;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4rem;
   padding: 0.5rem 1.3rem 0.6rem;
@@ -470,6 +491,11 @@
   letter-spacing: normal;
   text-transform: uppercase;
   white-space: nowrap;
+}
+
+/* Campaign badge: the bestseller pill's geometry on the campaign red. */
+.card-wrapper.product-card-wrapper .ob-badge--card.ob-badge--campaign {
+  background: var(--ob-campaign);
 }
 
 .card-wrapper.product-card-wrapper .card__inner .card__media .media {

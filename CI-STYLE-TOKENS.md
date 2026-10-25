@@ -299,3 +299,11 @@ The load-more area has no top divider or padding: its count starts 48px below th
 ## Newsletter popup teaser
 
 - The Shopify Forms small teaser uses uppercase Inter/body typography at calc(var(--heading-font-size) * 0.55), weight 600, 1px letter spacing and #0d80c4 text, 5px 14px padding, a 1px solid #38b6ff47 border, and a 70px right inset to clear the compact Trusted Shops badge. Its vertical centre follows --ob-scroll-top-bottom plus half the 44px back-to-top button height. The shadow host sits at z-index 8 so the cart drawer covers the app's otherwise maximum-z-index content (assets/ob-newsletter-popup.js).
+
+## Campaign badges and free-shipping progress (2026-10-25)
+
+- **Campaign red** `--ob-campaign: #d6260c` (base.css): the brand red `#f7391e` darkened until white badge text passes AA (white on `#f7391e` is ~4.0:1). Red keeps its playbook role as the promo accent; blue stays sale, black stays bestseller.
+- **Card campaign pill:** the bestseller pill's geometry (`0.5rem 1.3rem 0.6rem`, `1rem`/700 uppercase, 4rem radius) on `--ob-campaign`. Card stack `.ob-card-badges`: top-left `1.2rem`, column, `0.6rem` gap; moves to `top: 4.6rem` while Dawn's top-left `.card__badge` shows a badge.
+- **PDP gallery campaign pill:** the `.ob-badge--gallery` treatment on `--ob-campaign`, last in the gallery stack.
+- **Free-shipping progress:** truck icon in `--ob-accent`, `1.3rem/1.8rem` body text with the amount at 600; `0.4rem` pill track at 15% accent, accent fill with a 0.3s width transition; reached state in `#0d80c4` at 500.
+

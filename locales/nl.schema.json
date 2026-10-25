@@ -463,6 +463,10 @@
             },
             "link": {
               "label": "Link"
+            },
+            "campaign": {
+              "label": "Looptijd actie (optioneel)",
+              "info": "Toon dit bericht alleen tijdens de looptijd van de actie: de start en het einde die op deze collectie staan (Actie: start / Actie: einde). Leeg = altijd tonen."
             }
           }
         }

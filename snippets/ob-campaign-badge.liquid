@@ -1,0 +1,95 @@
+{% comment %}
+  OB: campaign badge ("-20%", "2+1") for a product, from its campaign
+  collections. Spec: campaign-badges.
+
+  A campaign collection is one whose handle starts with `actie-` and whose
+  custom.campaign_badge metafield holds text. The Shopify discount targets the
+  same collection, so badge and discount share one product list — but the
+  theme cannot verify that a discount exists; that is CAMPAIGNS.md's
+  checklist. The prefix test runs first so ordinary collections never cost a
+  metafield read. product.collections only lists collections published to the
+  Online Store, so an unpublished campaign shows no badge.
+
+  Every campaign that has not ended at render time is rendered, best first:
+  highest custom.campaign_priority (unset = 0), then earliest end (open-ended
+  last), then handle — encoded as one sortable string key. Only the first one
+  inside its run time is visible. ob-campaign-window.js repeats that choice on
+  the shopper's clock, which is why not-yet-started campaigns are rendered
+  (hidden) too: a page cached before the start still shows the badge on time.
+
+  Fails open: no campaign collection, no metafield definitions → no output.
+
+  Accepts:
+  - product: {Object} product object
+  - placement: {String} 'card' (default) | 'gallery'
+
+  Usage:
+  {%- render 'ob-campaign-badge', product: card_product, placement: 'card' -%}
+{% endcomment %}
+
+{%- liquid
+  assign ob_cb_prefix = 'actie-'
+  assign ob_cb_now = 'now' | date: '%s' | plus: 0
+  assign ob_cb_entries = ''
+
+  for ob_cb_collection in product.collections
+    assign ob_cb_head = ob_cb_collection.handle | slice: 0, ob_cb_prefix.size
+    if ob_cb_head != ob_cb_prefix
+      continue
+    endif
+    assign ob_cb_text = ob_cb_collection.metafields.custom.campaign_badge.value | strip
+    if ob_cb_text == blank
+      continue
+    endif
+
+    capture ob_cb_window
+      render 'ob-campaign-window', collection: ob_cb_collection
+    endcapture
+    assign ob_cb_end = ob_cb_window | split: ',' | last | plus: 0
+    if ob_cb_end <= ob_cb_now
+      continue
+    endif
+
+    assign ob_cb_priority = ob_cb_collection.metafields.custom.campaign_priority.value | default: 0 | plus: 0
+    assign ob_cb_rank = 1000000 | minus: ob_cb_priority | prepend: '0000000' | slice: -7, 7
+    assign ob_cb_end_key = ob_cb_end | prepend: '0000000000' | slice: -10, 10
+    assign ob_cb_entries = ob_cb_entries | append: ob_cb_rank | append: ob_cb_end_key | append: ob_cb_collection.handle | append: '#' | append: forloop.index0 | append: ','
+  endfor
+-%}
+
+{%- if ob_cb_entries != blank -%}
+  {%- assign ob_cb_sorted = ob_cb_entries | split: ',' | sort -%}
+  {%- assign ob_cb_shown = false -%}
+  <span class="ob-campaign-badges" data-ob-campaign-badges>
+    {%- for ob_cb_entry in ob_cb_sorted -%}
+      {%- liquid
+        assign ob_cb_index = ob_cb_entry | split: '#' | last | plus: 0
+        assign ob_cb_collection = product.collections[ob_cb_index]
+        capture ob_cb_window
+          render 'ob-campaign-window', collection: ob_cb_collection
+        endcapture
+        assign ob_cb_start = ob_cb_window | split: ',' | first | plus: 0
+        assign ob_cb_end = ob_cb_window | split: ',' | last | plus: 0
+        assign ob_cb_visible = false
+        if ob_cb_shown == false and ob_cb_start <= ob_cb_now
+          assign ob_cb_visible = true
+          assign ob_cb_shown = true
+        endif
+      -%}
+      <span
+        class="ob-badge ob-badge--campaign ob-badge--{{ placement | default: 'card' }}"
+        {% if ob_cb_start > 0 %}
+          data-ob-window-start="{{ ob_cb_start }}"
+        {% endif %}
+        {% if ob_cb_end < 9999999999 %}
+          data-ob-window-end="{{ ob_cb_end }}"
+        {% endif %}
+        {% unless ob_cb_visible %}
+          hidden
+        {% endunless %}
+      >
+        {{- ob_cb_collection.metafields.custom.campaign_badge.value | strip | escape -}}
+      </span>
+    {%- endfor -%}
+  </span>
+{%- endif -%}

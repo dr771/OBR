@@ -72,3 +72,21 @@
     transform: none;
   }
 }
+
+/* OB promo schedule: messages outside their campaign run time (see the inline
+   script in announcement-bar.liquid) take no slide, column or row space. */
+.utility-bar[hidden],
+.announcement-bar [data-ob-message][hidden],
+.announcement-bar[data-ob-message][hidden] {
+  display: none !important;
+}
+
+/* One message left in a slider shell: full width, no controls, at every breakpoint. */
+.ob-announcement--single .announcement-bar-slider .slider-button {
+  display: none;
+}
+
+.ob-announcement--single .announcement-bar-slider .grid--1-col .grid__item {
+  width: 100%;
+  max-width: 100%;
+}

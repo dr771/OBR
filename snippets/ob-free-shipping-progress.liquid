@@ -1,0 +1,63 @@
+{% comment %}
+  OB: "still €X to free shipping" message. Spec: cart-free-shipping-progress.
+
+  The threshold is the theme setting ob_free_shipping_threshold (euros), not
+  the shipping rate itself: Liquid cannot read rate conditions or a
+  free-shipping discount's minimum. That is a deliberate double maintenance —
+  the setting has to match the free rate in Admin (CAMPAIGNS.md,
+  MIGRATION-TO-LIVE.md). Blank or 0 renders nothing.
+
+  Compared with cart.total_price: after line and cart discounts, before
+  shipping — the amount Shopify's price-based rate conditions look at.
+  ob_free_shipping_countries (e.g. "BE,NL") limits it to the shopper's
+  storefront country; blank means every country.
+
+  Rendered inside regions Dawn already re-renders on every cart change (the
+  drawer's .cart-drawer__footer and main-cart-footer's subtotal .js-contents),
+  so it needs no JS of its own.
+
+  Usage:
+  {%- render 'ob-free-shipping-progress' -%}
+{% endcomment %}
+
+{%- liquid
+  assign ob_fs_show = true
+  assign ob_fs_threshold = settings.ob_free_shipping_threshold | default: 0 | times: 100 | round
+  if ob_fs_threshold <= 0 or cart.item_count == 0
+    assign ob_fs_show = false
+  endif
+
+  assign ob_fs_countries = settings.ob_free_shipping_countries | upcase | remove: ' ' | split: ','
+  if ob_fs_countries.size > 0
+    unless ob_fs_countries contains localization.country.iso_code
+      assign ob_fs_show = false
+    endunless
+  endif
+
+  if ob_fs_show
+    assign ob_fs_remaining = ob_fs_threshold | minus: cart.total_price
+    assign ob_fs_remaining_money = ob_fs_remaining | money
+    assign ob_fs_percent = cart.total_price | times: 100 | divided_by: ob_fs_threshold
+    if ob_fs_percent > 100
+      assign ob_fs_percent = 100
+    endif
+  endif
+-%}
+
+{%- if ob_fs_show -%}
+<div class="ob-free-shipping{% if ob_fs_remaining <= 0 %} ob-free-shipping--reached{% endif %}">
+  <p class="ob-free-shipping__text">
+    {%- render 'ob-icon', icon: 'truck', class: 'ob-free-shipping__icon' -%}
+    <span>
+      {%- if ob_fs_remaining > 0 -%}
+        {{- 'sections.cart.free_shipping_progress.remaining_html' | t: amount: ob_fs_remaining_money -}}
+      {%- else -%}
+        {{- 'sections.cart.free_shipping_progress.reached' | t -}}
+      {%- endif -%}
+    </span>
+  </p>
+  <div class="ob-free-shipping__bar" aria-hidden="true">
+    <span class="ob-free-shipping__fill" style="width: {{ ob_fs_percent }}%;"></span>
+  </div>
+</div>
+{%- endif -%}

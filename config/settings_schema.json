@@ -1470,6 +1470,22 @@
       },
       {
         "type": "header",
+        "content": "Free-shipping progress"
+      },
+      {
+        "type": "number",
+        "id": "ob_free_shipping_threshold",
+        "label": "Free shipping from (EUR)",
+        "info": "Shows 'still €X to free shipping' in the cart drawer and on the cart page. Leave empty to hide it. Must match the free-shipping rate in Settings > Shipping and delivery — the theme cannot read that rate."
+      },
+      {
+        "type": "text",
+        "id": "ob_free_shipping_countries",
+        "label": "Only for countries",
+        "info": "Comma-separated country codes, e.g. BE,NL. Leave empty for every country."
+      },
+      {
+        "type": "header",
         "content": "t:settings_schema.cart.settings.cart_drawer.header"
       },
       {

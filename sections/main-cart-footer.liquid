@@ -53,6 +53,7 @@
               {% render block %}
             {%- when 'subtotal' -%}
               <div class="js-contents" {{ block.shopify_attributes }}>
+                {%- render 'ob-free-shipping-progress' -%}
                 {%- render 'ob-cart-discount', id_prefix: 'Cart' -%}
 
                 <div>

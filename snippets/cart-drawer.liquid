@@ -510,6 +510,7 @@
         <!-- Subtotals -->
 
         <div class="cart-drawer__footer" {{ block.shopify_attributes }}>
+          {%- render 'ob-free-shipping-progress' -%}
           {%- render 'ob-cart-discount', id_prefix: 'CartDrawer' -%}
 
           <div>

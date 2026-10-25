@@ -354,6 +354,10 @@
       "duties_included_taxes_at_checkout_shipping_at_checkout_without_policy": "Douanerechten inbegrepen. Belastingen, kortingen en verzending worden bij de checkout berekend.",
       "taxes_at_checkout_shipping_at_checkout_with_policy_html": "Belastingen, kortingen en <a href=\"{{ link }}\">verzending</a> worden bij de checkout berekend.",
       "taxes_at_checkout_shipping_at_checkout_without_policy": "Belastingen, kortingen en verzending worden bij de checkout berekend.",
+      "free_shipping_progress": {
+        "remaining_html": "Nog <strong>{{ amount }}</strong> tot gratis verzending",
+        "reached": "Je bestelling wordt gratis verzonden"
+      },
       "summary": {
         "eyebrow": "Overzicht",
         "title": "Jouw bestelling",

@@ -5,6 +5,8 @@ collection-component {
 
 :root {
   --ob-accent: #38b6ff;
+  /* Campaign badges: brand red (#f7391e) darkened until white badge text passes AA. */
+  --ob-campaign: #d6260c;
   --alpha-button-background: 1;
   --alpha-button-border: 1;
   --alpha-link: 0.85;
@@ -3611,4 +3613,68 @@ details-disclosure > details {
   100% {
     transform: translateX(100%) scaleX(0);
   }
+}
+
+/*
+  OB campaign badges (snippets/ob-campaign-badge.liquid). The group wrapper only
+  exists for the run-time check in ob-campaign-window.js; its pills join whichever
+  badge stack hosts it. A pill outside its window carries [hidden], which has to
+  beat each placement's own display rule.
+*/
+.ob-campaign-badges {
+  display: contents;
+}
+
+.ob-badge--campaign[hidden] {
+  display: none !important;
+}
+
+/*
+  OB free-shipping progress (snippets/ob-free-shipping-progress.liquid), in the
+  cart drawer footer and the cart page summary. Lives here because the drawer
+  is on every page and its region is re-rendered wholesale on cart changes.
+*/
+.ob-free-shipping {
+  font-family: var(--font-body-family);
+}
+
+.ob-free-shipping__text {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0 0 0.8rem;
+  font-size: 1.3rem;
+  line-height: 1.8rem;
+  color: rgb(var(--color-foreground));
+}
+
+.ob-free-shipping__text strong {
+  font-weight: 600;
+}
+
+.ob-free-shipping__icon {
+  width: 1.6rem;
+  height: 1.6rem;
+  flex-shrink: 0;
+  color: var(--ob-accent);
+}
+
+.ob-free-shipping__bar {
+  height: 0.4rem;
+  border-radius: 99rem;
+  background: color-mix(in srgb, var(--ob-accent) 15%, transparent);
+  overflow: hidden;
+}
+
+.ob-free-shipping__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ob-accent);
+  transition: width 0.3s ease;
+}
+
+.ob-free-shipping--reached .ob-free-shipping__text {
+  color: #0d80c4;
+  font-weight: 500;
 }
