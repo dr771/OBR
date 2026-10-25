@@ -272,6 +272,14 @@ Descriptive, in `assets/component-ob-swatches.css`:
 - **Ranged badge prefix** (`.ob-sale-badge__prefix`, the translated "tot"): `0.9rem`, `text-transform: none`, against the badge value's `1.1rem` uppercase.
 - A sale badge hidden by chip selection needs `.badge--sale[hidden] { display: none }`: Dawn's `.badge` display overrides the `hidden` attribute.
 
+## Cart drawer sale cues (2026-10-25)
+
+Descriptive, in `assets/component-cart-drawer.css` (cart lines and the wishlist cross-sell rows alike):
+
+- **Prices:** current amount `var(--ob-accent)` weight 600; struck-through old amount `rgba(var(--color-foreground), 0.55)` weight 400. The cross-sell's 80%-opacity price row goes to full opacity when it holds a sale, so the accent is not washed out.
+- **Photo badge:** the PLP's blue pill scaled down for small packshots: `0.6rem` from top/left, `0.2rem 0.6rem` padding, `1rem` Inter 500, white on `--ob-accent`.
+- **Discount code chip** (line-level and cart-level `.discounts__discount`): `#0d80c4` text and tag icon on `color-mix(in srgb, var(--ob-accent) 12%, transparent)`, pill radius, `0.2rem 0.8rem` padding, `1.2rem` 500.
+
 ## Where this doesn't apply
 
 - The full `/cart` page's own line-item table/layout (product rows, quantity

@@ -374,12 +374,39 @@
       });
     }
 
+    /* Cart cross-sell photo badge: the saving between the two amounts WK
+       shows (its resolved variant), rounded down like the PLP card badge.
+       Both amounts share one money format, so their digits compare directly.
+       Rewritten only on change, since the content observer re-runs this pass. */
+    function syncCrossSellBadges(root) {
+      root.querySelectorAll('.wk-product-card').forEach(function (card) {
+        var link = card.querySelector('.wk-image-link');
+        if (!link) return;
+        var compareEl = card.querySelector('.wk-compare-price');
+        var currentEl = card.querySelector('.wk-current-price');
+        var compare = compareEl ? Number(compareEl.textContent.replace(/\D/g, '')) : 0;
+        var current = currentEl ? Number(currentEl.textContent.replace(/\D/g, '')) : 0;
+        var percent = compare > current && current > 0 ? Math.floor(((compare - current) * 100) / compare) : 0;
+        var text = percent > 0 ? '-' + percent + '%' : '';
+        var badge = link.querySelector(':scope > .ob-wishlist-badge');
+        if (!badge) {
+          if (!text) return;
+          badge = document.createElement('span');
+          badge.className = 'ob-wishlist-badge badge badge--sale';
+          link.appendChild(badge);
+        }
+        if (badge.textContent !== text) badge.textContent = text;
+        if (badge.hidden !== !text) badge.hidden = !text;
+      });
+    }
+
     function overlayAll() {
       document.querySelectorAll('wishlist-page, .ob-wishlist-cross-sell').forEach(function (root) {
         overlayContainer(root);
         rewriteRawKeys(root);
         stripCurrencySuffix(root);
       });
+      document.querySelectorAll('.ob-wishlist-cross-sell').forEach(syncCrossSellBadges);
       measureOptionWidths();
     }
 

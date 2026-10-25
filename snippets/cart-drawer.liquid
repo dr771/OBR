@@ -134,6 +134,22 @@
                           role="cell"
                           headers="CartDrawer-ColumnProductImage"
                         >
+                          {%- comment -%}
+                            Sale cues: the old line price is the higher of the variant's
+                            compare-at and its pre-discount price, so a reduced product and
+                            a discount both strike through and show in the photo badge as the
+                            whole saving the shopper gets (rounded down like the PLP badge).
+                          {%- endcomment -%}
+                          {%- liquid
+                            assign ob_old_line_price = item.original_line_price
+                            if item.variant.compare_at_price > item.original_price
+                              assign ob_old_line_price = item.variant.compare_at_price | times: item.quantity
+                            endif
+                            assign ob_sale_percent = 0
+                            if ob_old_line_price > item.final_line_price
+                              assign ob_sale_percent = ob_old_line_price | minus: item.final_line_price | times: 100 | divided_by: ob_old_line_price
+                            endif
+                          -%}
                           {% if item.image %}
                             {% comment %} Leave empty space due to a:empty CSS display: none rule {% endcomment %}
                             <a href="{{ item.url }}" class="cart-item__link" tabindex="-1" aria-hidden="true"> </a>
@@ -146,6 +162,9 @@
                                 width="150"
                                 height="{{ 150 | divided_by: item.image.aspect_ratio | ceil }}"
                               >
+                              {%- if ob_sale_percent > 0 -%}
+                                <span class="badge badge--sale cart-item__sale-badge">-{{ ob_sale_percent }}%</span>
+                              {%- endif -%}
                             </span>
                           {% endif %}
                         </td>
@@ -325,18 +344,18 @@
                                 </button>
                               </cart-remove-button>
                               <div class="cart-item__price-wrapper cart-item__quantity-price">
-                                {%- if item.original_line_price != item.final_line_price -%}
+                                {%- if ob_old_line_price > item.final_line_price -%}
                                   <div class="cart-item__discounted-prices">
                                     <span class="visually-hidden">
                                       {{ 'products.product.price.regular_price' | t }}
                                     </span>
                                     <s class="cart-item__old-price price price--end">
-                                      {{ item.original_line_price | money }}
+                                      {{ ob_old_line_price | money }}
                                     </s>
                                     <span class="visually-hidden">
                                       {{ 'products.product.price.sale_price' | t }}
                                     </span>
-                                    <span class="price price--end">
+                                    <span class="cart-item__sale-price price price--end">
                                       {{ item.final_line_price | money }}
                                     </span>
                                   </div>

@@ -632,6 +632,62 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   font-weight: 500;
   letter-spacing: normal;
 }
+
+/* Sale pricing as on the PLP card: accent current amount, muted regular-weight
+   struck-through old amount. */
+.cart-drawer .cart-item__price-wrapper .cart-item__sale-price {
+  color: var(--ob-accent);
+  font-weight: 600;
+}
+
+.cart-drawer .cart-item__price-wrapper .cart-item__old-price {
+  color: rgba(var(--color-foreground), 0.55);
+  font-weight: 400;
+}
+
+/* Photo sale badge — the PLP card's blue pill, scaled down to the drawer's
+   small packshot and pinned to its top-left corner. */
+.cart-drawer .cart-item__image-frame {
+  position: relative;
+}
+
+.cart-drawer .cart-item__sale-badge,
+.ob-wishlist-cross-sell .ob-wishlist-badge {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  z-index: 1;
+  padding: 0.2rem 0.6rem;
+  border-color: rgba(255, 255, 255, 0.1);
+  background: var(--ob-accent);
+  color: #fff;
+  font-family: var(--font-body-family);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.4rem;
+  letter-spacing: normal;
+  pointer-events: none;
+}
+
+/* Discount code applied to a line (or the whole cart): accent-ink chip with
+   its tag icon, so it reads as a saving rather than a grey option line. */
+.cart-drawer .discounts__discount {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 0.4rem;
+  padding: 0.2rem 0.8rem;
+  border-radius: 999.9rem;
+  background: color-mix(in srgb, var(--ob-accent) 12%, transparent);
+  color: #0d80c4;
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: normal;
+}
+
+.cart-drawer .discounts__discount > .icon {
+  margin-right: 0.5rem;
+  color: currentColor;
+}
 /* Drop Dawn's panel border, widen the right-side gutter (left stays 1.5rem).
    `.drawer__inner` is shared with the mobile menu drawer, so scope to
    `.cart-drawer` only. */
@@ -882,6 +938,32 @@ wishlist-product-card .wk-meta {
   opacity: 0.8;
   text-align: left;
   justify-content: flex-start;
+}
+
+/* Sale pricing, same as the cart lines above: the dimmed row would wash out
+   the accent, so the dimming moves onto the struck-through amount. */
+.ob-wishlist-cross-sell .wk-price:has(.wk-sale) {
+  opacity: 1;
+}
+
+.ob-wishlist-cross-sell .wk-current-price.wk-sale {
+  color: var(--ob-accent);
+  font-weight: 600;
+}
+
+.ob-wishlist-cross-sell .wk-compare-price {
+  color: rgba(var(--color-foreground), 0.55);
+  font-weight: 400;
+}
+
+/* Anchor for the photo sale badge (ob-wishlist.js). Dawn's `.badge` display
+   would otherwise override the badge's hidden attribute. */
+.ob-wishlist-cross-sell .wk-image-link {
+  position: relative;
+}
+
+.ob-wishlist-cross-sell .ob-wishlist-badge[hidden] {
+  display: none;
 }
 
 /* Dropdowns + CTA share a single row — nowrap, not wrap, so they never fall
