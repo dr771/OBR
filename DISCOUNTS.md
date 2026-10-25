@@ -51,7 +51,13 @@ Live example on dev: [FitFlop laarzen – 2e paar -50%](https://original-brands-
 
 ## Newsletter code
 
-One product discount per item: a code never stacks on items already in a campaign (a 2+1 also "uses" the two paid items). In a cart with only campaign items the code is rejected; with other items it applies to those. Stacking needs an *order* discount (can't exclude Sale), and the campaign discount must also allow *order discounts* under combinations: combining has to be ticked on both sides.
+**Policy still open (owner is testing).** Pick the type by what the code should cover:
 
+| Code should apply to… | Type | Notes |
+|---|---|---|
+| **Everything** (incl. Sale and campaign items) | **Amount off order** | Combinations: tick *product discounts* on the code **and** *order discounts* on every campaign, or the code is rejected while that campaign is in the cart. Calculated on the total after campaigns (tested: 3 Löwenweiss €168 → 2+1 €114 → -10 % €102.60). One line on the total, not per item. Can't exclude anything. |
+| **Everything except Sale** | **Amount off products** on `volle-prijs` | Doesn't stack on campaign items (one product discount per item; a 2+1 also "uses" the paid items). Cart with only campaign items → code rejected. ~60 partly-reduced products still slip through. |
 
-**Policy still open (owner is testing).** Options on the table: code on Sale or not, code on top of campaigns or not. Tool for "not on Sale": target the collection `volle-prijs` (non-reduced products; ~60 partly-reduced products still slip through). On dev WELCOME27 currently targets `all` + `volle-prijs`, i.e. everything.
+For both: *Limit to one use per customer*; optional minimum order value. The €70 free shipping counts after the code (€75 − 10 % = €67.50 → €4.95 shipping); the cart bar shows this correctly.
+
+Dev state: WELCOME27 is a product code targeting `all` + `volle-prijs` (= everything except campaign items); WELCOME28 is an order code (10 %), both demo campaigns allow order discounts.
