@@ -31,7 +31,7 @@
 ## 5. Verify and document
 
 - [x] 5.1 `shopify theme check` on touched Liquid; push with `--only`; header-group.json not pushed
-- [ ] 5.2 Live verification in Chrome: card badge on PLP/search/PDP, precedence, cached-window behaviour (simulated clock), drawer + /cart progress through add/qty/remove, threshold blank = off
-- [ ] 5.3 Set the threshold settings in Admin theme editor (owner/agent) and record in MIGRATION-TO-LIVE.md
+- [x] 5.2 Live verification in Chrome: card badge on PLP/search/PDP, precedence, cached-window behaviour (simulated clock), drawer + /cart progress through add/qty/remove, threshold blank = off
+- [x] 5.3 Set the threshold settings in Admin theme editor (owner/agent) and record in MIGRATION-TO-LIVE.md
 - [x] 5.4 CI-STYLE-TOKENS.md (badge/progress visuals), GOTCHAS.md (new traps), STATUS-LOG.md
 - [x] 5.5 `CAMPAIGNS.md` (NL) marketing checklist + link from CLAUDE.md project docs

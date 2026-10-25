@@ -15,7 +15,8 @@ Afprijzingen (Solden/Outlet) komen uit het ERP/Akeneo als doorgestreepte prijs e
 
 1. **Collectie aanmaken** (Producten → Collecties → Collectie maken)
    - De handle (onderaan, "Zoekmachinevermelding bewerken") **moet beginnen met `actie-`**, bijvoorbeeld `actie-black-friday`. Zonder dat voorvoegsel verschijnt er geen badge.
-   - Producten: handmatig of met voorwaarden. Mag de actie **niet** op afgeprijsde artikelen? Voeg dan de voorwaarde *Prijs verlaagd — is niet ingesteld* toe (of kies handmatig).
+   - Producten: handmatig of met voorwaarden. **Solden doet niet mee aan acties.** Bij voorwaarden: zet *Producten moeten voldoen aan: alle voorwaarden* en voeg **Vergelijkingsprijs — is gelijk aan — 0** toe. Akeneo vult bij niet-afgeprijsde artikelen `0,00` in, daarom werkt *Prijs verlaagd — is niet ingesteld* hier niet. Handmatig: geen artikelen uit Solden kiezen.
+   - Vangnet: toont een product toch een sale-badge (-30%), dan verbergt het thema de actiebadge, zodat er nooit twee kortingsbadges tegelijk staan. De korting zelf werkt dan wel nog in de checkout. Daarom eerst de collectie goed opbouwen.
    - Onderaan bij **Metavelden**:
      - **Actie: badge-tekst**: wat op de badge staat, bijvoorbeeld `-20%` of `2+1` (max. 16 tekens). Leeg betekent geen badge.
      - **Actie: start** / **Actie: einde**: wanneer de badge zichtbaar is. Leeg betekent meteen / geen einde.
@@ -28,7 +29,7 @@ Afprijzingen (Solden/Outlet) komen uit het ERP/Akeneo als doorgestreepte prijs e
    - Combinaties: standaard uit (geen stapeling met andere kortingen).
 3. **Promobalk (optioneel)**: Online Store → Thema's → Aanpassen → Header
    - Eenmalig: voeg boven de bestaande balk een tweede sectie *Aankondigingsbalk* toe en kies een eigen kleurenschema.
-   - Per bericht: tekst, link (meestal naar de actiecollectie) en bij **Looptijd actie** dezelfde collectie. Het bericht verschijnt en verdwijnt dan vanzelf met de data van de collectie. Zonder collectie staat het bericht er altijd.
+   - Per bericht: tekst, link (meestal naar de actiecollectie) en bij **Looptijd actie** dezelfde collectie **kiezen met de collectiekiezer**. De naam in de berichttekst typen is niet genoeg: zonder gekozen collectie staat het bericht er altijd. Het bericht verschijnt en verdwijnt dan vanzelf met de data van de collectie. Zonder collectie staat het bericht er altijd.
    - Geen bericht binnen de looptijd? Dan is de balk helemaal weg, er blijft geen lege strook staan.
 4. **Gratis verzending**: alleen als de drempel verandert
    - Instellingen → Verzending en levering: pas de gratis-verzendtarief aan (nu BE/NL vanaf € 70).
@@ -42,6 +43,7 @@ Afprijzingen (Solden/Outlet) komen uit het ERP/Akeneo als doorgestreepte prijs e
 - [ ] Een product uit de actie in de zoekresultaten en op de productpagina: zelfde badge.
 - [ ] Product in winkelwagen: korting staat erbij, bedrag klopt met de badge.
 - [ ] Een product **buiten** de actie: geen badge en geen korting.
+- [ ] Geen product uit Solden in de actiecollectie (filter de collectie in Admin op *Vergelijkingsprijs groter dan 0*: dat moet leeg blijven).
 - [ ] Promobalk zichtbaar (of juist nog niet, als de start in de toekomst ligt).
 
 ## Een actie stoppen
@@ -52,5 +54,6 @@ Stopt vanzelf op de einddatum. Eerder stoppen: korting deactiveren **én** Actie
 
 - Badge zonder korting of omgekeerd: het thema waarschuwt niet. Altijd stap 1 en 2 samen doen.
 - Datums wijken af: de badge kan een uur te vroeg of te laat zichtbaar zijn. Gebruik exact dezelfde tijd (tijdzone CET).
-- Mixproducten: een product waarvan sommige maten afgeprijsd zijn en andere niet, valt zowel in Solden als in de collectie "Volle prijs". Een korting via collecties werkt dan ook op de afgeprijsde maten.
+- Mixproducten: een product waarvan sommige maten afgeprijsd zijn en andere niet, valt zowel in Solden als in een collectie met *Vergelijkingsprijs = 0* (ook "Volle prijs"). Een korting via collecties werkt dan ook op de afgeprijsde maten. Het thema verbergt in dat geval wel de actiebadge op de afgeprijsde kleur.
+- Thema-editor open laten staan terwijl iemand anders iets aan de header wijzigt: eerst herladen, dan pas opslaan, anders zet je hun wijziging terug.
 - Handle achteraf hernoemen: de oude URL verdwijnt. Kies `actie-…` bij het aanmaken.

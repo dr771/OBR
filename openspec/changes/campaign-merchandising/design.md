@@ -30,6 +30,8 @@ The bestseller badge (`ob-product-badge`) sits absolutely at the top-left of the
 
 Alternative "Liquid only": rejected — Shopify serves cached storefront HTML, so a `now` comparison is only as fresh as the cache entry. Alternative "JS only (render all hidden)": rejected — badges would pop in after load and be missing without JS.
 
+**D4b — Sale wins over campaign.** Owner decision 2026-10-25: Solden is excluded from campaigns and no card or PDP shows two percentage badges. Campaign collections exclude reduced products by their own conditions (`CAMPAIGNS.md`); the theme adds a CSS-only guard (`:has()` on the visible sale badge) that hides the campaign badge, so it follows Dawn's in-card colour switch and the PDP variant switch without JS. Alternative "hide in Liquid" rejected: the sale badge toggles client-side per colour/variant.
+
 **D4 — Card badge stack.** The bestseller badge and the campaign badge share one absolutely positioned top-left container in `.card__media` (flex column), so they stack instead of overlapping. The sale badge stays in `.card__badge`. On the PDP the campaign badge joins `.ob-pdp__gallery-badges`. Visual values go to CI-STYLE-TOKENS.md.
 
 **D5 — Promo bar = a second instance of Dawn's announcement-bar section.** No new section type. Each announcement block gets a `campaign` collection setting; the block borrows that collection's start/end. Theme settings have no date type, and borrowing the dates keeps one time source per campaign. The section filters blocks that have ended at render time, renders not-yet-started ones `hidden` with their window, and an inline script directly after the markup applies the client-side check **before** Dawn's deferred `slideshow-component` initialises — Dawn's slider counts only slides with a width, so hidden slides drop out of paging and autoplay. When ≤1 message remains the controls are hidden; when none remain the whole section is hidden. The script is inline (not the deferred shared asset) precisely because it has to run before the slider initialises.
@@ -43,6 +45,7 @@ The threshold is deliberately maintained twice (shipping rate condition in Admin
 ## Risks / Trade-offs
 
 - [Marketing forgets the `actie-` prefix or the Online Store publication] → badge silently missing; `CAMPAIGNS.md` checklist, and a missing badge is the safe failure (never a badge without a discount from this cause).
+- [Partly reduced product in a campaign collection] → its reduced sizes still get the campaign discount at checkout although the storefront shows only the sale badge for them. Accepted; avoided by building campaign collections on *compare-at price = 0*.
 - [Badge without a matching discount, or different dates] → misleading claim. The theme cannot detect it → checklist step "same collection, same dates".
 - [Shopper's clock is wrong] → badge may show/hide at the wrong moment client-side. Liquid's render-time filter still drops campaigns ended before the cached render, bounding the error.
 - [Mixed products: some variants reduced, some not] → such a product can sit in both Solden and `volle-prijs`; a collection-targeted code then also discounts its reduced variants. Accepted for now (policy says "simple first"); listed in NICK.md-style follow-up in STATUS-LOG.

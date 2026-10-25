@@ -19,7 +19,8 @@
           "settings": {
             "text": "Gratis verzending vanaf 70€",
             "link": "",
-            "icon": "truck"
+            "icon": "truck",
+            "campaign": ""
           }
         },
         "announcement_hiGFec": {
@@ -27,7 +28,8 @@
           "settings": {
             "text": "Voor 12u besteld, morgen in huis",
             "link": "",
-            "icon": "clock"
+            "icon": "clock",
+            "campaign": ""
           }
         },
         "announcement_mmjrBk": {
@@ -35,7 +37,8 @@
           "settings": {
             "text": "Alleen originele topmerken",
             "link": "shopify://pages/merken",
-            "icon": "shield-check"
+            "icon": "shield-check",
+            "campaign": ""
           }
         }
       },
@@ -48,6 +51,43 @@
         "auto_rotate": true,
         "change_slides_speed": 5,
         "color_scheme": "scheme-3",
+        "show_line_separator": true,
+        "show_social": false,
+        "enable_country_selector": false,
+        "enable_language_selector": false
+      }
+    },
+    "announcement_bar_WRGrTQ": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement_tLaY3c": {
+          "type": "announcement",
+          "settings": {
+            "text": "Actie test",
+            "link": "",
+            "icon": "none",
+            "campaign": "actie-test"
+          }
+        },
+        "announcement_YbUwJE": {
+          "type": "announcement",
+          "settings": {
+            "text": "Actie test prio",
+            "link": "",
+            "icon": "none",
+            "campaign": "actie-test-prio"
+          }
+        }
+      },
+      "block_order": [
+        "announcement_tLaY3c",
+        "announcement_YbUwJE"
+      ],
+      "name": "Acties Announcement bar",
+      "settings": {
+        "auto_rotate": false,
+        "change_slides_speed": 5,
+        "color_scheme": "scheme-5",
         "show_line_separator": true,
         "show_social": false,
         "enable_country_selector": false,
@@ -70,13 +110,14 @@
         "show_account_icon": false,
         "enable_customer_avatar": false,
         "margin_bottom": 0,
-        "padding_top": 20,
+        "padding_top": 12,
         "padding_bottom": 20
       }
     }
   },
   "order": [
     "announcement-bar",
+    "announcement_bar_WRGrTQ",
     "header"
   ]
 }
