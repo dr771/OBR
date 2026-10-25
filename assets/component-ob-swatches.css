@@ -348,11 +348,19 @@
     transform: scale(1.04);
   }
 
-  .card-wrapper.ob-media-hover .card__media .media.media--hover-effect > img:first-child:not(:only-child) {
+  /*
+    The pair swaps only once the second shot is decoded (data-ob-ready, set by
+    ob-card-swatches.js). Until then the primary stays up rather than leaving
+    the bare tile on screen while the second image is still downloading.
+  */
+  .card-wrapper.ob-media-hover
+    .card__media
+    .media.media--hover-effect:has(> img + img[data-ob-ready])
+    > img:first-child:not(:only-child) {
     opacity: 0;
   }
 
-  .card-wrapper.ob-media-hover .card__media .media.media--hover-effect > img + img {
+  .card-wrapper.ob-media-hover .card__media .media.media--hover-effect > img + img[data-ob-ready] {
     opacity: 1;
     transform: scale(1.04);
   }

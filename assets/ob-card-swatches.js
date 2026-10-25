@@ -21,11 +21,37 @@
   var hoverMediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
   /*
-    Materialize the active color's SECOND shot as an extra <img> after the
-    primary one. Dawn's own `.card-wrapper:hover .media--hover-effect > img + img`
-    rule then reveals it on card hover — no CSS of our own needed.
+    Point a hover image at a new source and re-arm its reveal gate: the
+    image only counts as ready (data-ob-ready, which component-ob-swatches.css
+    requires before it hides the primary) once it has loaded AND decoded.
+    Without the gate the primary vanished at once and the bare tile showed
+    for the whole fetch + decode (~0.7 s measured on the PLP).
+  */
+  function setHoverSource(img, key, src, srcset) {
+    img.removeAttribute('data-ob-ready');
+    img.dataset.obFor = key;
+    img.setAttribute('srcset', srcset);
+    img.setAttribute('src', src);
+    if (!img.decode) {
+      img.setAttribute('data-ob-ready', '');
+      return;
+    }
+    // A rejection (failed load, or src changed mid-decode) leaves the gate
+    // closed; the primary simply stays visible.
+    img.decode().then(
+      function () {
+        if (img.dataset.obFor === key) img.setAttribute('data-ob-ready', '');
+      },
+      function () {}
+    );
+  }
 
-    Client-side only, on first hover: a touch device never fires hover, so it
+  /*
+    Materialize the active color's SECOND shot as an extra <img> after the
+    primary one; .ob-media-hover (below) reveals it once it is ready.
+
+    Client-side only and only on hover-capable input — warmed ahead as a
+    lazy image by warmCards(), or on first hover — so a touch-only device
     never downloads the extra image.
   */
   function ensureHoverImage(card, allowCreate) {
@@ -64,9 +90,7 @@
       }
       var target = src || dawnImg2.dataset.obOrigSrc;
       if (dawnImg2.dataset.obFor !== target) {
-        dawnImg2.setAttribute('src', target);
-        dawnImg2.setAttribute('srcset', src ? srcset || '' : dawnImg2.dataset.obOrigSrcset);
-        dawnImg2.dataset.obFor = target;
+        setHoverSource(dawnImg2, target, target, src ? srcset || '' : dawnImg2.dataset.obOrigSrcset);
       }
       return;
     }
@@ -85,6 +109,9 @@
       img2.className = 'ob-card-img2 motion-reduce';
       img2.alt = '';
       img2.setAttribute('aria-hidden', 'true');
+      // Lazy: a card warmed while still below the fold fetches its second
+      // shot only as it nears the viewport. An on-screen card loads at once.
+      img2.loading = 'lazy';
       ['width', 'height', 'sizes'].forEach(function (attr) {
         if (img1.getAttribute(attr)) img2.setAttribute(attr, img1.getAttribute(attr));
       });
@@ -92,11 +119,33 @@
     }
 
     if (img2.dataset.obFor !== src) {
-      img2.src = src;
-      img2.srcset = srcset || '';
-      img2.dataset.obFor = src;
+      setHoverSource(img2, src, src, srcset || '');
     }
   }
+
+  /*
+    Warm every card's hover image before the first hover, so it is already
+    decoded when the pointer reaches the photo. The image is created lazy, so
+    the browser fetches it only as the card nears the viewport. Runs only on
+    hover-capable input. A MutationObserver rescans because facets, load-more
+    and recommendations insert cards after load. It watches childList only,
+    so the marker attribute set here doesn't retrigger it.
+  */
+  var warmTimer = null;
+
+  function warmCards() {
+    warmTimer = null;
+    if (!hoverMediaQuery.matches) return;
+    document.querySelectorAll('.card-wrapper:not([data-ob-hover-warm])').forEach(function (card) {
+      card.setAttribute('data-ob-hover-warm', '');
+      ensureHoverImage(card, true);
+    });
+  }
+
+  new MutationObserver(function () {
+    if (!warmTimer) warmTimer = setTimeout(warmCards, 150);
+  }).observe(document.documentElement, { childList: true, subtree: true });
+  warmCards();
 
   function selectSwatch(swatch) {
     var card = swatch.closest('.card-wrapper');
