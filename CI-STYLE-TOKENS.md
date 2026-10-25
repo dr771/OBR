@@ -93,10 +93,8 @@ provenance rule — same caveat applies to this file).
      button (`.cart__ctas button { width: 100% }` already makes it
      full-width — `.ob-button--cta`'s `min-width` doesn't fight that, only
      the label typography and `min-height` apply).
-   - Note: PLP "Toon meer" (load more) is deliberately **not** a filled
-     button — it's `class="button-show-more link underlined-link"`, styled
-     as a plain text link (`component-show-more.css`), excluded from the
-     `.button` fill rule above.
+   - PLP load more uses the shared filled pill treatment through
+     `.ob-load-more__button` in `component-ob-plp.css`.
 
 3. **`.ob-button--outline`** — paired secondary action: same pill radius,
    `1px` border `#d9dee5`, background-colour fill, near-black text, and a
@@ -291,6 +289,12 @@ Descriptive, in `assets/component-cart-drawer.css` (cart lines and the wishlist 
   measured-to-the-pixel values from the approved Bolt prototype — those
   files are the source of truth for their surfaces; this doc only extracts
   the *reusable cross-component conventions*, not every measured value.
+
+## Collection bottom descriptions (2026-10-25)
+
+The load-more area has no top divider or padding: its count starts 48px below the grid. When bottom copy is present, the load-more wrapper adds 36px of bottom padding (24px below 750px), giving the button more space before the description band. The band has matching `#e2e8f0` hairlines at its top and bottom so it also separates from the footer.
+
+`assets/component-ob-collection-bottom-description.css` keeps editorial copy readable below the grid: a near-white #f8fafc surface, distinct from the white grid and #f1f5f9 footer, with a `#e2e8f0` top hairline and an `88rem` reading width. From 990px, when a vertical filter column exists, the text starts at the product grid's edge with a `27.8rem` inset (23rem sidebar + 4.8rem gutter), matching `component-facets.css`. Below 990px, where the current grid becomes two products per row, the text uses the full page content width even when tablet filters remain visible. Without a sidebar it also uses the normal `.page-width` edge. Body Inter `1.5rem/1.8` in `#334155`; H2 Fraunces 600, `2.4rem/1.3` (`2.2rem` below 750px); inline links underlined `#0d80c4`, ink on hover, visible keyboard outline. Section padding defaults to 48px/64px, scaled to 75% on mobile. This preserves desktop alignment while avoiding a narrow reading column beside the two-card layout.
 
 ## Newsletter popup teaser
 

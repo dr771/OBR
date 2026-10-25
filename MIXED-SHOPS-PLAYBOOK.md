@@ -2,6 +2,10 @@
 
 Shopify + Akeneo migration for Original Brands (originalbrands.nl), multi-brand apparel + footwear retailer replacing a custom Drupal-ish CMS. Dawn theme, connected to `original-brands-dev.myshopify.com`. Reuse source: SweatyBetty (sibling directory, `../SweatyBetty`), same stack, further along — check the reuse ledger below before re-deriving architecture.
 
+## Collection editorial content (2026-10-25)
+
+Collection short descriptions remain the hero introductions; supplementary buying guidance lives in merchant-owned Collection rich text `custom.bottom_description`, rendered by `ob-collection-bottom-description` after the product grid. This keeps the main shopping task first and preserves editable, translatable copy independently of grid updates. The team source archive, revised Dutch copy and per-collection provenance live in `content/collections/`; internal links are root-relative collection paths so launch requires no development-domain rewrite. The definition and values are separate live-shop migration data, tracked in `MIGRATION-TO-LIVE.md`. Current coverage is 55 collections; Home page and the unused Merken collection are utilities, and Kinderen awaits a verified children's assortment rather than Unisex adult matches.
+
 ## Confirmed facts (site audit, 2026-07-14)
 
 - **Current site is a migration, not "existing Shopify to copy."** Original Brands runs a custom Drupal-ish CMS (`itr_theme`, `photohost.be` image CDN) — content/UX parity target, not code to port. Expect the same per-variant-URL → single-Shopify-product consolidation + redirect-mapping work SB needed.
