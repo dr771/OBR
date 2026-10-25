@@ -1,7 +1,9 @@
-bug: black reduced prices in card drawer
-
-
+checkout customize
 ===
+Evaluate discounts strategy: akeneo vs manual!
+===
+
+
 BUG - back from PDP/wishlist after show more: same position!
 
 bug: click on search if scrolled!
