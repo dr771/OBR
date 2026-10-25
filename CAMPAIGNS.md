@@ -36,7 +36,7 @@ De werkwijze hieronder (Shopify-korting + actiecollectie) is voor acties die je 
    - Type: *Bedrag van producten* voor -X%, *Koop X krijg Y* voor 2+1 (koop 2 uit de collectie, krijg 1 uit dezelfde collectie, 100% korting).
 3. **Promobalk (optioneel)**: Online Store → Thema's → Aanpassen → Header
    - Eenmalig (staat al klaar): een tweede sectie *Aankondigingsbalk* met een eigen kleurenschema en het vinkje **Promobalk: vervangt andere aankondigingsbalken**. Zolang de promobalk een bericht toont, verdwijnt de trustbalk (gratis verzending, levertijd, originele merken). Na de actie komt de trustbalk vanzelf terug. Er staan dus nooit twee balken tegelijk.
-   - Per bericht: tekst, link (meestal naar de actiecollectie) en bij **Looptijd actie** dezelfde collectie **kiezen met de collectiekiezer**. De naam in de berichttekst typen is niet genoeg: zonder gekozen collectie staat het bericht er altijd. Het bericht verschijnt en verdwijnt dan vanzelf met de data van de collectie. Zonder collectie staat het bericht er altijd.
+   - Per bericht: tekst, link (meestal naar de actiecollectie) en bij **Looptijd actie** dezelfde collectie **kiezen met de collectiekiezer**. Het bericht verschijnt en verdwijnt dan vanzelf met de data van de collectie. De naam in de berichttekst typen is niet genoeg: zonder gekozen collectie staat het bericht er altijd.
    - Geen bericht binnen de looptijd? Dan is de promobalk helemaal weg en staat de trustbalk er weer.
    - Wil je de USP's tijdens de actie toch tonen, zet ze dan als extra bericht in de promobalk.
 4. **Gratis verzending**: alleen als de drempel verandert
