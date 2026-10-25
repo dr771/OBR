@@ -51,4 +51,7 @@ Live example on dev: [FitFlop laarzen – 2e paar -50%](https://original-brands-
 
 ## Newsletter code
 
+One product discount per item: a code never stacks on items already in a campaign (a 2+1 also "uses" the two paid items). In a cart with only campaign items the code is rejected; with other items it applies to those. Stacking would need an *order* discount, which can't exclude Sale.
+
+
 WELCOME27 (10 %) targets the collection `volle-prijs` (non-reduced products), so it doesn't work on Sale items. Known gap: about 60 products with some sizes reduced still get it on their reduced sizes.
