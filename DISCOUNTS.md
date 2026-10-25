@@ -23,6 +23,16 @@ Live example on dev: [FitFlop laarzen – 2e paar -50%](https://original-brands-
 4. **Check:** badge on the collection, in search and on the PDP; discount appears in the cart.
 5. **Stop early:** end the discount **and** set *Actie: einde* to now. Otherwise the badge stays.
 
+## Buy X get Y — the three "get" values
+
+| Option | Example on dev |
+|---|---|
+| *Free* | Winteractie Löwenweiss: buy 2, get 1 free (cheapest one) |
+| *Percentage* | FitFlop laarzen: buy 1, get the 2nd at -50 % |
+| *Amount off each* | Odlo skiset: buy a midlayer, get **€15 off each** pair of gloves (cross-sell: X and Y are different products) |
+
+For a cross-sell, put the X and Y products straight into the discount, and make one `actie-…` collection with **both** groups for the badge.
+
 ## What the theme guarantees
 
 - One campaign badge per product; the higher *prioriteit* wins.

@@ -77,11 +77,21 @@
             "icon": "none",
             "campaign": "actie-winter-loewenweiss"
           }
+        },
+        "announcement_odlo_skiset": {
+          "type": "announcement",
+          "settings": {
+            "text": "Odlo skiset: midlayer + €15 korting op handschoenen",
+            "link": "shopify://collections/actie-odlo-skiset",
+            "icon": "none",
+            "campaign": "actie-odlo-skiset"
+          }
         }
       },
       "block_order": [
         "announcement_fitflop_laarzen",
-        "announcement_winter_loewenweiss"
+        "announcement_winter_loewenweiss",
+        "announcement_odlo_skiset"
       ],
       "name": "Acties Announcement bar",
       "settings": {
