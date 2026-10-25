@@ -32,7 +32,8 @@ De werkwijze hieronder (Shopify-korting + actiecollectie) is voor acties die je 
    - Methode **Automatische korting** (een code geeft geen badge, en dat is de bedoeling: nieuwsbrief- en personeelscodes zijn niet voor iedereen).
    - Van toepassing op **dezelfde collectie** als in stap 1.
    - **Zelfde start- en einddatum en -tijd** als Actie: start / Actie: einde.
-   - Combinaties: standaard uit (geen stapeling met andere kortingen).
+   - Combinaties: **„Productkortingen" aanvinken**, de rest uit. Klinkt tegenstrijdig, maar zonder dat vinkje schrapt Shopify bij twee lopende acties in één winkelwagen de kleinere actie volledig (getest: 2+1 en -15% samen → de -15% verdween). Stapelen op hetzelfde product gebeurt toch niet: Shopify geeft per product maar één productkorting.
+   - Type: *Bedrag van producten* voor -X%, *Koop X krijg Y* voor 2+1 (koop 2 uit de collectie, krijg 1 uit dezelfde collectie, 100% korting).
 3. **Promobalk (optioneel)**: Online Store → Thema's → Aanpassen → Header
    - Eenmalig (staat al klaar): een tweede sectie *Aankondigingsbalk* met een eigen kleurenschema en het vinkje **Promobalk: vervangt andere aankondigingsbalken**. Zolang de promobalk een bericht toont, verdwijnt de trustbalk (gratis verzending, levertijd, originele merken). Na de actie komt de trustbalk vanzelf terug. Er staan dus nooit twee balken tegelijk.
    - Per bericht: tekst, link (meestal naar de actiecollectie) en bij **Looptijd actie** dezelfde collectie **kiezen met de collectiekiezer**. De naam in de berichttekst typen is niet genoeg: zonder gekozen collectie staat het bericht er altijd. Het bericht verschijnt en verdwijnt dan vanzelf met de data van de collectie. Zonder collectie staat het bericht er altijd.
