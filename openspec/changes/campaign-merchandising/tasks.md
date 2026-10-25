@@ -34,4 +34,4 @@
 - [x] 5.2 Live verification in Chrome: card badge on PLP/search/PDP, precedence, cached-window behaviour (simulated clock), drawer + /cart progress through add/qty/remove, threshold blank = off
 - [x] 5.3 Set the threshold settings in Admin theme editor (owner/agent) and record in MIGRATION-TO-LIVE.md
 - [x] 5.4 CI-STYLE-TOKENS.md (badge/progress visuals), GOTCHAS.md (new traps), STATUS-LOG.md
-- [x] 5.5 `CAMPAIGNS.md` (NL) marketing checklist + link from CLAUDE.md project docs
+- [x] 5.5 `DISCOUNTS.md` (EN owner cheat sheet, replaced NL `CAMPAIGNS.md`) + link from CLAUDE.md project docs

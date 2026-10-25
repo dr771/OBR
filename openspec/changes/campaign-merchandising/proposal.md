@@ -24,4 +24,4 @@ Marketing has to be able to start a campaign (Black Friday, a "2+1" action, a br
 - Assets: new `ob-campaign-window.js` (client-side run-time check for badges and promo messages); CSS in `component-ob-swatches.css`, `component-ob-pdp.css`, `component-ob-announcement-bar.css`, cart CSS.
 - `config/settings_schema.json` (cart: threshold + countries), `locales/*.json`.
 - Shop-side (dev now, live at migration): four collection metafield definitions (`custom.campaign_badge`, `custom.campaign_starts_at`, `custom.campaign_ends_at`, `custom.campaign_priority`); the BE/NL free-shipping rate; test campaign `actie-test` + its automatic discount; WELCOME27 retargeted to non-reduced products via a new `volle-prijs` collection.
-- New marketing doc `CAMPAIGNS.md` (Dutch): the "start a campaign" checklist, since the theme cannot verify that badge, discount and threshold agree.
+- New doc `DISCOUNTS.md` (EN cheat sheet for the owner; replaced the first Dutch marketing checklist `CAMPAIGNS.md`): the "start a campaign" steps, since the theme cannot verify that badge, discount and threshold agree.

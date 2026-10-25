@@ -16,7 +16,7 @@ The bestseller badge (`ob-product-badge`) sits absolutely at the top-left of the
 
 **Non-Goals:**
 - Showing the discounted price on cards/PDP before the cart (Shopify only computes automatic discounts in the cart/checkout).
-- Verifying that a discount actually targets the badge's collection — impossible from Liquid; covered by the `CAMPAIGNS.md` checklist.
+- Verifying that a discount actually targets the badge's collection — impossible from Liquid; covered by the `DISCOUNTS.md` checklist.
 - Changing the sale label or its Solden collection.
 - A countdown timer, a popup, or any overlay.
 
@@ -30,7 +30,7 @@ The bestseller badge (`ob-product-badge`) sits absolutely at the top-left of the
 
 Alternative "Liquid only": rejected — Shopify serves cached storefront HTML, so a `now` comparison is only as fresh as the cache entry. Alternative "JS only (render all hidden)": rejected — badges would pop in after load and be missing without JS.
 
-**D4b — Sale wins over campaign.** Owner decision 2026-10-25: Solden is excluded from campaigns and no card or PDP shows two percentage badges. Campaign collections exclude reduced products by their own conditions (`CAMPAIGNS.md`); the theme adds a CSS-only guard (`:has()` on the visible sale badge) that hides the campaign badge, so it follows Dawn's in-card colour switch and the PDP variant switch without JS. Alternative "hide in Liquid" rejected: the sale badge toggles client-side per colour/variant.
+**D4b — Sale wins over campaign.** Owner decision 2026-10-25: Solden is excluded from campaigns and no card or PDP shows two percentage badges. Campaign collections exclude reduced products by their own conditions (`DISCOUNTS.md`); the theme adds a CSS-only guard (`:has()` on the visible sale badge) that hides the campaign badge, so it follows Dawn's in-card colour switch and the PDP variant switch without JS. Alternative "hide in Liquid" rejected: the sale badge toggles client-side per colour/variant.
 
 **D4 — Card badge stack.** The bestseller badge and the campaign badge share one absolutely positioned top-left container in `.card__media` (flex column), so they stack instead of overlapping. The sale badge stays in `.card__badge`. On the PDP the campaign badge joins `.ob-pdp__gallery-badges`. Visual values go to CI-STYLE-TOKENS.md.
 
@@ -38,13 +38,13 @@ Alternative "Liquid only": rejected — Shopify serves cached storefront HTML, s
 
 **D6 — Free-shipping progress: theme settings + Dawn's section re-rendering.** Settings `ob_free_shipping_threshold` (number, euros; blank = off) and `ob_free_shipping_countries` (comma-separated ISO codes; blank = all) in the Cart settings group. The snippet `ob-free-shipping-progress` compares `cart.total_price` (after line and cart discounts, before shipping) with the threshold and checks `localization.country.iso_code`. It is rendered inside `.cart-drawer__footer` and inside main-cart-footer's subtotal `.js-contents` — both regions Dawn already re-renders on every cart change (`cart.js` updates `cart-drawer-items` + `.cart-drawer__footer`; `cart-drawer.js` replaces `#CartDrawer` on add-to-cart). No own JS.
 
-The threshold is deliberately maintained twice (shipping rate condition in Admin + theme setting); `CAMPAIGNS.md` and MIGRATION-TO-LIVE.md say so.
+The threshold is deliberately maintained twice (shipping rate condition in Admin + theme setting); `DISCOUNTS.md` and MIGRATION-TO-LIVE.md say so.
 
 **D7 — Shop-side setup on dev.** BE/NL split out of the EU zone into its own zone with EUR 4.95 below and EUR 0.00 from EUR 70; DE/FR/LU keep EUR 4.95. WELCOME27 retargeted from `all` to a new automated `volle-prijs` collection (*price reduced is not set*), unpublished from the storefront. Test campaign `actie-test` + a 15 % automatic discount on the same collection for verification, deactivated after review.
 
 ## Risks / Trade-offs
 
-- [Marketing forgets the `actie-` prefix or the Online Store publication] → badge silently missing; `CAMPAIGNS.md` checklist, and a missing badge is the safe failure (never a badge without a discount from this cause).
+- [Marketing forgets the `actie-` prefix or the Online Store publication] → badge silently missing; `DISCOUNTS.md` checklist, and a missing badge is the safe failure (never a badge without a discount from this cause).
 - [Partly reduced product in a campaign collection] → its reduced sizes still get the campaign discount at checkout although the storefront shows only the sale badge for them. Accepted; avoided by building campaign collections on *compare-at price = 0*.
 - [Badge without a matching discount, or different dates] → misleading claim. The theme cannot detect it → checklist step "same collection, same dates".
 - [Shopper's clock is wrong] → badge may show/hide at the wrong moment client-side. Liquid's render-time filter still drops campaigns ended before the cached render, bounding the error.

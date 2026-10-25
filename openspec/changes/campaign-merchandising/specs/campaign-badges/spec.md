@@ -81,7 +81,7 @@ The campaign badge SHALL follow the same rule on every shared product card surfa
 - **THEN** the campaign badge appears over the gallery
 
 ### Requirement: A visible sale badge suppresses the campaign badge
-Reduced prices (compare-at from ERP/Akeneo) and campaigns SHALL never be advertised together: wherever the sale badge is visible — for the colour a card currently shows, or for the PDP's selected variant — the campaign badge SHALL NOT be visible. When the shopper switches to a colour or variant without a visible sale badge, the campaign badge SHALL reappear if its campaign is inside its run time, without a page reload. The campaign badge SHALL NOT change whether the sale or bestseller badges render or what the sale badge states. Campaign collections are expected to exclude reduced products (`CAMPAIGNS.md`); this rule is the storefront's guarantee for products that are partly reduced or were added by hand.
+Reduced prices (compare-at from ERP/Akeneo) and campaigns SHALL never be advertised together: wherever the sale badge is visible — for the colour a card currently shows, or for the PDP's selected variant — the campaign badge SHALL NOT be visible. When the shopper switches to a colour or variant without a visible sale badge, the campaign badge SHALL reappear if its campaign is inside its run time, without a page reload. The campaign badge SHALL NOT change whether the sale or bestseller badges render or what the sale badge states. Campaign collections are expected to exclude reduced products (`DISCOUNTS.md`); this rule is the storefront's guarantee for products that are partly reduced or were added by hand.
 
 #### Scenario: Reduced colour in a running campaign
 - **WHEN** a card shows a reduced colour of a product that is in a running campaign
