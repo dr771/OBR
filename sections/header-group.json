@@ -60,28 +60,18 @@
     "announcement_bar_WRGrTQ": {
       "type": "announcement-bar",
       "blocks": {
-        "announcement_tLaY3c": {
+        "announcement_fitflop_laarzen": {
           "type": "announcement",
           "settings": {
-            "text": "Actie test",
-            "link": "",
+            "text": "FitFlop laarzen: 2e paar -50% – nog t/m 30 november",
+            "link": "shopify://collections/actie-fitflop-laarzen",
             "icon": "none",
-            "campaign": "actie-test"
-          }
-        },
-        "announcement_YbUwJE": {
-          "type": "announcement",
-          "settings": {
-            "text": "Actie test prio",
-            "link": "",
-            "icon": "none",
-            "campaign": "actie-test-prio"
+            "campaign": "actie-fitflop-laarzen"
           }
         }
       },
       "block_order": [
-        "announcement_tLaY3c",
-        "announcement_YbUwJE"
+        "announcement_fitflop_laarzen"
       ],
       "name": "Acties Announcement bar",
       "settings": {

@@ -14,6 +14,9 @@ The theme can't read Shopify discounts, only collections. That's why a visible c
 
 ## Visible campaign in 5 steps
 
+Live example on dev: [FitFlop laarzen – 2e paar -50%](https://original-brands-dev.myshopify.com/collections/actie-fitflop-laarzen) (collection `actie-fitflop-laarzen`, BXGY discount of the same name, promo bar message).
+
+
 1. **Create Collection:** handle starts with `actie-`. Add the products (no sale items). Fill the metafields *Actie: badge-tekst* (`-20%`, `2+1`), *start*, *einde*, and optionally *prioriteit*. Publish to Online Store.
 2. **Automatic discount** on that same collection, same dates. Under combinations, tick **product discounts** (otherwise two running campaigns cancel each other in one cart).
 3. **Promo bar (optional):** add a message in the promo bar and pick the collection under *Actiecollectie*. While it runs it replaces the trust bar.
