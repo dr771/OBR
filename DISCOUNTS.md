@@ -26,7 +26,7 @@ Live example on dev: [FitFlop laarzen – 2e paar -50%](https://original-brands-
 ## What the theme guarantees
 
 - One campaign badge per product; the higher *prioriteit* wins.
-- A visible sale badge hides the campaign badge (never two percentages).
+- Sale and campaign badges both show (stacked). So a `-15%` campaign should exclude Sale via its collection (two percentages would contradict); a `2e paar -50%` may include it.
 - Start/end are re-checked in the browser, so cached pages switch on time.
 
 ## Traps

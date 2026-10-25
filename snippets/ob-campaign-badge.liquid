@@ -17,8 +17,9 @@
   the shopper's clock, which is why not-yet-started campaigns are rendered
   (hidden) too: a page cached before the start still shows the badge on time.
 
-  A visible sale badge hides the campaign badge (CSS in base.css): Solden is
-  excluded from campaigns, and no card or PDP shows two percentage badges.
+  Independent of the sale badge: both can show at once (the card stack moves
+  below Dawn's sale badge). Keeping a "-15%" campaign off Sale items, where two
+  percentages would contradict each other, is the collection's job.
 
   Fails open: no campaign collection, no metafield definitions → no output.
 
@@ -27,7 +28,7 @@
   - placement: {String} 'card' (default) | 'gallery' | 'note'
     'note' is the PDP line under the price ("-15%: korting wordt verrekend in
     je winkelwagen"): Shopify computes automatic discounts only in the cart, so
-    the price itself stays full. Same window/precedence/sale-suppression rules.
+    the price itself stays full. Same window and precedence rules as the badge.
 
   Usage:
   {%- render 'ob-campaign-badge', product: card_product, placement: 'card' -%}

@@ -80,27 +80,19 @@ The campaign badge SHALL follow the same rule on every shared product card surfa
 - **WHEN** a campaign product's PDP renders
 - **THEN** the campaign badge appears over the gallery
 
-### Requirement: A visible sale badge suppresses the campaign badge
-Reduced prices (compare-at from ERP/Akeneo) and campaigns SHALL never be advertised together: wherever the sale badge is visible — for the colour a card currently shows, or for the PDP's selected variant — the campaign badge SHALL NOT be visible. When the shopper switches to a colour or variant without a visible sale badge, the campaign badge SHALL reappear if its campaign is inside its run time, without a page reload. The campaign badge SHALL NOT change whether the sale or bestseller badges render or what the sale badge states. Campaign collections are expected to exclude reduced products (`DISCOUNTS.md`); this rule is the storefront's guarantee for products that are partly reduced or were added by hand.
+### Requirement: Campaign badges are independent of the sale and bestseller badges
+The campaign badge SHALL NOT change whether the sale or bestseller badges render or what the sale badge states, and the sale badge SHALL NOT hide the campaign badge. A product that is reduced, a bestseller and in a running campaign SHALL show all three badges, none overlapping another, on cards and in the PDP gallery. Whether a campaign applies to reduced products is decided by the campaign collection's own conditions, not by the theme.
 
-#### Scenario: Reduced colour in a running campaign
-- **WHEN** a card shows a reduced colour of a product that is in a running campaign
-- **THEN** the sale badge with its percentage is visible and the campaign badge is not
+#### Scenario: Reduced product in a running campaign
+- **WHEN** a card or PDP shows a reduced colour or variant of a product that is in a running campaign
+- **THEN** both the sale badge with its percentage and the campaign badge are visible without overlap
 
-#### Scenario: Shopper switches the card to a full-price colour
-- **WHEN** the shopper selects a full-price colour chip on that card
-- **THEN** the sale badge hides and the campaign badge appears
-
-#### Scenario: PDP variant changes between reduced and full price
-- **WHEN** the shopper selects a reduced variant on the PDP of a campaign product, then a full-price one
-- **THEN** the gallery shows only the sale badge for the reduced variant and only the campaign badge for the full-price one
-
-#### Scenario: Bestseller in a running campaign
-- **WHEN** a bestseller product is in a running campaign
-- **THEN** the bestseller and campaign badges are both visible without overlap
+#### Scenario: Shopper switches between reduced and full-price variants
+- **WHEN** the shopper changes the card colour or the PDP variant between reduced and full price
+- **THEN** the sale badge follows the variant while the campaign badge stays visible
 
 ### Requirement: The PDP says where the campaign discount is applied
-Because Shopify applies automatic discounts only in the cart, the PDP price stays at the full price while a campaign runs. Wherever the PDP gallery shows a campaign badge, the PDP SHALL also show, next to the price, a translatable note that names the badge text and states that the discount is applied in the cart. The note SHALL follow the badge's run time, precedence and sale suppression exactly, so the note and the gallery badge are always visible together or not at all.
+Because Shopify applies automatic discounts only in the cart, the PDP price stays at the full price while a campaign runs. Wherever the PDP gallery shows a campaign badge, the PDP SHALL also show, next to the price, a translatable note that names the badge text and states that the discount is applied in the cart. The note SHALL follow the badge's run time and precedence exactly, so the note and the gallery badge are always visible together or not at all, including on reduced variants.
 
 #### Scenario: Full-price variant in a running campaign
 - **WHEN** the PDP of a running-campaign product shows a variant without a sale badge
@@ -108,7 +100,7 @@ Because Shopify applies automatic discounts only in the cart, the PDP price stay
 
 #### Scenario: Shopper selects a reduced variant
 - **WHEN** the shopper switches to a variant whose sale badge is visible
-- **THEN** both the campaign badge and the note disappear
+- **THEN** the sale badge, the campaign badge and the note are all visible
 
 #### Scenario: Campaign not running
 - **WHEN** no campaign of the product is inside its run time

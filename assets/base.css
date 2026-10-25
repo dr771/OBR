@@ -3679,13 +3679,3 @@ details-disclosure > details {
   font-weight: 500;
 }
 
-/*
-  Sale wins over campaign (spec campaign-badges, "A visible sale badge suppresses
-  the campaign badge"): never two percentage badges at once. CSS-only so it
-  follows the card's in-card colour switch ([hidden] on the sale badge) and the
-  PDP's variant switch (.hidden class on #SaleBadge-*) without extra JS.
-*/
-.card-wrapper:has(.card__badge .badge--sale:not([hidden])) .ob-badge--campaign,
-.ob-pdp__gallery-badges:has(.ob-badge--sale:not(.hidden)) .ob-badge--campaign {
-  display: none !important;
-}

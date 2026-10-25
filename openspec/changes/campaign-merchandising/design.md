@@ -30,7 +30,7 @@ The bestseller badge (`ob-product-badge`) sits absolutely at the top-left of the
 
 Alternative "Liquid only": rejected — Shopify serves cached storefront HTML, so a `now` comparison is only as fresh as the cache entry. Alternative "JS only (render all hidden)": rejected — badges would pop in after load and be missing without JS.
 
-**D4b — Sale wins over campaign.** Owner decision 2026-10-25: Solden is excluded from campaigns and no card or PDP shows two percentage badges. Campaign collections exclude reduced products by their own conditions (`DISCOUNTS.md`); the theme adds a CSS-only guard (`:has()` on the visible sale badge) that hides the campaign badge, so it follows Dawn's in-card colour switch and the PDP variant switch without JS. Alternative "hide in Liquid" rejected: the sale badge toggles client-side per colour/variant.
+**D4b — Sale and campaign badges are independent.** First decided as "sale wins" (a visible sale badge hid the campaign badge and note); reversed by the owner the same day after the "2e paar -50%" demo: an nth-item offer does not contradict a sale percentage and should stay visible on Sale items. Both badges now show, stacked without overlap. A "-15%"-type campaign that would contradict a sale percentage keeps Sale out through its collection conditions (DISCOUNTS.md).
 
 **D4 — Card badge stack.** The bestseller badge and the campaign badge share one absolutely positioned top-left container in `.card__media` (flex column), so they stack instead of overlapping. The sale badge stays in `.card__badge`. On the PDP the campaign badge joins `.ob-pdp__gallery-badges`. Visual values go to CI-STYLE-TOKENS.md.
 
