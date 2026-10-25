@@ -1,4 +1,6 @@
-finetune newsletter popup style
+bug: black reduced prices in card drawer
+
+
 ===
 BUG - back from PDP/wishlist after show more: same position!
 
@@ -6,7 +8,7 @@ bug: click on search if scrolled!
 
 bug: no badges in search widget
 
-BUG - wishlist shows no reduced badge!
+
 
 BUG - warum https://original-brands-dev.myshopify.com/products/fitflop-lulu-leather-toepost?variant=45841872846957 is NOT under blue in filter??
 -- es ist, aber zeigt another blue...
