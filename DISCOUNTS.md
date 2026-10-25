@@ -31,7 +31,7 @@ Live example on dev: [FitFlop laarzen – 2e paar -50%](https://original-brands-
 | *Percentage* | FitFlop laarzen: buy 1, get the 2nd at -50 % |
 | *Amount off each* | Odlo skiset: buy a midlayer, get **€15 off each** pair of gloves (cross-sell: X and Y are different products) |
 
-For a cross-sell, put the X and Y products straight into the discount, and make one `actie-…` collection with **both** groups for the badge.
+For a cross-sell, put the X and Y products straight into the discount, and make one `actie-…` collection with **both** groups for the badge. Sort it *manually* with the X products (what people must buy first) on top, and say "step 1 / step 2" in the collection text; otherwise shoppers only see the discounted Y items and can't find what unlocks them.
 
 ## What the theme guarantees
 
