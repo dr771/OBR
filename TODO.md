@@ -1,14 +1,10 @@
-checkout customize
-===
-Evaluate discounts strategy: akeneo vs manual!
-===
 
 
-BUG - back from PDP/wishlist after show more: same position!
-
-bug: click on search if scrolled!
+seems to work: click on search if scrolled! - saw in bravo tough
 
 bug: no badges in search widget
+
+
 
 
 
