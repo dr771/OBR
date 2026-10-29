@@ -8,6 +8,8 @@
 
 Status legend: `[ ]` todo · `[x]` done · `[~]` in progress/partially known
 
+**Prior store-copy work.** Sweaty Betty commit `38d642f` (2026-07-09, “Document Shopify migration CLI gotchas”) records `shopify store execute --variable-file` needing BOM-less UTF-8 and `productSet` requiring HS codes in `inventoryItem.harmonizedSystemCode`, not a variant metafield; see `../SweatyBetty/MEMORY.md` under Tooling. That commit ignores `.migration/` for temporary store-copy exports; the folder is absent from this Windows checkout, so recover any surviving local artifacts from the machine used for that work before treating this checklist as a complete technical runbook.
+
 ---
 
 ## 1. Catalog data — Nick / Akeneo
