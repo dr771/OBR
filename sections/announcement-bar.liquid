@@ -49,9 +49,6 @@
 <div
   id="UtilityBar-{{ section.id }}"
   class="utility-bar color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator and ob_live_count > 0 %} utility-bar--bottom-border{% elsif section.settings.show_line_separator and section.settings.show_social and social_icons%} utility-bar--bottom-border-social-only{% endif %}{% if section.settings.enable_country_selector or section.settings.enable_language_selector %} header-localization{% endif %}"
-  {% if section.settings.ob_replace_others %}
-    data-ob-promo
-  {% endif %}
 >
   <div class="page-width utility-bar__grid{% if announcement_bar and language_country_selector or section.settings.show_social and social_icons %} utility-bar__grid--3-col{% elsif language_country_selector or section.settings.show_social and social_icons %} utility-bar__grid--2-col{% endif %}">
     {%- if section.settings.show_social and social_icons -%}
@@ -220,7 +217,7 @@
   </div>
 </div>
 
-{%- if ob_has_schedule or section.settings.ob_replace_others -%}
+{%- if ob_has_schedule -%}
   {%- comment -%}
     Re-checks scheduled messages on the shopper's clock (the render-time choice
     is only as fresh as the page cache). Inline and synchronous on purpose: it
@@ -230,11 +227,8 @@
     fade classes could otherwise park the only message at opacity 0). None
     left: the whole bar goes, unless it also hosts social links or selectors.
 
-    A promo bar (ob_replace_others) that shows at least one message flags
-    <html> with .ob-promo-bar-active, which hides every other announcement bar
-    (component-ob-announcement-bar.css) — a class on <html> rather than hiding
-    siblings here, because the trust bar may come after this section in the
-    header group and not be parsed yet. Campaign over → no flag → trust bar back.
+    Bars never hide each other: showing or hiding the trust bar next to a promo
+    bar is the owner's eye icon in the theme editor (PROMOBAR.md).
   {%- endcomment -%}
   <script>
     (function (bar) {
@@ -254,9 +248,6 @@
         bar.classList.add('ob-announcement--single');
         var slider = bar.querySelector('[data-autoplay]');
         if (slider) slider.setAttribute('data-autoplay', 'false');
-      }
-      if (shown > 0 && bar.hasAttribute('data-ob-promo')) {
-        document.documentElement.classList.add('ob-promo-bar-active');
       }
     })(document.getElementById('UtilityBar-{{ section.id }}'));
   </script>
@@ -298,13 +289,6 @@
       "id": "show_line_separator",
       "default": true,
       "label": "t:sections.header.settings.show_line_separator.label"
-    },
-    {
-      "type": "checkbox",
-      "id": "ob_replace_others",
-      "default": false,
-      "label": "t:sections.announcement-bar.settings.ob_replace_others.label",
-      "info": "t:sections.announcement-bar.settings.ob_replace_others.info"
     },
     {
       "type": "header",

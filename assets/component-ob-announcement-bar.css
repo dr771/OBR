@@ -90,9 +90,3 @@
   width: 100%;
   max-width: 100%;
 }
-
-/* A promo bar (section setting "replaces other announcement bars") showing a
-   message hides every other announcement bar; set by its inline script. */
-.ob-promo-bar-active .utility-bar:not([data-ob-promo]) {
-  display: none !important;
-}

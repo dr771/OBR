@@ -19,7 +19,7 @@ Live example on dev: [FitFlop laarzen – 2e paar -50%](https://original-brands-
 
 1. **Create Collection:** handle starts with `actie-`. Add the products (no sale items). Fill the metafields *Actie: badge-tekst* (`-20%`, `2+1`), *start*, *einde*, and optionally *prioriteit*. Publish to Online Store.
 2. **Automatic discount** on that same collection, same dates. Under combinations, tick **product discounts** (otherwise two running campaigns cancel each other in one cart).
-3. **Promo bar (optional):** add a message in the promo bar and pick the collection under *Actiecollectie*. While it runs it replaces the trust bar.
+3. **Promo bar (optional):** add a message in the promo bar and pick the collection under *Actiecollectie*. It shows only while the collection runs. The black trust bar stays unless you hide it with its eye icon in the theme editor — how and why in [PROMOBAR.md](PROMOBAR.md).
 4. **Check:** badge on the collection, in search and on the PDP; discount appears in the cart.
 5. **Stop early:** end the discount **and** set *Actie: einde* to now. Otherwise the badge stays.
 
