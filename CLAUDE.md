@@ -46,7 +46,12 @@ explicit `--only` list, then verify the real storefront URL in Chrome. Horizon
 shopify theme push --store=original-brands-mtr6tuym.myshopify.com --theme=209721262417 --allow-live --only <file>
 ```
 
-**DEV is a test shop, not a deploy target.** Push to DEV (`--store=original-brands-dev.myshopify.com --theme=148245381229`, or `scripts/theme-push.sh --dev`) only when the owner asks for an experiment or a comparison there. Its theme will drift from `main`; that is accepted, and DEV is never the proof that a change works.
+**Deploy route for theme code: DEV first, then live (owner decision 2026-10-30).** DEV (`--store=original-brands-dev.myshopify.com --theme=148245381229`, or `scripts/theme-push.sh --dev`) is the staging shop for features and bug fixes:
+1. Reproduce on DEV, edit, push the changed files to DEV, verify on DEV's storefront (mobile and desktop as relevant).
+2. Commit and push to git: the commit is what goes live, so DEV and live always receive the same files.
+3. Push exactly those files to pre-live theme `209721262417`, then verify there: on the storefront where the page can show it, otherwise by pulling the file back and comparing it with the commit.
+
+Only code travels this way. `config/settings_data.json`, theme-editor edits in `templates/*.json`, apps, products and menus are per shop and are never synced from DEV. Bugs that depend on live data are reproduced on pre-live directly. DEV's catalog is Akeneo **dev**, so it is not proof for data-dependent behavior.
 
 **When any pushed file is under `templates/*.json`, use `scripts/theme-push.sh <file> [<file> ...]` instead of the raw command above.** It targets pre-live by default; `--dev` as the first argument targets DEV. It pulls each JSON template fresh and checks live changes against `HEAD`, allowing intentional local edits while aborting on overlapping live edits. Reconcile any live-only Admin settings into the local JSON before running it; the wrapper detects conflicts but does not merge settings automatically. This exists because `templates/*.json` is merchant-editable state that can be changed live in the Admin theme editor without ever being committed — a push built on a stale local copy silently reverts those live-only settings with a clean `git status` and no warning (it happened for real on 2026-09-03, commit `cdc6c7c`: a push meant to touch only `templates/collection.json`'s banner section also reverted its live `products_per_page`/`show_vendor`/`image_ratio` back to Dawn's defaults). For non-JSON files (Liquid/CSS/JS/assets) the raw command above is fine — they carry no live-only Admin state.
 
