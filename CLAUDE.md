@@ -6,7 +6,8 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 Shopify theme rebuild for Original Brands (originalbrands.nl) — multi-brand apparel + footwear retailer, migrating from a custom Drupal-ish CMS.
 
-- **Store:** original-brands-dev.myshopify.com (storefront password: `original`)
+- **Working shop (pre-live):** `original-brands-live.myshopify.com`, shop ID `109574717777`, permanent domain `original-brands-mtr6tuym.myshopify.com` (the one the CLI needs). Owned by the client (Nick) since 2026-10-30, Basic plan; Dr770.com works in it as collaborator. Storefront password-protected until launch. All theme and shop-data work happens here.
+- **Test shop (DEV):** `original-brands-dev.myshopify.com` (storefront password: `original`). Kept for experiments, Akeneo-dev comparisons and as the reference for how things looked before the migration. Reached through the CLI, not the connector.
 - **Theme base:** Dawn (cloned fresh 2026-08-10, no upstream git history)
 - **Product data source:** Akeneo, synced by Nick (connected — see STATUS-LOG.md for what's in the store)
 - **Reference project:** SweatyBetty — same Dawn/Akeneo/OpenSpec stack, further along. Sibling directory of this repo (`../SweatyBetty`). Reuse its shipped patterns and lessons, not its SB-specific branding/hacks.
@@ -33,28 +34,33 @@ Read these before any major decision:
 
 ## Shopify CLI
 
-**Direct-active-theme workflow — hard rule.** This dev shop's active main Dawn theme
-`148245381229` is the working surface agents must edit, push to, and verify against.
-In this project, “live” means that active theme on
-`original-brands-dev.myshopify.com`, even though the shop itself is the non-public dev
-shop. Push each requested theme-code change directly to that theme with an explicit
-`--only` list, then verify the real storefront URL in Chrome.
+**Direct-active-theme workflow — hard rule.** The pre-live shop's active Dawn theme
+`209721262417` is the working surface agents must edit, push to, and verify against.
+In this project, “live” means that active theme on `original-brands-live.myshopify.com`,
+even though its storefront is still password-protected and `originalbrands.nl` still points
+at the old site. Push each requested theme-code change directly to that theme with an
+explicit `--only` list, then verify the real storefront URL in Chrome. Horizon
+`209707532625` is a draft kept as rollback; never push to it.
 
 ```
-shopify theme push --store=original-brands-dev.myshopify.com --theme=148245381229 --allow-live --only <file>
+shopify theme push --store=original-brands-mtr6tuym.myshopify.com --theme=209721262417 --allow-live --only <file>
 ```
 
-**When any pushed file is under `templates/*.json`, use `scripts/theme-push.sh <file> [<file> ...]` instead of the raw command above.** It pulls each JSON template fresh and checks live changes against `HEAD`, allowing intentional local edits while aborting on overlapping live edits. Reconcile any live-only Admin settings into the local JSON before running it; the wrapper detects conflicts but does not merge settings automatically. This exists because `templates/*.json` is merchant-editable state that can be changed live in the Admin theme editor without ever being committed — a push built on a stale local copy silently reverts those live-only settings with a clean `git status` and no warning (it happened for real on 2026-09-03, commit `cdc6c7c`: a push meant to touch only `templates/collection.json`'s banner section also reverted its live `products_per_page`/`show_vendor`/`image_ratio` back to Dawn's defaults). For non-JSON files (Liquid/CSS/JS/assets) the raw command above is fine — they carry no live-only Admin state.
+**DEV is a test shop, not a deploy target.** Push to DEV (`--store=original-brands-dev.myshopify.com --theme=148245381229`, or `scripts/theme-push.sh --dev`) only when the owner asks for an experiment or a comparison there. Its theme will drift from `main`; that is accepted, and DEV is never the proof that a change works.
+
+**When any pushed file is under `templates/*.json`, use `scripts/theme-push.sh <file> [<file> ...]` instead of the raw command above.** It targets pre-live by default; `--dev` as the first argument targets DEV. It pulls each JSON template fresh and checks live changes against `HEAD`, allowing intentional local edits while aborting on overlapping live edits. Reconcile any live-only Admin settings into the local JSON before running it; the wrapper detects conflicts but does not merge settings automatically. This exists because `templates/*.json` is merchant-editable state that can be changed live in the Admin theme editor without ever being committed — a push built on a stale local copy silently reverts those live-only settings with a clean `git status` and no warning (it happened for real on 2026-09-03, commit `cdc6c7c`: a push meant to touch only `templates/collection.json`'s banner section also reverted its live `products_per_page`/`show_vendor`/`image_ratio` back to Dawn's defaults). For non-JSON files (Liquid/CSS/JS/assets) the raw command above is fine — they carry no live-only Admin state.
 
 Do **not** use `shopify theme dev`, localhost, a preview theme, or a CLI Development
 theme as the normal implementation/verification loop. Their settings and assets can be
 out of sync with the active theme and therefore give false results. Only use one when the
 owner explicitly requests a separate preview; stop it afterward, never report it as live
-verification, and still make the approved change on theme `148245381229`.
+verification, and still make the approved change on theme `209721262417`.
 
-**Store-identity gate for admin writes.** Before every Shopify Admin API mutation, retrieve the connected shop and proceed only when it is **Original Brands DEV** with the exact domain `original-brands-dev.myshopify.com`. This protects the shared connector from an accidental shop switch while keeping collection, navigation, metafield, and other shop-data work in the Admin API.
+**Store-identity gate for admin writes.** Before every Shopify Admin API mutation, read the shop and proceed only when it is **Original Brands** with the exact domain `original-brands-live.myshopify.com` and shop ID `109574717777`. The claude.ai Shopify connector is pointed at this shop (owner decision 2026-10-30). The CLI (`shopify store execute --store original-brands-mtr6tuym.myshopify.com`) works too, and must use the permanent domain because the CLI rejects the primary one.
 
-**Migration exception (owner-approved 2026-10-29).** For tasks in [MIGRATION-PLAN.md](MIGRATION-PLAN.md) only, Admin API mutations may also target the pre-live shop **Original Brands** with the exact domain `original-brands-live.myshopify.com` and shop ID `109574717777`. Its permanent domain is `original-brands-mtr6tuym.myshopify.com`, and `shopify store auth/execute` must use that one, because the CLI rejects the primary domain. Prefer the CLI (`shopify store execute --store <domain> --allow-mutations`) over switching the shared connector, since the store is explicit in every command. Before each mutation, re-read the shop and confirm that domain and ID, and confirm that the mutation belongs to the pre-live batch you are running. A DEV write while connected to pre-live, or the reverse, is a stop condition. Switch the connector back to DEV when the migration batch ends, and note the connected shop in the plan's handoff record. This exception does not cover the production domain, theme publishing, or product/catalog deletion. It also does not cover writing Akeneo-managed schema without Nick's agreement.
+**DEV writes are the exception.** Admin writes to DEV (`original-brands-dev.myshopify.com`, shop ID `72440086637`) only happen when the owner asks for an experiment there, and only through the CLI with `--store original-brands-dev.myshopify.com`, so the shop is explicit in the command. Never switch the shared connector to DEV for that. A write that lands on the other shop than the task intends is a stop condition.
+
+**Limits on pre-live writes.** No product/catalog deletion, no theme publishing and nothing on the production domain without the owner's explicit go-ahead. Akeneo-managed schema (product/variant metafield definitions, `filtercolors`/`activities` metaobjects) is created by Nick's Akeneo connector, not by us. Owner-only settings (business entity, payments, billing, plan) are Nick's.
 
 **Page-body writes via API — the agent clears the editor cache, not the owner.** The Admin page editor initialises from its IndexedDB `apollo-caches`, not from the server, so after a `pageUpdate` it can show the *old* body even after a hard reload — and the owner's next Save silently reverts the API change (happened 2026-09-30 on the FAQ). So, as part of every task that writes a page body via API, before reporting done: (1) re-read the body via API right before writing, in case the owner edited it in Admin; (2) after writing, on an `admin.shopify.com` tab in the owner's Chrome run `indexedDB.deleteDatabase('apollo-caches')`, reload the page's editor, and confirm it shows the new content; (3) tell the owner in one line that any *other* browser/machine where that page's editor was opened (e.g. the other machine) still needs a reload after clearing the same cache — the agent can only clear the Chrome it controls. Never ask the owner to remember this unprompted.
 
@@ -111,9 +117,9 @@ Die Specs selbst liegen in `openspec/specs/`, archivierte Changes unter `openspe
 
 See "Next up" in MIXED-SHOPS-PLAYBOOK.md for what's still open.
 
-**Theme workflow.** Shopify CLI is authenticated on this machine:
+**Theme workflow.** Shopify CLI is authenticated on this machine for both shops:
 ```
-shopify theme push --theme=148245381229 --allow-live --only <files>   # main Dawn theme
+shopify theme push --store=original-brands-mtr6tuym.myshopify.com --theme=209721262417 --allow-live --only <files>   # pre-live Dawn (working surface)
 ```
 Always push with `--only <changed files>`. `.shopifyignore` independently blocks `config/settings_data.json`, including when it is accidentally named in `--only`; do not remove that protection for a normal deploy. JSON templates remain merchant-editable state; use `scripts/theme-push.sh <file> [<file> ...]` whenever any pushed file is under `templates/*.json`. It checks changes against `HEAD`, permits intentional local edits when live has not changed those fields, and aborts on overlapping live edits. Reconcile live-only Admin settings into the local file before running it; the wrapper does not merge them automatically (see the Shopify CLI section above).
 

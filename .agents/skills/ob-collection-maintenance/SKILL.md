@@ -15,7 +15,7 @@ re-reading that change's design.md.
 
 ## Audit first
 
-1. Confirm the Shopify connector identifies the shop as **Original Brands DEV** with domain `original-brands-dev.myshopify.com`. Stop on any other shop.
+1. Confirm the Shopify connector identifies the shop as **Original Brands** (pre-live) with domain `original-brands-live.myshopify.com` and shop ID `109574717777`. Stop on any other shop. Run it against DEV only when the owner asks, via the CLI with `--store original-brands-dev.myshopify.com`.
 2. Read the live rule sets for **Sport & Training** (`sport-training`), **Outdoor & Werk** (`outdoor-werk`), and **Fashion & Lifestyle** (`fashion-lifestyle`).
 3. Query distinct `vendor` values across the live product catalog.
 4. Compare live vendor values with `COLLECTIONS.md`'s "Current scan baseline" table. Report vendors that are new, missing (in the table but with zero live products), or whose exact vendor string doesn't match what's actually stored (this matters for RH+ and Magnum specifically — their vendor strings were unverified estimates as of 2026-09-03). Include the current product count for each collection.

@@ -2,7 +2,7 @@
 
 Run this after **every** Akeneo sync by Nick. Each item has broken silently at least once: nothing errors, nothing is logged, the shop just shows the wrong thing.
 
-Shop: `original-brands-dev.myshopify.com`, storefront password `original`. Open issues and history: [NICK.md](NICK.md). Category vocabulary: [cats-dev.csv](cats-dev.csv).
+Shop: the pre-live working shop `original-brands-live.myshopify.com` (password-protected storefront; synced from Akeneo **live**). DEV (`original-brands-dev.myshopify.com`, password `original`) still gets Akeneo-dev syncs; run the same checks there only when testing on DEV. Open issues and history: [NICK.md](NICK.md). Category vocabulary: [cats-dev.csv](cats-dev.csv) is the **dev** vocabulary; Akeneo live differs, so confirm live values before treating a mismatch as an error.
 
 **One script for checks 1 and 2.** Paste it into the browser console on any storefront page:
 

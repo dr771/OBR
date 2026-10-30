@@ -15,7 +15,9 @@
 # (Shopify CLI and pushing). This script makes the required pull-and-diff step automatic instead
 # of relying on a human or an agent remembering to do it by hand.
 #
-# Usage: scripts/theme-push.sh <file> [<file> ...]
+# Usage: scripts/theme-push.sh [--dev] <file> [<file> ...]
+# Targets the pre-live shop's active Dawn theme (the working surface); --dev
+# targets the DEV test shop instead (see CLAUDE.md, Shopify CLI).
 # Every JSON template in the list is pulled fresh from the live theme and
 # diffed (formatting-normalized) against the local copy before anything is
 # pushed. Any real difference aborts the whole push with the diff printed,
@@ -24,13 +26,19 @@
 
 set -euo pipefail
 
-STORE="original-brands-dev.myshopify.com"
-THEME="148245381229"
+STORE="original-brands-mtr6tuym.myshopify.com"
+THEME="209721262417"
+if [ "${1:-}" = "--dev" ]; then
+  STORE="original-brands-dev.myshopify.com"
+  THEME="148245381229"
+  shift
+fi
 
 if [ "$#" -eq 0 ]; then
-  echo "Usage: $0 <theme-file> [<theme-file> ...]" >&2
+  echo "Usage: $0 [--dev] <theme-file> [<theme-file> ...]" >&2
   exit 1
 fi
+echo "Target: $STORE theme $THEME"
 
 TMPDIR=$(mktemp -d)
 trap 'rm -rf "$TMPDIR"' EXIT

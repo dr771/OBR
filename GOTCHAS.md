@@ -109,6 +109,9 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 
 ## Shopify CLI and pushing
 
+- **CLI versions differ per machine.** The Mac has Shopify CLI 3.91.1 (2026-10-30), which has no `shopify store execute` ("Command store execute not found"); the Windows box ran the 4.x CLI for the migration. Run `shopify version` first; upgrade with `npm install -g @shopify/cli@latest` before relying on `store execute`.
+- **The pre-live CLI store is the permanent domain** `original-brands-mtr6tuym.myshopify.com`; `--store original-brands-live.myshopify.com` is rejected.
+- **App-embed settings copy across shops.** `config/settings_data.json` blocks carry the app extension's global UUID in `type` (e.g. Swish `…/blocks/<name>/194f5011-…`), and block keys are arbitrary, so a block can be copied verbatim into another shop's settings as long as its settings hold no shop-specific IDs. Done for the four Swish embeds on 2026-10-30, following the settings-migration procedure in CLAUDE.md.
 - **A successful theme pull can download no matching file.** The code-only OB upload had no `config/settings_data.json`; a targeted pull exited 0 with an empty destination. Confirm actual file presence in the code editor and record absence as the baseline instead of calling it a successful settings backup. Explicit `--path` directories must already exist.
 - A silent `theme push` hang is an expired session with an invisible device-code prompt. Redirect output to a log (`> push.log 2>&1`) instead of piping to `tail`, and have the user open the link. Always pass `--store=original-brands-dev.myshopify.com`.
 - Commands that ask for confirmation (`theme publish`, `duplicate`, `delete`) hang non-interactively; pass `--force` (and `--json` on `duplicate`).

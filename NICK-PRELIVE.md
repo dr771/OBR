@@ -26,7 +26,7 @@ Deze definities beheert de Akeneo-connector. We maken ze daarom niet zelf aan zo
 
 Wat erop wacht: 37 categorie-, activiteit- en gendercollecties, `accessoires`, de submenu's van het hoofdmenu (33 links staan voorlopig als placeholder), de FitFlop-subcollecties, de actie "FitFlop laarzen – 2e paar -50%" en de filters in Search & Discovery.
 
-- [ ] Maak jij ze aan via de connector, of maken wij ze aan met dezelfde keys en types?
+- [ ] Je maakt ze aan via de Akeneo-connector (zoals in DEV), zodra pre-live gekoppeld is.
 - [ ] Wanneer koppel je pre-live aan de **live** Akeneo-omgeving?
 
 ### 2. Bedrijf, betalingen en btw (na de overdracht, in jouw account)
@@ -54,9 +54,7 @@ Apps van derden vragen op deze shop nog een identiteitsverificatie van de eigena
 
 - [ ] **Akeneo PIM App** met de live-omgeving.
 - [ ] **ERP/orderkoppeling:** welke app gaat naar productie, `OB_AX-SFY_TEST` of een andere? Heeft die toegang tot beschermde klantgegevens op het gekozen abonnement?
-- [ ] **Swish (Wishlist King):** het thema heeft deze app nodig voor de favorieten. Wie beheert het account en het abonnement?
-- [ ] **Channable:** account en feed-instellingen.
-- [ ] **Trusted Shops:** de officiële app met dezelfde TSID als de oude shop.
+- [ ] **Channable:** jouw account, installeren en feed instellen.
 
 ### 6. Teksten nalezen
 
