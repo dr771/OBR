@@ -510,7 +510,8 @@ product-info.ob-pdp {
     box-shadow: 0 -0.6rem 1.8rem rgba(15, 23, 42, 0.06);
   }
 
-  body:has(menu-drawer > details[open], cart-drawer.active) .ob-pdp .product-form__buttons {
+  /* header-drawer is the header menu; menu-drawer is Dawn's filter drawer. */
+  body:has(header-drawer > details[open], menu-drawer > details[open], cart-drawer.active) .ob-pdp .product-form__buttons {
     visibility: hidden;
   }
 
