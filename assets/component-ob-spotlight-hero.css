@@ -1,0 +1,177 @@
+/*
+  OB: alternative homepage hero, matched by eye to the Bolt proto's brand
+  spotlight. Below 750px the photo stacks above a solid panel, so the copy never
+  covers the product. From 750px up the copy overlays the photo on a gradient in
+  the theme's dark ink, which reads as part of the page rather than a black film.
+*/
+.ob-spotlight-hero__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.ob-spotlight-hero__content {
+  background: var(--ob-spotlight-hero-panel);
+  padding-block: 2.4rem 2.8rem;
+}
+
+.ob-spotlight-hero__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.ob-spotlight-hero__eyebrow::before {
+  content: '';
+  flex: none;
+  width: 3.2rem;
+  height: 0.1rem;
+  background: currentColor;
+}
+
+.ob-spotlight-hero__heading {
+  margin: 1.6rem 0 0;
+  font-family: var(--font-heading-family);
+  font-weight: 600;
+  font-size: 3.2rem;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.ob-spotlight-hero__heading-accent {
+  font-style: italic;
+  color: #dbeafe;
+}
+
+.ob-spotlight-hero__text {
+  margin: 1.4rem 0 0;
+  max-width: 52rem;
+  font-size: 1.6rem;
+  line-height: 1.5;
+  letter-spacing: normal;
+  color: #ffffff;
+}
+
+.ob-spotlight-hero__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-height: 4.8rem;
+  margin-top: 2.2rem;
+  padding: 1.3rem 2.8rem;
+  border-radius: 999.9rem;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-decoration: none;
+  transition: box-shadow 0.18s ease;
+}
+
+.ob-spotlight-hero__button:is(:hover, :focus-visible) {
+  box-shadow: 0 1rem 2rem -0.4rem rgba(0, 0, 0, 0.35);
+}
+
+.ob-spotlight-hero__button:focus-visible {
+  outline: 0.2rem solid #ffffff;
+  outline-offset: 0.3rem;
+}
+
+.ob-spotlight-hero__button-icon {
+  display: inline-flex;
+  transition: transform 0.18s ease;
+}
+
+.ob-spotlight-hero__button:is(:hover, :focus-visible) .ob-spotlight-hero__button-icon {
+  transform: translateX(0.4rem);
+}
+
+.ob-spotlight-hero__button svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+@media screen and (min-width: 750px) {
+  .ob-spotlight-hero__banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: clamp(48rem, 40vw, 76rem);
+    background: #0f172a;
+  }
+
+  .ob-spotlight-hero__image,
+  .ob-spotlight-hero__overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ob-spotlight-hero__image {
+    aspect-ratio: auto;
+  }
+
+  /* Extra class beats Dawn's div:empty { display: none }. */
+  .ob-spotlight-hero .ob-spotlight-hero__overlay {
+    display: block;
+    background: linear-gradient(
+      to right,
+      rgba(15, 23, 42, 0.92) 0%,
+      rgba(15, 23, 42, 0.76) 35%,
+      rgba(15, 23, 42, 0.25) 62%,
+      transparent 82%
+    );
+  }
+
+  .ob-spotlight-hero__content {
+    position: relative;
+    width: 100%;
+    padding-block: 4rem;
+    background: none;
+  }
+
+  .ob-spotlight-hero__eyebrow {
+    color: var(--ob-accent);
+  }
+
+  .ob-spotlight-hero__heading {
+    max-width: 40rem;
+    font-size: 4.4rem;
+  }
+
+  .ob-spotlight-hero__text {
+    max-width: 38rem;
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .ob-spotlight-hero__button {
+    margin-top: 2.8rem;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .ob-spotlight-hero__heading {
+    max-width: 62rem;
+    font-size: 6.8rem;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  .ob-spotlight-hero__text {
+    max-width: 52rem;
+    font-size: 1.8rem;
+    line-height: 1.55;
+  }
+}

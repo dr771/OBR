@@ -1,0 +1,182 @@
+{% comment %}
+  OB: alternative homepage hero, matched to the Bolt proto's brand spotlight. Any
+  photo works: a dark gradient carries the copy, so the image needs no empty space.
+  Copy sits left on the page grid from 750px up; below that the photo stacks above
+  a solid panel. Like the other heroes it carries its own brand marquee (the
+  section's blocks).
+{% endcomment %}
+{{ 'component-ob-spotlight-hero.css' | asset_url | stylesheet_tag }}
+{%- if section.blocks.size > 0 -%}
+  {{ 'component-ob-home-marquee.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'ob-home-marquee.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+<div class="ob-spotlight-hero">
+  <div class="ob-spotlight-hero__banner" style="--ob-spotlight-hero-panel: {{ section.settings.panel_color }};">
+    {%- if section.settings.image != blank -%}
+      <img
+        src="{{ section.settings.image | image_url: width: 1600 }}"
+        srcset="
+          {{ section.settings.image | image_url: width: 750 }} 750w,
+          {{ section.settings.image | image_url: width: 1100 }} 1100w,
+          {{ section.settings.image | image_url: width: 1600 }} 1600w,
+          {{ section.settings.image | image_url: width: 2200 }} 2200w,
+          {{ section.settings.image | image_url: width: 2880 }} 2880w
+        "
+        sizes="(min-width: 750px) 100vw, 134vw"
+        alt="{{ section.settings.image.alt | default: section.settings.heading | escape }}"
+        width="{{ section.settings.image.width }}"
+        height="{{ section.settings.image.height }}"
+        fetchpriority="high"
+        class="ob-spotlight-hero__image"
+        style="object-position: {{ section.settings.image_position_x }}% {{ section.settings.image_position_y }}%;"
+      >
+    {%- endif -%}
+    <div
+      class="ob-spotlight-hero__overlay"
+      style="opacity: {{ section.settings.overlay | divided_by: 100.0 }};"
+      aria-hidden="true"
+    ></div>
+
+    <div class="ob-spotlight-hero__content page-width">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="ob-spotlight-hero__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      <h1 class="ob-spotlight-hero__heading">
+        {{ section.settings.heading }}
+        {% if section.settings.heading_accent != blank -%}
+          <span class="ob-spotlight-hero__heading-accent">{{ section.settings.heading_accent }}</span>
+        {%- endif %}
+      </h1>
+      {%- if section.settings.text != blank -%}
+        <p class="ob-spotlight-hero__text">{{ section.settings.text }}</p>
+      {%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        <a href="{{ section.settings.button_link }}" class="ob-spotlight-hero__button">
+          {{ section.settings.button_label }}
+          <span class="ob-spotlight-hero__button-icon">
+            {%- render 'ob-icon', icon: 'arrow-right' -%}
+          </span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- if section.blocks.size > 0 -%}
+    {%- render 'ob-home-marquee', blocks: section.blocks -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "OB Spotlight-hero",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Regel boven titel",
+      "default": "Merk in de spotlight"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titel",
+      "default": "Jouw merk in de"
+    },
+    {
+      "type": "text",
+      "id": "heading_accent",
+      "label": "Titel accent (cursief, na de titel)",
+      "default": "hoofdrol."
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Tekst"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Knop label",
+      "default": "Shop nu"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Knop link"
+    },
+    {
+      "type": "header",
+      "content": "Afbeelding"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Foto",
+      "info": "Liggend, minstens 2400 px breed, met het onderwerp in het midden."
+    },
+    {
+      "type": "range",
+      "id": "image_position_x",
+      "label": "Beeldpositie (horizontaal)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "image_position_y",
+      "label": "Beeldpositie (verticaal)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "overlay",
+      "label": "Sterkte verloop",
+      "info": "Lager kan alleen bij een foto die aan de kant van de tekst al donker is.",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "color",
+      "id": "panel_color",
+      "label": "Achtergrond tekstvlak (mobiel)",
+      "default": "#0D80C4"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Merk (marquee)",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collectie"
+        },
+        {
+          "type": "text",
+          "id": "brand_handle",
+          "label": "Merk-handle (fallback)",
+          "info": "Alleen invullen als de collectie hierboven nog niet bestaat (bv. \"rh-plus\"). Bepaalt dan het logo en de link (/collections/<handle>)."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "OB Spotlight-hero"
+    }
+  ]
+}
+{% endschema %}

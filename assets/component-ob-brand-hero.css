@@ -5,7 +5,7 @@
 */
 .ob-brand-hero--text-light {
   --ob-brand-hero-ink: #ffffff;
-  --ob-brand-hero-ink-soft: rgba(255, 255, 255, 0.9);
+  --ob-brand-hero-ink-soft: #ffffff;
   --ob-brand-hero-button-bg: #ffffff;
   --ob-brand-hero-button-ink: #0f172a;
   --ob-brand-hero-scrim-rgb: 15, 23, 42;
@@ -139,8 +139,6 @@
   .ob-brand-hero__content {
     position: relative;
     width: 100%;
-    max-width: var(--page-width);
-    margin: 0 auto;
     padding: 3.2rem 5rem;
     background: none;
   }
@@ -149,8 +147,13 @@
     max-width: 50%;
   }
 
+  .ob-brand-hero--content-left .ob-brand-hero__content {
+    padding-left: max(5rem, calc((100% - var(--page-width)) / 2 + 5rem));
+  }
+
+  /* Starts at the banner's centre line rather than hugging the far edge. */
   .ob-brand-hero--content-right .ob-brand-hero__copy {
-    margin-left: auto;
+    margin-left: 50%;
   }
 
   .ob-brand-hero__heading {
