@@ -9,6 +9,121 @@
  */
 {
   "sections": {
+    "brand_hero": {
+      "type": "ob-brand-hero",
+      "blocks": {
+        "fitflop": {
+          "type": "brand",
+          "settings": {
+            "collection": "fitflop",
+            "brand_handle": ""
+          }
+        },
+        "hi_tec": {
+          "type": "brand",
+          "settings": {
+            "collection": "hi-tec",
+            "brand_handle": ""
+          }
+        },
+        "holster": {
+          "type": "brand",
+          "settings": {
+            "collection": "holster",
+            "brand_handle": ""
+          }
+        },
+        "irasuto_studios": {
+          "type": "brand",
+          "settings": {
+            "collection": "irasuto-studios",
+            "brand_handle": ""
+          }
+        },
+        "juicy_couture": {
+          "type": "brand",
+          "settings": {
+            "collection": "juicy-couture",
+            "brand_handle": ""
+          }
+        },
+        "loewenweiss": {
+          "type": "brand",
+          "settings": {
+            "collection": "loewenweiss",
+            "brand_handle": ""
+          }
+        },
+        "nike_swim": {
+          "type": "brand",
+          "settings": {
+            "collection": "nike-swim",
+            "brand_handle": ""
+          }
+        },
+        "odlo": {
+          "type": "brand",
+          "settings": {
+            "collection": "odlo",
+            "brand_handle": ""
+          }
+        },
+        "pas_de_monaco": {
+          "type": "brand",
+          "settings": {
+            "collection": "pas-de-monaco",
+            "brand_handle": ""
+          }
+        },
+        "rh_plus": {
+          "type": "brand",
+          "settings": {
+            "collection": "",
+            "brand_handle": "rh-plus"
+          }
+        },
+        "sneaker_lab": {
+          "type": "brand",
+          "settings": {
+            "collection": "sneaker-lab",
+            "brand_handle": ""
+          }
+        },
+        "sweaty_betty": {
+          "type": "brand",
+          "settings": {
+            "collection": "sweaty-betty",
+            "brand_handle": ""
+          }
+        }
+      },
+      "block_order": [
+        "fitflop",
+        "hi_tec",
+        "holster",
+        "irasuto_studios",
+        "juicy_couture",
+        "loewenweiss",
+        "nike_swim",
+        "odlo",
+        "pas_de_monaco",
+        "rh_plus",
+        "sneaker_lab",
+        "sweaty_betty"
+      ],
+      "settings": {
+        "heading": "Niets voelt als FitFlop",
+        "text": "Comfort dat je de hele dag draagt, in stijlen die overal bij passen. Ontdek de nieuwe collectie.",
+        "button_label": "Shop FitFlop",
+        "button_link": "shopify://collections/fitflop",
+        "image": "shopify://shop_images/fitflop-dash-hero-desktop.jpg",
+        "image_mobile": "shopify://shop_images/fitflop-dash-hero-mobile.jpg",
+        "content_position": "right",
+        "text_color": "light",
+        "scrim": 0,
+        "panel_color": "#073a6e"
+      }
+    },
     "hero": {
       "type": "ob-home-hero",
       "settings": {
@@ -132,7 +247,8 @@
         "rh_plus",
         "sneaker_lab",
         "sweaty_betty"
-      ]
+      ],
+      "disabled": true
     },
     "occasions": {
       "type": "ob-home-occasions",
@@ -380,6 +496,7 @@
     }
   },
   "order": [
+    "brand_hero",
     "hero",
     "occasions",
     "promo",
