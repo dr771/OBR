@@ -1,15 +1,19 @@
 ## MODIFIED Requirements
 
 ### Requirement: Brand marquee scrolls continuously and shows each brand's real logo
-The homepage SHALL render exactly one continuously auto-scrolling row of brand marks on a tinted band, owned by the hero section (its brands are the hero section's blocks), each linking to its collection, reusing `snippets/ob-brand-logotype.liquid` (shared with the Merken hero chips) so both surfaces stay in sync.
+The homepage SHALL render exactly one continuously auto-scrolling row of brand marks on a tinted band, owned by its own section `ob-home-brand-marquee` (its brands are that section's blocks) so every hero shares one brand list and no hero carries marquee code, each linking to its collection, reusing `snippets/ob-brand-logotype.liquid` (shared with the Merken hero chips) so both surfaces stay in sync.
 
 #### Scenario: Position below 750px
-- **WHEN** the homepage is displayed below 750px wide
+- **WHEN** the homepage is displayed below 750px wide with the default hero `ob-home-hero` shown
 - **THEN** the band SHALL render at full viewport width between the hero copy (after the trust/rating block) and the hero image.
+
+#### Scenario: Position under any other hero
+- **WHEN** any other hero is shown, at any width
+- **THEN** the band SHALL render at full viewport width directly under that hero.
 
 #### Scenario: Position from 750px up
 - **WHEN** the homepage is displayed at 750px wide or more
-- **THEN** the band SHALL render at full viewport width directly under the hero's copy and image.
+- **THEN** the band SHALL render at full viewport width directly under the shown hero.
 
 #### Scenario: Seamless loop
 - **WHEN** the marquee is displayed

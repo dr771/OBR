@@ -113,6 +113,8 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 
 ## Shopify CLI and pushing
 
+- **Moving blocks out of a section: push the template before the section.** While the shop's template still holds blocks, a section schema that no longer declares them can break it. Push the new section and the template first, then the section without blocks. A deleted local file named in `--only` is removed from the theme.
+- **Device emulation can trigger Cloudflare on Admin.** Navigating an emulated tab to admin.shopify.com showed a human check. Clear emulation first; a fresh navigation then loaded normally.
 - **Template and code in one commit block the pre-live push.** `scripts/theme-push.sh` compares the shop's template with `HEAD`, so a committed template change that has not reached that shop reads as a live edit and aborts. Commit the code first, push the template with the edit still uncommitted, then commit the template.
 - **The CLI's store token has no file scope.** `stagedUploadsCreate` returns ACCESS_DENIED, so upload to Files through Admin > Content > Files. A template that names a file before it exists pushes fine but loses that setting: upload first, or push the template again.
 - Moving blocks between sections takes two pushes in order: a single push with the section and `templates/*.json` together can report "pushed with errors" because the template uploads before the new schema exists. Push the section first, then the template.

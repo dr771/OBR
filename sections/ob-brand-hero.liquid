@@ -1,8 +1,7 @@
 {% comment %}
   OB: alternative homepage hero promoting one brand: a full-width photo with
   title, text and one CTA. Swap heroes in the theme editor by hiding one and
-  showing the other; each carries its own brand marquee (the section's blocks)
-  so the band stays under whichever is active.
+  showing the other.
 
   From 750px up the copy sits on the photo, so the desktop image needs empty
   space on the copy's side. Below 750px the photo stacks above a solid panel, so
@@ -10,10 +9,6 @@
   desktop one.
 {% endcomment %}
 {{ 'component-ob-brand-hero.css' | asset_url | stylesheet_tag }}
-{%- if section.blocks.size > 0 -%}
-  {{ 'component-ob-home-marquee.css' | asset_url | stylesheet_tag }}
-  <script src="{{ 'ob-home-marquee.js' | asset_url }}" defer></script>
-{%- endif -%}
 
 {%- liquid
   assign ob_desktop_image = section.settings.image
@@ -75,16 +70,17 @@
     </div>
   </div>
 
-  {%- if section.blocks.size > 0 -%}
-    {%- render 'ob-home-marquee', blocks: section.blocks -%}
-  {%- endif -%}
 </div>
 
 {% schema %}
 {
-  "name": "OB Merk-hero",
+  "name": "OB Hero: campagnefoto",
   "class": "section",
   "settings": [
+    {
+      "type": "paragraph",
+      "content": "Een campagnebeeld over de volle breedte, voor als de foto de hoofdrol speelt. De foto moet zelf lege ruimte hebben voor de tekst, dus vraagt om een beeld op maat. Toon steeds maar één hero en verberg de andere; de merkenband staat in een eigen sectie eronder."
+    },
     {
       "type": "text",
       "id": "heading",
@@ -177,28 +173,9 @@
       "default": "#0D80C4"
     }
   ],
-  "blocks": [
-    {
-      "type": "brand",
-      "name": "Merk (marquee)",
-      "settings": [
-        {
-          "type": "collection",
-          "id": "collection",
-          "label": "Collectie"
-        },
-        {
-          "type": "text",
-          "id": "brand_handle",
-          "label": "Merk-handle (fallback)",
-          "info": "Alleen invullen als de collectie hierboven nog niet bestaat (bv. \"rh-plus\"). Bepaalt dan het logo en de link (/collections/<handle>)."
-        }
-      ]
-    }
-  ],
   "presets": [
     {
-      "name": "OB Merk-hero"
+      "name": "OB Hero: campagnefoto"
     }
   ]
 }

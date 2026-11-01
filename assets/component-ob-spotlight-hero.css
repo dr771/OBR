@@ -50,7 +50,7 @@
 
 .ob-spotlight-hero__heading-accent {
   font-style: italic;
-  color: #dbeafe;
+  color: #b3e0ff;
 }
 
 .ob-spotlight-hero__text {
@@ -142,7 +142,8 @@
     background: none;
   }
 
-  .ob-spotlight-hero__eyebrow {
+  .ob-spotlight-hero__eyebrow,
+  .ob-spotlight-hero__heading-accent {
     color: var(--ob-accent);
   }
 

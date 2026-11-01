@@ -4,12 +4,11 @@
 
 Defines the `/` homepage: six sections replacing Dawn's stock `image-banner` +
 `featured-collection` default, matched to the approved homepage reference at
-https://original-brands.bolt.host/. Order: hero (which also holds the brand
-marquee), "Shop per behoefte" occasion grid, outlet promo banner, bestsellers (Dawn's
+https://original-brands.bolt.host/. Order: hero, brand marquee (its own
+section, shared by all heroes), "Shop per behoefte" occasion grid, outlet promo banner, bestsellers (Dawn's
 `featured-collection`, restyled), featured-brands grid, newsletter signup
 (Dawn's `newsletter`, restyled). `ob-brand-hero` and `ob-spotlight-hero` are
-alternatives to the hero, active instead of it when a brand is promoted, and carry
-the same marquee.
+alternatives to the hero, shown instead of it when a brand is promoted.
 ## Requirements
 ### Requirement: Hero links copy, CTAs, and floating info cards to editable settings
 The hero SHALL render an eyebrow badge, a heading split into prefix/accent/suffix

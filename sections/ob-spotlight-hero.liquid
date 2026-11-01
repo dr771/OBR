@@ -2,14 +2,9 @@
   OB: alternative homepage hero, matched to the Bolt proto's brand spotlight. Any
   photo works: a dark gradient carries the copy, so the image needs no empty space.
   Copy sits left on the page grid from 750px up; below that the photo stacks above
-  a solid panel. Like the other heroes it carries its own brand marquee (the
-  section's blocks).
+  a solid panel.
 {% endcomment %}
 {{ 'component-ob-spotlight-hero.css' | asset_url | stylesheet_tag }}
-{%- if section.blocks.size > 0 -%}
-  {{ 'component-ob-home-marquee.css' | asset_url | stylesheet_tag }}
-  <script src="{{ 'ob-home-marquee.js' | asset_url }}" defer></script>
-{%- endif -%}
 
 <div class="ob-spotlight-hero">
   <div class="ob-spotlight-hero__banner" style="--ob-spotlight-hero-panel: {{ section.settings.panel_color }};">
@@ -62,16 +57,17 @@
     </div>
   </div>
 
-  {%- if section.blocks.size > 0 -%}
-    {%- render 'ob-home-marquee', blocks: section.blocks -%}
-  {%- endif -%}
 </div>
 
 {% schema %}
 {
-  "name": "OB Spotlight-hero",
+  "name": "OB Hero: merk-spotlight",
   "class": "section",
   "settings": [
+    {
+      "type": "paragraph",
+      "content": "Voor elk merk of elke actie, met elke liggende foto: een donker verloop draagt de tekst links, dus de foto hoeft niet op maat te zijn. Toon steeds maar één hero en verberg de andere; de merkenband staat in een eigen sectie eronder."
+    },
     {
       "type": "text",
       "id": "eyebrow",
@@ -154,28 +150,9 @@
       "default": "#0D80C4"
     }
   ],
-  "blocks": [
-    {
-      "type": "brand",
-      "name": "Merk (marquee)",
-      "settings": [
-        {
-          "type": "collection",
-          "id": "collection",
-          "label": "Collectie"
-        },
-        {
-          "type": "text",
-          "id": "brand_handle",
-          "label": "Merk-handle (fallback)",
-          "info": "Alleen invullen als de collectie hierboven nog niet bestaat (bv. \"rh-plus\"). Bepaalt dan het logo en de link (/collections/<handle>)."
-        }
-      ]
-    }
-  ],
   "presets": [
     {
-      "name": "OB Spotlight-hero"
+      "name": "OB Hero: merk-spotlight"
     }
   ]
 }

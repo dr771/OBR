@@ -10,18 +10,10 @@
   override pattern as snippets/ob-brand-hero-image.liquid, so the section
   never renders blank before a merchant uploads their own photo.
 
-  The brand marquee lives here as well (the section's blocks), so it can sit
-  between copy and photo on mobile while staying one instance with one brand
-  list. It is a sibling of __inner: a full-width band under the hero from 750px
-  up; below that __inner dissolves (display: contents) and order sorts all
-  three. Markup in snippets/ob-home-marquee.liquid, shared with the alternative
-  hero (sections/ob-brand-hero.liquid).
+  The brand marquee is its own section (ob-home-brand-marquee), under this one.
+  Below 750px component-ob-home-hero.css sorts it between copy and photo.
 {% endcomment %}
 {{ 'component-ob-home-hero.css' | asset_url | stylesheet_tag }}
-{%- if section.blocks.size > 0 -%}
-  {{ 'component-ob-home-marquee.css' | asset_url | stylesheet_tag }}
-  <script src="{{ 'ob-home-marquee.js' | asset_url }}" defer></script>
-{%- endif -%}
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -142,16 +134,17 @@
     </div>
   </div>
 
-  {%- if section.blocks.size > 0 -%}
-    {%- render 'ob-home-marquee', blocks: section.blocks -%}
-  {%- endif -%}
 </div>
 
 {% schema %}
 {
-  "name": "OB Homepage hero",
+  "name": "OB Hero: algemeen",
   "class": "section",
   "settings": [
+    {
+      "type": "paragraph",
+      "content": "De standaard-hero als er geen campagne loopt: tekst links, foto rechts, met zwevende kaarten en de reviewscore. Toon steeds maar één hero en verberg de andere; de merkenband staat in een eigen sectie eronder."
+    },
     {
       "type": "text",
       "id": "eyebrow_badge",
@@ -311,28 +304,9 @@
       "default": 64
     }
   ],
-  "blocks": [
-    {
-      "type": "brand",
-      "name": "Merk (marquee)",
-      "settings": [
-        {
-          "type": "collection",
-          "id": "collection",
-          "label": "Collectie"
-        },
-        {
-          "type": "text",
-          "id": "brand_handle",
-          "label": "Merk-handle (fallback)",
-          "info": "Alleen invullen als de collectie hierboven nog niet bestaat (bv. \"rh-plus\"). Bepaalt dan het logo en de link (/collections/<handle>)."
-        }
-      ]
-    }
-  ],
   "presets": [
     {
-      "name": "OB Homepage hero"
+      "name": "OB Hero: algemeen"
     }
   ]
 }

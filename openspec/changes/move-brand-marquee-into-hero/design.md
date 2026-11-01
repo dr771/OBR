@@ -31,3 +31,7 @@ The hero (`ob-home-hero`) and marquee (`ob-home-brand-marquee`) are sibling sect
 - [`templates/index.json` is per shop, so one file must not overwrite DEV's own settings] → Apply the same structural move to DEV's own pulled template.
 - [The removed section file stays on the shops, because `--only` pushes don't delete] → Delete it from both themes once the template no longer references it.
 - [The Trusted Shops badge reveal moves earlier on mobile] → It still waits for the scroll-top arrow; verify on the storefront.
+
+## Revision (2026-11-01): marquee back in its own section
+
+Alternative heroes arrived the same day, and each one owning a copy of the brand list made every roster change a multi-place edit. The marquee is its own section again (`ob-home-brand-marquee`), one brand list for all heroes. This reverses the first decision above, including its rejection of `display: contents` across section wrappers: below 750px, `component-ob-home-hero.css` dissolves that hero's section wrapper and sorts copy, marquee and photo in Dawn's existing flex column. The rule ships only with that hero's stylesheet, so other heroes keep plain section order, and it moves no padding off a wrapper because the hero's padding already lives in CSS variables.
