@@ -14,9 +14,8 @@
   between copy and photo on mobile while staying one instance with one brand
   list. It is a sibling of __inner: a full-width band under the hero from 750px
   up; below that __inner dissolves (display: contents) and order sorts all
-  three. The block list is rendered twice back-to-back so a -50%-of-one-set
-  translateX loops seamlessly; assets/ob-home-marquee.js drives that translateX
-  itself (not a CSS keyframe - see that file for why).
+  three. Markup in snippets/ob-home-marquee.liquid, shared with the alternative
+  hero (sections/ob-brand-hero.liquid).
 {% endcomment %}
 {{ 'component-ob-home-hero.css' | asset_url | stylesheet_tag }}
 {%- if section.blocks.size > 0 -%}
@@ -144,33 +143,7 @@
   </div>
 
   {%- if section.blocks.size > 0 -%}
-    <div class="ob-home-marquee">
-      <div class="ob-home-marquee__track">
-        {%- for copy in (1..2) -%}
-          <div class="ob-home-marquee__set" aria-hidden="{% unless copy == 1 %}true{% endunless %}">
-            {%- for block in section.blocks -%}
-              {%- liquid
-                assign ob_mq_handle = block.settings.collection.handle | default: block.settings.brand_handle
-                assign ob_mq_url = block.settings.collection.url
-                if ob_mq_url == blank and block.settings.brand_handle != blank
-                  assign ob_mq_url = routes.collections_url | append: '/' | append: block.settings.brand_handle
-                endif
-              -%}
-              {%- if ob_mq_handle != blank -%}
-                <a
-                  href="{{ ob_mq_url }}"
-                  class="ob-home-marquee__item"
-                  {% if copy == 1 %}{{ block.shopify_attributes }}{% endif %}
-                  {% if copy == 2 %}tabindex="-1"{% endif %}
-                >
-                  {%- render 'ob-brand-logotype', collection: block.settings.collection, brand_handle: block.settings.brand_handle -%}
-                </a>
-              {%- endif -%}
-            {%- endfor -%}
-          </div>
-        {%- endfor -%}
-      </div>
-    </div>
+    {%- render 'ob-home-marquee', blocks: section.blocks -%}
   {%- endif -%}
 </div>
 

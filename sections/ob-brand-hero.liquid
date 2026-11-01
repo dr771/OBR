@@ -1,0 +1,205 @@
+{% comment %}
+  OB: alternative homepage hero promoting one brand: a full-width photo with
+  title, text and one CTA. Swap heroes in the theme editor by hiding one and
+  showing the other; each carries its own brand marquee (the section's blocks)
+  so the band stays under whichever is active.
+
+  From 750px up the copy sits on the photo, so the desktop image needs empty
+  space on the copy's side. Below 750px the photo stacks above a solid panel, so
+  a tall subject never has text across it. A blank mobile image reuses the
+  desktop one.
+{% endcomment %}
+{{ 'component-ob-brand-hero.css' | asset_url | stylesheet_tag }}
+{%- if section.blocks.size > 0 -%}
+  {{ 'component-ob-home-marquee.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'ob-home-marquee.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{%- liquid
+  assign ob_desktop_image = section.settings.image
+  assign ob_mobile_image = section.settings.image_mobile | default: section.settings.image
+  assign ob_image_alt = ob_desktop_image.alt | default: section.settings.heading
+-%}
+
+<div class="ob-brand-hero ob-brand-hero--content-{{ section.settings.content_position }} ob-brand-hero--text-{{ section.settings.text_color }}">
+  <div
+    class="ob-brand-hero__banner"
+    style="--ob-brand-hero-panel: {{ section.settings.panel_color }}; --ob-brand-hero-scrim: {{ section.settings.scrim | divided_by: 100.0 }};"
+  >
+    {%- if ob_desktop_image != blank -%}
+      <picture class="ob-brand-hero__media">
+        <source
+          media="(min-width: 750px)"
+          srcset="
+            {{ ob_desktop_image | image_url: width: 1100 }} 1100w,
+            {{ ob_desktop_image | image_url: width: 1600 }} 1600w,
+            {{ ob_desktop_image | image_url: width: 2200 }} 2200w,
+            {{ ob_desktop_image | image_url: width: 2880 }} 2880w
+          "
+          sizes="100vw"
+        >
+        <img
+          src="{{ ob_mobile_image | image_url: width: 750 }}"
+          srcset="
+            {{ ob_mobile_image | image_url: width: 500 }} 500w,
+            {{ ob_mobile_image | image_url: width: 750 }} 750w,
+            {{ ob_mobile_image | image_url: width: 1100 }} 1100w
+          "
+          sizes="100vw"
+          alt="{{ ob_image_alt | escape }}"
+          width="{{ ob_mobile_image.width }}"
+          height="{{ ob_mobile_image.height }}"
+          fetchpriority="high"
+          class="ob-brand-hero__image"
+        >
+      </picture>
+    {%- endif -%}
+
+    <div class="ob-brand-hero__content">
+      <div class="ob-brand-hero__copy">
+        {%- if section.settings.heading != blank -%}
+          <h1 class="ob-brand-hero__heading">{{ section.settings.heading }}</h1>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <p class="ob-brand-hero__text">{{ section.settings.text }}</p>
+        {%- endif -%}
+        {%- if section.settings.button_label != blank -%}
+          <a href="{{ section.settings.button_link }}" class="ob-brand-hero__button">
+            {{ section.settings.button_label }}
+            <span class="ob-brand-hero__button-icon">
+              {%- render 'ob-icon', icon: 'arrow-right' -%}
+            </span>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  {%- if section.blocks.size > 0 -%}
+    {%- render 'ob-home-marquee', blocks: section.blocks -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "OB Merk-hero",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titel",
+      "default": "Jouw merk in de hoofdrol"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Tekst"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Knop label",
+      "default": "Shop nu"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Knop link"
+    },
+    {
+      "type": "header",
+      "content": "Afbeelding"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Desktopfoto",
+      "info": "Liggend, 2880 x 1200 px, met lege ruimte aan de kant van de tekst."
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobiele foto",
+      "info": "Vierkant, 1500 x 1500 px. Leeg = de desktopfoto wordt bijgesneden."
+    },
+    {
+      "type": "header",
+      "content": "Tekstopmaak"
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Positie tekst",
+      "options": [
+        {
+          "value": "left",
+          "label": "Links"
+        },
+        {
+          "value": "right",
+          "label": "Rechts"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "select",
+      "id": "text_color",
+      "label": "Tekstkleur",
+      "options": [
+        {
+          "value": "light",
+          "label": "Wit"
+        },
+        {
+          "value": "dark",
+          "label": "Donker"
+        }
+      ],
+      "default": "light"
+    },
+    {
+      "type": "range",
+      "id": "scrim",
+      "label": "Verloop achter tekst",
+      "info": "Maakt de foto donkerder aan de kant van de tekst, voor meer contrast.",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "panel_color",
+      "label": "Achtergrond tekstvlak (mobiel)",
+      "default": "#073A6E"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Merk (marquee)",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collectie"
+        },
+        {
+          "type": "text",
+          "id": "brand_handle",
+          "label": "Merk-handle (fallback)",
+          "info": "Alleen invullen als de collectie hierboven nog niet bestaat (bv. \"rh-plus\"). Bepaalt dan het logo en de link (/collections/<handle>)."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "OB Merk-hero"
+    }
+  ]
+}
+{% endschema %}
