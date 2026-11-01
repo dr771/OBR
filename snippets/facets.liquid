@@ -921,8 +921,10 @@
       {%- liquid
         assign has_mobile_bar_row = false
         if filter_type != 'drawer'
-          if filter.param_name contains 'custom.genderid' or filter.param_name contains 'available_erp_sizes' or filter.param_name contains 'filtercolors'
-            assign has_mobile_bar_row = true
+          if filter.param_name contains 'custom.genderid' or filter.param_name == 'filter.p.vendor' or filter.param_name contains 'available_erp_sizes' or filter.param_name contains 'filtercolors'
+            if filter.values.size > 1
+              assign has_mobile_bar_row = true
+            endif
           endif
         endif
       -%}

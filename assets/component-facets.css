@@ -1811,8 +1811,13 @@ input.mobile-facets__checkbox {
   cursor: pointer;
 }
 
-.ob-mobile-bar__row--gender .ob-mobile-bar__box {
+.ob-mobile-bar__row--gender .ob-mobile-bar__box,
+.ob-mobile-bar__row--brand .ob-mobile-bar__box {
   min-height: 3.2rem;
+}
+
+.ob-mobile-bar__row--brand .ob-mobile-bar__box {
+  white-space: nowrap;
 }
 
 .ob-mobile-bar__row--size .ob-mobile-bar__box {

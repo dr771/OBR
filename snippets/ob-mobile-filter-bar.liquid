@@ -71,13 +71,15 @@
 
       {%- if enable_filtering -%}
         <div id="ObMobileBarPanel-{{ section.id }}" class="ob-mobile-bar__panel" data-ob-bar-panel>
-          {%- assign bar_kinds = 'gender,size,color' | split: ',' -%}
+          {%- assign bar_kinds = 'gender,brand,size,color' | split: ',' -%}
           {%- for bar_kind in bar_kinds -%}
             {%- for filter in results.filters -%}
               {%- liquid
                 assign filter_kind = 'generic'
                 if filter.param_name contains 'custom.genderid'
                   assign filter_kind = 'gender'
+                elsif filter.param_name == 'filter.p.vendor'
+                  assign filter_kind = 'brand'
                 elsif filter.param_name contains 'available_erp_sizes'
                   assign filter_kind = 'size'
                 elsif filter.param_name contains 'filtercolors'
@@ -91,7 +93,7 @@
                   data-index="bar-{{ bar_kind }}"
                 >
                   <h2 class="ob-mobile-bar__row-heading caption-large text-body">
-                    {%- if filter_kind == 'gender' -%}
+                    {%- if filter_kind == 'gender' or filter_kind == 'brand' -%}
                       {{- filter.label | escape -}}
                     {%- else -%}
                       {%- render 'ob-option-meta', option_name: filter.param_name, field: 'label' -%}
@@ -166,28 +168,37 @@
             {%- endfor -%}
           {%- endfor -%}
 
-          {%- for filter in results.filters -%}
-            {%- liquid
-              assign has_bar_row = false
-              if filter.param_name contains 'custom.genderid' or filter.param_name contains 'available_erp_sizes' or filter.param_name contains 'filtercolors'
-                assign has_bar_row = true
-              endif
-            -%}
-            {%- unless has_bar_row -%}
-              {%- if filter.type == 'price_range' -%}
-                {%- if filter.min_value.value -%}
-                  <input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | money_without_currency }}">
+          {%- comment -%}
+            A .js-filter so facets.js re-renders it on every response: which values
+            pass through changes when a row collapses. A span, not a div, because
+            the last-row spacing relies on .ob-mobile-bar__filter:last-of-type.
+          {%- endcomment -%}
+          <span id="Details-Bar-Passthrough-{{ section.id }}" class="js-filter" data-index="bar-passthrough" hidden>
+            {%- for filter in results.filters -%}
+              {%- liquid
+                assign has_bar_row = false
+                if filter.param_name contains 'custom.genderid' or filter.param_name == 'filter.p.vendor' or filter.param_name contains 'available_erp_sizes' or filter.param_name contains 'filtercolors'
+                  if filter.values.size > 1
+                    assign has_bar_row = true
+                  endif
+                endif
+              -%}
+              {%- unless has_bar_row -%}
+                {%- if filter.type == 'price_range' -%}
+                  {%- if filter.min_value.value -%}
+                    <input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | money_without_currency }}">
+                  {%- endif -%}
+                  {%- if filter.max_value.value -%}
+                    <input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | money_without_currency }}">
+                  {%- endif -%}
+                {%- else -%}
+                  {%- for value in filter.active_values -%}
+                    <input type="hidden" name="{{ value.param_name }}" value="{{ value.value | escape }}">
+                  {%- endfor -%}
                 {%- endif -%}
-                {%- if filter.max_value.value -%}
-                  <input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | money_without_currency }}">
-                {%- endif -%}
-              {%- else -%}
-                {%- for value in filter.active_values -%}
-                  <input type="hidden" name="{{ value.param_name }}" value="{{ value.value | escape }}">
-                {%- endfor -%}
-              {%- endif -%}
-            {%- endunless -%}
-          {%- endfor -%}
+              {%- endunless -%}
+            {%- endfor -%}
+          </span>
         </div>
       {%- endif -%}
     </form>
