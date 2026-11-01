@@ -22,7 +22,7 @@ if (!customElements.get('ob-bf-hero')) {
         if (!word || !canTrack) return;
 
         let frame = null;
-        this.addEventListener('pointermove', (event) => {
+        word.addEventListener('pointermove', (event) => {
           if (frame) return;
           frame = requestAnimationFrame(() => {
             frame = null;
@@ -31,7 +31,7 @@ if (!customElements.get('ob-bf-hero')) {
             this.style.setProperty('--ob-bf-x', `${((event.clientX - rect.left) / rect.width) * 100}%`);
           });
         });
-        this.addEventListener('pointerleave', () => {
+        word.addEventListener('pointerleave', () => {
           this.classList.remove('is-tracking');
           this.style.removeProperty('--ob-bf-x');
         });
