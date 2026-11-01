@@ -1750,7 +1750,34 @@ input.mobile-facets__checkbox {
   own 1.1rem bottom padding counts toward the gap.
 */
 .ob-mobile-bar__panel {
+  position: relative;
   padding: 1.5rem 0 0;
+}
+
+/* Sits on the first heading's line, right edge under the toggle icon. The
+   padding widens the tap target without reaching the first row's boxes. */
+.ob-mobile-bar__reset {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.6rem;
+  z-index: 1;
+}
+
+.ob-mobile-bar__reset-link {
+  display: block;
+  margin: -0.6rem -1.6rem;
+  padding: 0.6rem 1.6rem;
+  color: rgba(var(--color-foreground), 0.75);
+  font-size: 1.2rem;
+  line-height: 2rem;
+  letter-spacing: normal;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+/* The panel's reset link replaces Dawn's clear-all in the pill row. */
+.ob-mobile-bar ~ .active-facets-mobile .active-facets__button-wrapper {
+  display: none;
 }
 
 .ob-mobile-bar__row-heading {

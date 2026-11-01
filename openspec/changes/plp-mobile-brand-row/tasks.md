@@ -5,6 +5,8 @@
 - [x] 1.3 Apply the same rule to the mobile pill exclusion in `snippets/facets.liquid`
 - [x] 1.4 Style `.ob-mobile-bar__row--brand` in `assets/component-facets.css` at the compact Gender height, labels on one line
 
+- [x] 1.5 Add the panel reset link and hide the clear-all in the mobile pill row
+
 ## 2. Verify and ship
 
 - [x] 2.1 Run `shopify theme check`, grep for the touched files

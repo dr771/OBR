@@ -1,3 +1,20 @@
+## ADDED Requirements
+
+### Requirement: The open panel offers one reset for all filters
+While at least one filter is active, the open panel SHALL show one link that removes all active filters through the existing AJAX facet pipeline, and SHALL be the only clear-all control on mobile. With no active filter the link SHALL be absent. On search results the link SHALL keep the original query.
+
+#### Scenario: Shopper resets filters
+- **WHEN** filters are active and the shopper taps the reset link
+- **THEN** all filters are removed, the grid updates without a page reload, and the link disappears
+
+#### Scenario: First filter applied
+- **WHEN** the shopper selects the first filter value
+- **THEN** the reset link appears without a page reload
+
+#### Scenario: Reset on search results
+- **WHEN** the shopper taps the reset link on the search results page
+- **THEN** the filters are removed and the results stay constrained by the original query
+
 ## RENAMED Requirements
 
 - FROM: `### Requirement: Gender, Maat and Kleur render as simultaneous scrolling rows`
@@ -32,7 +49,7 @@ The Gender, Merk, Maat, or Kleur row SHALL NOT render when its underlying facet'
 - **THEN** the row renders with that value selected, no pill appears for it, and tapping the control removes the selection and brings back the values available again
 
 ### Requirement: Unrendered active filters are preserved and removable
-Active parameters for filters without a rendered bar row SHALL pass through every bar submission and SHALL retain their mobile active pill as their removal path. Gender, Merk, Maat, and Kleur SHALL show state only on their row controls and SHALL not render separate pills or reset links.
+Active parameters for filters without a rendered bar row SHALL pass through every bar submission and SHALL retain their mobile active pill as their removal path. Gender, Merk, Maat, and Kleur SHALL show state only on their row controls and SHALL not render separate pills or per-row reset links.
 
 #### Scenario: Shared URL contains an active price filter
 - **WHEN** the shopper changes a size in the mobile bar

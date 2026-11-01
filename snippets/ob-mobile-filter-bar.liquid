@@ -71,6 +71,29 @@
 
       {%- if enable_filtering -%}
         <div id="ObMobileBarPanel-{{ section.id }}" class="ob-mobile-bar__panel" data-ob-bar-panel>
+          {%- liquid
+            assign total_active_values = 0
+            for filter in results.filters
+              assign total_active_values = total_active_values | plus: filter.active_values.size
+              if filter.type == 'price_range' and filter.min_value.value != null or filter.type == 'price_range' and filter.max_value.value != null
+                assign total_active_values = total_active_values | plus: 1
+              endif
+            endfor
+            if results.url
+              assign results_url = results.url
+            else
+              assign terms = results.terms | escape
+              assign results_url = '?q=' | append: terms | append: '&options%5Bprefix%5D=last&sort_by=' | append: sort_by
+            endif
+          -%}
+          {%- comment -%} Always rendered: a .js-filter must exist for facets.js to fill it. {%- endcomment -%}
+          <span id="Details-Bar-Reset-{{ section.id }}" class="js-filter ob-mobile-bar__reset" data-index="bar-reset">
+            {%- if total_active_values > 0 -%}
+              <facet-remove>
+                <a href="{{ results_url }}" class="ob-mobile-bar__reset-link">{{ 'products.facets.clear_all' | t }}</a>
+              </facet-remove>
+            {%- endif -%}
+          </span>
           {%- assign bar_kinds = 'gender,brand,size,color' | split: ',' -%}
           {%- for bar_kind in bar_kinds -%}
             {%- for filter in results.filters -%}
