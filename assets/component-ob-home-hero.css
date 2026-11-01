@@ -333,13 +333,13 @@
 
   .ob-home-hero .ob-home-marquee {
     order: 2;
-    margin-top: 1.6rem;
+    margin-top: 4rem;
   }
 
   .ob-home-hero__media {
     order: 3;
     width: auto;
-    margin: 2.4rem 1.5rem var(--ob-hero-pad-bottom);
+    margin: 4rem 1.5rem var(--ob-hero-pad-bottom);
   }
 }
 
