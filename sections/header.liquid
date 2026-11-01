@@ -438,7 +438,7 @@
       {%- if shop.customer_accounts_enabled and section.settings.show_account_icon -%}
         <a
           href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
-          class="header__icon header__icon--account link focus-inset{% if section.settings.menu != blank %} small-hide{% endif %}"
+          class="header__icon header__icon--account link focus-inset"
           rel="nofollow"
         >
           {%- if section.settings.enable_customer_avatar -%}
@@ -804,7 +804,7 @@
       "id": "show_account_icon",
       "default": false,
       "label": "Show customer account icon",
-      "info": "Displays the customer account icon in the desktop header."
+      "info": "Displays the customer account icon in the header."
     },
     {
       "type": "checkbox",

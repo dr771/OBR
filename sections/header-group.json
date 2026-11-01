@@ -117,7 +117,7 @@
         "menu_color_scheme": "scheme-1",
         "enable_country_selector": false,
         "enable_language_selector": true,
-        "show_account_icon": false,
+        "show_account_icon": true,
         "enable_customer_avatar": false,
         "margin_bottom": 0,
         "padding_top": 12,
