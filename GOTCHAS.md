@@ -113,6 +113,8 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 
 ## Shopify CLI and pushing
 
+- Moving blocks between sections takes two pushes in order: a single push with the section and `templates/*.json` together can report "pushed with errors" because the template uploads before the new schema exists. Push the section first, then the template.
+- `--only <path>` also deletes: if the path no longer exists locally, `shopify theme push --only <path>` removes it from the remote theme. That's the way to delete one theme file, since the CLI's Admin token has only `read_themes`.
 - **Shopify CLI needs Node ≥ 22.** CLI 3.91.1 has no `shopify store execute` ("Command store execute not found"). The Mac runs Node 22 (nvm default) with CLI 5.0.0 since 2026-10-30. Run `shopify version` first on a machine you haven't used for a while. Upgrading needs **Node ≥ 22**: CLI 5.0.0 requires ≥ 22.12, and 4.9.3 already crashes on Node 20.19 (`enableCompileCache` import). On Node 20, `npm install -g @shopify/cli@latest` installs a CLI that does not start; 3.91.1 is the last one that runs there.
 - **The pre-live CLI store is the permanent domain** `original-brands-mtr6tuym.myshopify.com`; `--store original-brands-live.myshopify.com` is rejected.
 - **App-embed settings copy across shops.** `config/settings_data.json` blocks carry the app extension's global UUID in `type` (e.g. Swish `…/blocks/<name>/194f5011-…`), and block keys are arbitrary, so a block can be copied verbatim into another shop's settings as long as its settings hold no shop-specific IDs. Done for the four Swish embeds on 2026-10-30, following the settings-migration procedure in CLAUDE.md.

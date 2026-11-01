@@ -32,10 +32,7 @@
         "badge_2_text": "tot -40%",
         "padding_top": 48,
         "padding_bottom": 64
-      }
-    },
-    "brand-marquee": {
-      "type": "ob-home-brand-marquee",
+      },
       "blocks": {
         "fitflop": {
           "type": "brand",
@@ -135,11 +132,7 @@
         "rh_plus",
         "sneaker_lab",
         "sweaty_betty"
-      ],
-      "settings": {
-        "padding_top": 16,
-        "padding_bottom": 16
-      }
+      ]
     },
     "occasions": {
       "type": "ob-home-occasions",
@@ -388,7 +381,6 @@
   },
   "order": [
     "hero",
-    "brand-marquee",
     "occasions",
     "promo",
     "bestsellers",

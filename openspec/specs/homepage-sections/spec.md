@@ -2,17 +2,17 @@
 
 ## Purpose
 
-Defines the `/` homepage: seven sections replacing Dawn's stock `image-banner` +
+Defines the `/` homepage: six sections replacing Dawn's stock `image-banner` +
 `featured-collection` default, matched to the approved homepage reference at
-https://original-brands.bolt.host/. Order: hero, brand marquee, "Shop per
-behoefte" occasion grid, outlet promo banner, bestsellers (Dawn's
+https://original-brands.bolt.host/. Order: hero (which also holds the brand
+marquee), "Shop per behoefte" occasion grid, outlet promo banner, bestsellers (Dawn's
 `featured-collection`, restyled), featured-brands grid, newsletter signup
 (Dawn's `newsletter`, restyled).
 ## Requirements
 ### Requirement: Hero links copy, CTAs, and floating info cards to editable settings
 The hero SHALL render an eyebrow badge, a heading split into prefix/accent/suffix
 text settings (so the accent phrase can carry its own italic/colour styling
-without inline HTML), a subheading, two CTA buttons, a star rating line, and
+without inline HTML), a subheading, up to two CTA buttons (an empty label hides one), a star rating line, and
 two floating info cards over the hero photo — all merchant-editable, with the
 photo defaulting to a real curated theme asset rather than rendering blank
 before a merchant uploads one.
@@ -316,7 +316,7 @@ submission mechanism.
   shop-side dependency.
 
 ### Requirement: Homepage display headings use Fraunces, matching PDP and PLP
-Every `<h1>`/`<h2>` heading introduced by these seven sections SHALL render
+Every `<h1>`/`<h2>` heading introduced by these sections SHALL render
 in `var(--font-heading-family)` (Fraunces) rather than Inter.
 
 #### Scenario: Not a special-case override
