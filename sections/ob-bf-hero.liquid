@@ -1,0 +1,227 @@
+{% comment %}
+  OB: alternative homepage hero for Black Friday, or any loud sale with new words
+  and colours. Type only, so it needs no photo: a giant outlined word that fills
+  where the pointer is (a slow sweep on touch), a spinning price burst, a countdown
+  and two crossing tickers. assets/ob-bf-hero.js runs the countdown, the pointer
+  and the pause button. The countdown goes to the start date, then the end date,
+  and removes itself after that; the rest of the hero stays until it is hidden.
+{% endcomment %}
+{{ 'component-ob-bf-hero.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ob-bf-hero.js' | asset_url }}" defer></script>
+
+{%- assign ob_bf_ticker = section.settings.ticker_text | split: '|' -%}
+
+<ob-bf-hero
+  class="ob-bf-hero"
+  style="--ob-bf-accent: {{ section.settings.accent_color }}; --ob-bf-hot: {{ section.settings.hot_color }};"
+>
+  <div class="ob-bf-hero__content page-width">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="ob-bf-hero__eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+
+    <h1 class="ob-bf-hero__heading">
+      <span class="ob-bf-hero__word">{{ section.settings.word_1 }}</span>
+      <span class="ob-bf-hero__word ob-bf-hero__word--outline">
+        {{- section.settings.word_2 -}}
+        <span class="ob-bf-hero__word-fill" aria-hidden="true">{{ section.settings.word_2 }}</span>
+      </span>
+    </h1>
+
+    <div class="ob-bf-hero__row">
+      <div class="ob-bf-hero__pitch">
+        {%- if section.settings.text != blank -%}
+          <p class="ob-bf-hero__text">{{ section.settings.text }}</p>
+        {%- endif -%}
+        <div class="ob-bf-hero__actions">
+          {%- if section.settings.button_label != blank -%}
+            <a href="{{ section.settings.button_link }}" class="ob-bf-hero__button">
+              {{ section.settings.button_label }}
+              <span class="ob-bf-hero__button-icon">
+                {%- render 'ob-icon', icon: 'arrow-right' -%}
+              </span>
+            </a>
+          {%- endif -%}
+          <button type="button" class="ob-bf-hero__pause" aria-pressed="false" aria-label="Animatie pauzeren">
+            <span class="ob-bf-hero__pause-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+
+      <ob-bf-countdown
+        class="ob-bf-hero__countdown"
+        role="timer"
+        data-start="{{ section.settings.starts_at | escape }}"
+        data-end="{{ section.settings.ends_at | escape }}"
+        data-label-before="{{ section.settings.label_before | escape }}"
+        data-label-during="{{ section.settings.label_during | escape }}"
+      >
+        <p class="ob-bf-hero__countdown-label"></p>
+        <div class="ob-bf-hero__countdown-tiles">
+          <span class="ob-bf-hero__tile"><b data-unit="days">00</b> dagen</span>
+          <span class="ob-bf-hero__tile"><b data-unit="hours">00</b> uur</span>
+          <span class="ob-bf-hero__tile"><b data-unit="minutes">00</b> min</span>
+          <span class="ob-bf-hero__tile"><b data-unit="seconds">00</b> sec</span>
+        </div>
+      </ob-bf-countdown>
+    </div>
+  </div>
+
+  {%- if section.settings.burst_value != blank -%}
+    <div class="ob-bf-hero__burst">
+      <span class="ob-bf-hero__burst-shape" aria-hidden="true"></span>
+      <p class="ob-bf-hero__burst-text">
+        {%- if section.settings.burst_top != blank -%}
+          <span class="ob-bf-hero__burst-top">{{ section.settings.burst_top }}</span>
+        {%- endif -%}
+        <span class="ob-bf-hero__burst-value">{{ section.settings.burst_value }}</span>
+      </p>
+    </div>
+  {%- endif -%}
+
+  {%- if ob_bf_ticker.size > 0 -%}
+    <div class="ob-bf-hero__tickers" aria-hidden="true">
+      {%- for band in (1..2) -%}
+        <div class="ob-bf-hero__ticker ob-bf-hero__ticker--{{ band }}">
+          <div class="ob-bf-hero__ticker-track">
+            {%- for copy in (1..2) -%}
+              <div class="ob-bf-hero__ticker-set">
+                {%- for repeat in (1..6) -%}
+                  {%- for item in ob_bf_ticker -%}
+                    <span>{{ item | strip }}</span><span class="ob-bf-hero__ticker-star">✦</span>
+                  {%- endfor -%}
+                {%- endfor -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</ob-bf-hero>
+
+{% schema %}
+{
+  "name": "OB Hero: Black Friday",
+  "class": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Voor Black Friday of een andere grote actie: alleen typografie, dus geen foto nodig. Toon steeds maar één hero en verberg de andere; de merkenband staat in een eigen sectie eronder."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Regel boven titel",
+      "default": "Slim gekozen. Extra scherp."
+    },
+    {
+      "type": "text",
+      "id": "word_1",
+      "label": "Titel, eerste woord",
+      "default": "Black"
+    },
+    {
+      "type": "text",
+      "id": "word_2",
+      "label": "Titel, tweede woord (omlijnd)",
+      "default": "Friday"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Tekst",
+      "default": "Topmerken, extra scherp geprijsd. Op = op, dus wees er snel bij."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Knop label",
+      "default": "Shop de deals"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Knop link"
+    },
+    {
+      "type": "header",
+      "content": "Prijsster"
+    },
+    {
+      "type": "text",
+      "id": "burst_top",
+      "label": "Kleine regel",
+      "default": "tot"
+    },
+    {
+      "type": "text",
+      "id": "burst_value",
+      "label": "Korting",
+      "info": "Leeg = geen ster.",
+      "default": "-50%"
+    },
+    {
+      "type": "header",
+      "content": "Aftellen"
+    },
+    {
+      "type": "text",
+      "id": "starts_at",
+      "label": "Start",
+      "info": "Formaat: 2026-11-27T00:00:00+01:00. Na het einde verdwijnt het aftellen.",
+      "default": "2026-11-27T00:00:00+01:00"
+    },
+    {
+      "type": "text",
+      "id": "ends_at",
+      "label": "Einde",
+      "default": "2026-11-30T23:59:59+01:00"
+    },
+    {
+      "type": "text",
+      "id": "label_before",
+      "label": "Tekst voor de start",
+      "default": "Start over"
+    },
+    {
+      "type": "text",
+      "id": "label_during",
+      "label": "Tekst tijdens de actie",
+      "default": "Nog maar"
+    },
+    {
+      "type": "header",
+      "content": "Lopende banden"
+    },
+    {
+      "type": "text",
+      "id": "ticker_text",
+      "label": "Tekst",
+      "info": "Scheid de onderdelen met |",
+      "default": "Black Friday|Tot -50%|Op = op|Topmerken"
+    },
+    {
+      "type": "header",
+      "content": "Kleuren"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#38B6FF"
+    },
+    {
+      "type": "color",
+      "id": "hot_color",
+      "label": "Prijsster en tweede band",
+      "default": "#F7391E"
+    }
+  ],
+  "presets": [
+    {
+      "name": "OB Hero: Black Friday"
+    }
+  ]
+}
+{% endschema %}
