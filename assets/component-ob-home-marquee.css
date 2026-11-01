@@ -11,6 +11,13 @@
   border-top: 0.1rem solid #e2e8f0;
   border-bottom: 0.1rem solid #e2e8f0;
   overflow: hidden;
+  padding-block: 1.2rem;
+}
+
+@media screen and (min-width: 750px) {
+  .ob-home-marquee {
+    padding-block: 1.6rem;
+  }
 }
 
 /*
