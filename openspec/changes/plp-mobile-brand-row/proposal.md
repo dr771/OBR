@@ -6,14 +6,14 @@ Brand is a first-class shopping dimension for this multi-brand shop, and desktop
 
 - The mobile filter bar gains a Merk row (native `vendor` facet), placed directly after Gender, with the same checkbox-backed boxes and the same native parameter as desktop.
 - The row follows the existing "fewer than two values" rule, so it stays away on brand collections and wherever only one brand remains.
-- A row that is not rendered no longer counts as a bar row: its active values get a mobile pill and pass through bar submissions as hidden inputs. The spec already promised this pill for Gender, Maat and Kleur; the code suppressed it regardless of whether the row rendered, so such a selection could not be removed and was dropped on the next filter change.
+- A row with an active value always renders, even as the only value left, so a selection stays on its row control. Previously the row vanished with no pill, so such a selection could not be removed and was dropped on the next filter change.
 
 ## Capabilities
 
 ### New Capabilities
 
 ### Modified Capabilities
-- `plp-mobile-filter-bar`: the open panel renders Gender, Merk, Maat and Kleur rows instead of exactly Gender, Maat and Kleur; the pill and pass-through rules depend on whether a row rendered, not on the filter kind alone.
+- `plp-mobile-filter-bar`: the open panel renders Gender, Merk, Maat and Kleur rows instead of exactly Gender, Maat and Kleur; a row with an active value renders even with a single value, replacing the pill for that case.
 
 ## Impact
 

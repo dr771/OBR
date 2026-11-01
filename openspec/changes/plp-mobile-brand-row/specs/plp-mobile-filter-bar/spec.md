@@ -17,7 +17,7 @@ The open panel SHALL render exactly the Gender (`custom.genderid`), Merk (`vendo
 - **THEN** that control shows selected state and submits the same native parameter as its desktop counterpart
 
 ### Requirement: A bar row with fewer than two values does not render
-The Gender, Merk, Maat, or Kleur row SHALL NOT render when its underlying facet's `values` collapse to 0 or 1 entries, since selecting the sole remaining value cannot narrow the result set. The other rows are unaffected.
+The Gender, Merk, Maat, or Kleur row SHALL NOT render when its underlying facet's `values` collapse to 0 or 1 entries and none of them is active, since selecting the sole remaining value cannot narrow the result set. A row with an active value SHALL always render, so a selection stays on its row control. The other rows are unaffected.
 
 #### Scenario: Collection narrows Gender to one value
 - **WHEN** a collection's product mix leaves the Gender facet with exactly one available value
@@ -29,10 +29,10 @@ The Gender, Merk, Maat, or Kleur row SHALL NOT render when its underlying facet'
 
 #### Scenario: A single-valued row has an active selection
 - **WHEN** a row's sole remaining value is already selected (active)
-- **THEN** the row still does not render, the selection stays active through further bar submissions, and it remains removable via the active-filter pill row
+- **THEN** the row renders with that value selected, no pill appears for it, and tapping the control removes the selection
 
 ### Requirement: Unrendered active filters are preserved and removable
-Active parameters for filters without a rendered bar row SHALL pass through every bar submission and SHALL retain their mobile active pill as their removal path. Gender, Merk, Maat, and Kleur SHALL, while their row renders, show state only on their row controls and SHALL not render separate pills or reset links.
+Active parameters for filters without a rendered bar row SHALL pass through every bar submission and SHALL retain their mobile active pill as their removal path. Gender, Merk, Maat, and Kleur SHALL show state only on their row controls and SHALL not render separate pills or reset links.
 
 #### Scenario: Shared URL contains an active price filter
 - **WHEN** the shopper changes a size in the mobile bar

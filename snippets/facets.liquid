@@ -922,7 +922,7 @@
         assign has_mobile_bar_row = false
         if filter_type != 'drawer'
           if filter.param_name contains 'custom.genderid' or filter.param_name == 'filter.p.vendor' or filter.param_name contains 'available_erp_sizes' or filter.param_name contains 'filtercolors'
-            if filter.values.size > 1
+            if filter.values.size > 1 or filter.active_values.size > 0
               assign has_mobile_bar_row = true
             endif
           endif

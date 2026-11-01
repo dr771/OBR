@@ -86,7 +86,15 @@
                   assign filter_kind = 'color'
                 endif
               -%}
-              {%- if filter_kind == bar_kind and filter.values.size > 1 -%}
+              {%- liquid
+                assign renders_row = false
+                if filter_kind == bar_kind
+                  if filter.values.size > 1 or filter.active_values.size > 0
+                    assign renders_row = true
+                  endif
+                endif
+              -%}
+              {%- if renders_row -%}
                 <div
                   id="Details-Bar-{{ filter.param_name | escape }}-{{ section.id }}"
                   class="js-filter ob-mobile-bar__filter"
@@ -178,7 +186,7 @@
               {%- liquid
                 assign has_bar_row = false
                 if filter.param_name contains 'custom.genderid' or filter.param_name == 'filter.p.vendor' or filter.param_name contains 'available_erp_sizes' or filter.param_name contains 'filtercolors'
-                  if filter.values.size > 1
+                  if filter.values.size > 1 or filter.active_values.size > 0
                     assign has_bar_row = true
                   endif
                 endif

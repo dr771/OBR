@@ -49,7 +49,7 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
   Debug with an entry whose handle, `code` and value all differ (`pink`/`roze`, never `beige`/`beige`). To settle whether a key is read at all, write a distinctive sentinel value via the Admin API and look for it in the render. GraphQL showing the value proves nothing about the storefront.
 - Verify a theme deploy with a temporary HTML comment read in the browser; `curl` against the password-protected storefront serves cached HTML.
 
-- **Inputs outside a `.js-filter` never update on a facet AJAX response.** `facets.js` only replaces `.js-filter` elements, so a hidden input in the mobile form elsewhere keeps its page-load state: a selection whose row collapses is lost on the next change, and a removed pill's input brings the value back. The mobile bar's pass-through inputs therefore sit in their own `.js-filter` span (a span, since the last-row spacing uses `.ob-mobile-bar__filter:last-of-type`).
+- **Inputs outside a `.js-filter` never update on a facet AJAX response.** `facets.js` only replaces `.js-filter` elements, so a hidden input in the mobile form elsewhere keeps its page-load state: a removed pill's input brings the value back on the next change. The mobile bar's pass-through inputs therefore sit in their own `.js-filter` span (a span, since the last-row spacing uses `.ob-mobile-bar__filter:last-of-type`).
 
 ## Shopify admin and data
 
