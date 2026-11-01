@@ -9,6 +9,13 @@
  */
 {
   "sections": {
+    "bf_hero": {
+      "type": "ob-bf-hero",
+      "settings": {
+        "button_link": "shopify://collections/solden"
+      },
+      "disabled": true
+    },
     "spotlight_hero": {
       "type": "ob-spotlight-hero",
       "settings": {
@@ -417,6 +424,7 @@
     }
   },
   "order": [
+    "bf_hero",
     "spotlight_hero",
     "brand_hero",
     "hero",
