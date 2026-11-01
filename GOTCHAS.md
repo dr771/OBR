@@ -51,6 +51,8 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 
 - **Inputs outside a `.js-filter` never update on a facet AJAX response.** `facets.js` only replaces `.js-filter` elements, so a hidden input in the mobile form elsewhere keeps its page-load state: a removed pill's input brings the value back on the next change. The mobile bar's pass-through inputs therefore sit in their own `.js-filter` span (a span, since the last-row spacing uses `.ob-mobile-bar__filter:last-of-type`).
 
+- **Selected state in the mobile bar must come from `:checked`, not a Liquid class.** `facets.js` does not re-render the clicked row, so a server-rendered `active` class survives a deselect: the filter comes off, but the box still looks selected and the next tap re-adds it.
+
 ## Shopify admin and data
 
 - **Back up role scope from “View stores”, not just the role-card count.** Nick's Organization administrator card displayed “5 stores”, but its View stores dialog listed only OB DEV and Sweaty Betty; the custom Store role and Store administrator each really listed five. Exact restoration snapshot is in MIGRATION-TO-LIVE.md.

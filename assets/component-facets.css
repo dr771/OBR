@@ -1862,7 +1862,8 @@ input.mobile-facets__checkbox {
   cursor: pointer;
 }
 
-.ob-mobile-bar__box.active,
+/* Only the live checkbox state: facets.js does not re-render the clicked row,
+   so a server-rendered class would keep a deselected box looking selected. */
 .ob-mobile-bar__box:has(input:checked) {
   border-color: rgb(var(--color-foreground));
   background: rgb(var(--color-foreground));
