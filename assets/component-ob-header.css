@@ -83,6 +83,10 @@
     text-align: left;
   }
 
+  .header__heading-logo {
+    max-width: 87%;
+  }
+
   .header__icons {
     padding-right: 0;
   }
