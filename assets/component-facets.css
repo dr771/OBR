@@ -1754,12 +1754,12 @@ input.mobile-facets__checkbox {
   padding: 1.5rem 0 0;
 }
 
-/* Sits on the first heading's line, right edge under the toggle icon. The
-   padding widens the tap target without reaching the first row's boxes. */
+/* Sits beside the first heading, slightly above its line. The padding widens
+   the tap target without reaching the first row's boxes. */
 .ob-mobile-bar__reset {
   position: absolute;
-  top: 1.5rem;
-  right: 1.6rem;
+  top: 1.1rem;
+  right: 0.8rem;
   z-index: 1;
 }
 
