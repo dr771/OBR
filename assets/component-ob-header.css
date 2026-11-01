@@ -74,7 +74,7 @@
 @media screen and (max-width: 749px) {
   header.header {
     grid-template-columns: auto minmax(0, 1fr) auto;
-    padding-inline: 2.4rem;
+    padding-inline: 1.5rem;
   }
 
   .header__heading,
@@ -86,9 +86,11 @@
   .header__icons {
     padding-right: 0;
   }
-}
 
-@media screen and (max-width: 359px) {
+  .header__icons .header__icon--cart {
+    margin-right: -0.8rem;
+  }
+
   .header__icons .header__icon,
   .header__icons .header__icon .svg-wrapper {
     width: 3.6rem;
