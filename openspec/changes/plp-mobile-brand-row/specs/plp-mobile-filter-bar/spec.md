@@ -29,7 +29,7 @@ The Gender, Merk, Maat, or Kleur row SHALL NOT render when its underlying facet'
 
 #### Scenario: A single-valued row has an active selection
 - **WHEN** a row's sole remaining value is already selected (active)
-- **THEN** the row renders with that value selected, no pill appears for it, and tapping the control removes the selection
+- **THEN** the row renders with that value selected, no pill appears for it, and tapping the control removes the selection and brings back the values available again
 
 ### Requirement: Unrendered active filters are preserved and removable
 Active parameters for filters without a rendered bar row SHALL pass through every bar submission and SHALL retain their mobile active pill as their removal path. Gender, Merk, Maat, and Kleur SHALL show state only on their row controls and SHALL not render separate pills or reset links.

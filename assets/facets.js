@@ -221,7 +221,13 @@ class FacetFiltersForm extends HTMLElement {
 
     const matchesId = (element) => {
       const jsFilter = event ? event.target.closest('.js-filter') : undefined;
-      return jsFilter ? element.id === jsFilter.id : false;
+      if (!jsFilter || element.id !== jsFilter.id) return false;
+      // Deselecting can bring values back to a mobile bar row; the clicked row
+      // must then re-render too, or it keeps showing only the narrowed values.
+      const barRowGrew =
+        jsFilter.matches('.ob-mobile-bar__filter') &&
+        element.querySelectorAll('input').length > jsFilter.querySelectorAll('input').length;
+      return !barRowGrew;
     };
 
     const facetsToRender = Array.from(facetDetailsElementsFromFetch).filter((element) => !matchesId(element));
