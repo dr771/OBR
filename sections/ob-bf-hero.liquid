@@ -9,8 +9,6 @@
 {{ 'component-ob-bf-hero.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'ob-bf-hero.js' | asset_url }}" defer></script>
 
-{%- assign ob_bf_ticker = section.settings.ticker_text | split: '|' -%}
-
 <ob-bf-hero
   class="ob-bf-hero"
   style="--ob-bf-accent: {{ section.settings.accent_color }}; --ob-bf-hot: {{ section.settings.hot_color }};"
@@ -79,15 +77,22 @@
     </div>
   {%- endif -%}
 
-  {%- if ob_bf_ticker.size > 0 -%}
-    <div class="ob-bf-hero__tickers" aria-hidden="true">
-      {%- for band in (1..2) -%}
+  <div class="ob-bf-hero__tickers" aria-hidden="true">
+    {%- for band in (1..2) -%}
+      {%- liquid
+        assign ob_bf_ticker = section.settings.ticker_text
+        if band == 2
+          assign ob_bf_ticker = section.settings.ticker_text_2
+        endif
+        assign ob_bf_ticker_items = ob_bf_ticker | split: '|'
+      -%}
+      {%- if ob_bf_ticker_items.size > 0 -%}
         <div class="ob-bf-hero__ticker ob-bf-hero__ticker--{{ band }}">
           <div class="ob-bf-hero__ticker-track">
             {%- for copy in (1..2) -%}
               <div class="ob-bf-hero__ticker-set">
                 {%- for repeat in (1..6) -%}
-                  {%- for item in ob_bf_ticker -%}
+                  {%- for item in ob_bf_ticker_items -%}
                     <span>{{ item | strip }}</span><span class="ob-bf-hero__ticker-star">✦</span>
                   {%- endfor -%}
                 {%- endfor -%}
@@ -95,9 +100,9 @@
             {%- endfor -%}
           </div>
         </div>
-      {%- endfor -%}
-    </div>
-  {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
 </ob-bf-hero>
 
 {% schema %}
@@ -197,9 +202,15 @@
     {
       "type": "text",
       "id": "ticker_text",
-      "label": "Tekst",
-      "info": "Scheid de onderdelen met |",
+      "label": "Tekst eerste band (accent)",
+      "info": "Scheid de onderdelen met |. Leeg = geen band.",
       "default": "Black Friday|Tot -50%|Op = op|Topmerken"
+    },
+    {
+      "type": "text",
+      "id": "ticker_text_2",
+      "label": "Tekst tweede band",
+      "default": "Slim gekozen|Extra scherp geprijsd|Wees er snel bij|Shop de deals"
     },
     {
       "type": "header",
