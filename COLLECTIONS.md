@@ -79,6 +79,10 @@ Magnum (work/tactical/safety boots) hasn't synced yet, so this collection is spa
 
 - Vendor is one of: Juicy Couture, Pas dé Monacó, Irasuto Studios
 
+### Schoenen (`schoenen`, pre-live)
+
+- Product type is `Schoenen` AND title does not contain `Socks` (set 2026-11-03). The live feed types products as `Schoenen` (DEV: `Shoe`), and five Odlo socks carry that type by mistake (NICK.md #16 point 8). Drop the title condition once Akeneo types them `Sport`.
+
 ### Sub-collections under Outdoor & Werk and Fashion & Lifestyle (pre-live, 2026-11-03)
 
 Team request: the main-menu dropdowns of these two items show product groups instead of brand names. The brands stay reachable under Merken. Each one is a smart collection with OR vendor rules, `custom.breadcrumb_rank = 5`, published to Online Store:
