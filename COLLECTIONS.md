@@ -71,13 +71,25 @@ Sweaty Betty is **provisional** — the user expects it will likely leave the Ak
 
 ### Outdoor & Werk (`outdoor-werk`)
 
-- Vendor is one of: Hi-Tec, Magnum
+- Vendor is one of: Hi-Tec, Magnum, Mechanix (Mechanix added on pre-live 2026-11-03)
 
 Magnum (work/tactical/safety boots) hasn't synced yet, so this collection is sparse (Hi-Tec only) for now — same class of "not yet exercisable at full scale" caveat this project already accepts elsewhere (PLP load-more >18 products, predictive search >8 results). "Werk" isn't a misnomer: it only looked empty because the original 11-product test sync happened to have zero Magnum items.
 
 ### Fashion & Lifestyle (`fashion-lifestyle`, renamed from "Dagelijks Comfort")
 
 - Vendor is one of: Juicy Couture, Pas dé Monacó, Irasuto Studios
+
+### Sub-collections under Outdoor & Werk and Fashion & Lifestyle (pre-live, 2026-11-03)
+
+Team request: the main-menu dropdowns of these two items show product groups instead of brand names. The brands stay reachable under Merken. Each one is a smart collection with OR vendor rules, `custom.breadcrumb_rank = 5`, published to Online Store:
+
+| Menu item | Handle | Vendor is one of |
+|---|---|---|
+| Outdoor & Werk → Werkkleding | `werkkleding` | Mechanix |
+| Fashion & Lifestyle → Streetwear | `streetwear` | Pas dé Monacó, Irasuto Studios |
+| Fashion & Lifestyle → Loungewear | `loungewear` | Juicy Couture |
+
+On 2026-11-03 Werkkleding and Streetwear are empty, because Mechanix, Pas dé Monacó and Irasuto Studios have no products in the live feed yet. The header dropdown still shows them (only the collection hero's pills hide empty collections). `Mechanix` is the expected vendor string, unverified like RH+ and Magnum: check it against the first real product record. A Juicy Couture product's breadcrumb now resolves to Fashion & Lifestyle › Loungewear (rank 5 beats the brand collection's 40).
 
 **Caveat:** RH+ and Magnum's vendor conditions use the brand labels from the SKU export ("RH+", "Magnum") verbatim, but neither brand has synced yet, so the exact vendor string is unverified — re-check against the real product record the moment either syncs.
 
