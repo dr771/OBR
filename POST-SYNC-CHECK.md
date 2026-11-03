@@ -22,7 +22,7 @@ console.log(Object.fromEntries(Object.entries(f).map(([k, v]) => [k, [...v].join
 
 **Why:** Nick's connector writes product metafields without saving the product, and the storefront filter index only refreshes on a product save. So the facet can stay a generation behind the real data (2026-09-21: 412 of 564 products). A wrong facet value is therefore either bad data *or* a stale index, and the facet alone cannot tell you which.
 
-**Check:** compare the `custom.shopify_originalbrands_category` list from the script against the **right-hand** column of `cats-dev.csv`. Known and already with Nick, do not re-report: `Shirt` 4, `Legging` 3, `Slipper` 2, `Sneaker` 2, `Outdoor` 1 (NICK.md item 11).
+**Check:** compare the category list from the script (`custom.shopify_originalbrands_category` on DEV; on pre-live the live sync writes `akeneo.shopify_originalbrands_cate__1`, NICK.md #16) against the **right-hand** column of `cats-dev.csv`. Known and already with Nick, do not re-report: `Shirt` 4, `Legging` 3, `Slipper` 2, `Sneaker` 2, `Outdoor` 1 (NICK.md item 11).
 
 For any *other* off-vocabulary value, open one product from that bucket at `/admin/products/<id>/metafields`. Use a value whose code is not a prefix of its label (`boots`→`Laarzen`, `pants`→`Broeken`), never `Slipper`→`Slippers`, because a prefix match proves nothing.
 

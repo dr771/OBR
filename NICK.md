@@ -402,3 +402,15 @@ Most likely these two products were mapped to the SB activity codes in Akeneo by
 
 - **Ask Nick:** should it be in the webshop feed at all? If not, exclude it in Akeneo and set it to draft or delete it in the shop. If Rica Lewis is a real new brand, which products are coming?
 - Do not assign Rica Lewis to a needs collection until that is clear (`ob-collection-maintenance`).
+
+## 16. First Akeneo-live sync into pre-live: schema and value differences from DEV (found 2026-11-03)
+
+**Open.** Measured on pre-live (shop `109574717777`) the morning after Nick connected it to Akeneo **live**: 808 products, 14,384 variants, all ACTIVE. The metaobjects came in clean (`filtercolors` 18 and `activities` 8 entries, `label_nl` as display name, publishable off, PUBLIC_READ). The Search & Discovery filters were rebuilt the same day and work. What differs from DEV:
+
+1. **Category lands in `akeneo.shopify_originalbrands_cate__1`, not `custom.shopify_originalbrands_category`.** The `custom.` definition does not exist on pre-live; the `akeneo.` one has storefront access NONE and is not enabled as a collection condition. On DEV both fields exist and the 18 category collections filter on the `custom.` one. The values themselves are better than DEV's (Dutch labels: `Shorts`, `Ballerina's`, `Rokken`). **Ask Nick:** is the `akeneo.` field the intended target from now on? If yes, we build the category collections on it, which needs `useAsCollectionCondition` (and PUBLIC_READ for Liquid) on that definition: his schema, so his call or his OK. 79 products have no category at all (DEV: 16), and `Handsschoenen` is misspelt (15 products).
+2. **Gender mixes English and Dutch:** `Women` 397, `Mannen` 222, `Unisex` 114, `Kinderen` 25, `Jongens` 3, empty 47. DEV is all English (`Women`/`Men`/`Kids`). The theme translates `Women`→Vrouwen, so the facet reads fine, but the DEV gender collections (`Dames` = `Women OR Unisex`, `Heren` = `Men OR Unisex`) would miss every `Mannen` product. **Ask:** one language for all values.
+3. **Product type mixes too:** `Sport` 549, `Fashion` 31, `Schoenen` 228 (DEV: `Shoe`). The pre-live collection `schoenen` (rule type = `Shoe`) is therefore **empty**, and it is a main-menu item. Fix either the data (`Shoe`) or the rule (`Schoenen`) once Nick says which is final.
+4. **Coverage gaps:** 110 products without `available_erp_sizes` (missing from the Maat filter), 47 without activities, 47 without gender, 815 variants without `filtercolors` (missing from Kleur). DEV had 2–3 of each.
+5. **Activity `work` has `label_nl` = `work`** (should be `Werk`); it is not on any product yet.
+6. **Compare-at `0.00` is back** (#13): 9,188 variants carry `0.00`, 32 are empty. Separately, 5,579 variants have a compare-at above the price, spread over FitFlop, Odlo, Sweaty Betty, Juicy Couture, Loewenweiss and Holster. That makes 513 of 808 products show as reduced (Solden collection, `-20%` badges). **Ask:** are these real current markdowns, or is the RRP being written as compare-at?
+7. Not synced to pre-live (present on DEV): `akeneo.stock` and `akeneo.sku_formated`. The theme reads neither.
