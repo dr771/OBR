@@ -170,6 +170,35 @@
                         {%- if settings.predictive_search_show_price -%}
                           {% render 'price', product: product, use_variant: true, show_badges: false %}
                         {%- endif -%}
+                        {%- comment -%}
+                          OB discount badges, same rules as the product card. No color is
+                          selected here, so the sale label covers every available variant.
+                          One node for both breakpoints: component-ob-search.css lifts it
+                          over the thumbnail on desktop.
+                        {%- endcomment -%}
+                        {%- liquid
+                          capture ps_sale_label
+                            render 'ob-sale-label', product: product
+                          endcapture
+                          assign ps_sale_label = ps_sale_label | strip
+                          capture ps_campaign_badge
+                            render 'ob-campaign-badge', product: product, placement: 'search'
+                          endcapture
+                        -%}
+                        {%- if ps_sale_label != blank or ps_campaign_badge != blank -%}
+                          <div class="ob-search-badges">
+                            {%- if ps_sale_label != blank -%}
+                              <span class="ob-badge ob-badge--search ob-badge--sale">
+                                {%- if ps_sale_label contains '~' -%}
+                                  <span class="ob-sale-badge__prefix">{{ 'products.product.sale_up_to' | t }}</span>
+                                  {{ ' ' }}
+                                {%- endif -%}
+                                {{- ps_sale_label | remove: '~' -}}
+                              </span>
+                            {%- endif -%}
+                            {{- ps_campaign_badge -}}
+                          </div>
+                        {%- endif -%}
                       </div>
                     </a>
                   </product-component>

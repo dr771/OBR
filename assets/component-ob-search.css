@@ -101,6 +101,49 @@
   mix-blend-mode: multiply;
 }
 
+/*
+  Discount badges (sale, campaign). The card pills' look, restated because
+  their rules in component-ob-swatches.css are scoped to the card wrapper.
+  Mobile: a row under the price, since the 5rem thumbnail can't carry a pill.
+*/
+.predictive-search--header .ob-search-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.predictive-search--header .ob-badge--search {
+  display: inline-block;
+  border-radius: 4rem;
+  padding: 0.3rem 0.9rem 0.4rem;
+  color: #fff;
+  font-family: var(--font-body-family);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4rem;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.predictive-search--header .ob-badge--search.ob-badge--sale {
+  background: var(--ob-accent);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.predictive-search--header .ob-badge--search.ob-badge--campaign {
+  background: var(--ob-campaign);
+}
+
+/* "tot" before a ranged discount, as on the card. */
+.predictive-search--header .ob-badge--search .ob-sale-badge__prefix {
+  font-size: 0.9rem;
+  text-transform: none;
+}
+
 .predictive-search--header
   #predictive-search-results-products-list
   .predictive-search__list-item:hover
@@ -133,8 +176,20 @@
     grid-template-columns: 11.5rem minmax(0, 1fr);
     column-gap: 1.2rem;
     align-items: start;
+    position: relative;
     min-height: 11.5rem;
     padding: 0;
+  }
+
+  /* Over the thumbnail's top-left corner, as on the card photo. */
+  .predictive-search--header #predictive-search-results-products-list .ob-search-badges {
+    position: absolute;
+    top: 0.6rem;
+    left: 0.6rem;
+    z-index: 1;
+    flex-direction: column;
+    max-width: 10.3rem;
+    margin-top: 0;
   }
 
   /*
