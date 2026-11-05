@@ -61,7 +61,7 @@ Only code travels this way. `config/settings_data.json`, theme-editor edits in `
 - `scripts/check-theme-drift.py` compares each file with the shop's ledger `assets/ob-theme-push-ledger.json`, which holds a hash of every file as the wrapper last pushed it. Each shop has its own ledger, and both machines read the same one. An unchanged hash means no Admin edit.
 - An Admin edit to a JSON file is merged three-way into the local file. The script stops with exit 3: review `git diff`, commit, re-run. The same setting changed on both sides, or an edited Liquid/CSS/JS file, aborts with a diff.
 - After the push it pulls the files again and updates the ledger.
-- Files pushed before the ledger existed (2026-11-05) fall back to Git history: a shop copy equal to a committed version is safe, anything else is merged against `HEAD` and stops for review.
+- Files with no ledger entry yet (pushed before 2026-11-05) fall back to Git history. A shop copy equal to a committed version is safe. Otherwise an Admin edit and a shop that is simply behind look the same, so the script lists every difference and needs `--confirm <file>` once. Read the list before confirming: anything in it that you didn't change is a team edit, so merge it into the file first.
 
 Do **not** use `shopify theme dev`, localhost, a preview theme, or a CLI Development
 theme as the normal implementation/verification loop. Their settings and assets can be
