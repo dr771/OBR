@@ -11,14 +11,6 @@
             "description": "Biomechanisch ontwikkelde zolen, sinds 2007."
           }
         },
-        "hi_tec": {
-          "type": "brand",
-          "settings": {
-            "collection": "hi-tec",
-            "eyebrow": "Wandelen & buiten",
-            "description": "Lichtgewicht wandelschoenen sinds 1974."
-          }
-        },
         "holster": {
           "type": "brand",
           "settings": {
@@ -94,7 +86,6 @@
       },
       "block_order": [
         "fitflop",
-        "hi_tec",
         "holster",
         "irasuto_studios",
         "juicy_couture",
@@ -107,7 +98,7 @@
       ],
       "settings": {
         "title": "Merken",
-        "subheading": "Elk merk is de beste in zijn vak. Wij brengen ze samen zodat jij niet hoeft te zoeken.",
+        "subheading": "De beste merken, zorgvuldig voor jou samengebracht. Zo hoef je niet eindeloos te zoeken naar kwaliteit die bij je past.",
         "color_scheme": "scheme-1",
         "padding_top": 0,
         "padding_bottom": 48
