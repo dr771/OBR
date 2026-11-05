@@ -44,7 +44,8 @@ explicit `--only` list, then verify the real storefront URL in Chrome. Horizon
 `209707532625` is a draft kept as rollback; never push to it.
 
 ```
-shopify theme push --store=original-brands-mtr6tuym.myshopify.com --theme=209721262417 --allow-live --only <file>
+scripts/theme-push.sh <file> [<file> ...]          # pre-live theme 209721262417
+scripts/theme-push.sh --dev <file> [<file> ...]    # DEV theme 148245381229
 ```
 
 **Deploy route for theme code: DEV first, then live (owner decision 2026-10-30).** DEV (`--store=original-brands-dev.myshopify.com --theme=148245381229`, or `scripts/theme-push.sh --dev`) is the staging shop for features and bug fixes:
@@ -54,7 +55,13 @@ shopify theme push --store=original-brands-mtr6tuym.myshopify.com --theme=209721
 
 Only code travels this way. `config/settings_data.json`, theme-editor edits in `templates/*.json`, apps, products and menus are per shop and are never synced from DEV. Bugs that depend on live data are reproduced on pre-live directly. DEV's catalog is Akeneo **dev**, so it is not proof for data-dependent behavior.
 
-**When any pushed file is under `templates/*.json`, use `scripts/theme-push.sh <file> [<file> ...]` instead of the raw command above.** It targets pre-live by default; `--dev` as the first argument targets DEV. It pulls each JSON template fresh and checks live changes against `HEAD`, allowing intentional local edits while aborting on overlapping live edits. Reconcile any live-only Admin settings into the local JSON before running it; the wrapper detects conflicts but does not merge settings automatically. This exists because `templates/*.json` is merchant-editable state that can be changed live in the Admin theme editor without ever being committed — a push built on a stale local copy silently reverts those live-only settings with a clean `git status` and no warning (it happened for real on 2026-09-03, commit `cdc6c7c`: a push meant to touch only `templates/collection.json`'s banner section also reverted its live `products_per_page`/`show_vendor`/`image_ratio` back to Dawn's defaults). For non-JSON files (Liquid/CSS/JS/assets) the raw command above is fine — they carry no live-only Admin state.
+**Every theme push goes through `scripts/theme-push.sh`, for every file type.** The OB team edits the frontend in the Admin since 2026-11 (theme editor → `templates/*.json` and `sections/*.json`, "Edit default theme content" → `locales/*.json`, code editor → any file). A raw push of a stale local copy silently reverts those edits with a clean `git status` (happened 2026-09-03, commit `cdc6c7c`, and was caught on 2026-11-05 for the Merken subheading and the header group). A Claude hook (`.claude/settings.json` → `scripts/hooks/guard-theme-push.js`) blocks the raw `shopify theme push`; Codex has no hook and must follow this rule by hand. What the wrapper does:
+- Pre-live only takes committed files.
+- It pulls every named file fresh in one call; a failed pull aborts.
+- `scripts/check-theme-drift.py` compares each file with the shop's ledger `assets/ob-theme-push-ledger.json`, which holds a hash of every file as the wrapper last pushed it. Each shop has its own ledger, and both machines read the same one. An unchanged hash means no Admin edit.
+- An Admin edit to a JSON file is merged three-way into the local file. The script stops with exit 3: review `git diff`, commit, re-run. The same setting changed on both sides, or an edited Liquid/CSS/JS file, aborts with a diff.
+- After the push it pulls the files again and updates the ledger.
+- Files pushed before the ledger existed (2026-11-05) fall back to Git history: a shop copy equal to a committed version is safe, anything else is merged against `HEAD` and stops for review.
 
 Do **not** use `shopify theme dev`, localhost, a preview theme, or a CLI Development
 theme as the normal implementation/verification loop. Their settings and assets can be
@@ -125,9 +132,9 @@ See "Next up" in MIXED-SHOPS-PLAYBOOK.md for what's still open.
 
 **Theme workflow.** Shopify CLI is authenticated on this machine for both shops:
 ```
-shopify theme push --store=original-brands-mtr6tuym.myshopify.com --theme=209721262417 --allow-live --only <files>   # pre-live Dawn (working surface)
+scripts/theme-push.sh <changed files>   # pre-live Dawn (working surface); --dev first for DEV
 ```
-Always push with `--only <changed files>`. `.shopifyignore` independently blocks `config/settings_data.json`, including when it is accidentally named in `--only`; do not remove that protection for a normal deploy. JSON templates remain merchant-editable state; use `scripts/theme-push.sh <file> [<file> ...]` whenever any pushed file is under `templates/*.json`. It checks changes against `HEAD`, permits intentional local edits when live has not changed those fields, and aborts on overlapping live edits. Reconcile live-only Admin settings into the local file before running it; the wrapper does not merge them automatically (see the Shopify CLI section above).
+Always name the changed files. `.shopifyignore` independently blocks `config/settings_data.json`, including when it is accidentally named; do not remove that protection for a normal deploy. The wrapper protects Admin edits for every file type (see the Shopify CLI section above).
 
 **Use the active main theme, not a CLI Development theme.** Development themes are both
 out of workflow and unreliable here: they are ephemeral, machine-bound, and can carry

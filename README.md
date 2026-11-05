@@ -7,7 +7,7 @@ See `MIXED-SHOPS-PLAYBOOK.md` for scoping decisions and reuse notes (shared with
 ## Local dev
 
 ```
-shopify theme push --store=original-brands-mtr6tuym.myshopify.com --theme=209721262417 --allow-live --only <file>
+scripts/theme-push.sh <file> [<file> ...]   # pre-live; --dev first for DEV. Never a raw `shopify theme push` (CLAUDE.md)
 ```
 
 `shopify theme dev` and preview themes are not the verification loop here (CLAUDE.md).

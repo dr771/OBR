@@ -18,13 +18,26 @@
 # Usage: scripts/theme-push.sh [--dev] <file> [<file> ...]
 # Targets the pre-live shop's active Dawn theme (the working surface); --dev
 # targets the DEV test shop instead (see CLAUDE.md, Shopify CLI).
-# Every JSON template in the list is pulled fresh from the live theme and
-# diffed (formatting-normalized) against the local copy before anything is
-# pushed. Any real difference aborts the whole push with the diff printed,
-# so it can be reconciled by hand first. config/settings_data.json is always
-# refused outright, mirroring .shopifyignore.
+#
+# EVERY theme file goes through this script, not only templates/*.json: the
+# OB team edits the frontend in the Admin, which writes templates, section
+# groups (sections/*.json), locales/*.json ("Edit default theme content") and,
+# through the code editor, any Liquid/CSS/JS file. A raw `shopify theme push`
+# is blocked by a Claude hook (.claude/settings.json).
+#
+# 1. Pre-live only accepts committed files (the commit is what goes live).
+# 2. All files are pulled fresh in one call; a failed pull aborts.
+# 3. scripts/check-theme-drift.py compares each file with the ledger
+#    (assets/ob-theme-push-ledger.json in the shop: a hash of every file as we
+#    last pushed it). A changed hash means an Admin edit: JSON is merged
+#    three-way into the local file (exit 3: review, commit, re-run);
+#    overlapping or non-JSON edits abort.
+# 4. After the push the files are pulled again and the ledger is updated in
+#    the shop. Its local copy is a gitignored staging file.
+# config/settings_data.json is always refused outright, mirroring .shopifyignore.
 
 set -euo pipefail
+export PYTHONIOENCODING=utf-8
 
 STORE="original-brands-mtr6tuym.myshopify.com"
 THEME="209721262417"
@@ -52,66 +65,61 @@ else
   exit 1
 fi
 
-normalize_json() {
-  # Strips Shopify's auto-generated comment header (if present) and
-  # reformats with sorted keys, so a pure formatting difference never
-  # trips the check — only real content differences do.
-  "$PYTHON" -c "
-import json, re, sys
-raw = open(sys.argv[1], encoding='utf-8').read()
-raw = re.sub(r'^\s*/\*.*?\*/\s*', '', raw, flags=re.DOTALL)
-print(json.dumps(json.loads(raw), indent=2, sort_keys=True))
-" "$1"
-}
-
+LEDGER="assets/ob-theme-push-ledger.json"
 for f in "$@"; do
+  if [ "$f" = "$LEDGER" ]; then
+    echo "REFUSED: $LEDGER is written by this script only." >&2
+    exit 1
+  fi
   if [ "$f" = "config/settings_data.json" ]; then
     echo "REFUSED: config/settings_data.json is protected deployment state — never push it via a normal deploy. See CLAUDE.md Hard Rules." >&2
     exit 1
   fi
 done
 
-for f in "$@"; do
-  case "$f" in
-    templates/*.json)
-      echo "Checking live drift for $f ..."
-      shopify theme pull --store="$STORE" --theme="$THEME" --only "$f" --path "$TMPDIR" >/dev/null 2>&1 || true
-      if [ ! -f "$TMPDIR/$f" ]; then
-        echo "  (not found live — treating as a new file, nothing to compare)"
-        continue
-      fi
-      if ! git show "HEAD:$f" > "$TMPDIR/baseline.json"; then
-        echo "ABORTED: no Git baseline for $f; cannot distinguish live settings from intended edits." >&2
-        exit 1
-      fi
-      LIVE_NORM=$(normalize_json "$TMPDIR/$f")
-      if "$PYTHON" scripts/check-theme-json-merge.py "$TMPDIR/baseline.json" "$TMPDIR/$f" "$f"; then
-        LOCAL_NORM="$LIVE_NORM"
-      else
-        LOCAL_NORM=$(normalize_json "$f")
-      fi
-      if [ "$LIVE_NORM" != "$LOCAL_NORM" ]; then
-        {
-          echo ""
-          echo "ABORTED: $f differs between the live theme and this local copy (beyond formatting)."
-          echo "This usually means someone changed settings live in the Shopify Admin theme editor"
-          echo "since this file was last pulled or committed. Pushing now would silently overwrite that."
-          echo ""
-          echo "Diff (live -> local):"
-          diff <(echo "$LIVE_NORM") <(echo "$LOCAL_NORM") || true
-          echo ""
-          echo "Reconcile by hand — merge the live-only settings into $f — then re-run this script."
-        } >&2
-        exit 1
-      fi
-      echo "  OK: every live-only setting is preserved in the local file."
-      ;;
-  esac
-done
+if [ "$STORE" = "original-brands-mtr6tuym.myshopify.com" ]; then
+  DIRTY=$(git status --porcelain -- "$@")
+  if [ -n "$DIRTY" ]; then
+    echo "ABORTED: pre-live only receives committed files. Commit first:" >&2
+    echo "$DIRTY" >&2
+    exit 1
+  fi
+fi
 
-echo "All JSON templates verified clean. Pushing..."
-ONLY_ARGS=()
+PULL_ARGS=()
 for f in "$@"; do
-  ONLY_ARGS+=(--only "$f")
+  PULL_ARGS+=(--only "$f")
 done
-shopify theme push --store="$STORE" --theme="$THEME" --allow-live "${ONLY_ARGS[@]}"
+echo "Pulling the shop's current copy of $# file(s) ..."
+if ! shopify theme pull --store="$STORE" --theme="$THEME" "${PULL_ARGS[@]}" --only "$LEDGER" --path "$TMPDIR" >/dev/null 2>&1; then
+  echo "ABORTED: theme pull failed, so Admin edits cannot be ruled out. Nothing pushed." >&2
+  exit 1
+fi
+
+set +e
+"$PYTHON" scripts/check-theme-drift.py check "$TMPDIR" "$@"
+STATUS=$?
+set -e
+if [ "$STATUS" -eq 3 ]; then
+  echo "" >&2
+  echo "STOPPED: Admin edits were merged into the local file(s) above. Review with git diff," >&2
+  echo "commit them, then re-run this script. Nothing pushed." >&2
+  exit 3
+elif [ "$STATUS" -ne 0 ]; then
+  echo "" >&2
+  echo "ABORTED: reconcile the conflicts above by hand, then re-run. Nothing pushed." >&2
+  exit 1
+fi
+
+echo "No Admin edit would be lost. Pushing..."
+shopify theme push --store="$STORE" --theme="$THEME" --allow-live "${PULL_ARGS[@]}"
+
+echo "Recording the pushed state in $LEDGER ..."
+mkdir -p "$TMPDIR/after"
+if shopify theme pull --store="$STORE" --theme="$THEME" "${PULL_ARGS[@]}" --path "$TMPDIR/after" >/dev/null 2>&1   && "$PYTHON" scripts/check-theme-drift.py record "$TMPDIR/$LEDGER" "$TMPDIR/after" "$LEDGER" "$@"   && shopify theme push --store="$STORE" --theme="$THEME" --allow-live --only "$LEDGER" >/dev/null 2>&1; then
+  rm -f "$LEDGER"
+  echo "Done."
+else
+  echo "WARNING: push succeeded, but the ledger was not updated. The next push of these files" >&2
+  echo "will compare against Git instead and may stop for review." >&2
+fi

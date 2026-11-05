@@ -40,3 +40,6 @@ drupal-customers*
 # Redirect map: per-shop catalog dumps are regenerated inputs
 redirects/catalog-*.json
 redirects/redirects-*.csv
+
+# Staging copy of the theme-push ledger; the real one lives in each shop (scripts/theme-push.sh)
+assets/ob-theme-push-ledger.json
