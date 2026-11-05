@@ -364,6 +364,11 @@ cart-items .cart-item__line-total .cart-item__discounted-prices {
   text-align: center;
 }
 
+/* Same 24px as the title above it; the discount box below has no top margin. */
+#main-cart-footer .ob-free-shipping {
+  margin-bottom: 2.4rem;
+}
+
 #main-cart-footer .cart__ctas {
   justify-content: center;
   text-align: center;

@@ -585,7 +585,10 @@
             class="cart__checkout-button button"
             name="checkout"
             form="CartDrawer-Form"
-            title="{{ tax_note | strip_html | strip_newlines | strip }}"
+            {% comment %} OB: German shoppers only, like the PDP caption (main-product.liquid). {% endcomment %}
+            {% if localization.country.iso_code == 'DE' %}
+              title="{{ tax_note | strip_html | strip_newlines | strip }}"
+            {% endif %}
             {% if cart == empty %}
               disabled
             {% endif %}

@@ -121,7 +121,10 @@
                   <p class="totals__total-value">{{ cart.total_price | money }}</p>
                 </div>
 
-                <small class="tax-note caption-large rte">{{ tax_note }}</small>
+                {%- comment -%} OB: German shoppers only, like the PDP caption (main-product.liquid). {%- endcomment -%}
+                {%- if localization.country.iso_code == 'DE' -%}
+                  <small class="tax-note caption-large rte">{{ tax_note }}</small>
+                {%- endif -%}
               </div>
             {%- else -%}
               {%- comment -%}
