@@ -1143,3 +1143,17 @@ product-info.ob-pdp {
 .ob-campaign-note[hidden] {
   display: none !important;
 }
+
+/*
+  Dawn's tax/shipping caption under the price (shown once the shop has
+  "taxes included" or a shipping policy). Dawn pulls it up with
+  margin-top: -1.4rem to tuck it under its own price; our price row is taller
+  and has no bottom margin, so the caption landed on top of the number.
+*/
+.ob-pdp .product__tax {
+  margin: 0.8rem 0 0;
+  font-size: 1.3rem;
+  line-height: 1.8rem;
+  letter-spacing: normal;
+  color: var(--ob-pdp-ink-muted);
+}
