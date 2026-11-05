@@ -150,7 +150,21 @@
                       <span>{{ 'products.product.volume_pricing.note' | t }}</span>
                     </div>
                   {%- endif -%}
-                  {%- if cart.taxes_included or cart.duties_included or shop.shipping_policy.body != blank -%}
+                  {%- comment -%}
+                    OB: the tax/shipping caption only for German shoppers. Germany's price rules (PAngV)
+                    expect "incl. VAT, plus shipping" with the price; NL/BE don't, and there the USP strip
+                    and checkout already cover shipping. Keyed on the shopper's country, so it appears by
+                    itself once a market including DE is active.
+                  {%- endcomment -%}
+                  {%- liquid
+                    assign ob_show_tax_caption = false
+                    if localization.country.iso_code == 'DE'
+                      if cart.taxes_included or cart.duties_included or shop.shipping_policy.body != blank
+                        assign ob_show_tax_caption = true
+                      endif
+                    endif
+                  -%}
+                  {%- if ob_show_tax_caption -%}
                     <div class="product__tax caption rte">
                       {%- if cart.duties_included and cart.taxes_included -%}
                         {{ 'products.product.duties_and_taxes_included' | t }}

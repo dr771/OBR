@@ -1145,8 +1145,8 @@ product-info.ob-pdp {
 }
 
 /*
-  Dawn's tax/shipping caption under the price (shown once the shop has
-  "taxes included" or a shipping policy). Dawn pulls it up with
+  Dawn's tax/shipping caption under the price (German shoppers only, see
+  main-product.liquid). Dawn pulls it up with
   margin-top: -1.4rem to tuck it under its own price; our price row is taller
   and has no bottom margin, so the caption landed on top of the number.
 */
