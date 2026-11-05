@@ -20,12 +20,12 @@ re-reading that change's design.md.
 3. Query distinct `vendor` values across the live product catalog.
 4. Compare live vendor values with `COLLECTIONS.md`'s "Current scan baseline" table. Report vendors that are new, missing (in the table but with zero live products), or whose exact vendor string doesn't match what's actually stored (this matters for RH+ and Magnum specifically — their vendor strings were unverified estimates as of 2026-09-03). Include the current product count for each collection.
 
-The audit is read-only. Do not guess a merchandising destination for a new vendor, and do not edit a collection or `COLLECTIONS.md` until the user approves the proposed assignment. Not every vendor belongs in a needs-collection — FitFlop, Holster, Loewenweiss, and Sneaker Lab are deliberately excluded (see `COLLECTIONS.md`); don't add a vendor just because it's new.
+The audit is read-only. Do not guess a merchandising destination for a new vendor, and do not edit a collection or `COLLECTIONS.md` until the user approves the proposed assignment. Not every vendor belongs in a needs-collection — Holster, Loewenweiss, and Sneaker Lab are deliberately excluded (see `COLLECTIONS.md`); don't add a vendor just because it's new. FitFlop was excluded too until 2026-11-05, when the team moved it into Fashion & Lifestyle (with the `comfort-footwear` sub-collection).
 
 ## Applying an approved change
 
 - Reconfirm the connector identity immediately before any write.
-- Keep each collection's rule set disjunctive (`appliedDisjunctively: true`): every approved vendor is an OR condition.
+- Keep each collection's rule set disjunctive (`appliedDisjunctively: true`; in the 2026-10 `sources` API, `matchType: ANY`): every approved vendor is an OR condition. Since Admin 2026-10 the connector refuses `ruleSet`; read and write rules through `sources` (GOTCHAS.md, Shopify admin and data).
 - Use `column: VENDOR`, `relation: EQUALS`, and the exact vendor string as `condition`. No `conditionObjectId` is needed for vendor conditions (that field is only for metafield-definition rules).
 - Updating a Shopify rule set replaces all of its rules. Read the current rules first and send the complete approved list in one mutation.
 - Verify the collection's final rules, OR logic, publication to Online Store, and product count. Then update `COLLECTIONS.md`'s "Current scan baseline" table in the same change.

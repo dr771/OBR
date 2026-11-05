@@ -61,7 +61,7 @@ merchandising decision rather than an inferred mapping.
 
 These three automatic collections use **OR** logic on the product's **vendor**: a product is included when its vendor matches one of the collection's listed brands. This replaced the original activity/category-based rule set on 2026-09-03 (see `openspec/changes/restructure-needs-collections/`) after a live check found it caused real overlap — Odlo, which dominates Sport & Training's SKU volume, tags nearly every product with activities spanning both the Sport & Training and Outdoor & Werk buckets at once (e.g. one base layer tagged `Training, Fietsen, Skiën & Snowboard, Wandelen, Running` simultaneously), so the two collections showed largely the same products under the old rule type. Vendor is single-valued per product, so these three collections are now mutually exclusive by construction.
 
-The pillar assignment is based on a full-catalog SKU export (not just what's synced), which showed the catalog splits cleanly by brand mission — see `TODO.md` for the SKU counts behind this call. FitFlop, Holster, Loewenweiss, and Sneaker Lab deliberately have **no** needs-collection: they're comfort-footwear/care brands already reachable via the Schoenen/Kleding/Accessoires product-type collections and their own Merken brand page — a "Comfort" needs-card would just duplicate that existing axis.
+The pillar assignment is based on a full-catalog SKU export (not just what's synced), which showed the catalog splits cleanly by brand mission — see `TODO.md` for the SKU counts behind this call. FitFlop, Holster, Loewenweiss, and Sneaker Lab deliberately have **no** needs-collection: they're comfort-footwear/care brands already reachable via the Schoenen/Kleding/Accessoires product-type collections and their own Merken brand page — a "Comfort" needs-card would just duplicate that existing axis. **Exception since 2026-11-05 (pre-live, team request): FitFlop is in Fashion & Lifestyle**, with its own `Comfort Footwear` sub-collection (see below). Holster, Loewenweiss and Sneaker Lab still have no needs-collection.
 
 ### Sport & Training (`sport-training`)
 
@@ -77,7 +77,9 @@ Magnum (work/tactical/safety boots) hasn't synced yet, so this collection is spa
 
 ### Fashion & Lifestyle (`fashion-lifestyle`, renamed from "Dagelijks Comfort")
 
-- Vendor is one of: Juicy Couture, Pas dé Monacó, Irasuto Studios
+- Vendor is one of: Juicy Couture, Pas dé Monacó, Irasuto Studios, FitFlop (FitFlop added on pre-live 2026-11-05)
+
+FitFlop makes up most of the collection: 159 of 190 products on 2026-11-05 (31 before). The owner gave the go knowing this.
 
 ### Schoenen (`schoenen`, pre-live)
 
@@ -92,6 +94,9 @@ Team request: the main-menu dropdowns of these two items show product groups ins
 | Outdoor & Werk → Werkkleding | `werkkleding` | Mechanix |
 | Fashion & Lifestyle → Streetwear | `streetwear` | Pas dé Monacó, Irasuto Studios |
 | Fashion & Lifestyle → Loungewear | `loungewear` | Juicy Couture |
+| Fashion & Lifestyle → Comfort Footwear (2026-11-05) | `comfort-footwear` | FitFlop |
+
+`comfort-footwear` has **rank 15, not 5**. It holds every FitFlop product, so at 5 it would tie with the more specific `Sandalen`/`Sneakers`/… sub-collections. Ties go to Liquid's undocumented `product.collections` order, so a FitFlop sandal's breadcrumb could flip to "Comfort Footwear". It would also pour all of FitFlop into the related-products rail's first band. At 15 it ranks after the type collections and before Fashion & Lifestyle (20). For now it shows the same products as `/collections/fitflop`; Holster and Loewenweiss could join it with one vendor value.
 
 On 2026-11-03 Werkkleding and Streetwear are empty, because Mechanix, Pas dé Monacó and Irasuto Studios have no products in the live feed yet. The header dropdown still shows them (only the collection hero's pills hide empty collections). `Mechanix` is the expected vendor string, unverified like RH+ and Magnum: check it against the first real product record. A Juicy Couture product's breadcrumb now resolves to Fashion & Lifestyle › Loungewear (rank 5 beats the brand collection's 40).
 
@@ -115,6 +120,7 @@ Rank resolves that. It is the Collection metafield `custom.breadcrumb_rank` (int
 |---|---|---|
 | 5 | Product sub-type and activity | the live second-level collections behind the two-level menu — `Sandalen`, `Teenslippers`, `Slippers`, `Sneakers`, `Laarzen`, `Hardlopen`, `Training`, … They locate a product more precisely than a parent collection, so they rank below 10. |
 | 10 | Product type | `Schoenen`, `Kleding`, `Accessoires` |
+| 15 | Brand-wide occasion sub-collection | `Comfort Footwear` (= all of FitFlop, so less precise than a type sub-collection, more than Fashion & Lifestyle) |
 | 20 | Occasion | `Fashion & Lifestyle`, `Sport & Training`, `Outdoor & Werk` |
 | 30 | Gender | `Dames`, `Heren`, `Kinderen` |
 | 40 | Brand | `FitFlop`, `Hi-Tec`, `Holster`, `Irasuto Studios`, `Juicy Couture`, `Loewenweiss`, `Nike Swim`, `Odlo`, `Pas dé Monacó`, `Sneaker Lab`, `Sweaty Betty` |
@@ -161,7 +167,7 @@ collections still use the documented OR rule sets and currently contain:
 | Juicy Couture | 70 | Fashion & Lifestyle |
 | Pas dé Monacó | 3 | Fashion & Lifestyle |
 | Irasuto Studios | 1 | Fashion & Lifestyle |
-| FitFlop | 379 | None — comfort footwear, reachable via Schoenen + its Merken brand page |
+| FitFlop | 379 | Fashion & Lifestyle (since 2026-11-05, pre-live; sub-collection `comfort-footwear`) |
 | Holster | 3 | None — comfort footwear, reachable via Schoenen + its Merken brand page |
 | Loewenweiss | 8 | None — comfort footwear, reachable via Schoenen + its Merken brand page |
 | Sneaker Lab | 1 | None — care products, reachable via Accessoires + its Merken brand page |
