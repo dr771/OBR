@@ -364,6 +364,15 @@ cart-items .cart-item__line-total .cart-item__discounted-prices {
   text-align: center;
 }
 
+/*
+  Shop Pay / Google Pay take their radius from this variable. Dawn sets it on
+  the element itself (to the theme's button radius), so it must be overridden
+  there, not on a parent; pill like the Afrekenen button.
+*/
+#main-cart-footer shopify-accelerated-checkout-cart {
+  --shopify-accelerated-checkout-button-border-radius: 9999px;
+}
+
 /* Same 24px as the title above it; the discount box below has no top margin. */
 #main-cart-footer .ob-free-shipping {
   margin-bottom: 2.4rem;
