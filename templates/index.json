@@ -11,13 +11,28 @@
   "sections": {
     "bf_hero": {
       "type": "ob-bf-hero",
-      "disabled": true,
       "settings": {
-        "button_link": "shopify://collections/solden"
+        "eyebrow": "Slim gekozen. Extra scherp.",
+        "word_1": "Black",
+        "word_2": "Friday",
+        "text": "Topmerken, extra scherp geprijsd. Op = op, dus wees er snel bij.",
+        "button_label": "Shop de deals",
+        "button_link": "shopify://collections/solden",
+        "burst_top": "tot",
+        "burst_value": "-50%",
+        "starts_at": "2026-11-27T00:00:00+01:00",
+        "ends_at": "2026-11-30T23:59:59+01:00",
+        "label_before": "Start over",
+        "label_during": "Nog maar",
+        "ticker_text": "Black Friday|Tot -50%|Op = op|Topmerken",
+        "ticker_text_2": "Slim gekozen|Extra scherp geprijsd|Wees er snel bij|Shop de deals",
+        "accent_color": "#38b6ff",
+        "hot_color": "#f7391e"
       }
     },
     "spotlight_hero": {
       "type": "ob-spotlight-hero",
+      "disabled": true,
       "settings": {
         "eyebrow": "Merk in de spotlight: FitFlop",
         "heading": "Comfort die de hele dag",
@@ -34,6 +49,7 @@
     },
     "brand_hero": {
       "type": "ob-brand-hero",
+      "disabled": true,
       "settings": {
         "heading": "Niets voelt als FitFlop",
         "text": "Comfort dat je de hele dag draagt, in stijlen die overal bij passen. Ontdek de nieuwe collectie.",
@@ -49,11 +65,12 @@
     },
     "hero": {
       "type": "ob-home-hero",
+      "disabled": true,
       "settings": {
         "eyebrow_badge": "Topmerken · slim gekozen",
-        "heading_prefix": "Sterke specialisten voor",
-        "heading_accent": "elk moment",
-        "heading_suffix": "van je dag.",
+        "heading_prefix": "Het juiste",
+        "heading_accent": "merk",
+        "heading_suffix": "voor elk moment",
         "subheading": "Van training tot outdoor en lifestyle — wij kiezen per behoefte het juiste merk, zodat jij slimmer shopt.",
         "button_1_label": "Ontdek per behoefte",
         "button_1_link": "#shop-per-behoefte",
