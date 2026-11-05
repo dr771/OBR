@@ -345,8 +345,8 @@
         "error_generic": "Er is iets misgegaan. Probeer het opnieuw.",
         "prefill_applied": "Kortingscode \"{{ code }}\" toegepast."
       },
-      "estimated_total": "Geschat totaal",
-      "new_estimated_total": "Nieuw geschat totaal",
+      "estimated_total": "Subtotaal",
+      "new_estimated_total": "Nieuw subtotaal",
       "duties_and_taxes_included_shipping_at_checkout_with_policy_html": "Douanerechten en belastingen inbegrepen. Kortingen en <a href=\"{{ link }}\">verzending</a> worden bij de checkout berekend.",
       "duties_and_taxes_included_shipping_at_checkout_without_policy": "Douanerechten en belastingen inbegrepen. Kortingen en verzending worden bij de checkout berekend.",
       "taxes_included_shipping_at_checkout_with_policy_html": "Belastingen inbegrepen. Kortingen en <a href=\"{{ link }}\">verzending</a> worden bij de checkout berekend.",
