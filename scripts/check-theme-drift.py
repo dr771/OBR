@@ -38,6 +38,9 @@ import subprocess
 import sys
 
 LEDGER = "assets/ob-theme-push-ledger.json"
+# Images and fonts: not text, and not editable in the Admin code editor, so
+# there is no team edit to protect. They are pushed without a check or ledger.
+BINARY = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif", ".ico", ".woff", ".woff2", ".ttf", ".otf")
 MISSING = object()
 HISTORY_LIMIT = 200
 
@@ -139,6 +142,9 @@ def print_text_diff(base, live):
 
 def check_file(live_dir, ledger, path):
     """Returns 'ok', 'merged' or 'conflict'."""
+    if path.lower().endswith(BINARY):
+        print(f"  {path}: binary asset, not checked.")
+        return "ok"
     live_path = os.path.join(live_dir, path)
     if not os.path.exists(live_path):
         print(f"  {path}: not in the shop yet, nothing to protect.")
@@ -220,6 +226,8 @@ def check(live_dir, files):
 def record(old_ledger, after_dir, out, files):
     ledger = load_ledger(old_ledger)
     for path in files:
+        if path.lower().endswith(BINARY):
+            continue
         after = os.path.join(after_dir, path)
         if not os.path.exists(after) or not os.path.exists(path):
             ledger.pop(path, None)

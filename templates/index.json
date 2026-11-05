@@ -82,13 +82,6 @@
             "brand_handle": ""
           }
         },
-        "hi_tec": {
-          "type": "brand",
-          "settings": {
-            "collection": "hi-tec",
-            "brand_handle": ""
-          }
-        },
         "holster": {
           "type": "brand",
           "settings": {
@@ -162,7 +155,6 @@
       },
       "block_order": [
         "fitflop",
-        "hi_tec",
         "holster",
         "irasuto_studios",
         "juicy_couture",
@@ -279,14 +271,6 @@
             "description": "Activewear voor haar"
           }
         },
-        "hi_tec": {
-          "type": "brand",
-          "settings": {
-            "collection": "hi-tec",
-            "brand_handle": "",
-            "description": "Wandelen & buiten"
-          }
-        },
         "fitflop": {
           "type": "brand",
           "settings": {
@@ -355,7 +339,6 @@
       "block_order": [
         "odlo",
         "sweaty_betty",
-        "hi_tec",
         "fitflop",
         "juicy_couture",
         "holster",

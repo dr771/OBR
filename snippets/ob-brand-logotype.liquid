@@ -28,8 +28,8 @@
   where ratio = ink width / height and density = share of that box covered
   by ink (thin serif marks like Pas de Monaco read lighter than dense ones
   like FitFlop at the same size). 4 and 0.33 are the row's "typical" logo.
-  Two by-eye corrections on top: FitFlop x0.92, Nike Swim x0.8 (a diagonal
-  swoosh reads heavier than its bounding-box density says). Asset files must
+  Two by-eye corrections on top: FitFlop x0.92, Nike Swim x1.15 (its thin
+  swoosh reads lighter than the dense SWIM letters suggest). Asset files must
   be trimmed to their ink (no transparent padding) or the scale is off - a
   new logo needs trimming and its own scale from the formula above.
 
@@ -146,11 +146,11 @@
     <img
       src="{{ 'ob-logo-nike-swim.png' | asset_url }}"
       alt="Nike Swim"
-      width="130"
-      height="46"
+      width="900"
+      height="104"
       loading="lazy"
       class="ob-brand-logo"
-      style="--ob-logo-scale: 1.07;"
+      style="--ob-logo-scale: 0.62;"
     >
   {%- when 'odlo' -%}
     <img

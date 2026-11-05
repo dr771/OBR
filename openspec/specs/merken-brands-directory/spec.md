@@ -15,12 +15,12 @@ The Merken page's hero (breadcrumb, H1, subheading, background/spacing) SHALL be
 - **WHEN** the Merken page renders
 - **THEN** the brand-chip grid SHALL be passed to `ob-collection-hero` as its `extra_content` parameter (a captured HTML string), so it renders inside the same tinted wrapper as the breadcrumb/title, above the hero's bottom border — not as separate markup after the hero closes.
 
-### Requirement: Hero includes a brand-mark chip grid at 6 columns
+### Requirement: Hero includes a brand-mark chip grid
 Below the title/subheading, the hero SHALL render one chip per brand block, each containing a per-brand brand mark (not the plain collection title), laid out with a flex-wrap technique so a short last row's chips stretch to fill the row instead of leaving a dead gap.
 
-#### Scenario: 11 brands split 6 + 5
-- **WHEN** 11 brand blocks are configured
-- **THEN** the chip grid SHALL render 6 chips in the first row and 5 in the second at desktop widths (≥990px), with the second row's chips stretched to fill the full row width.
+#### Scenario: Short last row fills the width
+- **WHEN** the brand count does not divide evenly into the desktop row length
+- **THEN** the last row's chips SHALL stretch to fill the full row width rather than leaving empty space.
 
 #### Scenario: Real logo for a sourced brand
 - **WHEN** a chip is rendered for a brand with a sourced logo file (FitFlop, Hi-Tec, Holster, Irasuto Studios, Juicy Couture, Löwenweiss, Nike Swim, Odlo, Pas de Monaco, Sweaty Betty)
