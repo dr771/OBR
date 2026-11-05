@@ -19,7 +19,9 @@ machines read the same one) records for every file the wrapper pushed:
       don't touch what the local copy changed are written into the local file.
       Same setting changed on both sides, a non-JSON file, or no base: conflict.
     - no ledger entry yet (pushed before the ledger existed): fine only if the
-      shop holds exactly a committed version; otherwise merge against HEAD.
+      shop holds exactly a committed version. Otherwise an Admin edit and a
+      shop that is merely behind look the same: the differences are printed and
+      the file needs --confirm (env THEME_PUSH_CONFIRMED) once.
     Exit 0 safe, 1 conflict (nothing written), 3 merged (review, commit, re-run).
 
   record <old-ledger> <after-dir> <out> <file>...
@@ -161,19 +163,26 @@ def check_file(live_dir, ledger, path):
         return "ok"
 
     versions = git_versions(path)
+    base = MISSING
     if entry:
         base = next((v for v in versions if digest(path, v) == entry.get("git")), MISSING)
-        if base is MISSING:
-            print(f"  {path}: CONFLICT, edited in the shop, and the version we last pushed is not in Git.")
-            return "conflict"
     elif live in versions:
         print(f"  {path}: no ledger entry yet; the shop holds a committed version, no Admin edits.")
         return "ok"
-    elif versions:
-        base = versions[0]
-        print(f"  {path}: no ledger entry yet; comparing the shop against HEAD.")
-    else:
-        print(f"  {path}: CONFLICT, edited in the shop and no Git history to compare against.")
+    if base is MISSING:
+        # No record of what we last pushed: an Admin edit and a shop that is
+        # merely behind look the same, so only a person can decide.
+        if path in os.environ.get("THEME_PUSH_CONFIRMED", "").split():
+            print(f"  {path}: no push record, local copy confirmed by --confirm.")
+            return "ok"
+        print(f"  {path}: CONFLICT, no record of what we last pushed, and the shop differs from every commit.")
+        print("    The push would change these (shop -> local):")
+        if path.endswith(".json"):
+            for item in changed_paths(live, local, "")[:40]:
+                print(f"    {item}\n      shop:  {show(lookup(live, item))}\n      local: {show(lookup(local, item))}")
+        else:
+            print_text_diff(live, local)
+        print(f"    If the local copy is right (team edits included), re-run with --confirm {path}")
         return "conflict"
 
     if not path.endswith(".json"):

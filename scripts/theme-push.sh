@@ -15,7 +15,7 @@
 # (Shopify CLI and pushing). This script makes the required pull-and-diff step automatic instead
 # of relying on a human or an agent remembering to do it by hand.
 #
-# Usage: scripts/theme-push.sh [--dev] <file> [<file> ...]
+# Usage: scripts/theme-push.sh [--dev] [--confirm <file>]... <file> [<file> ...]
 # Targets the pre-live shop's active Dawn theme (the working surface); --dev
 # targets the DEV test shop instead (see CLAUDE.md, Shopify CLI).
 #
@@ -31,7 +31,8 @@
 #    (assets/ob-theme-push-ledger.json in the shop: a hash of every file as we
 #    last pushed it). A changed hash means an Admin edit: JSON is merged
 #    three-way into the local file (exit 3: review, commit, re-run);
-#    overlapping or non-JSON edits abort.
+#    overlapping or non-JSON edits abort. A file with no ledger entry whose
+#    shop copy matches no commit needs --confirm <file> once (see the script).
 # 4. After the push the files are pulled again and the ledger is updated in
 #    the shop. Its local copy is a gitignored staging file.
 # config/settings_data.json is always refused outright, mirroring .shopifyignore.
@@ -46,6 +47,12 @@ if [ "${1:-}" = "--dev" ]; then
   THEME="148245381229"
   shift
 fi
+CONFIRMED=""
+while [ "${1:-}" = "--confirm" ]; do
+  CONFIRMED="$CONFIRMED $2"
+  shift 2
+done
+export THEME_PUSH_CONFIRMED="$CONFIRMED"
 
 if [ "$#" -eq 0 ]; then
   echo "Usage: $0 [--dev] <theme-file> [<theme-file> ...]" >&2
