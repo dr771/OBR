@@ -19,7 +19,8 @@
 
 {%- capture ob_in_stock_only_output -%}{%- render 'ob-in-stock-only', results: results -%}{%- endcapture -%}
 {%- liquid
-  # plp-hide-sold-out: while in-stock is forced, the availability filter is invisible in every loop below.
+  # plp-hide-sold-out: while in-stock is forced, the availability filter is invisible in every loop below,
+  # and counts show only the in-stock total (all_products_count would still include the sold-out ones).
   assign ob_in_stock_only = false
   if ob_in_stock_only_output contains 'true'
     assign ob_in_stock_only = true
@@ -524,7 +525,7 @@
               <span id="ProductCountDesktop">
                 {%- if results.results_count -%}
                   {{ 'templates.search.results_with_count' | t: terms: results.terms, count: results.results_count }}
-                {%- elsif results.products_count == results.all_products_count -%}
+                {%- elsif ob_in_stock_only or results.products_count == results.all_products_count -%}
                   {{ 'products.facets.product_count_simple' | t: count: results.products_count }}
                 {%- else -%}
                   {{
@@ -604,7 +605,7 @@
                 <p class="mobile-facets__count">
                   {%- if results.results_count -%}
                     {{ 'templates.search.results_with_count' | t: terms: results.terms, count: results.results_count }}
-                  {%- elsif results.products_count == results.all_products_count -%}
+                  {%- elsif ob_in_stock_only or results.products_count == results.all_products_count -%}
                     {{ 'products.facets.product_count_simple' | t: count: results.products_count }}
                   {%- else -%}
                     {{
@@ -1050,7 +1051,7 @@
       >
         {%- if results.results_count -%}
           {{ 'templates.search.results_with_count' | t: terms: results.terms, count: results.results_count }}
-        {%- elsif results.products_count == results.all_products_count -%}
+        {%- elsif ob_in_stock_only or results.products_count == results.all_products_count -%}
           {{ 'products.facets.product_count_simple' | t: count: results.products_count }}
         {%- else -%}
           {{
