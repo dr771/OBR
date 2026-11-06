@@ -16,24 +16,23 @@ Interne status en technische details: [MIGRATION-PLAN.md](MIGRATION-PLAN.md). Op
 
 ## Graag beslissen of doen
 
-### 0. Gender in het Nederlands (Akeneo live → pre-live)
+### 0. Gender in Dutch (Akeneo live → pre-live)
 
-Je koos voor de waarden `Dames`, `Heren`, `Unisex`, `Kinderen`, `Jongens` en `Meisjes`. Op 2026-11-06 staan in pre-live nog de oude waarden:
+You chose the values `Dames`, `Heren`, `Unisex`, `Kinderen`, `Jongens` and `Meisjes`. On 2026-11-06 pre-live still has the old values:
 
-| Nu in de shop | Producten | Wordt |
+| In the shop now | Products | Becomes |
 |---|---:|---|
 | `Women` | 464 | `Dames` |
 | `Mannen` | 251 | `Heren` |
-| `Unisex` | 130 | blijft |
-| `Kinderen` | 34 | blijft |
-| `Jongens` | 3 | blijft |
-| `Meisjes` | 2 | blijft |
+| `Unisex` | 130 | unchanged |
+| `Kinderen` | 34 | unchanged |
+| `Jongens` | 3 | unchanged |
+| `Meisjes` | 2 | unchanged |
 
-- [ ] In Akeneo live `Women` vervangen door `Dames` en `Mannen` door `Heren`, en de producten opnieuw naar pre-live syncen. Graag precies zo geschreven (hoofdletter, geen spatie): de collecties filteren op de exacte tekst.
-- [ ] `Unisex` betekent bij ons unisex voor volwassenen: die producten staan in Dames én Heren, niet in Kinderen. Kinderproducten krijgen `Kinderen`, `Jongens` of `Meisjes`. Klopt dat zo?
-- [ ] Elk product krijgt precies één waarde. Op dit moment heeft geen enkel product een lege gender; graag zo houden.
-- [ ] Laat ons weten wanneer de sync klaar is. Dan halen wij de oude waarden uit de collectieregels en zetten we de genderfilter om. Tot dan zijn de collecties FitFlop Dames en FitFlop Heren leeg.
-
+- [ ] In Akeneo live, replace `Women` with `Dames` and `Mannen` with `Heren`, then sync the products to pre-live again. Please spell them exactly like this (capital first letter, no spaces): the collections match the exact text.
+- [ ] We read `Unisex` as adult unisex: those products are in both Dames and Heren, not in Kinderen. Children's products get `Kinderen`, `Jongens` or `Meisjes`. Is that right?
+- [ ] Every product gets exactly one value. No product has an empty gender right now; please keep it that way.
+- [ ] Let us know when the sync is done. We then remove the old values from the collection rules and update the gender filter. Until then the FitFlop Dames and FitFlop Heren collections are empty.
 
 ### 1. Akeneo-schema in pre-live: dit blokkeert verdere migratie
 
@@ -48,7 +47,7 @@ Wat erop wacht: 37 categorie-, activiteit- en gendercollecties, `accessoires`, d
 - [x] Je maakt ze aan via de Akeneo-connector (zoals in DEV), zodra pre-live gekoppeld is. Gedaan op 2026-11-03.
 - [x] Wanneer koppel je pre-live aan de **live** Akeneo-omgeving? Gekoppeld op 2026-11-03.
 
-Sinds 2026-11-06 bestaan alle collecties en is het hoofdmenu compleet. De categorie staat in `akeneo.shopify_originalbrands_cate__1`, zoals je bevestigde; wij hebben daar "Gebruiken in automatische collecties" en storefront-toegang aangezet. Laat het ons weten als de connector die definitie bij een volgende sync opnieuw aanmaakt.
+Since 2026-11-06 all collections exist and the main menu is complete. The category lives in `akeneo.shopify_originalbrands_cate__1`, as you confirmed; we turned on "Use as a condition in collections" and storefront access on that definition. Please tell us if the connector recreates that definition in a later sync.
 
 ### 2. Bedrijf, betalingen en btw (na de overdracht, in jouw account)
 
