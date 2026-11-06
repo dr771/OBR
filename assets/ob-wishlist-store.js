@@ -10,9 +10,10 @@
 
   if (window.obWishlist) return;
 
-  // [{ handle, variantId, addedAt }], newest first, one entry per product.
-  // variantId is null only when a heart could not load its product; the
-  // first wishlist surface that renders the entry fills it in.
+  // [{ handle, variantId, addedAt, source }], newest first, one entry per
+  // product. variantId is null only when a heart could not load its product;
+  // the first wishlist surface that renders the entry fills it in. source is
+  // where it was saved (see pageSource), carried into the cart as _wishlist.
   var STORAGE_KEY = 'ob-wishlist';
   var items = read();
   var listeners = [];
@@ -82,18 +83,23 @@
     },
     // Saving a product that is already listed replaces its variant and moves
     // it to the top, as a fresh save would.
-    add: function (handle, variantId) {
+    add: function (handle, variantId, source) {
       if (!handle) return;
       var index = indexOf(handle);
       if (index !== -1) items.splice(index, 1);
-      items.unshift({ handle: handle, variantId: Number(variantId) || null, addedAt: Date.now() });
+      items.unshift({ handle: handle, variantId: Number(variantId) || null, addedAt: Date.now(), source: source || null });
       write();
     },
     // An option change on a wishlist surface: keeps the entry's place.
     update: function (handle, variantId) {
       var index = indexOf(handle);
       if (index === -1 || items[index].variantId === Number(variantId)) return;
-      items[index] = { handle: handle, variantId: Number(variantId) || null, addedAt: items[index].addedAt };
+      items[index] = {
+        handle: handle,
+        variantId: Number(variantId) || null,
+        addedAt: items[index].addedAt,
+        source: items[index].source || null,
+      };
       write();
     },
     remove: function (handle) {
@@ -112,6 +118,88 @@
       };
     },
   };
+
+  // Analytics events on Shopify's customer-events bus; a custom pixel can
+  // forward them (none stores them yet). Never from the theme editor or an
+  // unpublished-theme preview; team browsers opt out once with
+  // ?ob_notrack=1 (?ob_notrack=0 undoes it). Publishing never blocks the
+  // wishlist action itself.
+  var NOTRACK_KEY = 'ob-notrack';
+  try {
+    var notrack = new URLSearchParams(window.location.search).get('ob_notrack');
+    if (notrack === '1') window.localStorage.setItem(NOTRACK_KEY, '1');
+    else if (notrack === '0') window.localStorage.removeItem(NOTRACK_KEY);
+  } catch (e) {
+    // fail open: the opt-out just isn't stored
+  }
+
+  function trackingOff() {
+    var shopify = window.Shopify || {};
+    if (shopify.designMode || (shopify.theme && shopify.theme.role && shopify.theme.role !== 'main')) return true;
+    try {
+      return window.localStorage.getItem(NOTRACK_KEY) === '1';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // name, { handle, product_id, variant_id, sku, title, variant_title, price, source }
+  window.obWishlistTrack = function (name, data) {
+    try {
+      var analytics = window.Shopify && window.Shopify.analytics;
+      if (trackingOff() || !analytics || typeof analytics.publish !== 'function') return;
+      var payload = {
+        list_size: items.length,
+        currency: (window.Shopify.currency && window.Shopify.currency.active) || null,
+      };
+      Object.keys(data || {}).forEach(function (key) {
+        payload[key] = data[key] === undefined ? null : data[key];
+      });
+      analytics.publish(name, payload);
+    } catch (e) {
+      // analytics must never break the wishlist
+    }
+  };
+
+  // Where a card heart was clicked, from Shopify's own page type.
+  function pageSource() {
+    var meta = window.ShopifyAnalytics && window.ShopifyAnalytics.meta;
+    var type = meta && meta.page && meta.page.pageType;
+    var sources = { collection: 'plp', searchresults: 'search', search: 'search', home: 'home', product: 'pdp_cards' };
+    return sources[type] || 'other';
+  }
+
+  // Event fields from /products/<handle>.js data (prices in cents).
+  function productFields(product, variant) {
+    return {
+      handle: product.handle,
+      product_id: product.id,
+      variant_id: variant ? variant.id : null,
+      sku: variant ? variant.sku || null : null,
+      title: product.title,
+      variant_title: variant ? variant.title : null,
+      price: variant ? variant.price / 100 : null,
+    };
+  }
+
+  // The PDP's own product data (ShopifyAnalytics), when it has this variant.
+  function pdpFields(handle, variantId) {
+    var meta = window.ShopifyAnalytics && window.ShopifyAnalytics.meta;
+    var product = meta && meta.product;
+    var fields = { handle: handle, variant_id: variantId };
+    if (!product) return fields;
+    var variant = (product.variants || []).filter(function (v) {
+      return v.id === variantId;
+    })[0];
+    fields.product_id = product.id;
+    if (variant) {
+      fields.sku = variant.sku || null;
+      fields.title = variant.name ? String(variant.name).split(' - ')[0] : null;
+      fields.variant_title = variant.public_title || null;
+      fields.price = variant.price / 100;
+    }
+    return fields;
+  }
 
   function shopUrl(path) {
     var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
@@ -175,7 +263,12 @@
     return fetchProduct(handle).then(function (product) {
       button.removeAttribute('aria-busy');
       var variant = product && window.obWishlistStartVariant ? window.obWishlistStartVariant(product, colorValue) : null;
-      if (!window.obWishlist.has(handle)) window.obWishlist.add(handle, variant ? variant.id : null);
+      if (window.obWishlist.has(handle)) return;
+      var source = pageSource();
+      window.obWishlist.add(handle, variant ? variant.id : null, source);
+      var fields = product ? productFields(product, variant) : { handle: handle };
+      fields.source = source;
+      window.obWishlistTrack('add_to_wishlist', fields);
     });
   }
 
@@ -195,15 +288,26 @@
     var handle = button.dataset.productHandle;
     if (button.getAttribute('aria-busy') === 'true') return;
     try {
+      var isCard = button.hasAttribute('data-ob-wishlist-card');
       if (window.obWishlist.has(handle)) {
+        var entry = window.obWishlist.get(handle);
         window.obWishlist.remove(handle);
+        window.obWishlistTrack('remove_from_wishlist', {
+          handle: handle,
+          variant_id: entry.variantId,
+          source: isCard ? pageSource() : 'pdp',
+        });
       } else if (button.hasAttribute('data-ob-wishlist-card')) {
         // Fill straight away; the entry follows once the product is loaded.
         button.classList.add('ob-wishlist-btn--selected');
         button.setAttribute('aria-pressed', 'true');
         addFromCard(button, handle);
       } else {
-        window.obWishlist.add(handle, selectedVariantId(button));
+        var variantId = selectedVariantId(button);
+        window.obWishlist.add(handle, variantId, 'pdp');
+        var fields = pdpFields(handle, variantId);
+        fields.source = 'pdp';
+        window.obWishlistTrack('add_to_wishlist', fields);
       }
     } catch (e) {
       // fail open: click is a no-op

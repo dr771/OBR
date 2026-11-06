@@ -17,6 +17,11 @@
     return typeof window.obWishlistUrl === 'function' ? window.obWishlistUrl(path) : path;
   }
 
+  // Analytics (ob-wishlist-store.js); a no-op when that isn't loaded.
+  function track(name, data) {
+    if (typeof window.obWishlistTrack === 'function') window.obWishlistTrack(name, data);
+  }
+
   // One entry. Option controls (colour chips, size boxes, compact selects)
   // carry data-ob-wl-option="<option index>".
   class ObWishlistItem extends HTMLElement {
@@ -36,6 +41,24 @@
 
     get handle() {
       return this.dataset.handle;
+    }
+
+    // Where this entry is shown, for analytics: the favorites page or the cart.
+    get surface() {
+      return this.classList.contains('ob-wl-item--compact') ? 'cart' : 'favorites';
+    }
+
+    eventFields(variant) {
+      return {
+        handle: this.handle,
+        product_id: this.data.id || null,
+        variant_id: variant.id,
+        sku: variant.sku || null,
+        title: this.data.title || null,
+        variant_title: variant.title || null,
+        price: typeof variant.amount === 'number' ? variant.amount / 100 : null,
+        source: this.surface,
+      };
     }
 
     variantById(id) {
@@ -105,12 +128,14 @@
       this.variant = variant;
       this.render();
       store.update(this.handle, variant.id);
+      track('wishlist_variant_change', this.eventFields(variant));
     }
 
     onClick(evt) {
       if (evt.target.closest('[data-ob-wl-remove]')) {
         evt.preventDefault();
         store.remove(this.handle);
+        track('remove_from_wishlist', this.eventFields(this.variant));
       } else if (evt.target.closest('[data-ob-wl-add]')) {
         evt.preventDefault();
         this.addToCart(evt.target.closest('[data-ob-wl-add]'));
@@ -220,9 +245,12 @@
       var cart = document.querySelector('cart-drawer');
       var onCartPage = !!document.querySelector('#MainContent cart-items');
 
+      // The order keeps where the entry was saved (hidden: underscore property).
+      var entry = store.get(this.handle);
       var body = new FormData();
       body.append('id', variant.id);
       body.append('quantity', 1);
+      body.append('properties[_wishlist]', (entry && entry.source) || 'unknown');
       if (cart && typeof cart.getSectionsToRender === 'function' && !onCartPage) {
         body.append(
           'sections',
@@ -252,7 +280,11 @@
             self.showError(response.description || response.message || '');
             return;
           }
-          if (move) store.remove(self.handle);
+          track('wishlist_add_to_cart', self.eventFields(variant));
+          if (move) {
+            store.remove(self.handle);
+            track('remove_from_wishlist', self.eventFields(variant));
+          }
           if (onCartPage || !cart) {
             window.location = routes.cart_url;
             return;
@@ -331,6 +363,10 @@
     connectedCallback() {
       var self = this;
       this.layout = this.dataset.layout === 'compact' ? 'compact' : 'card';
+      if (this.layout === 'card' && !ObWishlistList.viewTracked) {
+        ObWishlistList.viewTracked = true;
+        track('wishlist_view', {});
+      }
       // The cart drawer is on every page but rarely opened: its rows load
       // when it first opens, not on every page view.
       var drawer = this.closest('cart-drawer');

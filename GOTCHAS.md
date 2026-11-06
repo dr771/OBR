@@ -104,6 +104,8 @@ Wishlist King (Swish) ran the wishlist until 2026-11-06 and was then replaced by
 - **The cart drawer is on every page.** A list inside it that fetches its entries on connect costs one request per entry on every page view. The compact list waits for `cart-drawer.active` (or a filled cache) before it renders.
 - **Radio groups are per document when inputs have no form.** Entry inputs carry `form=""` (no owner), so two cards of the same product would share one group; names include product id and layout.
 
+- **Testing `Shopify.analytics.publish`: wrap it after the page has loaded.** Shopify reassigns `publish` once its analytics finish loading, so a wrapper installed by an init script silently stops seeing events (looked like a broken opt-out). Wrap it in `evaluate_script` after load, or call `obWishlistTrack` directly.
+
 ## Size preselects (`ob-size-memory.js`)
 
 - **`input.click()` on a radio fires a trusted `change`.** The click is synthetic, but the change its activation behaviour fires has `isTrusted: true`, so an `isTrusted` guard does not tell a scripted preselect from a shopper's pick. Set `checked` and dispatch `new Event('change')` instead.

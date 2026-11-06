@@ -49,6 +49,8 @@
   <script type="application/json" data-ob-wl-data>
     {
       "handle": {{ product.handle | json }},
+      "id": {{ product.id }},
+      "title": {{ product.title | json }},
       "options": {{ product.options | json }},
       "colorIndex": {{ wl_color_index }},
       "sizeIndex": {{ wl_size_index }},
@@ -74,6 +76,9 @@
             "options": {{ variant.options | json }},
             "available": {{ variant.available | json }},
             "price": {{ variant.price | money | json }},
+            "amount": {{ variant.price }},
+            "sku": {{ variant.sku | json }},
+            "title": {{ variant.title | json }},
             "compare": {% if wl_percent > 0 %}{{ variant.compare_at_price | money | json }}{% else %}null{% endif %},
             "percent": {{ wl_percent }},
             "url": {{ variant.url | json }},
