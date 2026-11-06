@@ -11,4 +11,4 @@
 ## 3. Ship
 
 - [ ] 3.1 DEV: verify events (subscribed in the console) and opt-out; cart line carries `_wishlist`, not shown
-- [ ] 3.2 Commit, pre-live push and check; MIGRATION-TO-LIVE.md (GA4 + pixel), STATUS-LOG.md
+- [x] 3.2 Commit, pre-live push and check; MIGRATION-TO-LIVE.md (GA4 + pixel), STATUS-LOG.md
