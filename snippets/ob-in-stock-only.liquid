@@ -4,12 +4,15 @@
   the shop has Search & Discovery's Availability filter enabled. Without that
   filter Shopify ignores `filter.v.availability`, so nothing may be forced.
   Capture it; theme.liquid (redirect) and facets.liquid (hidden facet) share it.
+  The setting is compared with `false`, not tested for truth: a theme whose
+  settings_data predates the setting has no value for it (nil), and the schema
+  default (on) doesn't reach Liquid until someone saves the theme settings.
 
   Accepts:
   - results: {Object} collection
 {% endcomment %}
 {%- liquid
-  if settings.ob_hide_sold_out and template.name == 'collection' and results.filters
+  if settings.ob_hide_sold_out != false and template.name == 'collection' and results.filters
     for filter in results.filters
       if filter.param_name == 'filter.v.availability'
         echo 'true'
