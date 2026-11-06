@@ -42,7 +42,7 @@ For a cross-sell, put the X and Y products straight into the discount, and make 
 ## Traps
 
 - Badge and discount are separate objects: a mismatch (other products, other dates) is not detected.
-- Collection conditions: use *compare-at price = 0* for "not reduced". Akeneo writes `0.00`, so *price reduced is not set* misses almost everything.
+- Collection conditions for "not reduced": *compare-at price is not set* OR *compare-at price = 0* (as in `volle-prijs`). Akeneo leaves it empty since Nov 2026; the `= 0` guards against the old `0.00` coming back.
 - In *Actiecollectie*, pick the collection. Typing its name in the message text does nothing.
 - Reload the theme editor before saving if someone else changed the header meanwhile.
 
@@ -56,7 +56,7 @@ For a cross-sell, put the X and Y products straight into the discount, and make 
 
 ## Black Friday "on everything": order or products?
 
-- **Amount off products** on a collection with condition *compare-at price = 0*: excludes Sale, struck-through price per line, badge/PDP note possible. **Use this** while Sale is excluded.
+- **Amount off products** on the `volle-prijs` collection (not reduced, see Traps): excludes Sale, struck-through price per line, badge/PDP note possible. **Use this** while Sale is excluded.
 - **Amount off order**: one line on the cart total, also discounts Sale items, no badge. Only if it really should include everything.
 
 ## Newsletter code
