@@ -6,8 +6,10 @@
 (function () {
   'use strict';
 
-  // Size values in storefront order, the JS twin of ob-option-value-order
-  // (XXXL reads as 3XL, W32 as 32).
+  // Size values in storefront order, the JS twin of ob-option-value-order:
+  // letter sizes first (XXXL reads as 3XL), then numbered ones (EU 38, waist
+  // W32, kids 104, half sizes 36.5) ascending. A range (S_M, 116_128) ranks
+  // right after its first size; anything else follows in source order.
   var LETTER_SIZES = ['3XS', 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL', '6XL'];
 
   function normalizeLetterSize(value) {
@@ -19,21 +21,30 @@
       });
   }
 
+  function sizePartRank(part) {
+    var letter = LETTER_SIZES.indexOf(normalizeLetterSize(part));
+    if (letter !== -1) return { group: 1, rank: letter + 1 };
+    var number = part.trim().match(/^W?(\d+(?:[.,]\d+)?)$/i);
+    return number ? { group: 2, rank: parseFloat(number[1].replace(',', '.')) } : null;
+  }
+
+  // [group, first size, second size + 1 (0 for a single size)]; group 9 is unknown.
+  function sizeRank(value) {
+    var parts = String(value).trim().split('_').map(sizePartRank);
+    var first = parts[0];
+    var second = parts[1];
+    if (!first || parts.length > 2) return [9, 0, 0];
+    if (parts.length === 1) return [first.group, first.rank, 0];
+    return second && second.group === first.group ? [first.group, first.rank, second.rank + 1] : [9, 0, 0];
+  }
+
   function sortSizeValues(values) {
-    // Letter sizes first, then numbered ones (EU shoe 38, waist W32,
-    // clothing 36) ascending, then anything else in source order.
-    function rank(value) {
-      var index = LETTER_SIZES.indexOf(normalizeLetterSize(value));
-      if (index !== -1) return index;
-      var number = String(value).trim().match(/^W?(\d+(?:[.,]\d+)?)$/i);
-      return number ? 1000 + parseFloat(number[1].replace(',', '.')) : Infinity;
-    }
     return values
       .map(function (value, index) {
-        return { value: value, index: index, rank: rank(value) };
+        return { value: value, index: index, rank: sizeRank(value) };
       })
       .sort(function (a, b) {
-        return a.rank - b.rank || a.index - b.index;
+        return a.rank[0] - b.rank[0] || a.rank[1] - b.rank[1] || a.rank[2] - b.rank[2] || a.index - b.index;
       })
       .map(function (entry) {
         return entry.value;

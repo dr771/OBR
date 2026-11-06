@@ -7,7 +7,7 @@
   - block: {Object} block object.
   - picker_type: {String} type of picker to dispay
   - option_kind: {String} 'color' | 'size' | 'generic', from ob-option-meta (optional)
-  - option_size_kind: {String} 'shoe-eu' | 'tops' | 'bottoms' | 'generic' (optional)
+  - option_size_kind: {String} 'shoe-eu' | 'tops' | 'bottoms' | 'generic' (optional, unused here)
 
 
   Usage:
@@ -22,7 +22,7 @@
 {%- liquid
   assign product_form_id = 'product-form-' | append: section.id
   capture ordered_value_indexes
-    render 'ob-option-value-order', option: option, size_kind: option_size_kind
+    render 'ob-option-value-order', option: option, kind: option_kind
   endcapture
   assign ordered_value_indexes = ordered_value_indexes | strip | split: ','
 -%}
