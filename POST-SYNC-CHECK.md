@@ -29,6 +29,8 @@ For any *other* off-vocabulary value, open one product from that bucket at `/adm
 - Admin shows the Dutch label → **stale index**. Fix: Products → select all → **Select all in this store** → Actions → **Add tags** `ob-reindex-touch` → Save. The facet settles in about 2 minutes. Then remove the tag the same way. Always use this bulk route: saving a single product in the UI writes `Uncategorized` over its taxonomy suggestion.
 - Admin shows the same value → **real data error**. Report it to Nick with the SKUs.
 
+**Then check that every category value has a collection home** (pre-live, `COLLECTIONS.md` "Pre-live rules"). A value no collection rule names is only reachable through the brand pages and the filter. Clothing values belong in the `kleding` OR rule, shoe values in a Schoenen sub-collection, the rest in `accessoires`. Overlap between collections is fine; a product that no category collection shows is not.
+
 ---
 
 ## 2. Kleur and Activities still Dutch?
