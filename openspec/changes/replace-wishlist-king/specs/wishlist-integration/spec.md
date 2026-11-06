@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Wishlist is stored in the shopper's browser
-The wishlist SHALL be kept in the shopper's own browser, per browser and not per customer account: a list of entries, newest first, each naming one product (by handle) and one of its variants, at most one entry per product. Saving a product that is already on the list SHALL replace that entry's variant rather than add a second entry. Every surface (card hearts, PDP button, header badge, favorites page, cart cross-sell) SHALL read and write this one list, and a change made on any surface SHALL show on every other surface of the same page without a reload, and on the shopper's other open tabs of the shop. When the browser refuses storage (private mode, blocked site data) the wishlist SHALL simply be empty and the page SHALL work as usual, with no errors.
+The wishlist SHALL be kept in the shopper's own browser, per browser and not per customer account: a list of entries, newest first, each naming one product (by handle) and one of its variants, at most one entry per product. Saving a product that is already on the list SHALL replace that entry's variant rather than add a second entry. Every surface (card hearts, PDP button, header badge, favorites page, cart cross-sell) SHALL read and write this one list, and no third-party wishlist app SHALL be involved, and a change made on any surface SHALL show on every other surface of the same page without a reload, and on the shopper's other open tabs of the shop. When the browser refuses storage (private mode, blocked site data) the wishlist SHALL simply be empty and the page SHALL work as usual, with no errors.
 
 #### Scenario: Saving the same product twice
 - **WHEN** a product is on the list in black 38 and the shopper saves it again from the PDP in black 40
@@ -15,19 +15,8 @@ The wishlist SHALL be kept in the shopper's own browser, per browser and not per
 - **WHEN** the browser blocks storage for the shop
 - **THEN** the header badge shows nothing, the favorites page shows its empty state, and no script error is raised
 
-### Requirement: Native wishlist is switched by a theme setting
-A theme setting SHALL choose between the native wishlist and Wishlist King, default off (Wishlist King). While it is off, every wishlist surface SHALL behave as before this change. While it is on, the theme SHALL render the native surfaces and SHALL keep Wishlist King out of them even when its app embed is still enabled: no WK heart is injected into or shown on product cards, no WK component renders in the cart, and the header heart links to the native favorites page. Switching the setting SHALL need no code change.
-
-#### Scenario: Switch on with the WK app embed still enabled
-- **WHEN** the setting is on and Wishlist King's app embeds are still enabled
-- **THEN** each product card shows exactly one heart (the theme's own), and the cart cross-sell shows only native items
-
-#### Scenario: Switch off
-- **WHEN** the setting is off
-- **THEN** the card hearts, PDP button, header badge, `/apps/wishlist` page and cart cross-sell are Wishlist King's, as before
-
 ### Requirement: Favorites page
-While the native wishlist is on, a page using the theme's favorites template (`/pages/favorieten`) SHALL list every wishlist entry as a product card, newest first, in a responsive multi-column grid. Each card SHALL be rendered by the theme from the product's own current data and SHALL show the entry's variant: its photo, a photo badge, vendor, title linking to the product page for that variant, price (with the compare-at price struck through when reduced), the colour options as image chips and the size options as a box grid in storefront size order, an add-to-cart button and a remove control. Option names SHALL never show raw Akeneo keys.
+A page using the theme's favorites template (`/pages/favorieten`) SHALL list every wishlist entry as a product card, newest first, in a responsive multi-column grid. Each card SHALL be rendered by the theme from the product's own current data and SHALL show the entry's variant: its photo, a photo badge, vendor, title linking to the product page for that variant, price (with the compare-at price struck through when reduced), the colour options as image chips and the size options as a box grid in storefront size order, an add-to-cart button and a remove control. Option names SHALL never show raw Akeneo keys.
 
 Changing colour or size SHALL update the card's photo, price, badge, link and add-to-cart immediately, without a server request, and SHALL save the new variant to the entry. When the shopper clicks several options quickly, the last click SHALL be the one the card shows and saves. A product that no longer exists or is no longer published SHALL be dropped from the list without an error. While the entries are loading the page SHALL show placeholders; with no entries it SHALL show an empty state that links back into the shop.
 
@@ -42,6 +31,10 @@ Changing colour or size SHALL update the card's photo, price, badge, link and ad
 #### Scenario: Empty wishlist
 - **WHEN** the list is empty
 - **THEN** the page shows the empty-state message and a link into the shop, and no grid
+
+#### Scenario: Old wishlist URL
+- **WHEN** a shopper opens `/apps/wishlist`, the former Wishlist King page
+- **THEN** the shop redirects to `/pages/favorieten`
 
 ### Requirement: Favorites cards carry the product-card photo badge
 Each favorites card SHALL show over its photo a sold-out badge when the card's variant is unavailable, otherwise a sale badge with that variant's reduction, `floor((compare_at_price - price) * 100 / compare_at_price)`, where an unset, zero or not-higher compare-at price counts as no reduction. The badge SHALL be hidden when there is no reduction and SHALL follow every option change.
@@ -61,14 +54,14 @@ Each favorites card SHALL show over its photo a sold-out badge when the card's v
 ## MODIFIED Requirements
 
 ### Requirement: Header wishlist heart with count badge
-The header SHALL render a heart icon link in the icon row immediately before the cart icon, on all viewports, styled like Dawn's `header__icon` controls, with a localized accessible label. When the optional account icon is rendered, the heart SHALL follow it and remain before cart. The link SHALL lead to the favorites page of the active wishlist (`/pages/favorieten` for the native wishlist, `/apps/wishlist` for Wishlist King) and SHALL carry `wk-skip` so WK does not inject its own component into it. A count badge (visually consistent with Dawn's cart bubble) SHALL show the number of wishlist entries, follow every change without a reload, and be hidden entirely at count 0 or while the count is unknown.
+The header SHALL render a heart icon link in the icon row immediately before the cart icon, on all viewports, styled like Dawn's `header__icon` controls, with a localized accessible label. When the optional account icon is rendered, the heart SHALL follow it and remain before cart. The link SHALL lead to the favorites page (`/pages/favorieten`). A count badge (visually consistent with Dawn's cart bubble) SHALL show the number of wishlist entries, follow every change without a reload, and be hidden entirely at count 0 or while the count is unknown.
 
 #### Scenario: Badge reflects wishlist count
 - **WHEN** the wishlist contains 3 items
 - **THEN** the header heart shows a badge with "3", and adding/removing an item updates the badge without a page reload
 
 #### Scenario: WK not yet loaded
-- **WHEN** the count cannot be read (Wishlist King not yet booted while it is the active wishlist, or browser storage unavailable)
+- **WHEN** the count cannot be read (browser storage unavailable)
 - **THEN** the heart link still renders and navigates to the favorites page, with no badge shown
 
 #### Scenario: Optional account icon is absent

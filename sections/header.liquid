@@ -465,9 +465,8 @@
       {%- endif -%}
 
       <a
-        href="{% if settings.ob_wishlist_native %}{{ routes.root_url | append: '/pages/favorieten' | replace: '//', '/' }}{% else %}/apps/wishlist{% endif %}"
+        href="{{ routes.root_url | append: '/pages/favorieten' | replace: '//', '/' }}"
         class="header__icon header__icon--wishlist link focus-inset"
-        wk-skip
       >
         <span class="svg-wrapper">{{ 'icon-heart.svg' | inline_asset_content }}</span>
         <span class="visually-hidden">{{ 'general.wishlist.title' | t }}</span>

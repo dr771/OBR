@@ -1,7 +1,7 @@
 /*
  * Shopper size memory and size ordering, shared by the PDP and the wishlist
- * surfaces (ob-wishlist.js, ob-wishlist-page-rails.js). Loaded on every page,
- * before ob-wishlist.js.
+ * (ob-wishlist-store.js, ob-wishlist-items.js). Loaded on every page, before
+ * ob-wishlist-store.js.
  */
 (function () {
   'use strict';
@@ -65,9 +65,9 @@
   // nothing is remembered.
   var SIZE_MEMORY_KEY = 'ob-size-memory';
 
-  // One entry per size system whichever form the key arrives in: PDP inputs
-  // and WK's product data carry the raw option name (`[shoe_size_eu]`), the
-  // wishlist page's chips the bare key from WK's select name.
+  // One entry per size system whichever form the key arrives in: the raw
+  // option name (`[shoe_size_eu]`) or the bare key (Translate & Adapt can
+  // strip the brackets).
   function sizeSystem(name) {
     return String(name || '')
       .trim()
@@ -143,8 +143,7 @@
   // for a minute (localStorage, so a link opened in a new tab counts too).
   var KEEP_VARIANT_KEY = 'ob-pdp-keep-variant';
   var KEEP_LINK_SELECTOR =
-    'cart-drawer a[href*="/products/"], cart-items a[href*="/products/"], wishlist-page a[href*="/products/"], ' +
-    'ob-wishlist-item a[href*="/products/"]';
+    'cart-drawer a[href*="/products/"], cart-items a[href*="/products/"], ob-wishlist-item a[href*="/products/"]';
 
   function markKeptVariant(evt) {
     var link = evt.target.closest && evt.target.closest(KEEP_LINK_SELECTOR);
@@ -265,9 +264,8 @@
   // available, otherwise the middle of its available sizes in storefront
   // order (lower middle for an even count), which is closer to most shoppers
   // than the smallest. Wishlist entries are always whole variants, so a
-  // colour without a size cannot be saved. Shared by both wishlists (Wishlist
-  // King in ob-wishlist.js, the native one in ob-wishlist-store.js and
-  // ob-wishlist-items.js). `product` is /products/<handle>.js data or the same
+  // colour without a size cannot be saved. Used by ob-wishlist-store.js (card
+  // hearts) and ob-wishlist-items.js (colour picks). `product` is /products/<handle>.js data or the same
   // shape: options (names or {name}), variants with options[] and available.
   function startVariant(product, colorValue) {
     if (!product || !product.variants || !product.variants.length) return null;

@@ -661,9 +661,8 @@
   text-transform: none;
 }
 
-/* Native wishlist heart (card-product.liquid, ob-wishlist-store.js): same
-   control and spot as Wishlist King's heart below, above Dawn's full-card
-   link overlay. */
+/* Wishlist heart (card-product.liquid, ob-wishlist-store.js), over the
+   photo's top-right corner and above Dawn's full-card link overlay. */
 .card-wrapper.product-card-wrapper .ob-card-heart {
   position: absolute;
   top: 1.2rem;
@@ -705,56 +704,4 @@
 .card-wrapper.product-card-wrapper .ob-card-heart:focus-visible {
   outline: 0.2rem solid rgb(var(--color-foreground));
   outline-offset: 0.2rem;
-}
-
-/* While the native wishlist is on, Wishlist King's app embed may still be
-   enabled; its injected heart must not show beside ours. */
-.ob-wishlist-native .card-wrapper wk-button,
-.ob-wishlist-native .card-wrapper wishlist-button-collection {
-  display: none !important;
-}
-
-/* Wishlist King's collection heart matches the approved Bolt card control. */
-.card-wrapper.product-card-wrapper wk-button.wk-floating {
-  width: 3.6rem;
-  height: 3.6rem;
-  top: 1.2rem !important;
-  right: 1.2rem !important;
-  bottom: auto !important;
-  left: auto !important;
-  transform: none !important;
-}
-
-.card-wrapper.product-card-wrapper wk-button.wk-floating .wk-button {
-  display: grid;
-  place-items: center;
-  width: 100% !important;
-  height: 100% !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.9);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230f172a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5C2 10.8 3.51 12.54 5 14l7 7Z'/%3E%3C/svg%3E");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 1.6rem;
-  transition: background-color 0.15s ease;
-}
-
-.card-wrapper.product-card-wrapper wk-button.wk-floating .wk-button:hover {
-  background-color: #fff;
-}
-
-.card-wrapper.product-card-wrapper wk-button.wk-floating .wk-button:hover:not(.wk-selected) {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2338b6ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5C2 10.8 3.51 12.54 5 14l7 7Z'/%3E%3C/svg%3E");
-}
-
-.card-wrapper.product-card-wrapper wk-button.wk-floating .wk-icon {
-  display: none;
-}
-
-.card-wrapper.product-card-wrapper wk-button.wk-floating .wk-button.wk-selected {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%2338b6ff' stroke='%2338b6ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5C2 10.8 3.51 12.54 5 14l7 7Z'/%3E%3C/svg%3E");
 }

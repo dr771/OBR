@@ -422,6 +422,33 @@ cart-items .cart-item__line-total .cart-item__discounted-prices {
   border-top: 0;
 }
 
+/* The cart-page cross-sell spans the full column from 750px; its two-up row
+   grid lives in component-ob-wishlist-native.css. */
+@media screen and (min-width: 750px) {
+  #MainContent > .ob-cart-wishlist-section .ob-wishlist-cross-sell--page {
+    max-width: none;
+  }
+}
+
+.ob-cart-summary__usp {
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  width: 100%;
+}
+
+#MainContent > .ob-cart-items-section .cart__items {
+  border-bottom: 0;
+}
+
+#MainContent > .ob-cart-wishlist-section {
+  border-top: 1px solid rgba(var(--color-foreground), 0.18);
+}
+
+#MainContent > .ob-cart-wishlist-section .ob-wishlist-cross-sell {
+  border-top: 0;
+}
+
 /* The cart-page cross-sell has enough horizontal space for two compact
    wishlist cards. Keep the drawer's one-column mini-row layout unchanged. */
 @media screen and (min-width: 750px) {

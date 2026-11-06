@@ -198,29 +198,25 @@
     {% endif %}
   >
     <div class="card-wrapper product-card-wrapper{% if card_brand_handle != blank %} ob-brand ob-brand--{{ card_brand_handle }}{% endif %}">
-      {%- if settings.ob_wishlist_native -%}
-        {%- comment -%}
-          Native wishlist heart (wishlist-integration), at the spot Wishlist
-          King's injected heart used. ob-wishlist-store.js saves the colour the
-          card shows in its start size and keeps aria-pressed in sync.
-        {%- endcomment -%}
-        <button
-          type="button"
-          class="ob-card-heart"
-          data-ob-wishlist-toggle
-          data-ob-wishlist-card
-          data-product-handle="{{ card_product.handle }}"
-          data-label-add="{{ 'general.wishlist.add' | t }}"
-          data-label-remove="{{ 'general.wishlist.remove' | t }}"
-          aria-pressed="false"
-          aria-label="{{ 'general.wishlist.add' | t }}"
-          wk-skip
-        >
-          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5C2 10.8 3.51 12.54 5 14l7 7Z"/>
-          </svg>
-        </button>
-      {%- endif -%}
+      {%- comment -%}
+        Wishlist heart (wishlist-integration). ob-wishlist-store.js saves the
+        colour the card shows in its start size and keeps aria-pressed in sync.
+      {%- endcomment -%}
+      <button
+        type="button"
+        class="ob-card-heart"
+        data-ob-wishlist-toggle
+        data-ob-wishlist-card
+        data-product-handle="{{ card_product.handle }}"
+        data-label-add="{{ 'general.wishlist.add' | t }}"
+        data-label-remove="{{ 'general.wishlist.remove' | t }}"
+        aria-pressed="false"
+        aria-label="{{ 'general.wishlist.add' | t }}"
+      >
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5C2 10.8 3.51 12.54 5 14l7 7Z"/>
+        </svg>
+      </button>
       <div
         class="
           card card--{{ settings.card_style }}

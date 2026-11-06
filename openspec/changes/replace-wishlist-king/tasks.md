@@ -38,4 +38,4 @@
 
 - [x] 7.1 Commit; push the same files to pre-live (switch off), verify nothing changed there
 - [x] 7.2 MIGRATION-TO-LIVE.md shop-side items; STATUS-LOG.md; GOTCHAS.md findings; CLAUDE.md asset notes; WISHLIST-CUSTOM.md status
-- [ ] 7.3 (After owner go-ahead, not in this run) pre-live switch on, WK removal, redirect, archive
+- [x] 7.3 Pre-live switch on and verified on real data, WK uninstalled (DEV, then pre-live), WK code and the switch removed, `/apps/wishlist` redirect; archive

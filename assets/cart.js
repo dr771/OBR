@@ -108,11 +108,9 @@ class CartItems extends window.StandardEvents.createViewEventElement(HTMLElement
   onChange(event) {
     /* This listener is on the whole <cart-drawer-items>, so it also catches
        change events from anything else rendered inside the drawer — notably
-       Wishlist King's option <select>s in the cross-sell. validateQuantity
-       then reads min/max/step off a control that has none, fails the step
-       check against NaN, and setCustomValidity()s that <select>, which makes
-       WK's add-to-cart form fail interactive validation forever (no submit
-       event is ever dispatched, so the move-to-cart intercept never runs).
+       the wishlist cross-sell's option <select>s. validateQuantity would read
+       min/max/step off a control that has none, fail the step check against
+       NaN and setCustomValidity() that <select>, leaving it invalid for good.
        Only Dawn's own quantity inputs are ours to validate. */
     if (!event.target.matches('.quantity__input')) return;
     this.validateQuantity(event);

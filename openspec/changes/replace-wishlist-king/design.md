@@ -29,7 +29,7 @@ See proposal.md for why, and `WISHLIST-CUSTOM.md` for the owner-approved plan. T
 
 **Cart add.** Uses the theme's `/cart/add.js` with `sections`/`sections_url` from `cart-drawer.getSectionsToRender()`, then `cartDrawer.renderContents(response)`, the same pattern as the WK move-to-cart intercept. Compact rows remove their entry after a successful add (move-to-cart). Page cards keep theirs (plain add-to-cart). Without a cart drawer the browser goes to `/cart`.
 
-**Feature switch in Liquid, not JS.** `settings.ob_wishlist_native` decides which assets load, where the header links, whether cards get the native heart, and which cross-sell markup renders. The WK assets (`ob-wishlist.js`, the `/apps/wishlist` page rails) don't load while it is on, so no WK workaround runs against native markup. A CSS rule keyed on a `ob-wishlist-native` class on `<body>` hides WK's injected floating card heart, and our card heart carries `wk-skip`.
+**Feature switch in Liquid, not JS (build phase only; removed after WK was uninstalled).** `settings.ob_wishlist_native` decides which assets load, where the header links, whether cards get the native heart, and which cross-sell markup renders. The WK assets (`ob-wishlist.js`, the `/apps/wishlist` page rails) don't load while it is on, so no WK workaround runs against native markup. A CSS rule keyed on a `ob-wishlist-native` class on `<body>` hides WK's injected floating card heart, and our card heart carries `wk-skip`.
 
 **Card heart markup in `card-product.liquid`.** A button inside the card's media box, above Dawn's full-card link overlay, with the same look as the WK heart it replaces. Its state is synced from the store on load, on store changes, and whenever new cards enter the DOM (facet and load-more re-renders replace the grid).
 
@@ -42,6 +42,9 @@ See proposal.md for why, and `WISHLIST-CUSTOM.md` for the owner-approved plan. T
 - [WK app embed still on while switched on] → WK still loads its script. The CSS and `wk-skip` keep its UI out of our surfaces; the owner turns the embed off as part of the trial.
 
 ## Migration Plan
+
+Done 2026-11-06: steps 1–3 on DEV and pre-live, then WK uninstalled on both, WK code and the switch deleted, `/apps/wishlist` redirected on both shops. Original plan:
+
 
 1. Code to DEV with the switch on in DEV's theme editor and WK's embeds off; verify.
 2. Commit, push the same files to pre-live (switch off: nothing visible changes).

@@ -1,10 +1,9 @@
 /*
- * Native wishlist (wishlist-integration, theme setting ob_wishlist_native):
- * the list itself, kept in this browser, plus the small surfaces that only
- * read or toggle it (header badge, product-card hearts, PDP button). The
- * favorites page and the cart cross-sell live in ob-wishlist-items.js.
- * Loaded after ob-size-memory.js (obWishlistStartVariant), only while the
- * switch is on; Wishlist King's ob-wishlist.js is not loaded then.
+ * Wishlist (wishlist-integration): the list itself, kept in this browser,
+ * plus the small surfaces that only read or toggle it (header badge,
+ * product-card hearts, PDP button). The favorites page and the cart
+ * cross-sell live in ob-wishlist-items.js. Loaded after ob-size-memory.js
+ * (obWishlistStartVariant).
  */
 (function () {
   'use strict';

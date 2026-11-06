@@ -1,8 +1,6 @@
-/* Native wishlist (wishlist-integration, theme setting ob_wishlist_native):
-   favorites page cards and cart cross-sell rows (snippets/ob-wishlist-item.liquid).
-   Loaded on every page while the switch is on, since the cart drawer is.
-   Values carry over the shipped Wishlist King page skin and drawer rows
-   (component-ob-wishlist.css, component-cart-drawer.css). */
+/* Wishlist (wishlist-integration): favorites page cards and cart cross-sell
+   rows (snippets/ob-wishlist-item.liquid). Loaded on every page, since the
+   cart drawer is. */
 
 /* ---------- Favorites page ---------- */
 

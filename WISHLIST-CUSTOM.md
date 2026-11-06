@@ -1,6 +1,6 @@
 # Custom wishlist (replacing Wishlist King)
 
-Status: **built and verified on DEV, shipped to pre-live switched off** (2026-11-06, OpenSpec change `replace-wishlist-king`). Next: owner review on DEV, then the pre-live switch-over (phase 7) and WK removal (phase 8). Pre-live keeps Wishlist King (WK) until the owner switches over.
+Status: **done** (2026-11-06, OpenSpec change `replace-wishlist-king`). The theme wishlist runs on DEV and pre-live, Wishlist King is uninstalled from both, its code and the temporary switch are removed, and `/apps/wishlist` redirects to `/pages/favorieten`. Open questions answered by the owner: the team used no WK emails, Flow or analytics.
 
 ## Why
 

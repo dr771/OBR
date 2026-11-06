@@ -18,11 +18,9 @@
     {%- endif -%}
   </header>
 
-  {%- if settings.ob_wishlist_native -%}
-    <ob-wishlist-list class="ob-wl-page__grid" data-layout="card" aria-busy="true">
-      <p class="visually-hidden">{{ 'general.wishlist.loading' | t }}</p>
-    </ob-wishlist-list>
-  {%- endif -%}
+  <ob-wishlist-list class="ob-wl-page__grid" data-layout="card" aria-busy="true">
+    <p class="visually-hidden">{{ 'general.wishlist.loading' | t }}</p>
+  </ob-wishlist-list>
 
   <div class="ob-wl-page__empty">
     <p class="ob-wl-page__empty-title">{{ 'general.wishlist.empty' | t }}</p>
