@@ -1,6 +1,6 @@
 # Pre-live shop: checklist voor Nick
 
-Shop: `original-brands-live.myshopify.com` (ID `109574717777`), met wachtwoord beveiligd. Stand van 2026-10-29.
+Shop: `original-brands-live.myshopify.com` (ID `109574717777`), met wachtwoord beveiligd. Stand van 2026-11-06.
 Interne status en technische details: [MIGRATION-PLAN.md](MIGRATION-PLAN.md). Open sync-issues voor de DEV-shop staan apart in [NICK.md](NICK.md).
 
 ## Al klaar in pre-live (alleen ter info)
@@ -16,6 +16,25 @@ Interne status en technische details: [MIGRATION-PLAN.md](MIGRATION-PLAN.md). Op
 
 ## Graag beslissen of doen
 
+### 0. Gender in het Nederlands (Akeneo live → pre-live)
+
+Je koos voor de waarden `Dames`, `Heren`, `Unisex`, `Kinderen`, `Jongens` en `Meisjes`. Op 2026-11-06 staan in pre-live nog de oude waarden:
+
+| Nu in de shop | Producten | Wordt |
+|---|---:|---|
+| `Women` | 464 | `Dames` |
+| `Mannen` | 251 | `Heren` |
+| `Unisex` | 130 | blijft |
+| `Kinderen` | 34 | blijft |
+| `Jongens` | 3 | blijft |
+| `Meisjes` | 2 | blijft |
+
+- [ ] In Akeneo live `Women` vervangen door `Dames` en `Mannen` door `Heren`, en de producten opnieuw naar pre-live syncen. Graag precies zo geschreven (hoofdletter, geen spatie): de collecties filteren op de exacte tekst.
+- [ ] `Unisex` betekent bij ons unisex voor volwassenen: die producten staan in Dames én Heren, niet in Kinderen. Kinderproducten krijgen `Kinderen`, `Jongens` of `Meisjes`. Klopt dat zo?
+- [ ] Elk product krijgt precies één waarde. Op dit moment heeft geen enkel product een lege gender; graag zo houden.
+- [ ] Laat ons weten wanneer de sync klaar is. Dan halen wij de oude waarden uit de collectieregels en zetten we de genderfilter om. Tot dan zijn de collecties FitFlop Dames en FitFlop Heren leeg.
+
+
 ### 1. Akeneo-schema in pre-live: dit blokkeert verdere migratie
 
 Deze definities beheert de Akeneo-connector. We maken ze daarom niet zelf aan zonder jouw akkoord:
@@ -26,8 +45,10 @@ Deze definities beheert de Akeneo-connector. We maken ze daarom niet zelf aan zo
 
 Wat erop wacht: 37 categorie-, activiteit- en gendercollecties, `accessoires`, de submenu's van het hoofdmenu (33 links staan voorlopig als placeholder), de FitFlop-subcollecties, de actie "FitFlop laarzen – 2e paar -50%" en de filters in Search & Discovery.
 
-- [ ] Je maakt ze aan via de Akeneo-connector (zoals in DEV), zodra pre-live gekoppeld is.
-- [ ] Wanneer koppel je pre-live aan de **live** Akeneo-omgeving?
+- [x] Je maakt ze aan via de Akeneo-connector (zoals in DEV), zodra pre-live gekoppeld is. Gedaan op 2026-11-03.
+- [x] Wanneer koppel je pre-live aan de **live** Akeneo-omgeving? Gekoppeld op 2026-11-03.
+
+Sinds 2026-11-06 bestaan alle collecties en is het hoofdmenu compleet. De categorie staat in `akeneo.shopify_originalbrands_cate__1`, zoals je bevestigde; wij hebben daar "Gebruiken in automatische collecties" en storefront-toegang aangezet. Laat het ons weten als de connector die definitie bij een volgende sync opnieuw aanmaakt.
 
 ### 2. Bedrijf, betalingen en btw (na de overdracht, in jouw account)
 
