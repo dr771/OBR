@@ -252,7 +252,7 @@ On the standalone `/apps/wishlist` page, WK ignores an option change, add-to-car
 - **THEN** the item is removed once that save has finished
 
 ### Requirement: Wishlist entries start on a whole variant
-Because WK stores only whole variants, a wishlist entry SHALL start on the colour the shopper saw with a start size chosen from that colour's available sizes (all of its sizes when none is available): the size the shopper last chose for the same size system (the raw size option key, e.g. `shoe_size_eu`) when the colour offers it; otherwise, when every offered size is a letter size, the most recent letter size the shopper chose in another size system that the colour offers; otherwise the middle of the offered sizes in storefront size order (the PDP's order), the lower middle for an even count. Numeric sizes SHALL NOT carry across size systems. A product without a colour option SHALL use all its variants; one without a size option SHALL start on the colour's first available variant.
+Because WK stores only whole variants, a wishlist entry SHALL start on the colour the shopper saw with a start size chosen from that colour's available sizes (all of its sizes when none is available): the size the shopper last chose for the same size system (the raw size option key, e.g. `shoe_size_eu`, compared without brackets) when the colour offers it; otherwise, when every offered size is a letter size, the most recent letter size the shopper chose in another size system that the colour offers; otherwise the middle of the offered sizes in storefront size order (the PDP's order), the lower middle for an even count. Numeric sizes SHALL NOT carry across size systems. A product without a colour option SHALL use all its variants; one without a size option SHALL start on the colour's first available variant.
 
 Only the shopper's own size choices SHALL count: a size picked on the PDP picker or the standalone wishlist page's size grid by a real user interaction, never a size the theme preselected. They SHALL be kept per browser only, and unavailable storage SHALL simply mean the middle-size fallback.
 
@@ -260,7 +260,9 @@ The PDP SHALL choose the size it opens on among the available sizes of the colou
 
 A product card's wishlist heart (collection, search and any other shared product-card surface where WK injects it) SHALL add the item this way, using the colour the card currently shows, instead of WK's variant-less add. Removing through a filled heart SHALL remain WK's own behaviour. If the product data cannot be loaded, the heart SHALL fall back to WK's variant-less add.
 
-On the standalone wishlist page, picking a colour on an item with no chosen size (an entry saved before hearts saved variants) SHALL also pick that colour's start size the same way, so the photo, price, badge and add-to-cart follow the colour without a further click. An already chosen size SHALL NOT be changed by a colour pick. The page's size options SHALL render in storefront size order.
+On both wishlist surfaces (the standalone wishlist page and the cart drawer / `/cart` cross-sell), a colour pick SHALL always land on an existing variant. Picking a colour on an item with no chosen size (an entry saved before hearts saved variants), or with a chosen size that colour doesn't come in, SHALL also pick that colour's start size the same way, so the photo, price, badge and add-to-cart follow the colour without a further click. A chosen size the colour does offer SHALL NOT be changed by a colour pick. Sizes the chosen colour doesn't come in SHALL be unavailable for selection (a disabled dropdown option, a disabled size chip); colours SHALL stay selectable. The page's size options SHALL render in storefront size order.
+
+Size systems SHALL be compared by their key with or without its Akeneo brackets (`[shoe_size_eu]` and `shoe_size_eu` are one size system).
 
 #### Scenario: Heart on a card showing a non-default colour
 - **WHEN** a shopper selects the Sugar Swizzle chip on a card and clicks its empty heart
@@ -271,8 +273,16 @@ On the standalone wishlist page, picking a colour on an item with no chosen size
 - **THEN** Bright Pink's start size is selected and the card shows Bright Pink's photo, price and an enabled add-to-cart
 
 #### Scenario: Colour picked with a size already chosen
-- **WHEN** the entry already has size M and the shopper picks another colour
+- **WHEN** the entry already has size M and the shopper picks another colour that comes in M
 - **THEN** the size stays M
+
+#### Scenario: Colour that doesn't come in the chosen size
+- **WHEN** a wishlist entry is in size 37 and the shopper picks Beige, which only comes in 28, from the cross-sell dropdown or the page's colour chips
+- **THEN** the entry switches to Beige in 28, and the card shows Beige's photo, price and an enabled add-to-cart
+
+#### Scenario: Sizes the chosen colour lacks
+- **WHEN** an entry is Black, which comes in 29 to 38 but not 28, 33 or 39
+- **THEN** 28, 33 and 39 are disabled in the cross-sell size dropdown and in the page's size grid, and become available again when a colour that has them is picked
 
 #### Scenario: Scrambled sizes on the wishlist page
 - **WHEN** a product's sizes arrive as `XXXXL XS S L XXXL XXL XXS XL M`
