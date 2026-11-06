@@ -33,6 +33,7 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 
 ## Liquid
 
+- **A captured snippet carries the file's trailing newline.** `{% capture x %}{% render 'flag-snippet' %}{% endcapture %}` yields `"true\n"`, not `"true"`, even when the snippet's body is a whitespace-trimmed `{%- liquid -%}` block: the newline after the closing `-%}` at the end of the file is output. So `x == 'true'` is never true and the feature silently stays off (2026-11-06, `ob-in-stock-only`; looked like an unsaved theme setting until an HTML-comment probe printed `out=["\n"]`). Test with `contains 'true'` or `| strip` the capture. New theme settings missing from `settings_data.json` do resolve to their schema default in Liquid.
 - Never name a `render` parameter `handle`: the global `handle` (the current page's) leaks in when the caller omits it, so `| default:` never falls back. Use `brand_handle`, `item_handle`. The same applies to `collection` (hence `trail_collection`).
 - `render` doesn't accept filters on parameter values (`title: x | default: y` is a syntax error); precompute into a variable.
 - `section.blocks | where: 'settings.x'` returns empty on Shopify's Block drop; loop and test instead.

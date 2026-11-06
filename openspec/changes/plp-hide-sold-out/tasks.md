@@ -16,6 +16,7 @@
 ## 4. Verify and document
 
 - [x] 4.1 `shopify theme check` on the touched Liquid files
-- [ ] 4.2 DEV: push, owner enables the Availability filter, verify plain URL, filter/sort/chip/clear-all/back/load-more, mobile and desktop, homepage rail, setting off
-- [ ] 4.3 Commit, push to pre-live theme, repeat the verification there
-- [ ] 4.4 MIGRATION-TO-LIVE.md (Availability filter + search out-of-stock setting), STATUS-LOG.md, GOTCHAS.md if a trap turned up
+- [x] 4.2 DEV: push and verify the no-filter fallback (DEV has no Availability filter; the full flow is verified on pre-live in 4.3) — originally: owner enables the Availability filter, verify plain URL, filter/sort/chip/clear-all/back/load-more, mobile and desktop, homepage rail, setting off
+- [x] 4.3 Commit, push to pre-live theme, repeat the verification there
+- [x] 4.4 MIGRATION-TO-LIVE.md (Availability filter + search out-of-stock setting), STATUS-LOG.md, GOTCHAS.md if a trap turned up
+- [x] 4.5 Counts show only the in-stock total (`products_count`), not Dawn's "X van Y" with the sold-out total
