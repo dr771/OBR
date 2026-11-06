@@ -364,7 +364,7 @@
     if (!sizeValue) return;
 
     queueSelectValue(size.select, sizeValue);
-    size.grid.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+    (size.select.obSizeGrid || size.grid).querySelectorAll('input[type="radio"]').forEach(function (radio) {
       if (radio.value === sizeValue) radio.checked = true;
     });
   }
@@ -426,6 +426,29 @@
       if (selectHasQueuedValue(select) || shell.closest('.ob-wishlist-card--syncing')) return;
       if (option && option.value === select.value && !radio.checked) radio.checked = true;
     });
+  }
+
+  // WK lists only the sizes of the colour it last saved, so a colour change
+  // changes the size values themselves. The grid is rebuilt from WK's new
+  // list once no chip change is pending (a queued click keeps its chip).
+  function rebuildStaleGrid(shell, select) {
+    if (selectHasQueuedValue(select) || shell.closest('.ob-wishlist-card--syncing')) return shell;
+    var radios = shell.querySelectorAll('input[type="radio"]');
+    if (!radios.length) return shell;
+    var listed = Array.prototype.filter.call(select.options, function (option) {
+      return !option.disabled || option.hasAttribute('data-ob-missing');
+    }).map(function (option) {
+      return option.value;
+    });
+    var shown = Array.prototype.map.call(radios, function (radio) {
+      return radio.value;
+    });
+    if (listed.sort().join('\n') === shown.sort().join('\n')) return shell;
+    var grid = buildSizeGrid(select, radios[0].name);
+    wireRail(grid, select, null);
+    shell.replaceWith(grid);
+    select.obSizeGrid = grid; // fillMissingSize checks its chip here
+    return grid;
   }
 
   function buildRailsForForm(card, form, product) {
@@ -510,6 +533,7 @@
       var shell = kind === 'color' ? colorShells[colorIndex++] : otherShells[otherIndex++];
       if (!shell) return;
       try {
+        if (kind !== 'color') shell = rebuildStaleGrid(shell, select);
         syncRailAvailability(shell, select);
       } catch (e) {
         // fail open: availability just stays as last synced
