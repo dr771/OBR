@@ -83,7 +83,7 @@ FitFlop makes up most of the collection: 159 of 190 products on 2026-11-05 (31 b
 
 ### Schoenen (`schoenen`, pre-live)
 
-- Product type is `Schoenen` AND title does not contain `Socks` (set 2026-11-03). The live feed types products as `Schoenen` (DEV: `Shoe`), and five Odlo socks carry that type by mistake (NICK.md #16 point 8). Drop the title condition once Akeneo types them `Sport`.
+- Product type is `Shoe` AND title does not contain `Socks` (since 2026-11-06; `Schoenen` from 2026-11-03). Nick made `Shoe` the final value (NICK.md #16 point 3). Five Odlo socks carry the shoe type by mistake (point 8). Drop the title condition once Akeneo types them `Sport`.
 
 ### Sub-collections under Outdoor & Werk and Fashion & Lifestyle (pre-live, 2026-11-03)
 
@@ -109,6 +109,14 @@ These automatic collections use the Product metafield `custom.genderid` with OR 
 - Dames: `Women` or `Unisex`
 - Heren: `Men` or `Unisex`
 - Kinderen: `Unisex`
+
+That is the DEV rule set (DEV only has `Women`/`Men`/`Unisex`/`Kids`). **Pre-live (2026-11-06):** Nick's final values are `Dames`, `Heren`, `Unisex`, `Kinderen`, `Jongens`, `Meisjes` (NICK.md #16 point 2), so `Unisex` means adult unisex and is no longer in Kinderen:
+
+- Dames: `Dames` or `Unisex` (+ `Women` until the re-sync)
+- Heren: `Heren` or `Unisex` (+ `Mannen`, `Men` until the re-sync)
+- Kinderen: `Kinderen`, `Jongens` or `Meisjes`
+
+Once no product carries `Women`, `Mannen` or `Men` any more, remove those values from the two rules.
 
 ## Breadcrumb rank
 
@@ -173,6 +181,19 @@ collections still use the documented OR rule sets and currently contain:
 | Sneaker Lab | 1 | None — care products, reachable via Accessoires + its Merken brand page |
 
 Every activity value is still assigned to a metaobject and every category value above is still real product data, but as of 2026-09-03 neither list controls membership of the three needs-collections — see "Special collections."
+
+## Pre-live rules (2026-11-06)
+
+Built on pre-live from the DEV records (title, handle, description, sort order, `breadcrumb_rank`, `bottom_description`, the same publications) once Nick answered NICK.md #16 points 1–3. Differences from the DEV tables below:
+
+- **Category field:** every category condition uses `akeneo.shopify_originalbrands_cate__1`. Pre-live has no `custom.shopify_originalbrands_category`.
+- **Live vocabulary:** `ballerinas` and `fitflop-ballerinas` = `Ballerina's`; `shorts` = `Shorts`; `jurken-rokken` = `Jurken` OR `Rokken`; `hoofddeksels` = `Mutsen & petten` (DEV: `Headware`); `shirts-tops` = `Hemden` OR `Bovenkleding`; `slides` = `Slippers`; `leggings` = `Leggings`. The DEV-only stale values (`Shirt`, `Legging`, `Slipper`, `Rokjes`, `Shorten`) are not in the live feed.
+- **Typo:** `handschoenen` and `accessoires` match `Handschoenen` and `Handsschoenen` (live typo, NICK.md #16). Drop `Handsschoenen` once Akeneo fixes it.
+- **Activities** reference the live metaobjects by handle (`running`, `training`, `hiking`, `cycling`, `ski_snowboard`, `swimming`). Pre-live has no `sb_hardlopen`, so `hardlopen` is `running` only.
+- **Gender:** see "Gender collections". `fitflop-dames`/`fitflop-heren` are AND rules and cannot carry a transitional value, so they use `Dames`/`Heren` and stay empty until the re-sync.
+- **Live category values with no collection (2026-11-06):** `Ondergoed` 93, `Jassen` 31, `Badmode` 10, `Pyjama's` 2, `One-piece` 1. They are reachable through Kleding/brands and the Category filter only. Not decided yet.
+
+Counts on 2026-11-06 (884 products): Dames 594, Heren 381, Kinderen 39, Accessoires 130, Schoenen 113; Sandalen 30, Slippers 36, Slides 54, Sneakers 59, Laarzen 34, Ballerina's 7, Instappers 8; Broeken 67, Truien 32, Vesten 26, Shirts & tops 152, Shorts 46, Leggings 63, Jurken & rokken 3; Handschoenen 24, Kousen 26, Hoofddeksels 55, Overige accessoires 25; Hardlopen 463, Training 573, Wandelen 529, Fietsen 163, Skiën & snowboard 152, Zwemmen 15; FitFlop Slippers 34, Slides 37, Sandalen 28, Sneakers 36, Enkellaarzen 12, Ballerina's 7, Dames 0, Heren 0.
 
 ## Two-level main navigation
 
