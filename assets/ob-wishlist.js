@@ -460,7 +460,7 @@
            in a drawer-width row both ellipsize to "Selecte…"; the bare option
            name reads as the prompt and fits. The CTA keeps the full sentence
            for screen readers. */
-        var placeholder = select && select.querySelector('option[disabled]');
+        var placeholder = select && select.querySelector('option[disabled]:not([data-ob-missing])');
         if (!placeholder) return;
         setOnlyText(placeholder, label);
         if (select.options[select.selectedIndex] === placeholder) {
