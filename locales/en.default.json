@@ -47,7 +47,15 @@
     "wishlist": {
       "title": "Wishlist",
       "add": "Add to wishlist",
-      "remove": "Remove from wishlist"
+      "remove": "Remove from wishlist",
+      "empty": "You have no favorites yet.",
+      "empty_cta": "Continue shopping",
+      "empty_hint": "Tap the heart on a product to keep it here.",
+      "loading": "Loading favorites…",
+      "count": {
+        "one": "{{ count }} item",
+        "other": "{{ count }} items"
+      }
     },
     "share": {
       "close": "Close share",

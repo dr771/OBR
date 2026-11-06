@@ -1,0 +1,279 @@
+{% comment %}
+  One native wishlist entry (wishlist-integration), rendered by the theme from
+  the product itself so price, badges, option labels and size order come from
+  the same snippets as the rest of the shop. Fetched per entry through the
+  Section Rendering API (sections/ob-wishlist-item.liquid and
+  ob-wishlist-item-compact.liquid) with `?variant=<id>`, so
+  product.selected_or_first_available_variant is the saved variant.
+
+  Every variant's data is embedded as JSON; assets/ob-wishlist-items.js
+  switches colour and size from it without another request.
+
+  Accepts:
+  - product: {Object}
+  - layout: {String} 'card' (favorites page) | 'compact' (cart cross-sell row)
+
+  Usage:
+  {% render 'ob-wishlist-item', product: product, layout: 'card' %}
+{% endcomment %}
+{%- liquid
+  assign wl_variant = product.selected_or_first_available_variant
+  assign wl_layout = layout | default: 'card'
+  assign wl_uid = product.id | append: '-' | append: wl_layout
+
+  assign wl_color_index = -1
+  assign wl_size_index = -1
+  for option in product.options_with_values
+    capture wl_kind
+      render 'ob-option-meta', option_name: option.name
+    endcapture
+    assign wl_kind = wl_kind | strip
+    if wl_kind == 'color' and wl_color_index == -1
+      assign wl_color_index = forloop.index0
+    elsif wl_kind == 'size' and wl_size_index == -1
+      assign wl_size_index = forloop.index0
+    endif
+  endfor
+
+  if wl_layout == 'compact'
+    assign wl_image_width = 240
+  else
+    assign wl_image_width = 533
+  endif
+-%}
+<ob-wishlist-item
+  class="ob-wl-item ob-wl-item--{{ wl_layout }}"
+  data-handle="{{ product.handle }}"
+  data-variant-id="{{ wl_variant.id }}"
+>
+  <script type="application/json" data-ob-wl-data>
+    {
+      "handle": {{ product.handle | json }},
+      "options": {{ product.options | json }},
+      "colorIndex": {{ wl_color_index }},
+      "sizeIndex": {{ wl_size_index }},
+      "variants": [
+        {%- for variant in product.variants -%}
+          {%- liquid
+            assign wl_media = variant.featured_media | default: product.featured_media
+            assign wl_percent = 0
+            if variant.compare_at_price > variant.price
+              assign wl_percent = variant.compare_at_price | minus: variant.price | times: 100 | divided_by: variant.compare_at_price
+            endif
+            assign wl_srcset = null
+            if wl_media and wl_layout == 'card'
+              capture wl_srcset
+                echo wl_media | image_url: width: 360 | append: ' 360w, '
+                echo wl_media | image_url: width: 533 | append: ' 533w, '
+                echo wl_media | image_url: width: 720 | append: ' 720w'
+              endcapture
+            endif
+          -%}
+          {
+            "id": {{ variant.id }},
+            "options": {{ variant.options | json }},
+            "available": {{ variant.available | json }},
+            "price": {{ variant.price | money | json }},
+            "compare": {% if wl_percent > 0 %}{{ variant.compare_at_price | money | json }}{% else %}null{% endif %},
+            "percent": {{ wl_percent }},
+            "url": {{ variant.url | json }},
+            "image": {% if wl_media %}{{ wl_media | image_url: width: wl_image_width | json }}{% else %}null{% endif %},
+            "srcset": {{ wl_srcset | json }}
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+  {%- liquid
+    assign wl_media = wl_variant.featured_media | default: product.featured_media
+    assign wl_percent = 0
+    if wl_variant.compare_at_price > wl_variant.price
+      assign wl_percent = wl_variant.compare_at_price | minus: wl_variant.price | times: 100 | divided_by: wl_variant.compare_at_price
+    endif
+  -%}
+
+  <div class="ob-wl-item__media">
+    <a href="{{ wl_variant.url }}" class="ob-wl-item__image-link" data-ob-wl-link tabindex="-1" aria-hidden="true">
+      {%- if wl_media -%}
+        <img
+          src="{{ wl_media | image_url: width: wl_image_width }}"
+          {% if wl_layout == 'card' %}
+            srcset="{{ wl_media | image_url: width: 360 }} 360w, {{ wl_media | image_url: width: 533 }} 533w, {{ wl_media | image_url: width: 720 }} 720w"
+            sizes="(min-width: 990px) 280px, (min-width: 750px) calc((100vw - 120px) / 3), calc((100vw - 35px) / 2)"
+          {% endif %}
+          alt="{{ product.title | escape }}"
+          width="{{ wl_media.width }}"
+          height="{{ wl_media.height }}"
+          loading="lazy"
+          data-ob-wl-image
+        >
+      {%- endif -%}
+    </a>
+    <span
+      class="ob-wl-item__badge badge badge--sale color-{{ settings.sale_badge_color_scheme }}"
+      data-ob-wl-sale
+      {% if wl_percent == 0 or wl_variant.available == false %}
+        hidden
+      {% endif %}
+    >
+      <span class="ob-sale-badge__value" data-ob-wl-sale-value>-{{ wl_percent }}%</span>
+    </span>
+    <span
+      class="ob-wl-item__badge ob-wl-item__badge--sold-out badge color-{{ settings.sold_out_badge_color_scheme }}"
+      data-ob-wl-sold-out
+      {% if wl_variant.available %}
+        hidden
+      {% endif %}
+    >
+      {{- 'products.product.sold_out' | t -}}
+    </span>
+  </div>
+
+  {%- if wl_layout == 'card' and wl_color_index != -1 -%}
+    {%- assign wl_color_option = product.options_with_values[wl_color_index] -%}
+    {%- if wl_color_option.values.size > 1 -%}
+      <div class="ob-wl-item__colors">
+        <div class="product-form__option-rail-shell" data-ob-option-rail-shell>
+          <div
+            class="product-form__option-rail product-form__option-rail--color"
+            data-ob-option-rail
+            role="radiogroup"
+            aria-label="{% render 'ob-option-meta', option_name: wl_color_option.name, field: 'label' %}"
+          >
+            {%- for value in wl_color_option.values -%}
+              {%- capture wl_input_id %}ob-wl-{{ wl_uid }}-{{ wl_color_option.position }}-{{ forloop.index0 }}{% endcapture -%}
+              {%- capture wl_input_name %}ob-wl-{{ wl_uid }}-{{ wl_color_option.position }}{% endcapture -%}
+              {%- capture wl_dataset %}data-ob-wl-option="{{ wl_color_index }}"{% endcapture -%}
+              {% render 'ob-swatch-input',
+                option: wl_color_option,
+                value: value,
+                product: product,
+                input_id: wl_input_id,
+                input_name: wl_input_name,
+                product_form_id: '',
+                option_disabled: false,
+                input_dataset: wl_dataset
+              %}
+            {%- endfor -%}
+          </div>
+          {%- assign wl_previous_label = 'products.product.colors_previous' | t -%}
+          {%- assign wl_next_label = 'products.product.colors_next' | t -%}
+          {% render 'ob-option-rail-controls', previous_label: wl_previous_label, next_label: wl_next_label %}
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+
+  <div class="ob-wl-item__body">
+    <div class="ob-wl-item__meta">
+      {%- if wl_layout == 'card' and product.vendor != blank -%}
+        <span class="ob-wl-item__vendor">{{ product.vendor | escape }}</span>
+      {%- endif -%}
+      <a href="{{ wl_variant.url }}" class="ob-wl-item__title" data-ob-wl-link>{{ product.title | escape }}</a>
+      <div class="ob-wl-item__price">
+        <span class="ob-wl-item__current{% if wl_percent > 0 %} ob-wl-item__current--sale{% endif %}" data-ob-wl-current>
+          {{- wl_variant.price | money -}}
+        </span>
+        <s class="ob-wl-item__compare" data-ob-wl-compare{% if wl_percent == 0 %} hidden{% endif %}>
+          {%- if wl_percent > 0 -%}{{ wl_variant.compare_at_price | money }}{%- endif -%}
+        </s>
+      </div>
+    </div>
+
+    <div class="ob-wl-item__controls">
+      {%- for option in product.options_with_values -%}
+        {%- if option.values.size < 2 -%}
+          {%- continue -%}
+        {%- endif -%}
+        {%- if wl_layout == 'card' and forloop.index0 == wl_color_index -%}
+          {%- continue -%}
+        {%- endif -%}
+        {%- liquid
+          capture wl_kind
+            render 'ob-option-meta', option_name: option.name
+          endcapture
+          assign wl_kind = wl_kind | strip
+          capture wl_label
+            render 'ob-option-meta', option_name: option.name, field: 'label'
+          endcapture
+          capture wl_order
+            render 'ob-option-value-order', option: option, kind: wl_kind
+          endcapture
+          assign wl_order = wl_order | strip | split: ','
+          assign wl_option_index = forloop.index0
+        -%}
+        {%- if wl_layout == 'card' -%}
+          <div class="ob-wl-item__sizes product-form__input--size-grid" role="radiogroup" aria-label="{{ wl_label | escape }}">
+            {%- for value_index in wl_order -%}
+              {%- assign wl_value_index = value_index | plus: 0 -%}
+              {%- assign value = option.values[wl_value_index] -%}
+              <input
+                type="radio"
+                id="ob-wl-{{ wl_uid }}-{{ option.position }}-{{ wl_value_index }}"
+                name="ob-wl-{{ wl_uid }}-{{ option.position }}"
+                value="{{ value | escape }}"
+                class="visually-hidden"
+                data-ob-wl-option="{{ wl_option_index }}"
+                {% if wl_kind == 'size' %}
+                  data-option-name="{{ option.name | escape }}"
+                {% endif %}
+                {% if value.selected %}
+                  checked
+                {% endif %}
+              >
+              <label for="ob-wl-{{ wl_uid }}-{{ option.position }}-{{ wl_value_index }}">{{ value | escape }}</label>
+            {%- endfor -%}
+          </div>
+        {%- else -%}
+          <div class="ob-wl-item__select select">
+            <select
+              id="ob-wl-{{ wl_uid }}-{{ option.position }}"
+              class="select__select"
+              data-ob-wl-option="{{ wl_option_index }}"
+              aria-label="{{ wl_label | escape }}"
+            >
+              {%- for value_index in wl_order -%}
+                {%- assign wl_value_index = value_index | plus: 0 -%}
+                {%- assign value = option.values[wl_value_index] -%}
+                <option value="{{ value | escape }}"{% if value.selected %} selected{% endif %}>{{ value | escape }}</option>
+              {%- endfor -%}
+            </select>
+            <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+
+      <div class="ob-wl-item__actions">
+        <button
+          type="button"
+          class="ob-wl-item__add"
+          data-ob-wl-add
+          data-label-add="{{ 'products.product.add_to_cart' | t | escape }}"
+          data-label-sold-out="{{ 'products.product.sold_out' | t | escape }}"
+          aria-label="{% if wl_variant.available %}{{ 'products.product.add_to_cart' | t | escape }}{% else %}{{ 'products.product.sold_out' | t | escape }}{% endif %}"
+          {% unless wl_variant.available %}
+            disabled
+          {% endunless %}
+        >
+          <span class="ob-wl-item__add-label" data-ob-wl-add-label>
+            {%- if wl_variant.available -%}
+              {{- 'products.product.add_to_cart' | t -}}
+            {%- else -%}
+              {{- 'products.product.sold_out' | t -}}
+            {%- endif -%}
+          </span>
+          {%- render 'loading-spinner' -%}
+        </button>
+        <button
+          type="button"
+          class="ob-wl-item__remove"
+          data-ob-wl-remove
+          aria-label="{{ 'sections.cart.wishlist_remove_title' | t | escape }}"
+        >
+          <span class="svg-wrapper">{{ 'icon-trash.svg' | inline_asset_content }}</span>
+        </button>
+      </div>
+    </div>
+    <p class="ob-wl-item__error" role="alert" data-ob-wl-error hidden></p>
+  </div>
+</ob-wishlist-item>

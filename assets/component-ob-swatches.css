@@ -661,6 +661,59 @@
   text-transform: none;
 }
 
+/* Native wishlist heart (card-product.liquid, ob-wishlist-store.js): same
+   control and spot as Wishlist King's heart below, above Dawn's full-card
+   link overlay. */
+.card-wrapper.product-card-wrapper .ob-card-heart {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  z-index: 9;
+  display: grid;
+  place-items: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #0f172a;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.card-wrapper.product-card-wrapper .ob-card-heart svg {
+  width: 1.6rem;
+  height: 1.6rem;
+  fill: none;
+  stroke: currentColor;
+}
+
+.card-wrapper.product-card-wrapper .ob-card-heart:hover {
+  background-color: #fff;
+}
+
+.card-wrapper.product-card-wrapper .ob-card-heart:hover:not([aria-pressed='true']),
+.card-wrapper.product-card-wrapper .ob-card-heart[aria-pressed='true'] {
+  color: #38b6ff;
+}
+
+.card-wrapper.product-card-wrapper .ob-card-heart[aria-pressed='true'] svg {
+  fill: currentColor;
+}
+
+.card-wrapper.product-card-wrapper .ob-card-heart:focus-visible {
+  outline: 0.2rem solid rgb(var(--color-foreground));
+  outline-offset: 0.2rem;
+}
+
+/* While the native wishlist is on, Wishlist King's app embed may still be
+   enabled; its injected heart must not show beside ours. */
+.ob-wishlist-native .card-wrapper wk-button,
+.ob-wishlist-native .card-wrapper wishlist-button-collection {
+  display: none !important;
+}
+
 /* Wishlist King's collection heart matches the approved Bolt card control. */
 .card-wrapper.product-card-wrapper wk-button.wk-floating {
   width: 3.6rem;

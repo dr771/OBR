@@ -1,0 +1,46 @@
+{% comment %}
+  Native favorites page (wishlist-integration), on the `favorieten` page
+  template. The entries live in the shopper's browser, so the grid is filled
+  client-side by <ob-wishlist-list> (ob-wishlist-items.js), one server-rendered
+  card per entry. The empty state shows while the list holds nothing.
+{% endcomment %}
+{{ 'component-ob-swatches.css' | asset_url | stylesheet_tag }}
+{{ 'component-ob-option-rail.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ob-option-rail.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'ob-swatch-tooltip.js' | asset_url }}" defer="defer"></script>
+
+<div class="ob-wl-page page-width section-{{ section.id }}-padding">
+  <header class="ob-wl-page__header">
+    {%- assign wl_title = 'general.wishlist.title' | t -%}
+    <h1 class="ob-wl-page__title">{{ page.title | default: wl_title | escape }}</h1>
+    {%- if page.content != blank -%}
+      <div class="ob-wl-page__intro rte">{{ page.content }}</div>
+    {%- endif -%}
+  </header>
+
+  {%- if settings.ob_wishlist_native -%}
+    <ob-wishlist-list class="ob-wl-page__grid" data-layout="card" aria-busy="true">
+      <p class="visually-hidden">{{ 'general.wishlist.loading' | t }}</p>
+    </ob-wishlist-list>
+  {%- endif -%}
+
+  <div class="ob-wl-page__empty">
+    <p class="ob-wl-page__empty-title">{{ 'general.wishlist.empty' | t }}</p>
+    <p class="ob-wl-page__empty-hint">{{ 'general.wishlist.empty_hint' | t }}</p>
+    <a href="{{ routes.all_products_collection_url }}" class="button">{{ 'general.wishlist.empty_cta' | t }}</a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "OB Favorites",
+  "tag": "section",
+  "class": "section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "OB Favorites"
+    }
+  ]
+}
+{% endschema %}

@@ -1508,5 +1508,17 @@
         "default": "scheme-1"
       }
     ]
+  },
+  {
+    "name": "Favorieten",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "ob_wishlist_native",
+        "label": "Use the theme's own wishlist",
+        "info": "Off: Wishlist King. On: favorites stored in the shopper's browser, page /pages/favorieten (page template 'favorieten'). Turn Wishlist King's app embeds off when this is on.",
+        "default": false
+      }
+    ]
   }
 ]

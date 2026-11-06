@@ -465,7 +465,7 @@
       {%- endif -%}
 
       <a
-        href="/apps/wishlist"
+        href="{% if settings.ob_wishlist_native %}{{ routes.root_url | append: '/pages/favorieten' | replace: '//', '/' }}{% else %}/apps/wishlist{% endif %}"
         class="header__icon header__icon--wishlist link focus-inset"
         wk-skip
       >

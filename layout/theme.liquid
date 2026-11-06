@@ -320,9 +320,13 @@
     {{ 'base.css' | asset_url | stylesheet_tag }}
     {{ 'component-ob-buttons.css' | asset_url | stylesheet_tag }}
     {{ 'component-ob-typography.css' | asset_url | stylesheet_tag }}
-    {{ 'component-ob-wishlist.css' | asset_url | stylesheet_tag }}
+    {%- if settings.ob_wishlist_native -%}
+      {{ 'component-ob-wishlist-native.css' | asset_url | stylesheet_tag }}
+    {%- else -%}
+      {{ 'component-ob-wishlist.css' | asset_url | stylesheet_tag }}
+    {%- endif -%}
     {{ 'component-ob-scroll-top.css' | asset_url | stylesheet_tag }}
-    {%- if request.path contains '/apps/wishlist' -%}
+    {%- if request.path contains '/apps/wishlist' and settings.ob_wishlist_native == false -%}
       {{ 'component-ob-swatches.css' | asset_url | stylesheet_tag }}
       {{ 'component-ob-option-rail.css' | asset_url | stylesheet_tag }}
     {%- endif -%}
@@ -374,7 +378,7 @@
     </script>
   </head>
 
-  <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
+  <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}{% if settings.ob_wishlist_native %} ob-wishlist-native{% endif %}">
     <a class="skip-to-content-link button visually-hidden" href="#MainContent">
       {{ 'accessibility.skip_to_text' | t }}
     </a>
@@ -458,8 +462,14 @@
     {%- endif -%}
 
     <script src="{{ 'ob-size-memory.js' | asset_url }}" defer="defer"></script>
-    <script src="{{ 'ob-wishlist.js' | asset_url }}" defer="defer"></script>
-    {%- if request.path contains '/apps/wishlist' -%}
+    {%- if settings.ob_wishlist_native -%}
+      {%- comment -%} Native wishlist (wishlist-integration); Wishlist King's ob-wishlist.js stays out. {%- endcomment -%}
+      <script src="{{ 'ob-wishlist-store.js' | asset_url }}" defer="defer"></script>
+      <script src="{{ 'ob-wishlist-items.js' | asset_url }}" defer="defer"></script>
+    {%- else -%}
+      <script src="{{ 'ob-wishlist.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+    {%- if request.path contains '/apps/wishlist' and settings.ob_wishlist_native == false -%}
       <script>
         window.obWishlistBadges = {
           upTo: {{ 'products.product.sale_up_to' | t | json }},

@@ -112,6 +112,13 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 - Missing-size options are disabled *and* flagged `data-ob-missing`. Any code looking for WK's disabled "Selecteer" placeholder must skip them: the label overlay once renamed a real size to "Maat".
 - Script clicks on wishlist chips (`radio.click()`) count as shopper picks for size memory in Chrome. Reset `ob-size-memory` after a test run.
 
+## Native wishlist (`ob_wishlist_native`)
+
+- **Liquid `default` before `t` translates the wrong thing.** `page.title | default: 'general.wishlist.title' | t` runs `t` on the page title ("Translation missing: nl.Favorieten"). Assign the translated fallback first, then `default` to it.
+- **Dawn's `.select .svg-wrapper` sizes the caret, not the SVG itself.** `icon-caret.svg` inlined bare into `.select` renders at full size; wrap it in `<span class="svg-wrapper">` as Dawn does.
+- **The cart drawer is on every page.** A list inside it that fetches its entries on connect costs one request per entry on every page view. The compact list waits for `cart-drawer.active` (or a filled cache) before it renders.
+- **Radio groups are per document when inputs have no form.** Entry inputs carry `form=""` (no owner), so two cards of the same product would share one group; names include product id and layout.
+
 ## Size preselects (`ob-size-memory.js`)
 
 - **`input.click()` on a radio fires a trusted `change`.** The click is synthetic, but the change its activation behaviour fires has `isTrusted: true`, so an `isTrusted` guard does not tell a scripted preselect from a shopper's pick. Set `checked` and dispatch `new Event('change')` instead.

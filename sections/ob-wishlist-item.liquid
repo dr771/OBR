@@ -1,0 +1,16 @@
+{% comment %}
+  Native wishlist: one favorites-page card, fetched by ob-wishlist-items.js
+  through the Section Rendering API on the product's own URL
+  (/products/<handle>?section_id=ob-wishlist-item&variant=<id>). Not meant
+  for templates, so it has no presets.
+{% endcomment %}
+{%- if product -%}
+  {% render 'ob-wishlist-item', product: product, layout: 'card' %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "OB Wishlist item",
+  "settings": []
+}
+{% endschema %}

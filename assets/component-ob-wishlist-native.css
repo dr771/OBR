@@ -1,0 +1,674 @@
+/* Native wishlist (wishlist-integration, theme setting ob_wishlist_native):
+   favorites page cards and cart cross-sell rows (snippets/ob-wishlist-item.liquid).
+   Loaded on every page while the switch is on, since the cart drawer is.
+   Values carry over the shipped Wishlist King page skin and drawer rows
+   (component-ob-wishlist.css, component-cart-drawer.css). */
+
+/* ---------- Favorites page ---------- */
+
+.ob-wl-page {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-top: 3.2rem;
+  padding-bottom: 6.4rem;
+}
+
+@media screen and (min-width: 990px) {
+  .ob-wl-page {
+    padding-inline: 3rem;
+  }
+}
+
+.ob-wl-page__header {
+  margin-bottom: 2.4rem;
+}
+
+.ob-wl-page__title {
+  margin: 0;
+  font-family: var(--font-body-family);
+  font-size: calc(var(--font-heading-scale) * 3.6rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: rgb(var(--color-foreground));
+}
+
+.ob-wl-page__intro {
+  margin-top: 0.8rem;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.ob-wl-page__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1.6rem;
+  row-gap: 3.2rem;
+}
+
+@media screen and (min-width: 750px) {
+  .ob-wl-page__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .ob-wl-page__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 2.4rem;
+    row-gap: 3.6rem;
+  }
+}
+
+/* The empty state shows once the list knows it is empty (data-count="0"),
+   or when the page renders without the native list (switch off). */
+.ob-wl-page__empty {
+  display: none;
+  padding: 4.8rem 0;
+  text-align: center;
+}
+
+.ob-wl-page:has(ob-wishlist-list[data-count='0']) .ob-wl-page__empty,
+.ob-wl-page:not(:has(ob-wishlist-list)) .ob-wl-page__empty {
+  display: block;
+}
+
+.ob-wl-page:has(ob-wishlist-list[data-count='0']) .ob-wl-page__grid {
+  display: none;
+}
+
+.ob-wl-page__empty-title {
+  margin: 0 0 0.6rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: rgb(var(--color-foreground));
+}
+
+.ob-wl-page__empty-hint {
+  margin: 0 0 2.4rem;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+/* ---------- Shared item parts ---------- */
+
+.ob-wl-item {
+  display: block;
+  min-width: 0;
+  transition: opacity 200ms ease;
+}
+
+.ob-wl-item__media {
+  position: relative;
+  background-color: #f1f5f9;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.ob-wl-item__image-link {
+  display: block;
+}
+
+.ob-wl-item__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.ob-wl-item__badge {
+  position: absolute;
+  z-index: 1;
+  font-family: var(--font-body-family);
+  letter-spacing: normal;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.ob-wl-item__badge[hidden] {
+  display: none;
+}
+
+.ob-wl-item__badge.badge--sale {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: var(--ob-accent);
+  color: #fff;
+}
+
+.ob-wl-item__title {
+  color: rgb(var(--color-foreground));
+  text-decoration: none;
+}
+
+.ob-wl-item__title:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+.ob-wl-item__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.6rem;
+}
+
+.ob-wl-item__current--sale {
+  color: var(--ob-accent);
+  font-weight: 600;
+}
+
+.ob-wl-item__compare {
+  font-weight: 400;
+  color: rgba(var(--color-foreground), 0.55);
+}
+
+.ob-wl-item__compare[hidden] {
+  display: none;
+}
+
+.ob-wl-item__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.ob-wl-item__add {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: var(--ob-button-background);
+  color: var(--ob-button-text);
+  font-family: var(--font-body-family);
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.ob-wl-item__add:not([disabled]):is(:hover, :focus-visible) {
+  background: var(--ob-button-background-hover);
+}
+
+.ob-wl-item__add:focus-visible {
+  outline: 0.2rem solid var(--ob-button-background-hover);
+  outline-offset: 0.3rem;
+}
+
+.ob-wl-item__add[disabled] {
+  background: rgba(var(--color-foreground), 0.08);
+  color: rgba(var(--color-foreground), 0.4);
+  cursor: default;
+}
+
+.ob-wl-item__add .loading__spinner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ob-wl-item__add .loading__spinner.hidden {
+  display: none;
+}
+
+.ob-wl-item__add .loading__spinner .spinner {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.ob-wl-item__add .loading__spinner .path {
+  stroke: currentColor;
+}
+
+.ob-wl-item__add.is-loading {
+  pointer-events: none;
+}
+
+.ob-wl-item__add.is-loading > :not(.loading__spinner) {
+  visibility: hidden;
+}
+
+.ob-wl-item__remove {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(var(--color-foreground), 0.75);
+  cursor: pointer;
+  transition: color 200ms ease;
+}
+
+.ob-wl-item__remove:is(:hover, :focus-visible) {
+  color: #dc2626;
+}
+
+.ob-wl-item__error {
+  margin: 0.6rem 0 0;
+  font-size: 1.2rem;
+  line-height: 1.4;
+  color: #dc2626;
+}
+
+.ob-wl-item__error[hidden] {
+  display: none;
+}
+
+.ob-wl-item--leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Placeholder while an entry loads: the photo's tinted square. */
+.ob-wl-item--placeholder {
+  pointer-events: none;
+}
+
+.ob-wl-item--card.ob-wl-item--placeholder {
+  aspect-ratio: 1;
+  border-radius: 1.6rem;
+  background: #f1f5f9;
+  animation: ob-wl-pulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes ob-wl-pulse {
+  to {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-wl-item,
+  .ob-wl-item__add,
+  .ob-wl-item__remove {
+    transition-duration: 0ms;
+  }
+
+  .ob-wl-item--card.ob-wl-item--placeholder {
+    animation: none;
+  }
+}
+
+/* ---------- Favorites page card ---------- */
+
+.ob-wl-item--card .ob-wl-item__media {
+  border-radius: 1.6rem;
+}
+
+.ob-wl-item--card .ob-wl-item__badge {
+  top: 1.3rem;
+  left: 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.5rem;
+}
+
+.ob-wl-item--card .ob-wl-item__badge.badge--sale {
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.4rem;
+}
+
+.ob-wl-item--card .ob-wl-item__colors {
+  margin-top: 0.4rem;
+}
+
+.ob-wl-item--card .ob-wl-item__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+}
+
+.ob-wl-item--card .ob-wl-item__vendor {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.45);
+}
+
+.ob-wl-item--card .ob-wl-item__title {
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 2.2rem;
+}
+
+.ob-wl-item--card .ob-wl-item__price {
+  font-size: 1.4rem;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.ob-wl-item--card .ob-wl-item__current--sale {
+  color: var(--ob-accent);
+}
+
+.ob-wl-item--card .ob-wl-item__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 1.6rem;
+}
+
+.ob-wl-item--card .ob-wl-item__add {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 3.6rem;
+  padding: 0.8rem 1.2rem;
+  border-radius: var(--ob-button-radius);
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.8rem;
+}
+
+.ob-wl-item--card .ob-wl-item__remove,
+.ob-wl-item--card .ob-wl-item__remove .svg-wrapper {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+/* Colour rail: the PDP chip on the shared rail chrome
+   (component-ob-option-rail.css, component-ob-swatches.css), at the PLP
+   card's chevron size, flush with the rail edge. */
+.ob-wl-item--card .product-form__option-rail-button {
+  width: 2.8rem;
+  height: 2.8rem;
+  top: 0;
+  bottom: 0;
+}
+
+.ob-wl-item--card .product-form__option-rail-button--previous {
+  left: 0;
+}
+
+.ob-wl-item--card .product-form__option-rail-button--next {
+  right: 0;
+}
+
+.ob-wl-item--card .product-form__option-rail-button .icon {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.ob-wl-item--card .product-form__option-rail {
+  padding: 0.4rem 0;
+  scrollbar-width: none;
+}
+
+.ob-wl-item--card .product-form__option-rail::-webkit-scrollbar {
+  display: none;
+  height: 0;
+}
+
+.ob-wl-item--card .ob-swatch-input__chip {
+  width: 5rem;
+  height: 5rem;
+  border: 0.1rem solid transparent;
+  border-radius: 0.8rem;
+  background-color: color-mix(in srgb, #f1f5f9 40%, #fff);
+  transition: background-color var(--duration-short) ease;
+}
+
+.ob-wl-item--card .ob-swatch-input__chip img {
+  mix-blend-mode: multiply;
+}
+
+.ob-wl-item--card .ob-swatch-input__label:hover .ob-swatch-input__chip,
+.ob-wl-item--card .ob-swatch-input__radio:checked + .ob-swatch-input__label .ob-swatch-input__chip,
+.ob-wl-item--card .ob-swatch-input__radio:focus-visible + .ob-swatch-input__label .ob-swatch-input__chip {
+  background-color: #f1f5f9;
+  border-color: #66666612;
+}
+
+.ob-wl-item--card .ob-swatch-input__radio:focus-visible + .ob-swatch-input__label {
+  outline: 0.2rem solid rgb(var(--color-foreground));
+  outline-offset: 0.2rem;
+}
+
+/* Size boxes: a wrapping grid, every value visible. */
+.ob-wl-item--card .ob-wl-item__sizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.ob-wl-item--card .ob-wl-item__sizes input[type='radio'] + label {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.4rem;
+  height: 3.4rem;
+  padding: 0.3rem 0.6rem;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.3);
+  background: rgb(var(--color-background));
+  font-family: var(--font-body-family);
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: rgb(var(--color-foreground));
+  cursor: pointer;
+  transition: border-color var(--duration-short) ease;
+}
+
+.ob-wl-item--card .ob-wl-item__sizes input[type='radio']:not(:checked):not([disabled]) + label:hover {
+  border-color: rgb(var(--color-foreground));
+}
+
+.ob-wl-item--card .ob-wl-item__sizes input[type='radio']:checked + label {
+  border-color: rgb(var(--color-foreground));
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+}
+
+.ob-wl-item--card .ob-wl-item__sizes input[type='radio']:focus-visible + label {
+  outline: 0.2rem solid rgb(var(--color-foreground));
+  outline-offset: 0.2rem;
+}
+
+.ob-wl-item--card .ob-wl-item__sizes input[type='radio'][disabled] + label {
+  color: rgba(var(--color-foreground), 0.4);
+  border-color: rgba(var(--color-foreground), 0.15);
+  cursor: default;
+}
+
+/* ---------- Cart drawer / /cart cross-sell row ---------- */
+
+/* Hidden, title and heading included, until a row has rendered; the base
+   .ob-wishlist-cross-sell rule (component-cart-drawer.css) sets display:none. */
+.ob-wishlist-cross-sell--native:has(ob-wishlist-item:not(.ob-wl-item--leaving)) {
+  display: block;
+}
+
+.ob-wishlist-cross-sell__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.ob-wl-item--compact {
+  display: grid;
+  grid-template-columns: 8rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.08);
+}
+
+.ob-wishlist-cross-sell__list > .ob-wl-item--compact:last-child {
+  border-bottom: 0;
+}
+
+.ob-wl-item--compact.ob-wl-item--placeholder {
+  display: none;
+}
+
+.ob-wl-item--compact .ob-wl-item__media {
+  align-self: start;
+  border-radius: 1.3rem;
+}
+
+.ob-wl-item--compact .ob-wl-item__badge {
+  top: 0.6rem;
+  left: 0.6rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.4rem;
+}
+
+.ob-wl-item--compact .ob-wl-item__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.ob-wl-item--compact .ob-wl-item__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.ob-wl-item--compact .ob-wl-item__title {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.8rem;
+  letter-spacing: normal;
+}
+
+.ob-wl-item--compact .ob-wl-item__price {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: normal;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+/* Pickers and buttons on one row inside the drawer: the selects shrink and
+   truncate instead of widening the row. */
+.ob-wl-item--compact .ob-wl-item__controls {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.ob-wl-item--compact .ob-wl-item__select {
+  flex: 0 1 auto;
+  width: auto;
+  min-width: 0;
+}
+
+.ob-wl-item--compact .ob-wl-item__select::before,
+.ob-wl-item--compact .ob-wl-item__select::after {
+  display: none;
+}
+
+.ob-wl-item--compact .ob-wl-item__select .select__select {
+  width: 100%;
+  min-width: 5.5rem;
+  height: 3.2rem;
+  min-height: 3.2rem;
+  margin: 0;
+  padding: 0 2.4rem 0 0.8rem;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.3);
+  border-radius: 0;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: rgba(var(--color-foreground), 0.75);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ob-wl-item--compact .ob-wl-item__select .select__select:hover {
+  border-color: rgba(var(--color-foreground), 0.55);
+}
+
+.ob-wl-item--compact .ob-wl-item__select .svg-wrapper {
+  right: 0.8rem;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.ob-wl-item--compact .ob-wl-item__actions {
+  flex: 0 0 auto;
+  gap: 0.6rem;
+}
+
+/* Icon-only cart button, label kept for screen readers. */
+.ob-wl-item--compact .ob-wl-item__add {
+  width: 3.2rem;
+  height: 3.2rem;
+  padding: 0;
+  border: 0.1rem solid rgb(var(--color-button));
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+}
+
+.ob-wl-item--compact .ob-wl-item__add-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.ob-wl-item--compact .ob-wl-item__add::before {
+  content: '';
+  width: 1.6rem;
+  height: 1.6rem;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='9' cy='21' r='1'/%3E%3Ccircle cx='20' cy='21' r='1'/%3E%3Cpath d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='9' cy='21' r='1'/%3E%3Ccircle cx='20' cy='21' r='1'/%3E%3Cpath d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+.ob-wl-item--compact .ob-wl-item__add.is-loading::before {
+  visibility: hidden;
+}
+
+.ob-wl-item--compact .ob-wl-item__add[disabled] {
+  background: transparent;
+  color: rgb(var(--color-foreground));
+  border-color: rgba(var(--color-foreground), 0.4);
+  opacity: 0.35;
+}
+
+.ob-wl-item--compact .ob-wl-item__add:not([disabled]):is(:hover, :focus-visible) {
+  background-color: var(--ob-accent);
+  border-color: var(--ob-accent);
+  color: var(--ob-button-text);
+}
+
+.ob-wl-item--compact .ob-wl-item__remove,
+.ob-wl-item--compact .ob-wl-item__remove .svg-wrapper {
+  width: 12px;
+  height: 12px;
+}
+
+.ob-wl-item--compact .ob-wl-item__error {
+  margin: 0;
+}
+
+/* Move-to-cart: the row fades while the cart request runs. */
+.ob-wl-item--compact.ob-wl-item--moving {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* /cart page: two rows side by side where there is room. */
+@media screen and (min-width: 750px) {
+  .ob-cart-wishlist-section .ob-wishlist-cross-sell--native .ob-wishlist-cross-sell__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2.4rem;
+  }
+
+  .ob-cart-wishlist-section .ob-wishlist-cross-sell--native .ob-wl-item--compact:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+}

@@ -143,7 +143,8 @@
   // for a minute (localStorage, so a link opened in a new tab counts too).
   var KEEP_VARIANT_KEY = 'ob-pdp-keep-variant';
   var KEEP_LINK_SELECTOR =
-    'cart-drawer a[href*="/products/"], cart-items a[href*="/products/"], wishlist-page a[href*="/products/"]';
+    'cart-drawer a[href*="/products/"], cart-items a[href*="/products/"], wishlist-page a[href*="/products/"], ' +
+    'ob-wishlist-item a[href*="/products/"]';
 
   function markKeptVariant(evt) {
     var link = evt.target.closest && evt.target.closest(KEEP_LINK_SELECTOR);
@@ -259,9 +260,60 @@
     target.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
+  // The variant a wishlist entry starts on: the given colour (any colour when
+  // blank) with the shopper's remembered size when that colour has it
+  // available, otherwise the middle of its available sizes in storefront
+  // order (lower middle for an even count), which is closer to most shoppers
+  // than the smallest. Wishlist entries are always whole variants, so a
+  // colour without a size cannot be saved. Shared by both wishlists (Wishlist
+  // King in ob-wishlist.js, the native one in ob-wishlist-store.js and
+  // ob-wishlist-items.js). `product` is /products/<handle>.js data or the same
+  // shape: options (names or {name}), variants with options[] and available.
+  function startVariant(product, colorValue) {
+    if (!product || !product.variants || !product.variants.length) return null;
+    var options = (product.options || []).map(function (option) {
+      return typeof option === 'string' ? option : option.name;
+    });
+    var colorIndex = -1;
+    var sizeIndex = -1;
+    options.forEach(function (name, index) {
+      var kind = optionKind(name);
+      if (kind === 'color' && colorIndex === -1) colorIndex = index;
+      if (kind === 'size' && sizeIndex === -1) sizeIndex = index;
+    });
+
+    var color = String(colorValue || '').trim();
+    var candidates = product.variants.filter(function (variant) {
+      return !color || colorIndex === -1 || String(variant.options[colorIndex] || '').trim() === color;
+    });
+    var available = candidates.filter(function (variant) {
+      return variant.available;
+    });
+    if (available.length) candidates = available;
+    if (!candidates.length) return null;
+    if (sizeIndex === -1) return candidates[0];
+
+    var sizes = sortSizeValues(
+      candidates
+        .map(function (variant) {
+          return variant.options[sizeIndex];
+        })
+        .filter(function (size, index, all) {
+          return all.indexOf(size) === index;
+        })
+    );
+    var startSize = rememberedSize(options[sizeIndex], sizes) || sizes[Math.floor((sizes.length - 1) / 2)];
+    return (
+      candidates.filter(function (variant) {
+        return variant.options[sizeIndex] === startSize;
+      })[0] || candidates[0]
+    );
+  }
+
   window.obOptionKind = optionKind;
   window.obSortSizeValues = sortSizeValues;
   window.obRememberedSize = rememberedSize;
+  window.obWishlistStartVariant = startVariant;
 
   try {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', preselectPdpSize);

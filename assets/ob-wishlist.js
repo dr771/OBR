@@ -26,52 +26,8 @@
   }
   window.obWkReady = obWkReady;
 
-  // The variant a wishlist entry starts on: the given colour (any colour when
-  // blank) with the shopper's remembered size when that colour has it
-  // available, otherwise the middle of its available sizes in storefront
-  // order (lower middle for an even count), which is closer to most shoppers
-  // than the smallest. WK can only store whole variants, so a colour without
-  // a size cannot be saved. Size helpers live in ob-size-memory.js.
-  window.obWishlistStartVariant = function (product, colorValue) {
-    if (!product || !product.variants || !product.variants.length) return null;
-    var options = (product.options || []).map(function (option) {
-      return typeof option === 'string' ? option : option.name;
-    });
-    var colorIndex = -1;
-    var sizeIndex = -1;
-    options.forEach(function (name, index) {
-      var kind = window.obOptionKind(name);
-      if (kind === 'color' && colorIndex === -1) colorIndex = index;
-      if (kind === 'size' && sizeIndex === -1) sizeIndex = index;
-    });
-
-    var color = String(colorValue || '').trim();
-    var candidates = product.variants.filter(function (variant) {
-      return !color || colorIndex === -1 || String(variant.options[colorIndex] || '').trim() === color;
-    });
-    var available = candidates.filter(function (variant) {
-      return variant.available;
-    });
-    if (available.length) candidates = available;
-    if (!candidates.length) return null;
-    if (sizeIndex === -1) return candidates[0];
-
-    var sizes = window.obSortSizeValues(
-      candidates
-        .map(function (variant) {
-          return variant.options[sizeIndex];
-        })
-        .filter(function (size, index, all) {
-          return all.indexOf(size) === index;
-        })
-    );
-    var startSize = window.obRememberedSize(options[sizeIndex], sizes) || sizes[Math.floor((sizes.length - 1) / 2)];
-    return (
-      candidates.filter(function (variant) {
-        return variant.options[sizeIndex] === startSize;
-      })[0] || candidates[0]
-    );
-  };
+  // The variant a wishlist entry starts on (window.obWishlistStartVariant)
+  // lives in ob-size-memory.js, shared with the native wishlist.
 
   // Product JSON per handle for every wishlist surface (the page rails share
   // it). A failed fetch resolves to null and is retried on the next call.

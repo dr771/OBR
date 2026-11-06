@@ -47,7 +47,15 @@
     "wishlist": {
       "title": "Favorieten",
       "add": "Toevoegen aan favorieten",
-      "remove": "Verwijderen uit favorieten"
+      "remove": "Verwijderen uit favorieten",
+      "empty": "Je hebt nog geen favorieten.",
+      "empty_cta": "Verder winkelen",
+      "empty_hint": "Tik op het hartje bij een product om het hier te bewaren.",
+      "loading": "Favorieten laden…",
+      "count": {
+        "one": "{{ count }} artikel",
+        "other": "{{ count }} artikelen"
+      }
     },
     "share": {
       "copy_to_clipboard": "Link kopiëren",
