@@ -18,9 +18,14 @@
   {% render 'ob-active-filters-desktop', results: collection %}
 {% endcomment %}
 
+{%- capture ob_in_stock_only -%}{%- render 'ob-in-stock-only', results: results -%}{%- endcapture -%}
 {%- liquid
   assign total_active_values = 0
   for filter in results.filters
+    # plp-hide-sold-out: the forced availability filter gets no pill and doesn't count.
+    if ob_in_stock_only == 'true' and filter.param_name == 'filter.v.availability'
+      continue
+    endif
     assign total_active_values = total_active_values | plus: filter.active_values.size
     if filter.type == 'price_range' and filter.min_value.value != null or filter.type == 'price_range' and filter.max_value.value != null
       assign total_active_values = total_active_values | plus: 1
@@ -45,6 +50,7 @@
   {%- if total_active_values > 0 -%}
     <span class="ob-active-filters__kicker">{{ 'products.facets.active_filters' | t }}</span>
     {%- for filter in results.filters -%}
+      {%- if ob_in_stock_only == 'true' and filter.param_name == 'filter.v.availability' -%}{%- continue -%}{%- endif -%}
       {%- assign is_color_filter = false -%}
       {%- if filter.param_name contains 'filtercolors' -%}
         {%- assign is_color_filter = true -%}

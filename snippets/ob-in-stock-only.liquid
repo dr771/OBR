@@ -1,0 +1,20 @@
+{% comment %}
+  Renders `true` when collection listings are restricted to in-stock products
+  (plp-hide-sold-out): the theme setting is on, this is a collection page, and
+  the shop has Search & Discovery's Availability filter enabled. Without that
+  filter Shopify ignores `filter.v.availability`, so nothing may be forced.
+  Capture it; theme.liquid (redirect) and facets.liquid (hidden facet) share it.
+
+  Accepts:
+  - results: {Object} collection
+{% endcomment %}
+{%- liquid
+  if settings.ob_hide_sold_out and template.name == 'collection' and results.filters
+    for filter in results.filters
+      if filter.param_name == 'filter.v.availability'
+        echo 'true'
+        break
+      endif
+    endfor
+  endif
+-%}

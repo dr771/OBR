@@ -4,6 +4,21 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    {%- if template.name == 'collection' -%}
+      {%- capture ob_in_stock_only -%}{%- render 'ob-in-stock-only', results: collection -%}{%- endcapture -%}
+      {%- if ob_in_stock_only == 'true' -%}
+        {% comment %} plp-hide-sold-out: enter every collection with the in-stock filter applied, before anything paints. {% endcomment %}
+        <script>
+          (function () {
+            var params = new URLSearchParams(window.location.search);
+            if (params.getAll('filter.v.availability').join() === '1') return;
+            params.delete('filter.v.availability');
+            params.append('filter.v.availability', '1');
+            window.location.replace(window.location.pathname + '?' + params.toString() + window.location.hash);
+          })();
+        </script>
+      {%- endif -%}
+    {%- endif -%}
     <meta name="theme-color" content="">
     <link rel="canonical" href="{{ canonical_url }}">
 

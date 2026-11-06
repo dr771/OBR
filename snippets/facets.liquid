@@ -17,7 +17,13 @@
 {{ 'component-swatch.css' | asset_url | stylesheet_tag }}
 {{ 'component-ob-swatches.css' | asset_url | stylesheet_tag }}
 
+{%- capture ob_in_stock_only_output -%}{%- render 'ob-in-stock-only', results: results -%}{%- endcapture -%}
 {%- liquid
+  # plp-hide-sold-out: while in-stock is forced, the availability filter is invisible in every loop below.
+  assign ob_in_stock_only = false
+  if ob_in_stock_only_output == 'true'
+    assign ob_in_stock_only = true
+  endif
   assign sort_by = results.sort_by | default: results.default_sort_by
   assign total_active_values = 0
   assign default_presentation = 'text'
@@ -26,6 +32,9 @@
     assign color_filter_input_type = 'radio'
   endif
   for filter in results.filters
+    if ob_in_stock_only and filter.param_name == 'filter.v.availability'
+      continue
+    endif
     assign total_active_values = total_active_values | plus: filter.active_values.size
     if filter.type == 'price_range' and filter.min_value.value != null or filter.type == 'price_range' and filter.max_value.value != null
       assign total_active_values = total_active_values | plus: 1
@@ -45,6 +54,7 @@
   data-collection-handle="{{ results.handle }}"
   data-template="{{ template.name }}"
   data-ob-color-selection="{{ settings.ob_color_filter_selection_mode | default: 'multiple' }}"
+  data-ob-in-stock-only="{{ ob_in_stock_only }}"
 >
   {%- if filter_type == 'vertical' or filter_type == 'horizontal' -%}
     <facet-filters-form class="facets small-hide">
@@ -95,6 +105,7 @@
             {% comment %} Filters for both horizontal and vertical filter {% endcomment %}
             <div{% if filter_type == 'vertical' %} id="FacetsAccordionList-{{ section.id }}" class="ob-filter-panel-body"{% endif %}>
             {%- for filter in results.filters -%}
+              {%- if ob_in_stock_only and filter.param_name == 'filter.v.availability' -%}{%- continue -%}{%- endif -%}
               {% liquid
                 assign presentation = filter.presentation | default: default_presentation
 
@@ -418,6 +429,7 @@
           {%- if filter_type == 'horizontal' -%}
             <div class="active-facets active-facets-desktop">
               {%- for filter in results.filters -%}
+                {%- if ob_in_stock_only and filter.param_name == 'filter.v.availability' -%}{%- continue -%}{%- endif -%}
                 {%- for value in filter.active_values -%}
                   {%- capture ob_value_label -%}
                     {%- render 'ob-facet-value-label', value: value, param_name: filter.param_name -%}
@@ -533,7 +545,8 @@
       results: results,
       enable_filtering: enable_filtering,
       enable_sorting: enable_sorting,
-      sort_by: sort_by
+      sort_by: sort_by,
+      ob_in_stock_only: ob_in_stock_only
     %}
   {%- endif -%}
   {% comment %} Dawn's mobile drawer remains only for the explicit drawer layout. {% endcomment %}
@@ -608,6 +621,7 @@
             >
               {%- if enable_filtering -%}
                 {%- for filter in results.filters -%}
+                  {%- if ob_in_stock_only and filter.param_name == 'filter.v.availability' -%}{%- continue -%}{%- endif -%}
                   {% liquid
                     assign presentation = filter.presentation | default: default_presentation
                     assign is_color_facet = false
@@ -918,6 +932,7 @@
 
   <div class="active-facets active-facets-mobile medium-hide large-up-hide">
     {%- for filter in results.filters -%}
+      {%- if ob_in_stock_only and filter.param_name == 'filter.v.availability' -%}{%- continue -%}{%- endif -%}
       {%- liquid
         assign has_mobile_bar_row = false
         if filter_type != 'drawer'
@@ -1052,6 +1067,7 @@
       <form id="FacetFiltersPillsForm" class="facets__form">
         <div class="active-facets active-facets-desktop">
           {%- for filter in results.filters -%}
+            {%- if ob_in_stock_only and filter.param_name == 'filter.v.availability' -%}{%- continue -%}{%- endif -%}
             {%- for value in filter.active_values -%}
               {%- capture ob_value_label -%}
                 {%- render 'ob-facet-value-label', value: value, param_name: filter.param_name -%}

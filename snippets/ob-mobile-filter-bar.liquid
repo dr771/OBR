@@ -2,6 +2,9 @@
   Mobile collection/search filter bar. Replaces Dawn's menu drawer for the
   vertical and horizontal layouts while retaining FacetFiltersFormMobile so
   facets.js keeps its native serialization and AJAX rendering contracts.
+
+  Accepts:
+  - ob_in_stock_only: {Boolean} availability is forced (plp-hide-sold-out); keeps it out of the active-filter count
 {% endcomment %}
 
 {%- if enable_filtering or enable_sorting -%}
@@ -74,6 +77,10 @@
           {%- liquid
             assign total_active_values = 0
             for filter in results.filters
+              # plp-hide-sold-out: the forced availability filter never counts as a shopper's filter.
+              if ob_in_stock_only and filter.param_name == 'filter.v.availability'
+                continue
+              endif
               assign total_active_values = total_active_values | plus: filter.active_values.size
               if filter.type == 'price_range' and filter.min_value.value != null or filter.type == 'price_range' and filter.max_value.value != null
                 assign total_active_values = total_active_values | plus: 1

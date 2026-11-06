@@ -53,7 +53,20 @@ class FacetFiltersForm extends HTMLElement {
     collection.removeAttribute('aria-busy');
   }
 
+  // plp-hide-sold-out: the availability facet isn't rendered, so no form or chip URL carries it.
+  // Every listing update passes through here, which keeps the in-stock filter on all of them.
+  static withInStockOnly(searchParams) {
+    if (document.querySelector('.facets-container')?.dataset.obInStockOnly !== 'true') return searchParams;
+
+    const params = new URLSearchParams(searchParams);
+    if (params.getAll('filter.v.availability').join() === '1') return searchParams;
+    params.delete('filter.v.availability');
+    params.append('filter.v.availability', '1');
+    return params.toString();
+  }
+
   static renderPage(searchParams, event, updateURLHash = true) {
+    searchParams = FacetFiltersForm.withInStockOnly(searchParams);
     FacetFiltersForm.showGridLoading();
     FacetFiltersForm.searchParamsPrev = searchParams;
     const sections = FacetFiltersForm.getSections();

@@ -538,6 +538,13 @@
         "info": "Controls whether shoppers can keep several colors selected. Search & Discovery still controls how multiple values are combined."
       },
       {
+        "type": "checkbox",
+        "id": "ob_hide_sold_out",
+        "default": true,
+        "label": "Hide sold-out products",
+        "info": "Collection pages and the homepage product rail list only in-stock products. Needs the Availability filter enabled in Search & Discovery; search follows its own out-of-stock setting there."
+      },
+      {
         "type": "range",
         "id": "card_image_padding",
         "min": 0,
