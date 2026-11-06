@@ -125,11 +125,14 @@
   // Anchored bracket-key option parser patch. Fixes WK's getInputOption/
   // getFormOptions when a Shopify option name itself contains brackets
   // (Akeneo keys like "[color]"), which produce input names such as
-  // "options[[color]]" that WK's own lazy regex can't parse. Confirmed via
-  // Admin API that every synced product's raw option.name is bracketed;
-  // whether this reaches the storefront depends on Translate & Adapt
-  // coverage for the active locale, so this stays in as defense-in-depth
-  // rather than a directly-reproduced bug.
+  // "options[[color]]". WK's lazy /\[(.*?)\]/ reads those as "[color", finds
+  // no option, and every colour/size change in the cross-sell and on
+  // /apps/wishlist is dropped ("Cannot parse options from input"). Live on
+  // pre-live since 2026-11: names arrive bracketed there, while Translate &
+  // Adapt used to strip them. WK 5.29 calls both methods with one object
+  // ({input, product} / {formData, product}) and wants {optionN: value}
+  // back; the key is matched exactly, else with brackets ignored, so both
+  // name forms work.
   obWkReady(function (wk) {
     try {
       var product = wk.utils && wk.utils.product;
@@ -142,22 +145,44 @@
 
       var ANCHORED = /^options\[(.*)\]$/;
 
-      proto.getInputOption = function (input) {
+      function bare(name) {
+        return String(name).trim().replace(/^\[(.*)\]$/, '$1');
+      }
+
+      // optionN key for an input name, or null when it names no option.
+      function optionKeyFor(name, shopifyProduct) {
+        var match = typeof name === 'string' && name.match(ANCHORED);
+        var options = shopifyProduct && shopifyProduct.options;
+        if (!match || !options) return null;
+        var names = options.map(function (option) {
+          return option.name;
+        });
+        var index = names.indexOf(match[1]);
+        if (index === -1) index = names.map(bare).indexOf(bare(match[1]));
+        return index === -1 ? null : 'option' + (index + 1);
+      }
+
+      proto.getInputOption = function (args) {
         try {
-          var name = input && input.name;
-          var match = typeof name === 'string' && name.match(ANCHORED);
-          if (!match) return originalGetInputOption.apply(this, arguments);
-          return match[1];
+          var key = optionKeyFor(args.input.name, args.product);
+          if (!key) return originalGetInputOption.apply(this, arguments);
+          var change = {};
+          change[key] = args.input.value.toString();
+          return change;
         } catch (e) {
           return originalGetInputOption.apply(this, arguments);
         }
       };
 
-      proto.getFormOptions = function () {
+      proto.getFormOptions = function (args) {
         try {
-          return originalGetFormOptions.apply(this, arguments);
+          return Array.from(args.formData.entries()).reduce(function (options, entry) {
+            var key = optionKeyFor(entry[0], args.product);
+            if (key) options[key] = entry[1].toString() || null;
+            return options;
+          }, {});
         } catch (e) {
-          return {};
+          return originalGetFormOptions.apply(this, arguments);
         }
       };
 
