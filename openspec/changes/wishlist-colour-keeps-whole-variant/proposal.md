@@ -18,5 +18,6 @@ On pre-live the owner reported that colour and size changes on wishlist items do
 
 ## Impact
 
-- `assets/ob-wishlist.js` (shared product cache, missing-size marking, cross-sell colour handling), `assets/ob-wishlist-page-rails.js` (size grid keeps marked sizes as disabled chips, colour pick replaces a size the colour lacks, shares the product cache).
+- `assets/ob-wishlist.js` (shared product cache, missing-size marking, cross-sell colour handling, stand-in input for sizes WK doesn't list yet), `assets/ob-wishlist-page-rails.js` (size grid keeps marked sizes as disabled chips and is rebuilt when WK's size list changes, colour pick replaces a size the colour lacks, shares the product cache).
+- Found while implementing: WK lists only the sizes of the colour it last saved, so the size a new colour needs is often not an `<option>` yet. WK's card reads changes from any named input in its form, which is how the theme hands it over.
 - No data, schema or app changes. WK's own options are untouched apart from the `disabled` flag on size options.
