@@ -55,7 +55,8 @@
       "count": {
         "one": "{{ count }} artikel",
         "other": "{{ count }} artikelen"
-      }
+      },
+      "add_to_cart": "In winkelwagen"
     },
     "share": {
       "copy_to_clipboard": "Link kopiëren",

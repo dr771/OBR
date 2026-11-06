@@ -55,7 +55,8 @@
       "count": {
         "one": "{{ count }} item",
         "other": "{{ count }} items"
-      }
+      },
+      "add_to_cart": "Add to cart"
     },
     "share": {
       "close": "Close share",

@@ -248,16 +248,16 @@
           type="button"
           class="ob-wl-item__add"
           data-ob-wl-add
-          data-label-add="{{ 'products.product.add_to_cart' | t | escape }}"
+          data-label-add="{{ 'general.wishlist.add_to_cart' | t | escape }}"
           data-label-sold-out="{{ 'products.product.sold_out' | t | escape }}"
-          aria-label="{% if wl_variant.available %}{{ 'products.product.add_to_cart' | t | escape }}{% else %}{{ 'products.product.sold_out' | t | escape }}{% endif %}"
+          aria-label="{% if wl_variant.available %}{{ 'general.wishlist.add_to_cart' | t | escape }}{% else %}{{ 'products.product.sold_out' | t | escape }}{% endif %}"
           {% unless wl_variant.available %}
             disabled
           {% endunless %}
         >
           <span class="ob-wl-item__add-label" data-ob-wl-add-label>
             {%- if wl_variant.available -%}
-              {{- 'products.product.add_to_cart' | t -}}
+              {{- 'general.wishlist.add_to_cart' | t -}}
             {%- else -%}
               {{- 'products.product.sold_out' | t -}}
             {%- endif -%}
