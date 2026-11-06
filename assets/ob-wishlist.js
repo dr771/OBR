@@ -73,6 +73,144 @@
     );
   };
 
+  // Product JSON per handle for every wishlist surface (the page rails share
+  // it). A failed fetch resolves to null and is retried on the next call.
+  var productRequests = {};
+  var productData = {};
+  window.obWishlistProduct = function (handle) {
+    if (!productRequests[handle]) {
+      productRequests[handle] = fetch('/products/' + handle + '.js')
+        .then(function (res) {
+          if (!res.ok) throw new Error('product fetch failed');
+          return res.json();
+        })
+        .then(function (product) {
+          productData[handle] = product;
+          return product;
+        })
+        .catch(function () {
+          delete productRequests[handle];
+          return null;
+        });
+    }
+    return productRequests[handle];
+  };
+
+  function colorSizeIndexes(product) {
+    var indexes = { color: -1, size: -1 };
+    (product.options || []).forEach(function (option, index) {
+      var kind = window.obOptionKind(typeof option === 'string' ? option : option.name);
+      if (indexes[kind] === -1) indexes[kind] = index;
+    });
+    return indexes;
+  }
+
+  function hasVariant(product, indexes, color, size) {
+    return product.variants.some(function (variant) {
+      return (
+        String(variant.options[indexes.color] || '').trim() === color &&
+        String(variant.options[indexes.size] || '').trim() === size
+      );
+    });
+  }
+
+  // Akeneo colours often come in only some sizes, and WK offers every size
+  // for every colour; a combination without a variant leaves WK on the saved
+  // variant and saves nothing. So a colour pick moves to that colour's start
+  // size when it doesn't come in the chosen size (or none is chosen yet).
+  // Returns the size to switch to, or null when the chosen one stays.
+  window.obWishlistSizeForColor = function (product, colorValue, sizeValue) {
+    if (!product || !product.variants) return null;
+    var indexes = colorSizeIndexes(product);
+    var color = String(colorValue || '').trim();
+    var size = String(sizeValue || '').trim();
+    if (indexes.color === -1 || indexes.size === -1 || !color) return null;
+    if (size && hasVariant(product, indexes, color, size)) return null;
+    var variant = window.obWishlistStartVariant(product, color);
+    var next = variant && variant.options[indexes.size];
+    return next && next !== size ? next : null;
+  };
+
+  function wishlistHandle(form) {
+    var card = form.closest('.wk-product-card');
+    var link = card && card.querySelector('.wk-image-link, .wk-product-title a');
+    var match = link && (link.getAttribute('href') || '').match(/\/products\/([^/?#]+)/);
+    return match ? match[1] : null;
+  }
+
+  function wishlistPickers(form) {
+    var pickers = { color: null, size: null };
+    form.querySelectorAll('select[name^="options["]').forEach(function (select) {
+      var kind = window.obOptionKind(select.name.replace(/^options\[|\]$/g, ''));
+      if (pickers[kind] === null) pickers[kind] = select;
+    });
+    return pickers;
+  }
+
+  // Sizes the chosen colour doesn't come in are disabled, flagged
+  // data-ob-missing so the page rails can tell them from WK's own disabled
+  // placeholder. The selected size is never disabled: a colour pick moves it.
+  function markMissingSizes(form, product) {
+    var pickers = wishlistPickers(form);
+    if (!pickers.color || !pickers.size) return;
+    var indexes = colorSizeIndexes(product);
+    if (indexes.color === -1 || indexes.size === -1) return;
+    var color = pickers.color.value.trim();
+    var colorChosen = product.variants.some(function (variant) {
+      return String(variant.options[indexes.color] || '').trim() === color;
+    });
+    Array.prototype.forEach.call(pickers.size.options, function (option) {
+      var flagged = option.hasAttribute('data-ob-missing');
+      if (option.disabled && !flagged) return;
+      var missing = colorChosen && !option.selected && !hasVariant(product, indexes, color, option.value.trim());
+      if (missing === flagged) return;
+      option.disabled = missing;
+      option.toggleAttribute('data-ob-missing', missing);
+    });
+  }
+
+  function markAllMissingSizes() {
+    if (typeof window.obOptionKind !== 'function') return;
+    document.querySelectorAll('.wk-product-card .wk-form').forEach(function (form) {
+      var handle = wishlistHandle(form);
+      if (!handle) return;
+      if (productData[handle]) {
+        markMissingSizes(form, productData[handle]);
+        return;
+      }
+      window.obWishlistProduct(handle).then(function (product) {
+        if (product && form.isConnected) markMissingSizes(form, product);
+      });
+    });
+  }
+
+  // Cross-sell dropdowns (the page rails handle their chips through their
+  // queue). WK has already taken the colour when the change bubbles here; that
+  // combination has no variant, so WK saved nothing and the size change can
+  // follow straight away.
+  document.addEventListener('change', function (evt) {
+    var select = evt.target;
+    var form = select && select.closest && select.closest('.ob-wishlist-cross-sell .wk-form');
+    if (!form || typeof window.obOptionKind !== 'function') return;
+    var pickers = wishlistPickers(form);
+    if (select !== pickers.color || !pickers.size) return;
+    var handle = wishlistHandle(form);
+    if (!handle) return;
+    window.obWishlistProduct(handle).then(function (product) {
+      if (!product || !form.isConnected) return;
+      try {
+        var size = window.obWishlistSizeForColor(product, select.value, pickers.size.value);
+        if (size) {
+          pickers.size.value = size;
+          if (pickers.size.value === size) pickers.size.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        markMissingSizes(form, product);
+      } catch (e) {
+        // fail open: the colour still changes, the size stays as it was
+      }
+    });
+  });
+
   // PLP / search card heart. WK's injected floating button saves the product
   // without a variant, so the wishlist opened on the product's first colour
   // with no size, whatever colour the card showed. An add goes through WK's
@@ -363,7 +501,7 @@
         var longest = measureText(text.textContent.trim(), text);
         if (!placeholderShowing) {
           Array.prototype.forEach.call(select.options, function (option) {
-            if (option.disabled) return;
+            if (option.disabled && !option.hasAttribute('data-ob-missing')) return;
             longest = Math.max(longest, measureText(option.textContent.trim(), text));
           });
         }
@@ -432,6 +570,11 @@
         stripCurrencySuffix(root);
       });
       document.querySelectorAll('.ob-wishlist-cross-sell').forEach(syncCrossSellBadges);
+      try {
+        markAllMissingSizes();
+      } catch (e) {
+        // fail open: every size stays selectable
+      }
       measureOptionWidths();
     }
 

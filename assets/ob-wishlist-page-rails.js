@@ -52,6 +52,8 @@
   }
 
   function fetchProduct(handle) {
+    // Shared with ob-wishlist.js, which marks the sizes a colour lacks.
+    if (typeof window.obWishlistProduct === 'function') return window.obWishlistProduct(handle);
     if (productCache[handle]) return productCache[handle];
     productCache[handle] = fetch('/products/' + handle + '.js')
       .then(function (res) {
@@ -168,8 +170,10 @@
     grid.setAttribute('role', 'radiogroup');
 
     // Storefront size order, as on the PDP (Akeneo's own order is scrambled).
+    // Sizes the chosen colour lacks (data-ob-missing) stay in as disabled
+    // chips; only WK's placeholder is left out.
     var options = Array.prototype.filter.call(select.options, function (option) {
-      return !option.disabled;
+      return !option.disabled || option.hasAttribute('data-ob-missing');
     });
     if (typeof window.obSortSizeValues === 'function') {
       var sortedValues = window.obSortSizeValues(
@@ -341,27 +345,14 @@
     });
   }
 
-  function isRealOptionValue(product, position, value) {
-    var option = product && product.options && product.options[position - 1];
-    return !!(
-      option &&
-      option.values &&
-      option.values.some(function (v) {
-        return String(v).trim() === String(value || '').trim();
-      })
-    );
-  }
-
-  // WK only shows a colour's photo, price and add-to-cart once a size is
-  // chosen too, so picking a colour on an item that has no size yet (saved
-  // from a PLP heart before the heart saved variants) also picks that
-  // colour's first available size, the same start variant the PLP heart uses.
+  // WK only shows a colour's photo, price and add-to-cart once colour and size
+  // name an existing variant, so picking a colour on an item with no size yet
+  // (saved from a PLP heart before the heart saved variants), or with a size
+  // that colour doesn't come in, also picks that colour's start size, the
+  // same one the PLP heart uses (obWishlistSizeForColor in ob-wishlist.js).
   function fillMissingSize(product, size, colorValue) {
-    if (!size || typeof window.obWishlistStartVariant !== 'function') return;
-    if (isRealOptionValue(product, size.position, size.select.value)) return;
-
-    var variant = window.obWishlistStartVariant(product, colorValue);
-    var sizeValue = variant && variant['option' + size.position];
+    if (!size || typeof window.obWishlistSizeForColor !== 'function') return;
+    var sizeValue = window.obWishlistSizeForColor(product, colorValue, size.select.value);
     if (!sizeValue) return;
 
     queueSelectValue(size.select, sizeValue);
