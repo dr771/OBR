@@ -65,10 +65,26 @@
   // nothing is remembered.
   var SIZE_MEMORY_KEY = 'ob-size-memory';
 
+  // One entry per size system whichever form the key arrives in: PDP inputs
+  // and WK's product data carry the raw option name (`[shoe_size_eu]`), the
+  // wishlist page's chips the bare key from WK's select name.
+  function sizeSystem(name) {
+    return String(name || '')
+      .trim()
+      .replace(/^\[(.*)\]$/, '$1');
+  }
+
   function readSizeMemory() {
     try {
       var stored = JSON.parse(window.localStorage.getItem(SIZE_MEMORY_KEY) || '{}');
-      return stored && typeof stored === 'object' ? stored : {};
+      var memory = {};
+      if (!stored || typeof stored !== 'object') return memory;
+      Object.keys(stored).forEach(function (key) {
+        var entry = stored[key];
+        var system = sizeSystem(key);
+        if (entry && (!memory[system] || (entry.time || 0) > (memory[system].time || 0))) memory[system] = entry;
+      });
+      return memory;
     } catch (e) {
       return {};
     }
@@ -81,7 +97,7 @@
     if (!key || optionKind(key) !== 'size') return;
     try {
       var memory = readSizeMemory();
-      memory[key] = { value: input.value, time: Date.now() };
+      memory[sizeSystem(key)] = { value: input.value, time: Date.now() };
       window.localStorage.setItem(SIZE_MEMORY_KEY, JSON.stringify(memory));
     } catch (e) {
       // fail open: this choice is just not remembered
@@ -98,6 +114,7 @@
   // says nothing about a numeric clothing size 40.
   function rememberedSize(sizeKey, sizes) {
     var memory = readSizeMemory();
+    sizeKey = sizeSystem(sizeKey);
     function offered(value) {
       var normalized = normalizeLetterSize(value);
       return sizes.filter(function (size) {
