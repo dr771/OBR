@@ -21,7 +21,7 @@
 {%- liquid
   # plp-hide-sold-out: while in-stock is forced, the availability filter is invisible in every loop below.
   assign ob_in_stock_only = false
-  if ob_in_stock_only_output == 'true'
+  if ob_in_stock_only_output contains 'true'
     assign ob_in_stock_only = true
   endif
   assign sort_by = results.sort_by | default: results.default_sort_by

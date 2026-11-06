@@ -19,6 +19,7 @@
 {% endcomment %}
 
 {%- capture ob_in_stock_only -%}{%- render 'ob-in-stock-only', results: results -%}{%- endcapture -%}
+{%- assign ob_in_stock_only = ob_in_stock_only | strip -%}
 {%- liquid
   assign total_active_values = 0
   for filter in results.filters

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     {%- if template.name == 'collection' -%}
       {%- capture ob_in_stock_only -%}{%- render 'ob-in-stock-only', results: collection -%}{%- endcapture -%}
-      {%- if ob_in_stock_only == 'true' -%}
+      {%- if ob_in_stock_only contains 'true' -%}
         {% comment %} plp-hide-sold-out: enter every collection with the in-stock filter applied, before anything paints. {% endcomment %}
         <script>
           (function () {
