@@ -131,6 +131,27 @@
     return next && next !== size ? next : null;
   };
 
+  // Hands WK an option change without touching its <select>. WK lists only
+  // the sizes of the colour it last saved, so the size a new colour needs is
+  // often not an option yet, and setting a missing value would deselect the
+  // select instead. WK's card reads a change from any named input in its form,
+  // and reads it synchronously, so a stand-in input is removed straight away
+  // and never reaches a cart post.
+  window.obWishlistChangeOption = function (select, value) {
+    var form = select.closest('form');
+    if (!form) return;
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = select.name;
+    input.value = value;
+    form.appendChild(input);
+    try {
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    } finally {
+      input.remove();
+    }
+  };
+
   function wishlistHandle(form) {
     var card = form.closest('.wk-product-card');
     var link = card && card.querySelector('.wk-image-link, .wk-product-title a');
@@ -200,10 +221,7 @@
       if (!product || !form.isConnected) return;
       try {
         var size = window.obWishlistSizeForColor(product, select.value, pickers.size.value);
-        if (size) {
-          pickers.size.value = size;
-          if (pickers.size.value === size) pickers.size.dispatchEvent(new Event('change', { bubbles: true }));
-        }
+        if (size) window.obWishlistChangeOption(pickers.size, size);
         markMissingSizes(form, product);
       } catch (e) {
         // fail open: the colour still changes, the size stays as it was

@@ -319,8 +319,16 @@
       select: select,
       run: function () {
         if (!select.isConnected) return;
+        // A size the newly picked colour needs is not listed until WK has
+        // saved that colour (see obWishlistChangeOption).
+        var listed = Array.prototype.some.call(select.options, function (option) {
+          return option.value === value;
+        });
+        if (!listed) {
+          if (typeof window.obWishlistChangeOption === 'function') window.obWishlistChangeOption(select, value);
+          return;
+        }
         select.value = value;
-        if (select.value !== value) return;
         select.dispatchEvent(new Event('change', { bubbles: true }));
       },
     });
