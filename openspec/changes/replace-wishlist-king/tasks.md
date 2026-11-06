@@ -32,10 +32,10 @@
 
 - [x] 6.1 Create page "Favorieten" (template `favorieten`) on DEV; switch on and WK embeds off in DEV's theme editor
 - [x] 6.2 Run the checklist in `WISHLIST-CUSTOM.md` on mobile (390px) and desktop; `shopify theme check` for the touched Liquid files
-- [ ] 6.3 Switch off: WK surfaces behave as before (checked on pre-live, where the switch is off and WK is live)
+- [x] 6.3 Switch off: WK surfaces behave as before (checked on pre-live, where the switch is off and WK is live)
 
 ## 7. Ship switched off, docs
 
-- [ ] 7.1 Commit; push the same files to pre-live (switch off), verify nothing changed there
+- [x] 7.1 Commit; push the same files to pre-live (switch off), verify nothing changed there
 - [x] 7.2 MIGRATION-TO-LIVE.md shop-side items; STATUS-LOG.md; GOTCHAS.md findings; CLAUDE.md asset notes; WISHLIST-CUSTOM.md status
 - [ ] 7.3 (After owner go-ahead, not in this run) pre-live switch on, WK removal, redirect, archive
