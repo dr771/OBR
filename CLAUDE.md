@@ -70,6 +70,8 @@ out of sync with the active theme and therefore give false results. Only use one
 owner explicitly requests a separate preview; stop it afterward, never report it as live
 verification, and still make the approved change on theme `209721262417`.
 
+**Storefront testing on pre-live is unrestricted (owner decision 2026-11-07).** Click through real flows on the pre-live storefront in the owner's Chrome: add to cart, fill and empty the wishlist, change options. The owner's carts, wishlists and other browser state there are throwaway test data; no need to back them up, restore them, or avoid them. This covers storefront clicks only, not Admin writes or orders.
+
 **Store-identity gate for admin writes.** Before every Shopify Admin API mutation, read the shop and proceed only when it is **Original Brands** with the exact domain `original-brands-live.myshopify.com` and shop ID `109574717777`. The claude.ai Shopify connector is pointed at this shop (owner decision 2026-10-30). The CLI (`shopify store execute --store original-brands-mtr6tuym.myshopify.com`) works too, and must use the permanent domain because the CLI rejects the primary one.
 
 **DEV writes are the exception.** Admin writes to DEV (`original-brands-dev.myshopify.com`, shop ID `72440086637`) only happen when the owner asks for an experiment there, and only through the CLI with `--store original-brands-dev.myshopify.com`, so the shop is explicit in the command. Never switch the shared connector to DEV for that. A write that lands on the other shop than the task intends is a stop condition.
