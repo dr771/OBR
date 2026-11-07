@@ -233,15 +233,15 @@
       this.classList.toggle('ob-wl-item--busy', busy);
     }
 
-    // Theme cart add with the drawer's sections, as product-form.js does. A
-    // compact cross-sell row is a move-to-cart: its entry leaves the
-    // wishlist once the cart has the variant. On the /cart page the page
-    // itself reloads instead of opening the drawer over it.
+    // Theme cart add with the drawer's sections, as product-form.js does.
+    // Every add is a move-to-cart, from the favorites page and the cart
+    // cross-sell alike: the entry leaves the wishlist once the cart has the
+    // variant. On the /cart page the page itself reloads instead of opening
+    // the drawer over it.
     addToCart(button) {
       if (button.disabled || button.classList.contains('is-loading')) return;
       var self = this;
       var variant = this.variant;
-      var move = this.classList.contains('ob-wl-item--compact');
       var cart = document.querySelector('cart-drawer');
       var onCartPage = !!document.querySelector('#MainContent cart-items');
 
@@ -267,7 +267,7 @@
       config.body = body;
 
       this.setBusy(button, true);
-      if (move) this.classList.add('ob-wl-item--moving');
+      this.classList.add('ob-wl-item--moving');
 
       fetch(routes.cart_add_url, config)
         .then(function (response) {
@@ -281,10 +281,8 @@
             return;
           }
           track('wishlist_add_to_cart', self.eventFields(variant));
-          if (move) {
-            store.remove(self.handle);
-            track('remove_from_wishlist', self.eventFields(variant));
-          }
+          store.remove(self.handle);
+          track('remove_from_wishlist', self.eventFields(variant));
           if (onCartPage || !cart) {
             window.location = routes.cart_url;
             return;

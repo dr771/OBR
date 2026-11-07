@@ -652,8 +652,8 @@
   margin: 0;
 }
 
-/* Move-to-cart: the row fades while the cart request runs. */
-.ob-wl-item--compact.ob-wl-item--moving {
+/* Move-to-cart: the entry fades while the cart request runs. */
+.ob-wl-item.ob-wl-item--moving {
   opacity: 0.4;
   pointer-events: none;
 }
