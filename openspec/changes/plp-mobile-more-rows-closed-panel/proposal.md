@@ -6,7 +6,7 @@ Desktop already has Activities and Category facets (Search & Discovery on pre-li
 
 ## What Changes
 
-- The mobile filter bar gains a Category row (`akeneo.shopify_originalbrands_cate__1` on pre-live, `custom.shopify_originalbrands_category` on DEV) and an Activities row (`custom.activities`), with the same checkbox-backed boxes and native parameters as desktop. Order: Gender, Merk, Category, Activities, Maat, Kleur.
+- The mobile filter bar gains a Category row (`akeneo.shopify_originalbrands_cate__1` on pre-live, `custom.shopify_originalbrands_category` on DEV) and an Activities row (`custom.activities`), with the same checkbox-backed boxes and native parameters as desktop. Order: Gender, Merk, Maat, Kleur, Category, Activities (owner decision 2026-11-12: the new rows go last).
 - Both rows follow the existing "fewer than two values, none active" rule and the existing pass-through/pill rules.
 - **BREAKING (spec):** the panel renders closed on every page load and opens only when the shopper taps "Verfijn op". The open/closed choice is no longer stored; the old `ob-plp-filter-bar` localStorage key is removed. An opened panel stays open across AJAX filter changes on the same page.
 - While filters are active, the toggle shows their number ("Verfijn op (2)"), because a closed panel would otherwise hide every active row selection (rows have no pills).

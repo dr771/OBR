@@ -117,7 +117,7 @@
               </facet-remove>
             {%- endif -%}
           </span>
-          {%- assign bar_kinds = 'gender,brand,category,activity,size,color' | split: ',' -%}
+          {%- assign bar_kinds = 'gender,brand,size,color,category,activity' | split: ',' -%}
           {%- for bar_kind in bar_kinds -%}
             {%- for filter in results.filters -%}
               {%- liquid

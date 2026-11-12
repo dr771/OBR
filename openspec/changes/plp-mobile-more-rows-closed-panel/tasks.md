@@ -1,6 +1,6 @@
 ## 1. Theme code
 
-- [x] 1.1 Add `category` and `activity` kinds to the row loop in `snippets/ob-mobile-filter-bar.liquid` (Gender, Merk, Category, Activities, Maat, Kleur), heading from `filter.label`
+- [x] 1.1 Add `category` and `activity` kinds to the row loop in `snippets/ob-mobile-filter-bar.liquid` (Gender, Merk, Maat, Kleur, Category, Activities), heading from `filter.label`
 - [x] 1.2 Add both kinds to the pass-through rule and to the mobile pill exclusion in `snippets/facets.liquid`
 - [x] 1.3 Render the panel closed (`hidden`, `aria-expanded="false"`); remove the inline localStorage script and the storage write in `assets/ob-plp.js`, clear the old key
 - [x] 1.4 Active-filter count in the toggle as a `.js-filter` span

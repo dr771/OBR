@@ -16,7 +16,7 @@
 
 - **Match category on `originalbrands_cat`.** DEV writes `custom.shopify_originalbrands_category`, pre-live `akeneo.shopify_originalbrands_cate__1` (NICK.md #16). One substring covers both, so DEV and pre-live run the same code.
 - **Match activities on `custom.activities`.** Metaobject-backed; labels already resolve through `ob-facet-value-label` (`label_nl`).
-- **Order: Gender, Merk, Category, Activities, Maat, Kleur.** The four short product-level rows first, Maat and Kleur stay adjacent at the bottom as the variant-level pair (same reasoning as `plp-mobile-brand-row`). Easy to change: it is the `bar_kinds` list.
+- **Order: Gender, Merk, Maat, Kleur, Category, Activities.** Owner decision 2026-11-12: the existing rows keep their place and the new ones are appended. A first draft put them between Merk and Maat. It is the `bar_kinds` list.
 - **Headings from `filter.label`** for every kind except Maat and Kleur, which keep `ob-option-meta`.
 - **Closed is server-rendered (`hidden` + `aria-expanded="false"`), not script-applied.** No flash and no dependency on storage. Facets.js only replaces `.js-filter` children, never the panel, so an opened panel stays open while filtering.
 - **No persistence.** The client asked for "initially closed"; remembering "open" would bring back an open panel on the next collection and read as the old behavior.

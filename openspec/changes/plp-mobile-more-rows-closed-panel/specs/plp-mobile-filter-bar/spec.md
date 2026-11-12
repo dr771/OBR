@@ -29,14 +29,14 @@ The panel SHALL be closed at first paint on every page load, with the toggle's `
 ## MODIFIED Requirements
 
 ### Requirement: Bar filters render as simultaneous scrolling rows
-The open panel SHALL render exactly the Gender (`custom.genderid`), Merk (`vendor`), Category (the Akeneo category metafield, `akeneo.shopify_originalbrands_cate__1` or `custom.shopify_originalbrands_category`), Activities (`custom.activities`), Maat, and Kleur filters, in that order, simultaneously as independent, non-wrapping horizontal rows. Gender, Merk, Category, Activities and Maat SHALL use native checkbox-backed boxes, with Gender, Merk, Category and Activities shorter than Maat; Kleur SHALL use the same color-family values and chips as desktop. Other filters, including Producttype, SHALL not render as rows.
+The open panel SHALL render exactly the Gender (`custom.genderid`), Merk (`vendor`), Maat, Kleur, Category (the Akeneo category metafield, `akeneo.shopify_originalbrands_cate__1` or `custom.shopify_originalbrands_category`), and Activities (`custom.activities`) filters, in that order, simultaneously as independent, non-wrapping horizontal rows. Gender, Merk, Category, Activities and Maat SHALL use native checkbox-backed boxes, with Gender, Merk, Category and Activities shorter than Maat; Kleur SHALL use the same color-family values and chips as desktop. Other filters, including Producttype, SHALL not render as rows.
 
 #### Scenario: Mobile panel is open
 - **WHEN** the shopper views the open panel on a collection with several brands, categories and activities
-- **THEN** Gender, Merk, Category, Activities, Maat, and Kleur are all visible, each row scrolls independently, and overflowing rows retain a native scroll indicator
+- **THEN** Gender, Merk, Maat, Kleur, Category, and Activities are all visible, each row scrolls independently, and overflowing rows retain a native scroll indicator
 
 #### Scenario: Shopper selects a row value
-- **WHEN** the shopper taps a Gender, Merk, Category, Activities, Maat, or Kleur value
+- **WHEN** the shopper taps a Gender, Merk, Maat, Kleur, Category, or Activities value
 - **THEN** that control shows selected state and submits the same native parameter as its desktop counterpart
 
 ### Requirement: Toolbar contains sort and a master toggle
@@ -55,7 +55,7 @@ The toolbar SHALL have equal-width sort and “Verfijn op” halves with a divid
 - **THEN** the visible toolbar shows no result count, the active-filter number reflects the new state, and assistive technology receives the updated result count
 
 ### Requirement: A bar row with fewer than two values does not render
-The Gender, Merk, Category, Activities, Maat, or Kleur row SHALL NOT render when its underlying facet's `values` collapse to 0 or 1 entries and none of them is active, since selecting the sole remaining value cannot narrow the result set. A row with an active value SHALL always render, so a selection stays on its row control. The other rows are unaffected.
+The Gender, Merk, Maat, Kleur, Category, or Activities row SHALL NOT render when its underlying facet's `values` collapse to 0 or 1 entries and none of them is active, since selecting the sole remaining value cannot narrow the result set. A row with an active value SHALL always render, so a selection stays on its row control. The other rows are unaffected.
 
 #### Scenario: Collection narrows Gender to one value
 - **WHEN** a collection's product mix leaves the Gender facet with exactly one available value
@@ -74,7 +74,7 @@ The Gender, Merk, Category, Activities, Maat, or Kleur row SHALL NOT render when
 - **THEN** the row renders with that value selected, no pill appears for it, and tapping the control removes the selection and brings back the values available again
 
 ### Requirement: Unrendered active filters are preserved and removable
-Active parameters for filters without a rendered bar row SHALL pass through every bar submission and SHALL retain their mobile active pill as their removal path. Gender, Merk, Category, Activities, Maat, and Kleur SHALL show state only on their row controls and SHALL not render separate pills or per-row reset links.
+Active parameters for filters without a rendered bar row SHALL pass through every bar submission and SHALL retain their mobile active pill as their removal path. Gender, Merk, Maat, Kleur, Category, and Activities SHALL show state only on their row controls and SHALL not render separate pills or per-row reset links.
 
 #### Scenario: Shared URL contains an active price filter
 - **WHEN** the shopper changes a size in the mobile bar
@@ -85,5 +85,5 @@ Active parameters for filters without a rendered bar row SHALL pass through ever
 - **THEN** the product type parameter remains active and its pill remains available to remove it
 
 #### Scenario: Shopper toggles an active row value
-- **WHEN** the shopper taps an already selected Gender, Merk, Category, Activities, Maat, or Kleur control
+- **WHEN** the shopper taps an already selected Gender, Merk, Maat, Kleur, Category, or Activities control
 - **THEN** that value is removed through the same control and no duplicate pill is involved
