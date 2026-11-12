@@ -179,8 +179,18 @@
   }
 })();
 
+/*
+  The mobile filter panel renders closed on every page load and opens only on
+  the toggle. Facet AJAX updates leave the panel element in place, so an opened
+  panel stays open while the shopper filters. The open/closed choice is no
+  longer stored (it used to be, under `ob-plp-filter-bar`).
+*/
 (() => {
-  const STORAGE_KEY = 'ob-plp-filter-bar';
+  try {
+    localStorage.removeItem('ob-plp-filter-bar');
+  } catch (error) {
+    /* Storage blocked: nothing stored either. */
+  }
 
   document.addEventListener('click', (event) => {
     const toggle = event.target.closest('[data-ob-bar-toggle]');
@@ -192,12 +202,6 @@
     const willOpen = panel.hidden;
     panel.hidden = !willOpen;
     toggle.setAttribute('aria-expanded', String(willOpen));
-
-    try {
-      localStorage.setItem(STORAGE_KEY, willOpen ? 'open' : 'closed');
-    } catch (error) {
-      /* Storage blocked: state remains valid for the current page. */
-    }
 
     if (!willOpen) return;
     requestAnimationFrame(() => {

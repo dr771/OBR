@@ -24,6 +24,22 @@
         <input type="hidden" name="q" value="{{ results.current_vendor }}{{ results.current_type }}">
       {%- endif -%}
 
+      {%- liquid
+        assign total_active_values = 0
+        if enable_filtering
+          for filter in results.filters
+            # plp-hide-sold-out: the forced availability filter never counts as a shopper's filter.
+            if ob_in_stock_only and filter.param_name == 'filter.v.availability'
+              continue
+            endif
+            assign total_active_values = total_active_values | plus: filter.active_values.size
+            if filter.type == 'price_range' and filter.min_value.value != null or filter.type == 'price_range' and filter.max_value.value != null
+              assign total_active_values = total_active_values | plus: 1
+            endif
+          endfor
+        endif
+      -%}
+
       <div class="ob-mobile-bar__toolbar">
         {%- if enable_sorting -%}
           <div id="Details-Mobile-SortBy-{{ section.id }}" class="ob-mobile-bar__sort js-filter" data-index="bar-sort">
@@ -57,11 +73,22 @@
           <button
             type="button"
             class="ob-mobile-bar__toggle"
-            aria-expanded="true"
+            aria-expanded="false"
             aria-controls="ObMobileBarPanel-{{ section.id }}"
             data-ob-bar-toggle
           >
-            {{ 'products.facets.filter_bar_toggle' | t }}
+            <span class="ob-mobile-bar__toggle-label">
+              {{- 'products.facets.filter_bar_toggle' | t -}}
+              {%- comment -%}
+                The panel starts closed and rows carry no pills, so the toggle is the
+                only place an active filter shows while it stays closed. A .js-filter
+                so facets.js refreshes it on every response; always rendered so it
+                is never dropped as a facet "no longer returned".
+              {%- endcomment -%}
+              <span id="Details-Bar-Count-{{ section.id }}" class="js-filter ob-mobile-bar__toggle-count" data-index="bar-count">
+                {%- if total_active_values > 0 %} ({{ total_active_values }}){% endif -%}
+              </span>
+            </span>
             <span class="ob-mobile-bar__toggle-icon ob-mobile-bar__toggle-icon--open svg-wrapper">
               {{- 'icon-filter.svg' | inline_asset_content -}}
             </span>
@@ -73,19 +100,8 @@
       </div>
 
       {%- if enable_filtering -%}
-        <div id="ObMobileBarPanel-{{ section.id }}" class="ob-mobile-bar__panel" data-ob-bar-panel>
+        <div id="ObMobileBarPanel-{{ section.id }}" class="ob-mobile-bar__panel" data-ob-bar-panel hidden>
           {%- liquid
-            assign total_active_values = 0
-            for filter in results.filters
-              # plp-hide-sold-out: the forced availability filter never counts as a shopper's filter.
-              if ob_in_stock_only and filter.param_name == 'filter.v.availability'
-                continue
-              endif
-              assign total_active_values = total_active_values | plus: filter.active_values.size
-              if filter.type == 'price_range' and filter.min_value.value != null or filter.type == 'price_range' and filter.max_value.value != null
-                assign total_active_values = total_active_values | plus: 1
-              endif
-            endfor
             if results.url
               assign results_url = results.url
             else
@@ -101,7 +117,7 @@
               </facet-remove>
             {%- endif -%}
           </span>
-          {%- assign bar_kinds = 'gender,brand,size,color' | split: ',' -%}
+          {%- assign bar_kinds = 'gender,brand,category,activity,size,color' | split: ',' -%}
           {%- for bar_kind in bar_kinds -%}
             {%- for filter in results.filters -%}
               {%- liquid
@@ -110,6 +126,11 @@
                   assign filter_kind = 'gender'
                 elsif filter.param_name == 'filter.p.vendor'
                   assign filter_kind = 'brand'
+                elsif filter.param_name contains 'originalbrands_cat'
+                  # DEV: custom.shopify_originalbrands_category; pre-live: akeneo.shopify_originalbrands_cate__1
+                  assign filter_kind = 'category'
+                elsif filter.param_name contains 'custom.activities'
+                  assign filter_kind = 'activity'
                 elsif filter.param_name contains 'available_erp_sizes'
                   assign filter_kind = 'size'
                 elsif filter.param_name contains 'filtercolors'
@@ -131,10 +152,10 @@
                   data-index="bar-{{ bar_kind }}"
                 >
                   <h2 class="ob-mobile-bar__row-heading caption-large text-body">
-                    {%- if filter_kind == 'gender' or filter_kind == 'brand' -%}
-                      {{- filter.label | escape -}}
-                    {%- else -%}
+                    {%- if filter_kind == 'size' or filter_kind == 'color' -%}
                       {%- render 'ob-option-meta', option_name: filter.param_name, field: 'label' -%}
+                    {%- else -%}
+                      {{- filter.label | escape -}}
                     {%- endif -%}
                   </h2>
                   <ul class="ob-mobile-bar__row ob-mobile-bar__row--{{ filter_kind }} list-unstyled" role="list">
@@ -215,7 +236,7 @@
             {%- for filter in results.filters -%}
               {%- liquid
                 assign has_bar_row = false
-                if filter.param_name contains 'custom.genderid' or filter.param_name == 'filter.p.vendor' or filter.param_name contains 'available_erp_sizes' or filter.param_name contains 'filtercolors'
+                if filter.param_name contains 'custom.genderid' or filter.param_name == 'filter.p.vendor' or filter.param_name contains 'originalbrands_cat' or filter.param_name contains 'custom.activities' or filter.param_name contains 'available_erp_sizes' or filter.param_name contains 'filtercolors'
                   if filter.values.size > 1 or filter.active_values.size > 0
                     assign has_bar_row = true
                   endif
@@ -242,18 +263,6 @@
     </form>
   </facet-filters-form>
   <script>
-    (function () {
-      try {
-        if (localStorage.getItem('ob-plp-filter-bar') !== 'closed') return;
-        var panel = document.getElementById('ObMobileBarPanel-{{ section.id }}');
-        var toggle = document.querySelector('[data-ob-bar-toggle][aria-controls="ObMobileBarPanel-{{ section.id }}"]');
-        if (panel) panel.hidden = true;
-        if (toggle) toggle.setAttribute('aria-expanded', 'false');
-      } catch (error) {
-        /* Storage blocked: retain the server-rendered open default. */
-      }
-    })();
-
     /* Only rows that overflow show a scrollbar - a classic one below the
        row, an overlay one (Android) inside its bottom padding. Flag those
        rows so the gap to the next row is measured from the scrollbar rather

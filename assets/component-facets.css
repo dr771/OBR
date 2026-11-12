@@ -1731,6 +1731,10 @@ input.mobile-facets__checkbox {
   cursor: pointer;
 }
 
+.ob-mobile-bar__toggle-count:empty {
+  display: none;
+}
+
 .ob-mobile-bar__toggle-icon {
   display: flex;
   width: 1.4rem;
@@ -1839,11 +1843,15 @@ input.mobile-facets__checkbox {
 }
 
 .ob-mobile-bar__row--gender .ob-mobile-bar__box,
-.ob-mobile-bar__row--brand .ob-mobile-bar__box {
+.ob-mobile-bar__row--brand .ob-mobile-bar__box,
+.ob-mobile-bar__row--category .ob-mobile-bar__box,
+.ob-mobile-bar__row--activity .ob-mobile-bar__box {
   min-height: 3.2rem;
 }
 
-.ob-mobile-bar__row--brand .ob-mobile-bar__box {
+.ob-mobile-bar__row--brand .ob-mobile-bar__box,
+.ob-mobile-bar__row--category .ob-mobile-bar__box,
+.ob-mobile-bar__row--activity .ob-mobile-bar__box {
   white-space: nowrap;
 }
 
