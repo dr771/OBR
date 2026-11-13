@@ -27,7 +27,7 @@
   rarely divide evenly into fixed columns, and a grid's last row would leave
   a dead gap. `flex` lets each row's chips - however many fit - stretch to
   fill the full width, so the row split stays uneven but there is never
-  empty space. Basis is tuned for 5 per row (10 brands -> 5 + 5).
+  empty space. Desktop basis is tuned for 6 per row (12 brands -> 6 + 6).
 */
 .ob-merken-chips {
   display: flex;
@@ -234,11 +234,11 @@
     margin-top: 4.8rem;
   }
 
-  /* 5 per row (10 brands -> 5 + 5): basis is exactly one-fifth of the row
-     minus its share of the 4 inter-item gaps, so a short last row's chips
+  /* 6 per row (12 brands -> 6 + 6): basis is exactly one-sixth of the row
+     minus its share of the 5 inter-item gaps, so a short last row's chips
      grow to fill the width instead of leaving a dead gap. */
   .ob-merken-chip {
-    flex-basis: calc((100% - 4 * 1.2rem) / 5);
+    flex-basis: calc((100% - 5 * 1.2rem) / 6);
     min-height: 8rem;
     padding: 1.2rem 1.6rem;
     border-radius: 1.2rem;
