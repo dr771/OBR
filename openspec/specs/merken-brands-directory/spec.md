@@ -23,7 +23,7 @@ Below the title/subheading, the hero SHALL render one chip per brand block, each
 - **THEN** the last row's chips SHALL stretch to fill the full row width rather than leaving empty space.
 
 #### Scenario: Real logo for a sourced brand
-- **WHEN** a chip is rendered for a brand with a sourced logo file (FitFlop, Hi-Tec, Holster, Irasuto Studios, Juicy Couture, Löwenweiss, Nike Swim, Odlo, Pas de Monaco, Sweaty Betty)
+- **WHEN** a chip is rendered for a brand with a sourced logo file (FitFlop, Hi-Tec, Holster, Irasuto Studios, Juicy Couture, Löwenweiss, Mechanix, Nike Swim, Odlo, Pas de Monaco, RH+, Sweaty Betty)
 - **THEN** it SHALL render that brand's real logo image (`assets/ob-logo-<handle>.*`, sourced from `snippets/ob-brand-logotype.liquid`) at a uniform grayscale, contrast-boosted, reduced-opacity weight - dark enough that lighter source files don't read pale next to the near-black ones - and SHALL reveal full color and opacity on hover/focus of the chip.
 
 #### Scenario: Text fallback for a brand with no sourced logo
