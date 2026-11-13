@@ -144,8 +144,9 @@
     >
   {%- when 'mechanix' -%}
     {%- comment -%}
-      Supplied by the OB team (Asana, 2026-11-12). The mark is a solid box,
-      so its ink density counts as 1 in the scale formula.
+      Supplied by the OB team (Asana, 2026-11-12). The mark is a solid box:
+      the formula (density 1) gives 0.92, but at that size the lettering
+      inside the box is unreadable, so it gets a by-eye x1.47.
     {%- endcomment -%}
     <img
       src="{{ 'ob-logo-mechanix.png' | asset_url }}"
@@ -154,7 +155,7 @@
       height="107"
       loading="lazy"
       class="ob-brand-logo"
-      style="--ob-logo-scale: 0.92;"
+      style="--ob-logo-scale: 1.35;"
     >
   {%- when 'nike-swim' -%}
     <img
