@@ -19,10 +19,28 @@
     assign ob_color_filter = true
   endif
 
+  # Fail open like product-media-gallery: no media for this color -> show all.
+  if ob_color_filter
+    assign ob_color_has_media = false
+    for ob_media in product.media
+      capture ob_media_code
+        render 'ob-media-color-code', media: ob_media, color: ob_current_color
+      endcapture
+      assign ob_media_code = ob_media_code | strip
+      if ob_media_code == blank or ob_media_code == ob_current_color
+        assign ob_color_has_media = true
+        break
+      endif
+    endfor
+    unless ob_color_has_media
+      assign ob_color_filter = false
+    endunless
+  endif
+
   assign ob_featured_media = product.selected_or_first_available_variant.featured_media
   if ob_color_filter and ob_featured_media != null
     capture ob_featured_media_code
-      render 'ob-media-color-code', media: ob_featured_media
+      render 'ob-media-color-code', media: ob_featured_media, color: ob_current_color
     endcapture
     assign ob_featured_media_code = ob_featured_media_code | strip
     if ob_featured_media_code != blank and ob_featured_media_code != ob_current_color
@@ -63,7 +81,7 @@
 
       {%- for media in product.media -%}
         {%- if ob_color_filter -%}
-          {%- capture ob_media_code -%}{%- render 'ob-media-color-code', media: media -%}{%- endcapture -%}
+          {%- capture ob_media_code -%}{%- render 'ob-media-color-code', media: media, color: ob_current_color -%}{%- endcapture -%}
           {%- assign ob_media_code = ob_media_code | strip -%}
           {%- if ob_media_code != blank and ob_media_code != ob_current_color -%}
             {%- continue -%}

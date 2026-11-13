@@ -24,6 +24,24 @@
     assign ob_color_filter = true
   endif
 
+  # Fail open: a color whose code no media filename carries would otherwise
+  # render an empty gallery, so it shows all product media instead.
+  if ob_color_filter
+    assign ob_color_media_count = 0
+    for ob_media in product.media
+      capture ob_media_code
+        render 'ob-media-color-code', media: ob_media, color: ob_current_color
+      endcapture
+      assign ob_media_code = ob_media_code | strip
+      if ob_media_code == blank or ob_media_code == ob_current_color
+        assign ob_color_media_count = ob_color_media_count | plus: 1
+      endif
+    endfor
+    if ob_color_media_count == 0
+      assign ob_color_filter = false
+    endif
+  endif
+
   unless ob_color_filter
     if section.settings.hide_variants and variant_images.size == product.media.size
       assign single_media_visible = true
@@ -36,16 +54,7 @@
 
   assign media_count = product.media.size
   if ob_color_filter
-    assign media_count = 0
-    for ob_media in product.media
-      capture ob_media_code
-        render 'ob-media-color-code', media: ob_media
-      endcapture
-      assign ob_media_code = ob_media_code | strip
-      if ob_media_code == blank or ob_media_code == ob_current_color
-        assign media_count = media_count | plus: 1
-      endif
-    endfor
+    assign media_count = ob_color_media_count
   elsif section.settings.hide_variants and media_count > 1 and variant_images.size > 0
     assign media_count = media_count | minus: variant_images.size | plus: 1
   endif
@@ -53,7 +62,7 @@
   assign featured_media = product.selected_or_first_available_variant.featured_media
   if ob_color_filter and featured_media != null
     capture ob_featured_media_code
-      render 'ob-media-color-code', media: featured_media
+      render 'ob-media-color-code', media: featured_media, color: ob_current_color
     endcapture
     assign ob_featured_media_code = ob_featured_media_code | strip
     if ob_featured_media_code != blank and ob_featured_media_code != ob_current_color
@@ -126,7 +135,7 @@
         {% endif %}
 
         {%- if ob_color_filter -%}
-          {%- capture ob_media_code -%}{%- render 'ob-media-color-code', media: media -%}{%- endcapture -%}
+          {%- capture ob_media_code -%}{%- render 'ob-media-color-code', media: media, color: ob_current_color -%}{%- endcapture -%}
           {%- assign ob_media_code = ob_media_code | strip -%}
           {%- if ob_media_code != blank and ob_media_code != ob_current_color -%}
             {%- continue -%}
@@ -283,7 +292,7 @@
         {%- assign ob_thumbnail_position = 0 -%}
         {%- for media in product.media -%}
           {%- if ob_color_filter -%}
-            {%- capture ob_media_code -%}{%- render 'ob-media-color-code', media: media -%}{%- endcapture -%}
+            {%- capture ob_media_code -%}{%- render 'ob-media-color-code', media: media, color: ob_current_color -%}{%- endcapture -%}
             {%- assign ob_media_code = ob_media_code | strip -%}
             {%- if ob_media_code != blank and ob_media_code != ob_current_color -%}
               {%- continue -%}

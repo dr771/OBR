@@ -17,37 +17,62 @@
   OB's two-segment Loewenweiss codes (`192_953`), so this version scans for the
   empty part instead and joins everything between the product code and it.
 
+  The left-to-right parse assumes a one-segment product code. Akeneo item codes
+  with a hyphen break that: SKU MSV-55__CVRT__S has media
+  ..._MSV_55_CVRT__01.jpg, which parses as 55_CVRT. Filename item codes don't
+  reliably equal the SKU's either (HST378-P36-41 -> ..._HST378_SA__01.jpg), so
+  a caller that already knows the color it is looking for passes it as `color`:
+  when the filename carries `_{color}__` (case-insensitive), that color is
+  echoed instead of the left-parsed code.
+
   Accepts (one of):
   - media: {Object} product media object
   - image_src: {String} an image src, when you have an image rather than media
+  Optional:
+  - color: {String} the selected variant's color code (ob-variant-color-code)
 
   Usage (capture the output to branch on it):
     {%- capture code -%}{%- render 'ob-media-color-code', media: media -%}{%- endcapture -%}
+    {%- capture code -%}{%- render 'ob-media-color-code', media: media, color: current -%}{%- endcapture -%}
 {% endcomment %}
 {%- liquid
   assign src = image_src | default: media.preview_image.src
   assign fname = src | split: '/' | last | split: '?' | first
-  assign parts = fname | split: '_'
 
-  assign stop_idx = 0
-  for part in parts
-    if part == blank and forloop.index0 > 2
-      assign stop_idx = forloop.index0
-      break
+  assign carries_color = false
+  if color != blank
+    assign color_needle = '_' | append: color | append: '__' | downcase
+    assign fname_lower = fname | downcase
+    if fname_lower contains color_needle
+      assign carries_color = true
     endif
-  endfor
+  endif
 
-  if stop_idx > 2
-    assign code = ''
+  if carries_color
+    echo color
+  else
+    assign parts = fname | split: '_'
+
+    assign stop_idx = 0
     for part in parts
-      if forloop.index0 > 1 and forloop.index0 < stop_idx
-        if code == blank
-          assign code = part
-        else
-          assign code = code | append: '_' | append: part
-        endif
+      if part == blank and forloop.index0 > 2
+        assign stop_idx = forloop.index0
+        break
       endif
     endfor
-    echo code
+
+    if stop_idx > 2
+      assign code = ''
+      for part in parts
+        if forloop.index0 > 1 and forloop.index0 < stop_idx
+          if code == blank
+            assign code = part
+          else
+            assign code = code | append: '_' | append: part
+          endif
+        endif
+      endfor
+      echo code
+    endif
   endif
 -%}
