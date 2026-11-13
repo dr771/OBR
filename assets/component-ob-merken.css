@@ -93,6 +93,14 @@
   opacity: 1;
 }
 
+/* White-on-transparent source (RH+): stay inverted at rest and on hover,
+   or the wordmark vanishes on the white chip. */
+.ob-merken-chip .ob-brand-logo--invert,
+.ob-merken-chip:hover .ob-brand-logo--invert,
+.ob-merken-chip:focus-visible .ob-brand-logo--invert {
+  filter: grayscale(1) invert(1);
+}
+
 .ob-logotype {
   display: inline-flex;
   align-items: center;
