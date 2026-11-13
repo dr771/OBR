@@ -142,6 +142,20 @@
       class="ob-brand-logo"
       style="--ob-logo-scale: 0.71;"
     >
+  {%- when 'mechanix' -%}
+    {%- comment -%}
+      Supplied by the OB team (Asana, 2026-11-12). The mark is a solid box,
+      so its ink density counts as 1 in the scale formula.
+    {%- endcomment -%}
+    <img
+      src="{{ 'ob-logo-mechanix.png' | asset_url }}"
+      alt="Mechanix Wear"
+      width="283"
+      height="107"
+      loading="lazy"
+      class="ob-brand-logo"
+      style="--ob-logo-scale: 0.92;"
+    >
   {%- when 'nike-swim' -%}
     <img
       src="{{ 'ob-logo-nike-swim.png' | asset_url }}"
@@ -172,8 +186,11 @@
       class="ob-brand-logo"
       style="--ob-logo-scale: 1.35;"
     >
-  {%- when 'rh-plus' -%}
+  {%- when 'rh-plus', 'rh' -%}
     {%- comment -%}
+      `rh` is the collection handle the team created in Admin (2026-11-12);
+      `rh-plus` stays for marquee blocks that still name it as brand_handle.
+
       Source file is white text + red bars on transparent (built for the
       brand's own dark navbar) - no dark-on-transparent variant exists, so
       the shared grayscale treatment alone would leave the wordmark
