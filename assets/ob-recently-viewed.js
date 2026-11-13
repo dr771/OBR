@@ -31,7 +31,10 @@
       if (!response.ok) return null;
       const html = new DOMParser().parseFromString(await response.text(), 'text/html');
       const template = html.querySelector('.ob-recently-viewed__card');
-      return template?.content.querySelector('.grid__item')?.cloneNode(true) || null;
+      const card = template?.content.querySelector('.grid__item');
+      // Sold-out products stay in history (they may come back) but aren't shown.
+      if (!card || card.dataset.available !== 'true') return null;
+      return card.cloneNode(true);
     } catch {
       return null;
     }
@@ -45,15 +48,22 @@
     if (!current) return;
 
     const history = [...new Set(readHistory())].filter((handle) => handle !== current);
-    const candidates = history.slice(-DISPLAY_LIMIT).reverse();
+    const candidates = history.slice().reverse();
     writeHistory([...history, current].slice(-HISTORY_LIMIT));
     if (!candidates.length) return;
 
     async function load() {
-      const cards = await Promise.all(candidates.map((handle) => renderCard(section, handle)));
+      // Newest first, a batch of DISPLAY_LIMIT at a time: unavailable entries
+      // are backfilled from older history until the row is full.
+      const shown = [];
+      for (let start = 0; start < candidates.length && shown.length < DISPLAY_LIMIT; start += DISPLAY_LIMIT) {
+        const batch = candidates.slice(start, start + DISPLAY_LIMIT);
+        const cards = await Promise.all(batch.map((handle) => renderCard(section, handle)));
+        shown.push(...cards.filter(Boolean));
+      }
       if (!section.isConnected) return;
       const grid = section.querySelector('.product-grid');
-      cards.filter(Boolean).forEach((card) => grid.append(card));
+      shown.slice(0, DISPLAY_LIMIT).forEach((card) => grid.append(card));
       if (grid.children.length) section.hidden = false;
     }
 

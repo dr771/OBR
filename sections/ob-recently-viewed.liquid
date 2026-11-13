@@ -16,7 +16,7 @@
   <h2 class="ob-recently-viewed__heading">{{ 'products.product.recently_viewed' | t }}</h2>
   <ul class="grid product-grid grid--4-col-desktop grid--2-col-tablet-down" role="list"></ul>
   <template class="ob-recently-viewed__card">
-    <li class="grid__item">
+    <li class="grid__item" data-available="{{ product.available }}">
       {% render 'card-product',
         card_product: product,
         media_aspect_ratio: 'square',
