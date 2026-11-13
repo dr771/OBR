@@ -6,4 +6,4 @@
 ## 2. Verify and ship
 
 - [x] 2.1 Theme check, push to DEV, verify a history with sold-out and available products
-- [ ] 2.2 Commit, push to pre-live, verify on the Mechanix Specialty Vent Covert PDP
+- [x] 2.2 Commit, push to pre-live, verify on the Mechanix Specialty Vent Covert PDP
