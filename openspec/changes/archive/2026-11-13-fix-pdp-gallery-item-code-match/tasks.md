@@ -12,4 +12,4 @@
 
 - [x] 3.1 `shopify theme check` clean for the touched snippets
 - [x] 3.2 Push to DEV and check a color-switching product (gallery filters per color, counter correct)
-- [ ] 3.3 Commit, push to pre-live, verify Mechanix Specialty Vent Covert (3 images), a multi-color product, and Holster Solace NATM (fail-open)
+- [x] 3.3 Commit, push to pre-live, verify Mechanix Specialty Vent Covert (3 images), a multi-color product, and Holster Solace NATM (fail-open)

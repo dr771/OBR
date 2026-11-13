@@ -23,7 +23,7 @@ Gallery filtering SHALL normalize the selected variant's hyphenated Akeneo SKU c
 - **THEN** all three images appear in the selected gallery
 
 ### Requirement: Unrecognized product data fails open
-If the product has no recognized color option, the selected variant has no parseable Akeneo color code, or no product media carries the selected color code, the PDP SHALL render all product media in source order rather than hiding content or raising an error.
+If the product has no recognized color option or the selected variant has no parseable Akeneo color code, the PDP SHALL render all product media in source order rather than hiding content or raising an error. If no product media carries the selected color code, the PDP SHALL render the gallery it renders without color filtering (Dawn's own media behavior, including its hide-other-variants setting) and SHALL NOT render an empty gallery.
 
 #### Scenario: Product has no color option
 - **WHEN** a product contains only a size option
@@ -35,4 +35,4 @@ If the product has no recognized color option, the selected variant has no parse
 
 #### Scenario: Selected color has no photos of its own
 - **WHEN** the selected variant's color code is `NATM` and every product image is coded `BL`
-- **THEN** all product media remain visible and the gallery count equals the product's media count
+- **THEN** the gallery shows the selected variant's featured image and Dawn's unfiltered media set, its count matches the rendered items, and it is never empty

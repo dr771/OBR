@@ -14,7 +14,7 @@ Catalog measurement on pre-live (2117 products, all with a color option): 112 co
 
 - **Match by "filename carries `_{code}__`", not by stripping the item code.** Filename item codes don't reliably equal the SKU item (`HST378-P36-41` → `HST378`; `MSD-55W` → `MSD_55W__CVRT__01`), so a right-anchored search for the known code is the only robust rule. Alternative considered: pass the SKU item code into the parser and skip its segments — fails on both examples above.
 - **Keep the matching inside `ob-media-color-code`** via an optional `color` argument: when the filename carries it, the snippet echoes that code, otherwise the left-parsed code as before. Callers keep their existing `code == blank or code == current` comparison, and the PLP (which passes no `color`) is untouched.
-- **Fail-open on zero matches** in both gallery and modal by counting matches first and switching the color filter off when the count is 0, before any other gallery state (single-media, `hide_variants`) is derived.
+- **Fail-open on zero matches** in both gallery and modal by counting matches first and switching the color filter off when the count is 0, before any other gallery state (single-media, `hide_variants`) is derived. With the color filter off, Dawn's `hide_variants` (on in the pre-live template) applies: the selected variant's featured photo plus media not attached to any variant. For a mismatched code that featured photo is usually the right color, so this beats showing every color.
 
 ## Risks / Trade-offs
 

@@ -429,3 +429,17 @@ Most likely these two products were mapped to the SB activity codes in Akeneo by
 - Full scan of pre-live 2026-11-13 (29,148 variants): 8 untracked left, all `holster-coastal` colour SI (`HST287__SI__36`–`43`, qty 0, sellable). No variant has inventory policy CONTINUE. Our CLI token lacks `write_inventory`, so the owner turned on Track quantity in Admin the same morning; re-measured: all 8 tracked, `availableForSale: false`. Shop is at 0 untracked variants.
 - **Ask Nick:** set `inventoryItem.tracked: true` when the connector **creates** a variant (`productSet` / `productVariantsBulkCreate` accept `inventoryItem: { tracked: true }`), not only on stock changes. Otherwise every new import can bring this back.
 - Re-measure after each sync: `productVariants` with `inventoryItem { tracked }`, count `tracked: false` on ACTIVE products (POST-SYNC-CHECK.md).
+
+## 18. Colours whose photos carry a different colour code (found 2026-11-13)
+
+**Open.** The PDP shows each colour's own photos by finding the variant's SKU colour code in the image filename (`…_{code}__01.jpg`). For 8 colours on pre-live no image carries the code. Since 2026-11-13 the PDP falls back to Dawn's default gallery for them (the variant's featured image plus shared images) instead of an empty gallery. The data is still wrong.
+
+| Product | SKU colour | Image codes on the product |
+|---|---|---|
+| `holster-solace` | `NATM`, `SAM` | `BL`, `NAT`, `SA` only |
+| `holster-coastal` | `SI` | `BL` |
+| `lowenweiss-trama-bicolor-slipper` | `552-41`, `903-988`, `955-903` | `552`, `903`, `955` (single-segment) |
+| `hi-tec-fuse-trail-mid-wp-womens` | `042` | `021`, `032` |
+| `sweaty-betty-power-6-inch-biker-shorts` | `1001` | `001` |
+
+**Ask Nick:** are these photos missing for those colours in Akeneo, or is the image's colour code written differently from the SKU's? Hyphenated item codes (Mechanix `MSV-55`, Holster `HST378-P36-41`) are fine; the theme handles them since 2026-11-13.

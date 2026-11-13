@@ -40,6 +40,7 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 - `card_product.url` can already contain `variant` plus `_pos`/`_fid`/`_ss`; retarget with `URL.searchParams.set('variant', id)`.
 - `variant=` in a card's `product.url` means Shopify narrowed the variant, by a variant-level filter **or** a search query that matched a variant (`q=redaur` adds none; a SKU or colour name adds that variant). Card logic that picks its own variant must yield whenever it is present. Detecting only `filter.v.*` made a search for a full-price colour show the reduced one. A plain-name search that stays on a non-sale variant is Shopify's match, not a bug.
 - Loewenweiss SKUs use hyphens inside multi-part colour codes (`192-953`), media filenames use underscores (`192_953`); normalise before matching.
+- Hyphenated **item** codes also become underscores in media filenames (`MSV-55__CVRT__S` → `…_MSV_55_CVRT__01.jpg`), so `ob-media-color-code` parses `55_CVRT`; filename item codes can even be shortened (`HST378-P36-41` → `HST378`). The PDP passes the known colour as `color:` and matches `_{code}__` instead. Card swatches compare filename codes with each other and don't need it. An empty PDP gallery on 104 products (all Mechanix) was this (2026-11-13).
 - **Metaobjects read from Liquid fail silently:**
   1. `shop.metaobjects[variable]` is nil; name the type statically.
   2. `.values` is a lazy drop: `.size` works, `.first` is nil, and assigning it before iterating gives an empty loop. Iterate it directly.
