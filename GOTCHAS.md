@@ -151,6 +151,7 @@ Wishlist King (Swish) ran the wishlist until 2026-11-06 and was then replaced by
 - Freeing port 9292: `lsof -ti:9292 | xargs kill -9` on macOS; on Windows `Get-NetTCPConnection -LocalPort 9292` → `Stop-Process -Force`, after checking the holder's `--theme` via `Get-CimInstance Win32_Process`.
 - Windows: run `npx` through PowerShell (Git Bash breaks on the space in `C:\Program Files`). Chrome is at `C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`. When MCP can't connect and the user is away, take screenshots with a headless instance on a scratch profile and no debugging port (`--headless=new --user-data-dir=<scratch> --screenshot=…`) instead of killing their Chrome.
 - macOS: if `npx` fails with EPERM on `~/.npm/_cacache`, point it at a writable cache (`npm_config_cache=/private/tmp/npm-cache`).
+- **MCP "Connection closed" with Chrome healthy on 9222 can be a broken npx cache, not Chrome** (2026-11-13). Killing stale MCP servers and restarting Chrome didn't help. Run the server by hand (`npx -y chrome-devtools-mcp@latest --autoConnect`, MCP `initialize` + `list_pages` piped to stdin) to see stderr: it showed `npm error ENOTEMPTY ... rename ~/.npm/_npx/<hash>/node_modules/chrome-devtools-mcp`, so `@latest` failed to update and the server never started. Fix: `rm -rf ~/.npm/_npx/<hash>`, then `/mcp` reconnect.
 
 ## Trusted Shops trustbadge
 
