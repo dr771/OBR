@@ -60,3 +60,11 @@ Every type must show `enabled: false`, and that includes any *new* type. Fix for
 **Why:** the three needs collections (Sport & Training, Outdoor & Werk, Fashion & Lifestyle) are built from vendor rules. A new brand lands in none of them and nothing tells you.
 
 **Check:** compare the script's `vendor` list against the baseline table in [COLLECTIONS.md](COLLECTIONS.md). For any difference, follow `.agents/skills/ob-collection-maintenance/SKILL.md`. Do not guess where a brand belongs.
+
+---
+
+## 5. Any variant "Inventory not tracked"?
+
+**Why:** an untracked inventory item is always sellable at zero stock: the PDP offers it, checkout accepts it, and hide-sold-out lists it, because Shopify's availability filter counts it as in stock. Nick's stock update only sets `tracked: true` on items whose counter changed, so a variant created untracked at 0 stays that way ([NICK.md](NICK.md) #17).
+
+**Check:** page through `productVariants(first: 250) { nodes { sku inventoryItem { tracked } product { status } } }` (pre-live has ~29k variants, about 2.5 minutes through the CLI). The count of `tracked: false` on ACTIVE products must be 0. Fix in Admin (variant → Inventory → Track quantity, or the bulk editor), since the CLI token has no `write_inventory`.
