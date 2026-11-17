@@ -54,6 +54,7 @@ Since 2026-11-06 all collections exist and the main menu is complete. The catego
 - [ ] **Bedrijfsentiteit:** vervang de tijdelijke entiteit Dr770.com door Original Brands B.V. Bevestig de juiste juridische naam: de oude AV noemen "Original Brands", de contactpagina "Original Brands B.V.". Ondernemingsnummer 0839.961.404.
 - [ ] **Betaalmethoden:** Shopify Payments of een andere provider? Welke methoden: Bancontact, iDEAL, kaart, PayPal?
 - [ ] **Btw:** registratie BE 0839 961 404 invoeren onder Belastingen. Is er een OSS-registratie voor verkoop naar NL?
+  - [ ] **Automatic VAT invoices (team request 2026-11-17, "like the Holster shop"):** once VAT is collected, go to Settings → Taxes and duties → European Union → *VAT invoices* and tick "Generate and display invoices when orders are placed"; optionally add a custom logo there. That section only appears after the BE registration (and OSS, if any) is entered. Holster uses exactly this native feature (timeline: "VAT invoice INV-BE-35 was generated"), no app. Check one test order afterwards.
 - [ ] **Uitbetalingen:** IBAN. Op de oude site staat BE59 3630 9403 0426; graag bevestigen.
 
 ### 3. Verzending en markten
