@@ -58,9 +58,9 @@ Since 2026-11-06 all collections exist and the main menu is complete. The catego
 
 ### 3. Verzending en markten
 
-- [ ] Klopt € 5,95 en gratis vanaf € 70 voor BE en NL?
+- [x] Klopt € 5,95 en gratis vanaf € 70 voor BE en NL? *Yes (Cindy, Asana 1220555712066383, 2026-11-17). Set on the market's Standard rate, transit 1–4 business days.*
 - [ ] De retourpagina van de oude site noemt ook andere landen (DPD) en de DEV-shop had DE/FR/LU in de markt. Leveren jullie ook daarheen? Zo ja: welke tarieven?
-- [ ] Een expresoptie, ja of nee?
+- [x] Een expresoptie, ja of nee? *No (Cindy, 2026-11-17): Express removed from the market.*
 - [ ] Vanaf welk magazijnadres wordt verzonden? Dat wordt de Shopify-locatie; die staat nu zonder adres.
 
 ### 4. E-mail

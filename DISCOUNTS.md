@@ -48,10 +48,10 @@ For a cross-sell, put the X and Y products straight into the discount, and make 
 
 ## Free shipping (not a discount)
 
-- **Shipping rate:** Settings → Shipping and delivery → General profile → zone **BE/NL**. *Standaard verzending* €4.95 up to €69.99, *Gratis verzending* €0 from €70. Zone **EU overig** (DE/FR/LU): €4.95 always.
+- **Shipping rate:** Markets → **België & Nederland** → Shipping → *Standard*: €5.95, free from €70, transit 1–4 business days (the only option since 2026-11-17). The market's shipping overrides the old rates in Settings → Shipping and delivery → General profile, which the Admin API still reports.
 - **Cart progress bar:** Theme settings → Cart → *Free shipping from (EUR)* `70`, *Only for countries* `BE,NL`.
 - Change both together, and update the texts that mention €70 (trust bar, PDP USPs, cart USP).
-- The €70 counts **after discounts** (tested: €80 item at -15% = €68 → €4.95 shipping; 2× = €136 → free). The cart bar uses the same total, so it agrees.
+- The €70 counts **after discounts** (tested: €80 item at -15% = €68 → €4.95 shipping (DEV rate); 2× = €136 → free). The cart bar uses the same total, so it agrees.
 - **Free shipping *discount*** (Discounts → Free shipping) is for exceptions, not the standing rule: a time-boxed "free shipping weekend", a code (customer service, influencer), a customer segment, a different threshold during a campaign, or limiting it to certain products. The cart bar doesn't know about it.
 
 ## Black Friday "on everything": order or products?
@@ -68,6 +68,6 @@ For a cross-sell, put the X and Y products straight into the discount, and make 
 | **Everything** (incl. Sale and campaign items) | **Amount off order** | Combinations: tick *product discounts* on the code **and** *order discounts* on every campaign, or the code is rejected while that campaign is in the cart. Calculated on the total after campaigns (tested: 3 Löwenweiss €168 → 2+1 €114 → -10 % €102.60). One line on the total, not per item. Can't exclude anything. |
 | **Everything except Sale** | **Amount off products** on `volle-prijs` | Doesn't stack on campaign items (one product discount per item; a 2+1 also "uses" the paid items). Cart with only campaign items → code rejected. ~60 partly-reduced products still slip through. |
 
-For both: *Limit to one use per customer*; optional minimum order value. The €70 free shipping counts after the code (€75 − 10 % = €67.50 → €4.95 shipping); the cart bar shows this correctly.
+For both: *Limit to one use per customer*; optional minimum order value. The €70 free shipping counts after the code (€75 − 10 % = €67.50 → €4.95 shipping (DEV rate)); the cart bar shows this correctly.
 
 Dev state: WELCOME27 is a product code targeting `all` + `volle-prijs` (= everything except campaign items); WELCOME28 is an order code (10 %), both demo campaigns allow order discounts.
