@@ -35,6 +35,25 @@
     endif
   endfor
 
+  comment
+    Colors sold out in every size aren't offered (hide-sold-out-colors),
+    except the entry's own.
+  endcomment
+  assign wl_offered_colors = blank
+  assign wl_offered_count = 0
+  if wl_color_index != -1
+    capture wl_offered_colors
+      render 'ob-offered-colors', product: product, color_index: wl_color_index, current: wl_variant.options[wl_color_index]
+    endcapture
+    assign wl_offered_colors = wl_offered_colors | strip
+    for value in product.options_with_values[wl_color_index].values
+      assign wl_offered_token = '|' | append: value.name | append: '|'
+      if wl_offered_colors == blank or wl_offered_colors contains wl_offered_token
+        assign wl_offered_count = wl_offered_count | plus: 1
+      endif
+    endfor
+  endif
+
   if wl_layout == 'compact'
     assign wl_image_width = 240
   else
@@ -136,7 +155,7 @@
 
   {%- if wl_layout == 'card' and wl_color_index != -1 -%}
     {%- assign wl_color_option = product.options_with_values[wl_color_index] -%}
-    {%- if wl_color_option.values.size > 1 -%}
+    {%- if wl_offered_count > 1 -%}
       <div class="ob-wl-item__colors">
         <div class="product-form__option-rail-shell" data-ob-option-rail-shell>
           <div
@@ -146,6 +165,12 @@
             aria-label="{% render 'ob-option-meta', option_name: wl_color_option.name, field: 'label' %}"
           >
             {%- for value in wl_color_option.values -%}
+              {%- if wl_offered_colors != blank -%}
+                {%- assign wl_offered_token = '|' | append: value.name | append: '|' -%}
+                {%- unless wl_offered_colors contains wl_offered_token -%}
+                  {%- continue -%}
+                {%- endunless -%}
+              {%- endif -%}
               {%- capture wl_input_id %}ob-wl-{{ wl_uid }}-{{ wl_color_option.position }}-{{ forloop.index0 }}{% endcapture -%}
               {%- capture wl_input_name %}ob-wl-{{ wl_uid }}-{{ wl_color_option.position }}{% endcapture -%}
               {%- capture wl_dataset %}data-ob-wl-option="{{ wl_color_index }}"{% endcapture -%}
@@ -188,6 +213,9 @@
     <div class="ob-wl-item__controls">
       {%- for option in product.options_with_values -%}
         {%- if option.values.size < 2 -%}
+          {%- continue -%}
+        {%- endif -%}
+        {%- if forloop.index0 == wl_color_index and wl_offered_count < 2 -%}
           {%- continue -%}
         {%- endif -%}
         {%- if wl_layout == 'card' and forloop.index0 == wl_color_index -%}
@@ -240,6 +268,12 @@
               {%- for value_index in wl_order -%}
                 {%- assign wl_value_index = value_index | plus: 0 -%}
                 {%- assign value = option.values[wl_value_index] -%}
+                {%- if wl_option_index == wl_color_index and wl_offered_colors != blank -%}
+                  {%- assign wl_offered_token = '|' | append: value.name | append: '|' -%}
+                  {%- unless wl_offered_colors contains wl_offered_token -%}
+                    {%- continue -%}
+                  {%- endunless -%}
+                {%- endif -%}
                 <option value="{{ value | escape }}"{% if value.selected %} selected{% endif %}>{{ value | escape }}</option>
               {%- endfor -%}
             </select>

@@ -97,6 +97,7 @@ Akeneo/metafield interpretation lives in these, never inline in a template (mirr
 - `ob-variant-color-code` — a selected variant SKU's Akeneo color code, normalized for media matching (`192-953` in SKU → `192_953` in filenames).
 - `ob-media-color-code` — a media/image filename's Akeneo color code. **Codes can span multiple segments** (`192_953`); don't port SB's single-segment version.
 - `ob-card-swatches` — PLP card swatch row: a single-row chip rail (hover swap + hover-pair data), with `ob-option-rail-controls` for its chevrons.
+- `ob-offered-colors` — the colors a surface offers: those with an available variant in any size, plus the current one; blank (all) for a fully sold-out product. Used by the card rail, the PDP picker and the wishlist item. Never Dawn's `value.available` for this (it depends on the selected size).
 - `ob-option-rail-controls` — the previous/next chevrons for any single-row rail (PDP option pickers, PLP card chips); `class_root` picks which surface's styling they take.
 - `ob-swatch-input` — one PDP color chip (image swatch from the variant's own photo).
 - `ob-facet-color-chip` / `ob-facet-swatch-input` — color *filter* chip: flat hex from the `filtercolors` metaobject, deliberately not an image swatch.

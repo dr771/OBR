@@ -64,8 +64,30 @@
           PLP card swatches and the cart drawer are untouched by this: they
           render from their own separate templates, not this snippet.
         endcomment
+        comment
+          Colors sold out in every size aren't offered (hide-sold-out-colors),
+          except the selected one, and the single-color rule counts what's left.
+        endcomment
+        assign offered_colors = blank
+        assign offered_count = option.values.size
+        if option_kind == 'color'
+          capture offered_colors
+            render 'ob-offered-colors', product: product, color_index: forloop.index0, current: option.selected_value
+          endcapture
+          assign offered_colors = offered_colors | strip
+          if offered_colors != blank
+            assign offered_count = 0
+            for value in option.values
+              assign offered_token = '|' | append: value.name | append: '|'
+              if offered_colors contains offered_token
+                assign offered_count = offered_count | plus: 1
+              endif
+            endfor
+          endif
+        endif
+
         assign ob_hide_single_color_option = false
-        if option_kind == 'color' and option.values.size <= 1
+        if option_kind == 'color' and offered_count <= 1
           assign ob_hide_single_color_option = true
         endif
 
@@ -82,7 +104,28 @@
         endif
       -%}
       {%- if picker_type == 'swatch' and ob_hide_single_color_option -%}
-        {%- comment -%} Single-value color option: render nothing on the PDP. {%- endcomment -%}
+        {%- comment -%}
+          Single offered color: render nothing visible. When other colors exist
+          but are sold out, the selected one still goes into Dawn's
+          option_values (fieldset input:checked), or a size change could
+          resolve to a sold-out color.
+        {%- endcomment -%}
+        {%- if option.values.size > 1 -%}
+          {%- for value in option.values -%}
+            {%- if value.selected -%}
+              <fieldset class="js" hidden>
+                <input
+                  type="radio"
+                  name="{{ option.name | escape }}-{{ option.position }}"
+                  value="{{ value | escape }}"
+                  checked
+                  data-option-value-id="{{ value.id }}"
+                  data-option-name="{{ option.name | escape }}"
+                >
+              </fieldset>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
       {%- elsif picker_type == 'swatch' -%}
         <fieldset class="js product-form__input product-form__input--swatch product-form__input--ob-block{% if option_kind == 'color' and ob_single_row_options %} product-form__input--option-rail{% endif %}">
           <legend class="form__label product-form__ob-label-row">
@@ -103,7 +146,8 @@
             block: block,
             picker_type: picker_type,
             option_kind: option_kind,
-            option_size_kind: option_size_kind
+            option_size_kind: option_size_kind,
+            offered_colors: offered_colors
           %}
           {%- if option_kind == 'color' and ob_single_row_options -%}
               </div>

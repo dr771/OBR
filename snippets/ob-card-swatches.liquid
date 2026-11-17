@@ -83,6 +83,27 @@
       endfor
     endif
   endif
+
+  comment
+    Colors sold out in every size get no chip (hide-sold-out-colors), except
+    the one the card shows. Fewer than two offered colors means no row, as for
+    a single-color product.
+  endcomment
+  assign offered_colors = blank
+  assign offered_count = 0
+  if color_option
+    assign color_index = color_option.position | minus: 1
+    capture offered_colors
+      render 'ob-offered-colors', product: card_product, color_index: color_index, current: card_variant.options[color_index]
+    endcapture
+    assign offered_colors = offered_colors | strip
+    for value in color_option.values
+      assign offered_token = '|' | append: value.name | append: '|'
+      if offered_colors == blank or offered_colors contains offered_token
+        assign offered_count = offered_count | plus: 1
+      endif
+    endfor
+  endif
 -%}
 {%- if default_swap2_media -%}
   <span
@@ -93,7 +114,7 @@
     data-ob-swap2-srcset="{{ default_swap2_media | image_url: width: 360 }} 360w, {{ default_swap2_media | image_url: width: 533 }} 533w, {{ default_swap2_media | image_url: width: 720 }} 720w"
   ></span>
 {%- endif -%}
-{%- if color_option and color_option.values.size > 1 -%}
+{%- if color_option and offered_count > 1 -%}
   {%- comment -%}
     The chips ride a single-row rail (see ob-option-rail.js), so a many-colour
     product can't wrap its card into a taller, ragged tile. Chip size comes from
@@ -101,7 +122,6 @@
   {%- endcomment -%}
   <div class="ob-card-swatches" data-ob-card-swatches data-ob-option-rail-shell>
     <div class="ob-card-swatches__rail" data-ob-option-rail data-ob-option-rail-step="item">
-    {%- assign color_index = color_option.position | minus: 1 -%}
     {%- assign active_color = card_variant.options[color_index] -%}
     {%- assign size_filtered = false -%}
     {%- if card_size_values != blank and card_size_index != blank -%}
@@ -109,6 +129,13 @@
     {%- endif -%}
     {%- for value in color_option.values -%}
       {%- liquid
+        assign offered_token = '|' | append: value.name | append: '|'
+        if offered_colors != blank
+          unless offered_colors contains offered_token
+            continue
+          endunless
+        endif
+
         comment
           swatch_variant: this color's first variant (image, fill). sale_variant:
           its first available reduced variant — only looked for when the

@@ -1,0 +1,40 @@
+{% comment %}
+  The colors a storefront surface offers for a product (hide-sold-out-colors):
+  every color with an available variant in any size, plus the color the
+  surface is currently on, which stays even when sold out (deep links, filter-
+  narrowed cards, saved wishlist entries). Output: `|Black|Matt White|`.
+  Callers test `offered contains '|' + value + '|'`; the bounding pipes keep
+  `Black` from matching `Matt Black`.
+
+  Outputs nothing when the product has no available variant: then every color
+  stays, there is nothing to steer the shopper toward.
+
+  Not Dawn's value.available: for a color it depends on the selected size, so
+  a color in stock only in another size would read sold out.
+
+  Accepts:
+  - product: {Object} Product Liquid object
+  - color_index: {Number} The color option's zero-based index
+  - current: {String} The color the surface is on (optional)
+
+  Usage:
+  {% capture offered_colors %}{% render 'ob-offered-colors', product: product, color_index: 0, current: variant.options[0] %}{% endcapture %}
+{% endcomment %}
+{%- liquid
+  if product.available
+    assign offered = '|'
+    if current != blank
+      assign offered = offered | append: current | append: '|'
+    endif
+    for variant in product.variants
+      unless variant.available
+        continue
+      endunless
+      assign token = '|' | append: variant.options[color_index] | append: '|'
+      unless offered contains token
+        assign offered = offered | append: variant.options[color_index] | append: '|'
+      endunless
+    endfor
+    echo offered
+  endif
+-%}

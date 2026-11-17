@@ -8,6 +8,8 @@
   - picker_type: {String} type of picker to dispay
   - option_kind: {String} 'color' | 'size' | 'generic', from ob-option-meta (optional)
   - option_size_kind: {String} 'shoe-eu' | 'tops' | 'bottoms' | 'generic' (optional, unused here)
+  - offered_colors: {String} `|A|B|` from ob-offered-colors; values outside it are
+    skipped (optional, blank = all)
 
 
   Usage:
@@ -31,6 +33,12 @@
   {%- liquid
     assign original_value_index = ordered_value_index | plus: 0
     assign value = option.values[original_value_index]
+    if offered_colors != blank
+      assign offered_token = '|' | append: value.name | append: '|'
+      unless offered_colors contains offered_token
+        continue
+      endunless
+    endif
     assign swatch_focal_point = null
     if value.swatch.image
       assign image_url = value.swatch.image | image_url: width: 50
