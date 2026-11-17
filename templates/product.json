@@ -41,7 +41,8 @@
           "settings": {
             "heading": "Bezorging & retour",
             "icon": "none",
-            "content": "<p>Gratis levering vanaf € 70 in Nederland en België; daaronder € 5,95 verzendkosten. Voor 12u besteld, volgende werkdag geleverd. <a href=\"https://www.originalbrands.nl/nl/levering\">Meer over levering</a>.</p><p>Je kunt artikelen binnen 30 dagen retourneren. Voor retouren wordt € 5,95 op de terugbetaling ingehouden. <a href=\"https://www.originalbrands.nl/nl/retourneren-naar-original-brands\">Lees de retourvoorwaarden</a>.</p>"
+            "content": "<p>Gratis levering vanaf € 70 in Nederland en België; daaronder € 5,95 verzendkosten. Voor 12u besteld, dezelfde dag verzonden op werkdagen. <a href=\"/pages/levering\" title=\"Levering\">Meer over levering</a>.</p><p>Je kunt artikelen binnen 30 dagen retourneren. Voor retouren wordt € 5,95 op de terugbetaling ingehouden. <a href=\"/pages/verzending-en-retour\" title=\"Retourneren naar Original Brands\">Lees de retourvoorwaarden</a>.</p>",
+            "page": ""
           }
         },
         "share": {
@@ -60,7 +61,7 @@
         "usp_dispatch": {
           "type": "usp",
           "settings": {
-            "text": "Voor 12u besteld, morgen in huis",
+            "text": "Voor 12u besteld, vandaag verzonden.",
             "icon": "clock"
           }
         }
