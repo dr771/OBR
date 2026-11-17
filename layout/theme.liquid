@@ -5,18 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     {%- if template.name == 'collection' -%}
-      {%- capture ob_in_stock_only -%}{%- render 'ob-in-stock-only', results: collection -%}{%- endcapture -%}
-      {%- if ob_in_stock_only contains 'true' -%}
-        {% comment %} plp-hide-sold-out: enter every collection with the in-stock filter applied, before anything paints. {% endcomment %}
+      {%- if collection.handle == 'frontpage' and request.design_mode == false -%}
+        {% comment %}
+          Shopify's own "Home page" collection is not a shop page. New customer accounts link their
+          empty-orders "Nu winkelen" button to it (and take the card image from its products), so it
+          forwards to the real homepage instead of rendering a one-product "Home page" listing.
+        {% endcomment %}
+        <meta name="robots" content="noindex">
         <script>
-          (function () {
-            var params = new URLSearchParams(window.location.search);
-            if (params.getAll('filter.v.availability').join() === '1') return;
-            params.delete('filter.v.availability');
-            params.append('filter.v.availability', '1');
-            window.location.replace(window.location.pathname + '?' + params.toString() + window.location.hash);
-          })();
+          window.location.replace({{ routes.root_url | json }});
         </script>
+      {%- else -%}
+        {%- capture ob_in_stock_only -%}{%- render 'ob-in-stock-only', results: collection -%}{%- endcapture -%}
+        {%- if ob_in_stock_only contains 'true' -%}
+          {% comment %} plp-hide-sold-out: enter every collection with the in-stock filter applied, before anything paints. {% endcomment %}
+          <script>
+            (function () {
+              var params = new URLSearchParams(window.location.search);
+              if (params.getAll('filter.v.availability').join() === '1') return;
+              params.delete('filter.v.availability');
+              params.append('filter.v.availability', '1');
+              window.location.replace(window.location.pathname + '?' + params.toString() + window.location.hash);
+            })();
+          </script>
+        {%- endif -%}
       {%- endif -%}
     {%- endif -%}
     <meta name="theme-color" content="">
