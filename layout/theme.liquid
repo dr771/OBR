@@ -31,6 +31,13 @@
         {%- endif -%}
       {%- endif -%}
     {%- endif -%}
+    {%- if template.name == 'search' -%}
+      {% comment %}
+        Search results are thin, query-driven pages (old Briko URLs redirect to /search?q=briko), and
+        Shopify's robots.txt no longer disallows /search. Keep them out of the index, follow the links.
+      {% endcomment %}
+      <meta name="robots" content="noindex, follow">
+    {%- endif -%}
     <meta name="theme-color" content="">
     <link rel="canonical" href="{{ canonical_url }}">
 
