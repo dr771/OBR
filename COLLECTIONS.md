@@ -37,7 +37,7 @@ Deliberately in no needs collection: Loewenweiss, Sneaker Lab. Briko (products, 
 | Parent | Collection | Handle | Rule | Products |
 |---|---|---|---|---:|
 | — | Schoenen | `schoenen` | type `Shoe` AND title does not contain `Socks` | 286 |
-| — | Kleding | `kleding` | category: Bovenkleding, Broeken, Hemden, Truien, Vesten, Shorts, Leggings, Jurken, Rokken, Jassen, Ondergoed, Badmode, Pyjama's, One-piece, Kousen, Mutsen & Petten, Handsschoenen, Handschoenen, Badjassen, Skibroeken | 611 |
+| — | Kleding | `kleding` | category: Bovenkleding, Broeken, Hemden, Truien, Vesten, Shorts, Leggings, Jurken, Rokken, Jassen, Ondergoed, Badmode, Pyjama's, One-piece, Kousen, Mutsen & petten, Handsschoenen, Handschoenen, Badjassen, Skibroeken | 611 |
 | — | Accessoires | `accessoires` | category: Handschoenen, Handsschoenen, Kousen, Mutsen & petten, Accessoires | 153 |
 | Schoenen | Sandalen | `sandalen` | Sandalen | 37 |
 | Schoenen | Slippers | `slippers` | Teenslippers | 68 |
@@ -60,7 +60,7 @@ Deliberately in no needs collection: Loewenweiss, Sneaker Lab. Briko (products, 
 | Accessoires | Hoofddeksels | `hoofddeksels` | Mutsen & petten | 15 |
 | Accessoires | Overige accessoires | `overige-accessoires` | Accessoires | 54 |
 
-Ranks: parents 10, children 5. `kleding` also lists accessory values (Kousen, Handsschoenen) on purpose: ski socks and gloves belong under ski clothing (owner, 2026-11-24). `Handschoenen` was added the same day so gloves stay when Nick fixes the typo, and the duplicate `Pyjama's` was removed (Admin edit, the CLI can't write this collection, see GOTCHAS.md). `Mutsen & Petten` with a capital P still matches nothing; with a lowercase p it would add the 15 hats of `hoofddeksels`, undecided. No collection of its own, deliberately: Badmode (all Nike Swim, already in `zwemmen`), Pyjama's, One-piece, Badjassen, Skibroeken. Odlo base-layer tops and sports bras sit partly under Bovenkleding and partly under Ondergoed in Akeneo, so they show in either collection.
+Ranks: parents 10, children 5. `kleding` also lists accessory values (Kousen, Mutsen & petten, Handsschoenen) on purpose: ski socks, hats and gloves belong under ski clothing (owner, 2026-11-24). `Handschoenen` was added the same day so gloves stay when Nick fixes the typo, the duplicate `Pyjama's` was removed and `Mutsen & Petten` became `Mutsen & petten` to match the real value (Admin edits, the CLI can't write this collection, see GOTCHAS.md). No collection of its own, deliberately: Badmode (all Nike Swim, already in `zwemmen`), Pyjama's, One-piece, Badjassen, Skibroeken. Odlo base-layer tops and sports bras sit partly under Bovenkleding and partly under Ondergoed in Akeneo, so they show in either collection.
 
 **Activity collections** (under Sport & Training, rank 5): `hardlopen` (running, vendor not Hi-Tec, 242), `training` (441), `wandelen` (hiking, vendor not Hi-Tec, 247), `fietsen` (cycling, 138), `skien-snowboard` (78), `zwemmen` (swimming, 13).
 
