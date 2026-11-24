@@ -2,7 +2,7 @@
 
 Rules, ranks and menu of the live shop, read from it on 2026-11-24. Counts are in-stock products on that day. Collections are shop data: change them in the Admin or through the Admin API (`sources`, GOTCHAS.md), then update this file.
 
-**Every automated collection also has `Variant inventory > 0`** as an extra AND condition, so collections only list products with stock. It was added in the Admin outside our docs (found 2026-11-24). The theme hides sold-out products on collection pages on its own as well (`plp-hide-sold-out`). Even `all` is automated for this reason: *title is not `§§§ob-no-such-product-title§§§`* AND inventory > 0.
+**Every automated collection also has `Variant inventory > 0`** as an extra AND condition, added by the OB team in the Admin (found 2026-11-24). Side effect: a sold-out product drops out of all its collections, so its PDP loses the breadcrumb (also in the JSON-LD) and the related-products rail (GOTCHAS.md). The team was asked why it was added and whether it can go. Keep the theme's own mechanism (`plp-hide-sold-out`) either way: it also works on manual collections, and its availability filter combines with the variant-level colour filter (Odlo, one colour: 62 products without it, 22 with). Even `all` is automated for this reason: *title is not `§§§ob-no-such-product-title§§§`* AND inventory > 0.
 
 Within one condition, the listed values are OR (the `sources` API takes a value list). Conditions are AND.
 
@@ -78,7 +78,7 @@ Drop `Women`, `Mannen`, `Men` once Nick's Dutch re-sync has landed (SHOP-SETUP.m
 
 ## Brand collections
 
-One per vendor (`fitflop`, `holster`, `irasuto-studios`, `juicy-couture`, `loewenweiss`, `mechanix`, `nike-swim`, `odlo`, `pas-de-monaco`, `rh`, `sneaker-lab`, `sweaty-betty`), rank 40. `mechanix` and `rh` have no rank yet; give them 40.
+One per vendor (`fitflop`, `holster`, `irasuto-studios`, `juicy-couture`, `loewenweiss`, `mechanix`, `nike-swim`, `odlo`, `pas-de-monaco`, `rh`, `sneaker-lab`, `sweaty-betty`), rank 40.
 
 **FitFlop sub-collections** (the only brand with a third menu level, because its old Drupal pages carried ~19,600 search clicks). **The handle is the old Drupal slug**, so `/nl/fitflop-sandalen` redirects 1:1; don't rename them. Vendor FitFlop AND:
 
@@ -89,7 +89,7 @@ One per vendor (`fitflop`, `holster`, `irasuto-studios`, `juicy-couture`, `loewe
 | Sandalen | `fitflop-sandalen` | category Sandalen | 36 |
 | Sneakers | `fitflop-sneakers` | category Sneakers | 62 |
 | Enkellaarzen | `fitflop-enkellaarzen` | category Laarzen | 25 |
-| Pantoffels | `fitflop-pantoffels` | category Slippers (same set as Slides; Akeneo has no Pantoffels value) | 49 |
+| Pantoffels | `fitflop-pantoffels` | category Slippers: since 2026-11-20 the same 49 summer slides as Slides, no house slippers (asked the team) | 49 |
 | Ballerina's & loafers | `fitflop-ballerinas` | category Ballerina's | 17 |
 | Dames | `fitflop-dames` | gender Women, Unisex | 244 |
 | Heren | `fitflop-heren` | gender Mannen, Unisex | 22 |
