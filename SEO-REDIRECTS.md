@@ -114,15 +114,32 @@ Dry run on dev: **3,180 redirect rows**. By old page type, with 16-month search 
 
 ## To do at launch (live shop, full catalog)
 
-- [ ] Recreate the collections and menu on the live shop with the same handles
+**Imported on pre-live 2026-11-24: 3,180 rows, 0 errors** (577 product-colour rows from the
+live catalog, 2,052 active products / 26,733 variants). Every distinct target was checked against
+the shop's collections, pages, blog posts and variant ids before the import, and 13 sample paths
+(`/nl` and bare, mixed case, trailing slash, `?size=38`) were fetched on the storefront and landed
+on their targets. Brand mapping as of that run:
+
+- RH+ → `/collections/rh`, Mechanix → `/collections/mechanix` (both synced since dev).
+- Hi-Tec, Sneaker Lab, Magnum: no products on live → `/pages/merken`. If one of them gets products
+  and a collection, add it back to `BRANDS` and re-run.
+- Briko: 40 active products but no collection (and not on the Merken page) → `/search?q=briko`.
+- Four blog posts are unpublished on pre-live (`la-vie-en-rose-…`, `10-days-fall-love-fitflop`,
+  `fitflop-meer-dan-enkel-slippers`, `omarm-je-unieke-loop-…`; 3 clicks together), so their old
+  URLs go to `/blogs/inspiratie` via `overrides.csv`. If the team republishes one, drop its row.
+
+A re-run only adds: the importer skips paths that already have a redirect, so changing a target
+means editing the existing redirect (Admin → Navigation → URL redirects), not re-importing.
+
+- [x] Recreate the collections and menu on the live shop with the same handles
   ([MIGRATION-TO-LIVE.md](MIGRATION-TO-LIVE.md) §3).
-- [ ] Add newly synced brands to `BRANDS` in the generator (RH+, Magnum, Mechanix) and decide
-  Hi-Tec sub-collections by their old-page clicks (none exist on dev).
-- [ ] Dump the live catalog to `redirects/catalog-live.json` and run
+- [x] Add newly synced brands to `BRANDS` in the generator. Hi-Tec has no products on live, so
+  no sub-collections.
+- [x] Dump the live catalog to `redirects/catalog-live.json` and run
   `node scripts/build-redirects.js live`. Product rows must come from this run.
-- [ ] Review `review-live.csv`, then import `redirects-live.csv` (Admin → Navigation → URL
-  redirects → Import, or `urlRedirectImportCreate`).
-- [ ] On the live shop, re-test one `/nl/…` redirect before the DNS switch (locale prefix).
+- [x] Review `review-live.csv`, then import `redirects-live.csv` (done via batched
+  `urlRedirectCreate`, 50 per request, after the shop identity check).
+- [x] On the live shop, re-test one `/nl/…` redirect before the DNS switch (locale prefix).
 - [ ] Do the DNS switch only after the import. The old pages are gone from that moment.
 
 ## To do after launch

@@ -49,14 +49,17 @@ const BRANDS = [
   ['sweaty-betty', 'sweaty-betty'],
   ['swetty-betty', 'sweaty-betty'],
   ['holster', 'holster'],
-  ['sneakerlab', 'sneaker-lab'],
   ['loewenweiss', 'loewenweiss'],
   ['lowenweiss', 'loewenweiss'],
   ['l-wenweiss', 'loewenweiss'],
   ['fitflop', 'fitflop'],
-  ['hi-tec', 'hi-tec'],
   ['odlo', 'odlo'],
+  ['rh', 'rh'],
+  ['mechanix', 'mechanix'],
 ];
+// Hi-Tec, Sneaker Lab and Magnum have no products on the live shop (2026-11-24): their pages fall
+// back to /pages/merken. Briko has products but no collection, so its pages go to a search.
+const SEARCH_BRANDS = ['briko'];
 // Brand x type pages that got a real collection under the old slug. See COLLECTIONS.md.
 const SUB_COLLECTIONS = new Set([
   'fitflop-slippers',
@@ -118,6 +121,8 @@ function pageTarget(alias) {
     if (/outlet|solden/.test(slug) && SUB_COLLECTIONS.has(`${brand}-outlet`)) return [`/collections/${brand}-outlet`, 'brand-outlet'];
     return [`/collections/${brand}`, 'brand'];
   }
+  const searchBrand = SEARCH_BRANDS.find((prefix) => slug === prefix || slug.startsWith(`${prefix}-`));
+  if (searchBrand) return [`/search?q=${searchBrand}`, 'brand-search'];
   if (/outlet|solden|black-friday|cyber-week|sales-/.test(slug)) return ['/collections/solden', 'sale'];
   return ['/pages/merken', 'fallback'];
 }
