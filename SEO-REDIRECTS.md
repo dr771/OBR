@@ -1,6 +1,6 @@
 # SEO redirects and blog
 
-Redirect map from the old `originalbrands.nl` (Drupal) to Shopify. **Live since 2026-11-24:** 3,180 redirects in the live shop (577 product-colour rows), DNS switched the same day, sample paths verified on the real domain. The open follow-ups (Search Console 404 report, brand pages) are in SHOP-SETUP.md, Open after launch.
+Redirect map from the old `originalbrands.nl` (Drupal) to Shopify. **Live since 2026-11-24:** 3,180 redirects in the live shop (577 product-colour rows), DNS switched the same day. Full check after launch (2026-11-24): every row answers 301 with its target as `Location`, and all 637 distinct targets answer 200. Two fixes came out of it: `/nl` (the old homepage, 2,571 clicks, listed as `/` in `gsc-clicks.json` so the generator made no row) → `/`, added by hand; `/blog/slippers` pointed at an empty tag page (below). Check slowly: the storefront answers 429 beyond about one request per second. The open follow-ups (Search Console 404 report, brand pages) are in SHOP-SETUP.md, Open after launch.
 
 ## How Shopify redirects behave
 
@@ -40,5 +40,5 @@ The primary domain stays `www.originalbrands.nl`, so no Search Console change of
 - **One blog, handle `inspiratie`** (`/blogs/inspiratie`), linked from the footer's "Over ons". 14 of the old 22 posts were recreated; posts about brands no longer sold were not, and redirect to the blog via `overrides.csv`.
 - **Post handle = the old last slug segment, unchanged**, so `/nl/blog/hielspoor/<post>` → `/blogs/inspiratie/<post>`.
 - **Tags are the old category labels.** Shopify handleizes a tag for its URL, which gives the old slug (`/tagged/hielspoor`). Renaming a tag breaks its redirect.
-- Four posts are unpublished on the live shop (3 clicks together); their old URLs go to `/blogs/inspiratie`. If the team republishes one, point its redirect at the post in Admin and drop its row from `overrides.csv`.
+- Four posts are unpublished on the live shop (3 clicks together); their old URLs go to `/blogs/inspiratie`. If the team republishes one, point its redirect at the post in Admin and drop its row from `overrides.csv`. A tag whose only posts are unpublished has no tag page (404): `slippers` is one, so `/blog/slippers` goes to `/blogs/inspiratie` too.
 - Theme: `sections/main-blog.liquid` (tinted hero, tags as pills, card grid), `sections/main-article.liquid`, `assets/component-ob-blog.css`. Dates are hidden. Payloads of the posts: `blog/articles.json`.
