@@ -140,7 +140,7 @@ means editing the existing redirect (Admin → Navigation → URL redirects), no
 - [x] Review `review-live.csv`, then import `redirects-live.csv` (done via batched
   `urlRedirectCreate`, 50 per request, after the shop identity check).
 - [x] On the live shop, re-test one `/nl/…` redirect before the DNS switch (locale prefix).
-- [ ] Do the DNS switch only after the import. The old pages are gone from that moment.
+- [x] Do the DNS switch only after the import. Switched 2026-11-24 12:56 CET; verified on the real domain (`/nl/fitflop-pantoffels`, an old `/nl/artikel/…` URL and the apex all 301 to their targets).
 
 ## To do after launch
 
