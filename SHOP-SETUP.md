@@ -77,12 +77,11 @@ Changed in the theme editor only; `config/settings_data.json` is protected (CLAU
 Shop-owner and Akeneo items, state 2026-11-24.
 
 - [ ] **Payments test mode off.** Every order up to #1024 was a test transaction; only Nick's account sees the switch. iDEAL is "not eligible" for the Belgian account, so NL shoppers have cards, Bancontact and wallets.
-- [ ] **VAT invoices:** Sufio Professional (invoice on fulfilment, credit notes for short deliveries) waits for his go. Shopify's native VAT invoices stay off.
 - [ ] **Location address** is "Maasstraat" without a house number.
 - [ ] **Gender in Dutch:** live still has `Women` and `Mannen`. After his re-sync to `Dames`/`Heren`: drop `Women`/`Men`/`Mannen` from `dames`, `heren`, `fitflop-dames`, `fitflop-heren`, update the S&D Gender value list and the mapping in `snippets/ob-facet-value-label.liquid`.
 - [ ] **Category typo `Handsschoenen`**: `handschoenen`, `accessoires` and `kleding` match both spellings until it's fixed.
 - [ ] **Five Odlo socks typed `Shoe`**: `schoenen` keeps them out with *title does not contain Socks*.
-- [ ] **Connector, at variant creation:** set `inventoryItem.tracked: true`. An untracked variant stays sellable at zero stock (POST-SYNC-CHECK.md §5).
-- [ ] **Connector, after metafield writes:** save the product (`productUpdate`), or the filter index stays a generation behind (POST-SYNC-CHECK.md §1).
+- [x] **Connector sets `inventoryItem.tracked: true` at variant creation:** Nick implemented it 2026-11-13; 0 untracked variants on active products on 2026-11-24. Keep the POST-SYNC-CHECK.md §5 count anyway.
+- [x] **Connector `productUpdate` after metafield writes:** Nick said on 2026-10-26 the connector has no option for it and suggested Shopify Flow. Not to be asked again; ours to solve (Flow or the re-save in POST-SYNC-CHECK.md §1).
 - [ ] **Photos whose colour code differs from the SKU's** (the PDP falls back to Dawn's gallery): `holster-solace` (NATM, SAM), `holster-coastal` (SI), `lowenweiss-trama-bicolor-slipper` (552-41, 903-988, 955-903), `hi-tec-fuse-trail-mid-wp-womens` (042), `sweaty-betty-power-6-inch-biker-shorts` (1001).
 - [ ] Activity `work` has `label_nl` = `work` (should be `Werk`).

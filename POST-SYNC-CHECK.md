@@ -77,6 +77,6 @@ Every type must show `enabled: false`, and that includes any *new* type. Fix for
 
 ## 5. Any variant "Inventory not tracked"?
 
-**Why:** an untracked inventory item is always sellable at zero stock: the PDP offers it, checkout accepts it, and hide-sold-out lists it, because Shopify's availability filter counts it as in stock. Nick's stock update only sets `tracked: true` on items whose counter changed, so a variant created untracked at 0 stays that way (asked to fix at creation: SHOP-SETUP.md).
+**Why:** an untracked inventory item is always sellable at zero stock: the PDP offers it, checkout accepts it, and hide-sold-out lists it, because Shopify's availability filter counts it as in stock. Nick's stock update only sets `tracked: true` on items whose counter changed, so a variant created untracked at 0 stays that way (Nick set `tracked: true` at creation on 2026-11-13; 0 untracked on 2026-11-24).
 
 **Check:** page through `productVariants(first: 250) { nodes { sku inventoryItem { tracked } product { status } } }` (~29k variants, about 2.5 minutes through the CLI). The count of `tracked: false` on ACTIVE products must be 0. Fix in Admin (variant → Inventory → Track quantity, or the bulk editor), since the CLI token has no `write_inventory`.
