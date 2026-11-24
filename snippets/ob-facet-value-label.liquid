@@ -43,8 +43,8 @@
 {%- comment -%}
   Plain-text facets: Geslacht (`custom.genderid`) and Producttype
   (`product_type`) arrive from Akeneo in English and there is no metaobject to
-  read a Dutch label from — the value IS the label. Until Nick's sync sends
-  Dutch values (NICK.md item 7), they are mapped here.
+  read a Dutch label from — the value IS the label. Until the Akeneo sync sends
+  Dutch values for every product (SHOP-SETUP.md, Open with Nick), they are mapped here.
 
   This is a stopgap, deliberately chosen over renaming the values in Search &
   Discovery: that route has failed on this shop before (it is the whole reason
@@ -98,7 +98,7 @@
      **Fix: delete the field from the definition, re-create it, re-write the
      values.** It works immediately — no waiting, no reindex. Nothing else
      worked: writing a sentinel value did not propagate, and waiting did not
-     help. See NICK.md item 4 for the exact mutations.
+     help. See POST-SYNC-CHECK.md §2 for the exact mutations.
 
      This also explains the earlier `label` / `display_label` failures, which
      were misdiagnosed for days as "reserved Liquid property names". They were

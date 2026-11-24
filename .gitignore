@@ -28,7 +28,7 @@ skills-lock.json
 ehthumbs.db
 Thumbs.db
 .shopify
-# Machine-local migration snapshots and CLI logs; reviewed progress lives in MIGRATION-PLAN.md.
+# Machine-local migration snapshots and CLI logs (from the 2026-10 DEV → live migration).
 .migration/
 node_modules
 *.zip

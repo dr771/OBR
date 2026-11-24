@@ -9,6 +9,6 @@
 ## 2. Verify and ship
 
 - [x] 2.1 Run `shopify theme check`, grep for the touched files
-- [ ] 2.2 Push to DEV, verify at phone width: panel closed on load and after navigation, opens on the toggle and stays open while filtering, Category and Activities rows on a mixed collection, native parameters via AJAX, count on the toggle appears/updates/disappears, search results
-- [ ] 2.3 Commit and push to git
-- [ ] 2.4 Push the same files to pre-live theme `209721262417` and verify on a pre-live collection
+- [x] 2.2 Push to DEV, verify at phone width: panel closed on load and after navigation, opens on the toggle and stays open while filtering, Category and Activities rows on a mixed collection, native parameters via AJAX, count on the toggle appears/updates/disappears, search results
+- [x] 2.3 Commit and push to git
+- [x] 2.4 Push the same files to pre-live theme `209721262417` and verify on a pre-live collection

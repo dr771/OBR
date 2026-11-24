@@ -27,6 +27,6 @@ Target: Original Brands DEV, `original-brands-dev.myshopify.com`, active Dawn th
 
 The legacy archive records 34 explicitly selected URLs: 23 contain extracted editorial copy; ten return 200 without matching editorial blocks, and one swimwear page returns 403. Empty extraction results are labelled as gaps rather than proof that a page had no text. No old product pages were crawled.
 
-`frontpage` and the unused `merken` collection are utility exclusions. `kinderen` is deliberately unfilled pending a genuine children's assortment; the current rule matches Unisex adult items and the marketing pallet already recorded in `NICK.md` #15. The manual `fitflop-pantoffels` collection remains empty, so its copy provides comparison guidance without promising stock.
+`frontpage` and the unused `merken` collection are utility exclusions. `kinderen` is deliberately unfilled pending a genuine children's assortment; the DEV rule matched Unisex adult items and a marketing pallet. The manual `fitflop-pantoffels` collection remains empty, so its copy provides comparison guidance without promising stock.
 
 Claude was working concurrently. This task deployed only its new section, stylesheet and the reviewed collection template; it did not alter the separate TODO changes or other theme code.

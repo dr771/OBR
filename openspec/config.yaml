@@ -5,12 +5,10 @@ context: |
   Domain: Original Brands (originalbrands.nl) — multi-brand apparel + footwear retailer, migrating from a
   custom Drupal-ish CMS to Shopify. Not a marketplace — single operator, 1 item + color/size variants per
   product (SB-style: one product per model, color x size as variants — see MIXED-SHOPS-PLAYBOOK.md
-  "Product-model decision").
+  "Data model").
   Reuse source: SweatyBetty (sibling directory of this repo, ../SweatyBetty), same Dawn/Akeneo/OpenSpec setup, further
-  along. Before writing a new spec, check MIXED-SHOPS-PLAYBOOK.md's "Reuse ledger" table — most PLP/PDP
-  capabilities (color filter, card swatches, size facet grid, filter panel chrome, wishlist integration,
-  predictive search, cart drawer) are marked "Reuse as-is" or "Reuse, adapt" against SB's already-shipped
-  specs there; don't re-derive architecture decisions already made for SB.
+  along. Before writing a new spec, check MIXED-SHOPS-PLAYBOOK.md and SB's shipped specs (../SweatyBetty/openspec/specs);
+  most PLP/PDP capabilities were ported from SB, so don't re-derive architecture decisions already made there.
   Boost (native filter/search app) is explicitly ruled out — native-first is the default, SB tested Boost
   and native won on LCP by ~40-50%.
 

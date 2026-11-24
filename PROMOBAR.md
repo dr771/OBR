@@ -72,5 +72,4 @@ Leave **Actiecollectie** empty. It then shows until you delete or hide it.
 
 - Section: `sections/announcement-bar.liquid` (both bars are instances of it, in `sections/header-group.json`). Styles: `assets/component-ob-announcement-bar.css`.
 - Run time of a message: snippet `ob-campaign-window` (reads `custom.campaign_starts_at` / `custom.campaign_ends_at` of the linked collection).
-- Spec: `openspec/changes/campaign-merchandising/specs/header-announcement-bar/spec.md` (still unarchived).
-- History: until 2026-10-29 there was a checkbox "Promo bar: replaces other announcement bars" that hid the trust bar automatically. It was removed because it overlapped with the eye icon and confused the team.
+- Spec: `openspec/specs/header-announcement-bar/spec.md`. There is deliberately no "promo replaces trust bar" setting: it overlapped with the eye icon and confused the team.

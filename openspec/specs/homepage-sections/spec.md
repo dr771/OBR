@@ -82,7 +82,19 @@ before a merchant uploads one.
 - **THEN** it SHALL say "Topmerken · slim gekozen" beside a decorative 6px blue dot.
 
 ### Requirement: Brand marquee scrolls continuously and shows each brand's real logo
-The homepage SHALL render a continuously auto-scrolling row of brand marks on a tinted band directly under the hero, each linking to its collection, reusing `snippets/ob-brand-logotype.liquid` (shared with the Merken hero chips) so both surfaces stay in sync.
+The homepage SHALL render exactly one continuously auto-scrolling row of brand marks on a tinted band, owned by its own section `ob-home-brand-marquee` (its brands are that section's blocks) so every hero shares one brand list and no hero carries marquee code, each linking to its collection, reusing `snippets/ob-brand-logotype.liquid` (shared with the Merken hero chips) so both surfaces stay in sync.
+
+#### Scenario: Position below 750px
+- **WHEN** the homepage is displayed below 750px wide with the default hero `ob-home-hero` shown
+- **THEN** the band SHALL render at full viewport width between the hero copy (after the trust/rating block) and the hero image.
+
+#### Scenario: Position under any other hero
+- **WHEN** any other hero is shown, at any width
+- **THEN** the band SHALL render at full viewport width directly under that hero.
+
+#### Scenario: Position from 750px up
+- **WHEN** the homepage is displayed at 750px wide or more
+- **THEN** the band SHALL render at full viewport width directly under the shown hero.
 
 #### Scenario: Seamless loop
 - **WHEN** the marquee is displayed
@@ -90,10 +102,10 @@ The homepage SHALL render a continuously auto-scrolling row of brand marks on a 
 
 #### Scenario: Tinted band
 - **WHEN** the marquee is displayed
-- **THEN** its strip SHALL render on `#f1f5f9`, the theme's single light surface tint — the same value used by the featured-brands band, the footer, and the PLP/PDP product-photo surface — not a transparent/white background and not a second, near-identical pale blue. The hero's floating-card icon tile directly above SHALL use that same value, so no two light surfaces on the page sit one step apart.
+- **THEN** its strip SHALL render on the theme's single light surface tint, the same value used by the featured-brands band, the footer, and the PLP/PDP product-photo surface, not a transparent/white background and not a second, near-identical tint. The hero's floating-card icon tile SHALL use that same value, so no two light surfaces on the page sit one step apart.
 
 #### Scenario: Real logo for a sourced brand
-- **WHEN** a marquee item is rendered for a brand with a sourced logo file (FitFlop, Hi-Tec, Holster, Irasuto Studios, Juicy Couture, Löwenweiss, Mechanix, Nike Swim, Odlo, Pas de Monaco, RH+, Sweaty Betty)
+- **WHEN** a marquee item is rendered for a brand with a sourced logo file (FitFlop, Hi-Tec, Holster, Irasuto Studios, Juicy Couture, Löwenweiss, Nike Swim, Odlo, Pas de Monaco, RH+, Sweaty Betty)
 - **THEN** it SHALL render that brand's real logo image (`assets/ob-logo-<handle>.*`) at a uniform grayscale, contrast-boosted, 90%-opacity weight - dark enough that lighter source files (e.g. Holster's cool gray, Pas de Monaco's olive) read at roughly the same weight as the near-black ones, not their own original lightness - and SHALL reveal full color and 100% opacity on hover/focus of the marquee item.
 
 #### Scenario: Inverted logo for a brand with no dark-on-light source file

@@ -14,8 +14,7 @@ The theme can't read Shopify discounts, only collections. That's why a visible c
 
 ## Visible campaign in 5 steps
 
-Live example on dev: [FitFlop laarzen – 2e paar -50%](https://original-brands-dev.myshopify.com/collections/actie-fitflop-laarzen) (collection `actie-fitflop-laarzen` incl. Sale, BXGY discount of the same name, promo bar message linking to Laarzen), running in parallel with [Winteractie Löwenweiss – 2+1 gratis](https://original-brands-dev.myshopify.com/collections/loewenweiss).
-
+The three demo campaigns from Oct–Nov 2026 (expired) are the examples below: *FitFlop laarzen – 2e paar -50%*, *Winteractie Löwenweiss – 2+1 gratis*, *Odlo skiset – €15 korting op handschoenen*.
 
 1. **Create Collection:** handle starts with `actie-`. Add the products (no sale items). Fill the metafields *Actie: badge-tekst* (`-20%`, `2+1`), *start*, *einde*, and optionally *prioriteit*. Publish to Online Store.
 2. **Automatic discount** on that same collection, same dates. Under combinations, tick **product discounts** (otherwise two running campaigns cancel each other in one cart).
@@ -25,13 +24,13 @@ Live example on dev: [FitFlop laarzen – 2e paar -50%](https://original-brands-
 
 ## Buy X get Y — the three "get" values
 
-| Option | Example on dev |
+| Option | Example (demo) |
 |---|---|
 | *Free* | Winteractie Löwenweiss: buy 2, get 1 free (cheapest one) |
 | *Percentage* | FitFlop laarzen: buy 1, get the 2nd at -50 % |
 | *Amount off each* | Odlo skiset: buy a midlayer, get **€15 off each** pair of gloves (cross-sell: X and Y are different products) |
 
-For a cross-sell, put the X and Y products straight into the discount, and make one `actie-…` collection with **both** groups for the badge. Sort it *manually*, alternating X and Y (dev: midlayer, gloves, midlayer, gloves…), and say "step 1 / step 2" in the collection text; with the default sort shoppers saw only the discounted gloves and couldn't find what unlocks them.
+For a cross-sell, put the X and Y products straight into the discount, and make one `actie-…` collection with **both** groups for the badge. Sort it *manually*, alternating X and Y (midlayer, gloves, midlayer, gloves…), and say "step 1 / step 2" in the collection text; with the default sort shoppers saw only the discounted gloves and couldn't find what unlocks them.
 
 ## What the theme guarantees
 
@@ -42,16 +41,16 @@ For a cross-sell, put the X and Y products straight into the discount, and make 
 ## Traps
 
 - Badge and discount are separate objects: a mismatch (other products, other dates) is not detected.
-- Collection conditions for "not reduced": *compare-at price is not set* OR *compare-at price = 0* (as in `volle-prijs`). Akeneo leaves it empty since Nov 2026; the `= 0` guards against the old `0.00` coming back.
+- Collection condition for "not reduced": *price reduced is not set* (`volle-prijs`). A product with some reduced and some full-price sizes matches both that and Sale.
 - In *Actiecollectie*, pick the collection. Typing its name in the message text does nothing.
 - Reload the theme editor before saving if someone else changed the header meanwhile.
 
 ## Free shipping (not a discount)
 
 - **Shipping rate:** Markets → **België & Nederland** → Shipping → *Standard*: €5.95, free from €70, transit 1–4 business days (the only option since 2026-11-17). The market's shipping overrides the old rates in Settings → Shipping and delivery → General profile, which the Admin API still reports.
-- **Cart progress bar:** Theme settings → Cart → *Free shipping from (EUR)* `70`, *Only for countries* `BE,NL`.
+- **Cart progress bar:** Theme settings → Cart → *Free shipping from (EUR)* `70`, *Only for countries* `BE,NL,LU`.
 - Change both together, and update the texts that mention €70 (trust bar, PDP USPs, cart USP).
-- The €70 counts **after discounts** (tested: €80 item at -15% = €68 → €4.95 shipping (DEV rate); 2× = €136 → free). The cart bar uses the same total, so it agrees.
+- The €70 counts **after discounts** (tested: €80 item at -15% = €68 → paid shipping; 2× = €136 → free). The cart bar uses the same total, so it agrees.
 - **Free shipping *discount*** (Discounts → Free shipping) is for exceptions, not the standing rule: a time-boxed "free shipping weekend", a code (customer service, influencer), a customer segment, a different threshold during a campaign, or limiting it to certain products. The cart bar doesn't know about it.
 
 ## Black Friday "on everything": order or products?
@@ -61,13 +60,11 @@ For a cross-sell, put the X and Y products straight into the discount, and make 
 
 ## Newsletter code
 
-**Policy still open (owner is testing).** Pick the type by what the code should cover:
+**Live: WELCOME27** is *Amount off order*, 10 %, once per customer, combines with product and order discounts, so it also applies to Sale and campaign items. To change what it covers:
 
 | Code should apply to… | Type | Notes |
 |---|---|---|
 | **Everything** (incl. Sale and campaign items) | **Amount off order** | Combinations: tick *product discounts* on the code **and** *order discounts* on every campaign, or the code is rejected while that campaign is in the cart. Calculated on the total after campaigns (tested: 3 Löwenweiss €168 → 2+1 €114 → -10 % €102.60). One line on the total, not per item. Can't exclude anything. |
-| **Everything except Sale** | **Amount off products** on `volle-prijs` | Doesn't stack on campaign items (one product discount per item; a 2+1 also "uses" the paid items). Cart with only campaign items → code rejected. ~60 partly-reduced products still slip through. |
+| **Everything except Sale** | **Amount off products** on `volle-prijs` | Doesn't stack on campaign items (one product discount per item; a 2+1 also "uses" the paid items). Cart with only campaign items → code rejected. Products with some reduced sizes are in `volle-prijs` too, so their reduced sizes still get the code. |
 
-For both: *Limit to one use per customer*; optional minimum order value. The €70 free shipping counts after the code (€75 − 10 % = €67.50 → €4.95 shipping (DEV rate)); the cart bar shows this correctly.
-
-Dev state: WELCOME27 is a product code targeting `all` + `volle-prijs` (= everything except campaign items); WELCOME28 is an order code (10 %), both demo campaigns allow order discounts.
+For both: *Limit to one use per customer*; optional minimum order value. The €70 free shipping counts after the code (€75 − 10 % = €67.50 → paid shipping); the cart bar shows this correctly.

@@ -2,7 +2,7 @@
 
 Run this after **every** Akeneo sync by Nick. Each item has broken silently at least once: nothing errors, nothing is logged, the shop just shows the wrong thing.
 
-Shop: the pre-live working shop `original-brands-live.myshopify.com` (password-protected storefront; synced from Akeneo **live**). DEV (`original-brands-dev.myshopify.com`, password `original`) still gets Akeneo-dev syncs; run the same checks there only when testing on DEV. Open issues and history: [NICK.md](NICK.md). Category vocabulary: [cats-dev.csv](cats-dev.csv) is the **dev** vocabulary; Akeneo live differs, so confirm live values before treating a mismatch as an error.
+Shop: the live shop `original-brands-live.myshopify.com` (www.originalbrands.nl, synced from Akeneo **live**). DEV (`original-brands-dev.myshopify.com`, password `original`) gets Akeneo-dev syncs; run the checks there only when testing on DEV. Open items with Nick: SHOP-SETUP.md, Open with Nick.
 
 **One script for checks 1 and 2.** Paste it into the browser console on any storefront page:
 
@@ -20,26 +20,38 @@ console.log(Object.fromEntries(Object.entries(f).map(([k, v]) => [k, [...v].join
 
 ## 1. Category facet: stale index or bad data?
 
-**Why:** Nick's connector writes product metafields without saving the product, and the storefront filter index only refreshes on a product save. So the facet can stay a generation behind the real data (2026-09-21: 412 of 564 products). A wrong facet value is therefore either bad data *or* a stale index, and the facet alone cannot tell you which.
+**Why:** Nick's connector writes product metafields without saving the product, and the storefront filter index only refreshes on a product save. So the facet can stay a generation behind the real data (2026-09-21: 412 of 564 products). Re-creating the metafield definition or the S&D filter does not help, and neither does waiting. A wrong facet value is therefore either bad data *or* a stale index, and the facet alone cannot tell you which.
 
-**Check:** compare the category list from the script (`custom.shopify_originalbrands_category` on DEV; on pre-live the live sync writes `akeneo.shopify_originalbrands_cate__1`, NICK.md #16) against the **right-hand** column of `cats-dev.csv`. Known and already with Nick, do not re-report: `Shirt` 4, `Legging` 3, `Slipper` 2, `Sneaker` 2, `Outdoor` 1 (NICK.md item 11).
+**Check:** compare the category list from the script (`akeneo.shopify_originalbrands_cate__1`; DEV uses `custom.shopify_originalbrands_category`) against the live vocabulary in COLLECTIONS.md, "Data the rules read". Known and already with Nick, do not re-report: `Handsschoenen`.
 
 For any *other* off-vocabulary value, open one product from that bucket at `/admin/products/<id>/metafields`. Use a value whose code is not a prefix of its label (`boots`→`Laarzen`, `pants`→`Broeken`), never `Slipper`→`Slippers`, because a prefix match proves nothing.
 
 - Admin shows the Dutch label → **stale index**. Fix: Products → select all → **Select all in this store** → Actions → **Add tags** `ob-reindex-touch` → Save. The facet settles in about 2 minutes. Then remove the tag the same way. Always use this bulk route: saving a single product in the UI writes `Uncategorized` over its taxonomy suggestion.
 - Admin shows the same value → **real data error**. Report it to Nick with the SKUs.
 
-**Then check that every category value has a collection home** (pre-live, `COLLECTIONS.md` "Pre-live rules"). A value no collection rule names is only reachable through the brand pages and the filter. Clothing values belong in the `kleding` OR rule, shoe values in a Schoenen sub-collection, the rest in `accessoires`. Overlap between collections is fine; a product that no category collection shows is not.
+**Then check that every category value has a collection home** (COLLECTIONS.md). A value no collection rule names is only reachable through the brand pages and the filter. Clothing values belong in the `kleding` OR rule, shoe values in a Schoenen sub-collection, the rest in `accessoires`. Overlap between collections is fine; a product that no category collection shows is not.
 
 ---
 
 ## 2. Kleur and Activities still Dutch?
 
-**Why:** a metaobject field can stop serving its value to Liquid, which then shows the English handle, while the Admin API still has the right value. This has happened three times to `label_nl`, most recently on `filtercolors` on 2026-10-21. The trigger is unknown (NICK.md item 4). You cannot see it on the page: the colour filter shows chips only, the name sits in tooltip and screen-reader text. That is why it went unnoticed for weeks.
+**Why:** a metaobject field can stop serving its value to Liquid, which then shows the English handle, while the Admin API still has the right value. This has happened three times to `label_nl` on DEV, most recently on `filtercolors` on 2026-10-21. The trigger is unknown: every operation a sync can do was replayed against a working definition and none broke it. One untested lead is the `publishable` snapshot, which is off since then (§3). You cannot see it on the page: the colour filter shows chips only, the name sits in tooltip and screen-reader text. That is why it went unnoticed for weeks.
 
 **Check:** in the script output, `custom.filtercolors` must read `zwart`, `blauw`, `bruin` … and `custom.activities` must read `Wandelen`, `Fietsen` …. English (`black`, `Hiking`) means broken. **Note the time** and ask Nick what his sync did just before, because that is the only way left to find the trigger.
 
-**Fix (≈2 min, instant, no reindex):** delete `label_nl` from the definition, re-create it, re-write every entry's value. Read all values first, because deleting the field wipes them. Exact mutations and definition ids are in NICK.md item 4.
+**Fix (≈2 min, instant, no reindex):** delete `label_nl` from the definition, re-create it, re-write every entry's value. Read all values first, because deleting the field wipes them. Waiting, a reindex, a sentinel write or renaming don't help. Look up the definition id first (`metaobjectDefinitionByType(type: "filtercolors") { id }`), then:
+
+```graphql
+# 1. displayNameKey must not point at the field while you delete it
+metaobjectDefinitionUpdate(id: $defId, definition: {
+  displayNameKey: "code", fieldDefinitions: [{ delete: { key: "label_nl" } }] })
+# 2. re-create it
+metaobjectDefinitionUpdate(id: $defId, definition: {
+  fieldDefinitions: [{ create: { key: "label_nl", name: "label_nl", type: "single_line_text_field" } }] })
+# 3. metaobjectUpdate every entry with its saved value, then set displayNameKey back to "label_nl"
+```
+
+Verify on the rendered storefront, never only in the Admin API: the API shows the right value whether or not Liquid can read it.
 
 ---
 
@@ -65,6 +77,6 @@ Every type must show `enabled: false`, and that includes any *new* type. Fix for
 
 ## 5. Any variant "Inventory not tracked"?
 
-**Why:** an untracked inventory item is always sellable at zero stock: the PDP offers it, checkout accepts it, and hide-sold-out lists it, because Shopify's availability filter counts it as in stock. Nick's stock update only sets `tracked: true` on items whose counter changed, so a variant created untracked at 0 stays that way ([NICK.md](NICK.md) #17).
+**Why:** an untracked inventory item is always sellable at zero stock: the PDP offers it, checkout accepts it, and hide-sold-out lists it, because Shopify's availability filter counts it as in stock. Nick's stock update only sets `tracked: true` on items whose counter changed, so a variant created untracked at 0 stays that way (asked to fix at creation: SHOP-SETUP.md).
 
-**Check:** page through `productVariants(first: 250) { nodes { sku inventoryItem { tracked } product { status } } }` (pre-live has ~29k variants, about 2.5 minutes through the CLI). The count of `tracked: false` on ACTIVE products must be 0. Fix in Admin (variant → Inventory → Track quantity, or the bulk editor), since the CLI token has no `write_inventory`.
+**Check:** page through `productVariants(first: 250) { nodes { sku inventoryItem { tracked } product { status } } }` (~29k variants, about 2.5 minutes through the CLI). The count of `tracked: false` on ACTIVE products must be 0. Fix in Admin (variant → Inventory → Track quantity, or the bulk editor), since the CLI token has no `write_inventory`.

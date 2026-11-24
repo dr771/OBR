@@ -16,4 +16,4 @@
 
 ## 3. Docs
 
-- [ ] 3.1 Update CI-STYLE-TOKENS.md wherever it records eyebrow/label tracking values
+- [x] 3.1 Update CI-STYLE-TOKENS.md wherever it records eyebrow/label tracking values

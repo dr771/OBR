@@ -1,406 +1,160 @@
-# Smart collections
+# Collections
 
-## Current catalog values
+Rules, ranks and menu of the live shop, read from it on 2026-11-24. Counts are in-stock products on that day. Collections are shop data: change them in the Admin or through the Admin API (`sources`, GOTCHAS.md), then update this file.
 
-### Categories
+**Every automated collection also has `Variant inventory > 0`** as an extra AND condition, so collections only list products with stock. It was added in the Admin outside our docs (found 2026-11-24). The theme hides sold-out products on collection pages on its own as well (`plp-hide-sold-out`). Even `all` is automated for this reason: *title is not `§§§ob-no-such-product-title§§§`* AND inventory > 0.
 
-Live Admin API scan on 2026-09-21: **565 active products**, of which **564** have
-`custom.shopify_originalbrands_category`. The stored metafield currently contains
-28 distinct values:
+Within one condition, the listed values are OR (the `sources` API takes a value list). Conditions are AND.
 
-| Stored value | Products | Note |
-|---|---:|---|
-| Accessoires | 3 | Valid `cats-dev.csv` label |
-| Badmode | 1 | Valid label |
-| Ballerinas | 20 | Valid label; storefront title should be `Ballerina's` |
-| Bovenkleding | 6 | Valid label; review wording with Nick (`top` maps here) |
-| Broeken | 34 | Valid label |
-| Handschoenen | 14 | Valid label |
-| Headware | 5 | Valid label; English/misspelt source label, present as stored |
-| Hemden | 30 | Valid label; both `shirt` and `buttonupshirt` map here |
-| Instappers | 14 | Valid label |
-| Jurken | 3 | Valid label |
-| Kousen | 10 | Valid label |
-| Laarzen | 26 | Valid label |
-| Legging | 3 | Stale/incorrect value; should be `Leggings` |
-| Leggings | 2 | Valid label |
-| Ondergoed | 1 | Valid label |
-| One-piece | 1 | Valid label |
-| Outdoor | 1 | Invalid: absent from both columns of `cats-dev.csv` |
-| Rokjes | 3 | Valid label; storefront title should be `Rokken` |
-| Sandalen | 50 | Valid label |
-| Shirt | 4 | Stale/incorrect value; should be `Hemden` |
-| Shorten | 10 | Valid source label; storefront title should be `Shorts` |
-| Slipper | 2 | Stale/incorrect value; should be `Slippers` |
-| Slippers | 88 | Valid label |
-| Sneaker | 2 | Stale/incorrect value; should be `Sneakers` |
-| Sneakers | 78 | Valid label |
-| Teenslippers | 112 | Valid label |
-| Truien | 20 | Valid label |
-| Vesten | 21 | Valid label |
-| *(missing)* | 1 | Active product without this metafield |
+## Data the rules read
 
-Four valid dev-vocabulary labels currently have zero products: `Pyjama's`,
-`Badjassen`, `Jassen`, and `Skibroeken`. The 12 products on `Shirt`, `Legging`,
-`Slipper`, `Sneaker`, or `Outdoor` are tracked with Nick in `NICK.md` #11.
-Until the feed is corrected, any approved category collection that should contain
-those products must OR the stale value with its canonical label; `Outdoor` needs a
-merchandising decision rather than an inferred mapping.
+- **Category:** `akeneo.shopify_originalbrands_cate__1`, Dutch labels from Akeneo live. Values on 2026-11-24: Accessoires, Badjassen, Badmode, Ballerina's, Bovenkleding, Broeken, Handsschoenen (typo, SHOP-SETUP.md), Hemden, Instappers, Jassen, Jurken, Kousen, Laarzen, Leggings, Mutsen & petten, Ondergoed, One-piece, Pyjama's, Rokken, Sandalen, Shorts, Slippers, Sneakers, Teenslippers, Truien, Vesten. Every value needs a collection home (POST-SYNC-CHECK.md §1). [cats-dev.csv](cats-dev.csv) is the Akeneo **dev** vocabulary and differs.
+- **Gender:** `custom.genderid`. Live has `Women`, `Mannen`, `Unisex`, `Kinderen`, `Jongens`; Nick's final values are `Dames`, `Heren`, `Unisex`, `Kinderen`, `Jongens`, `Meisjes`. `Unisex` means adult unisex.
+- **Activities:** `custom.activities`, by metaobject: `running`, `training`, `hiking`, `cycling`, `ski_snowboard`, `swimming`.
+- **Vendor** for the needs, brand and product-group collections: exact text, case-sensitive.
+- **Product type** `Shoe` / `Sport` / `Fashion`, used only by `schoenen`.
 
-### Activities
+## Needs collections and their product groups
 
-- Fietsen
-- Lifestyle
-- Running
-- Skiën & Snowboard
-- Training
-- Wandelen
-- Zwemmen
+Vendor-based (`ob-collection-maintenance` skill when the brand roster changes). Activity/category rules made Sport & Training and Outdoor & Werk overlap, which is why vendor replaced them (archived change `2026-09-03-restructure-needs-collections`).
 
-## Special collections
+| Collection | Handle | Vendor is one of | Rank | Products |
+|---|---|---|---:|---:|
+| Sport & Training | `sport-training` | Odlo, RH+, Nike Swim, Sweaty Betty | 20 | 504 |
+| Outdoor & Werk | `outdoor-werk` | Mechanix | 20 | 58 |
+| Fashion & Lifestyle | `fashion-lifestyle` | Juicy Couture, Pas dé Monacó, Irasuto Studios, FitFlop, Holster | 20 | 352 |
+| → Werkkleding | `werkkleding` | Mechanix | 5 | 58 |
+| → Streetwear | `streetwear` | Pas dé Monacó, Irasuto Studios | 5 | 18 |
+| → Loungewear | `loungewear` | Juicy Couture | 5 | 55 |
+| → Comfort Footwear | `comfort-footwear` | FitFlop | 15 | 266 |
 
-These three automatic collections use **OR** logic on the product's **vendor**: a product is included when its vendor matches one of the collection's listed brands. This replaced the original activity/category-based rule set on 2026-09-03 (see `openspec/changes/restructure-needs-collections/`) after a live check found it caused real overlap — Odlo, which dominates Sport & Training's SKU volume, tags nearly every product with activities spanning both the Sport & Training and Outdoor & Werk buckets at once (e.g. one base layer tagged `Training, Fietsen, Skiën & Snowboard, Wandelen, Running` simultaneously), so the two collections showed largely the same products under the old rule type. Vendor is single-valued per product, so these three collections are now mutually exclusive by construction.
+`comfort-footwear` is rank 15, not 5: it holds all of FitFlop, so at 5 it would tie with the more precise `sandalen`/`sneakers`/… and a FitFlop sandal's breadcrumb could flip to "Comfort Footwear".
 
-The pillar assignment is based on a full-catalog SKU export (not just what's synced), which showed the catalog splits cleanly by brand mission — see `TODO.md` for the SKU counts behind this call. FitFlop, Holster, Loewenweiss, and Sneaker Lab deliberately have **no** needs-collection: they're comfort-footwear/care brands already reachable via the Schoenen/Kleding/Accessoires product-type collections and their own Merken brand page — a "Comfort" needs-card would just duplicate that existing axis. **Exception since 2026-11-05 (pre-live, team request): FitFlop is in Fashion & Lifestyle**, with its own `Comfort Footwear` sub-collection (see below). Holster, Loewenweiss and Sneaker Lab still have no needs-collection.
+Deliberately in no needs collection: Loewenweiss, Sneaker Lab. Briko (products, no collection) is undecided (SHOP-SETUP.md, Open after launch).
 
-### Sport & Training (`sport-training`)
+## Product type and category collections
 
-- Vendor is one of: Odlo, RH+, Nike Swim, Sweaty Betty
+| Parent | Collection | Handle | Rule | Products |
+|---|---|---|---|---:|
+| — | Schoenen | `schoenen` | type `Shoe` AND title does not contain `Socks` | 286 |
+| — | Kleding | `kleding` | category: Bovenkleding, Broeken, Hemden, Truien, Vesten, Shorts, Leggings, Jurken, Rokken, Jassen, Ondergoed, Badmode, Pyjama's, One-piece, Kousen, Mutsen & Petten, Handsschoenen, Badjassen, Skibroeken | 611 |
+| — | Accessoires | `accessoires` | category: Handschoenen, Handsschoenen, Kousen, Mutsen & petten, Accessoires | 153 |
+| Schoenen | Sandalen | `sandalen` | Sandalen | 37 |
+| Schoenen | Slippers | `slippers` | Teenslippers | 68 |
+| Schoenen | Slides & pantoffels | `slides` | Slippers | 64 |
+| Schoenen | Sneakers | `sneakers` | Sneakers | 63 |
+| Schoenen | Laarzen | `laarzen` | Laarzen | 25 |
+| Schoenen | Ballerina's | `ballerinas` | Ballerina's | 17 |
+| Schoenen | Instappers | `instappers` | Instappers | 12 |
+| Kleding | Broeken | `broeken` | Broeken | 52 |
+| Kleding | Truien | `truien` | Truien | 38 |
+| Kleding | Vesten | `vesten` | Vesten | 31 |
+| Kleding | Jassen | `jassen` | Jassen | 22 |
+| Kleding | Shirts & tops | `shirts-tops` | Hemden, Bovenkleding | 177 |
+| Kleding | Shorts | `shorts` | Shorts | 49 |
+| Kleding | Leggings | `leggings` | Leggings | 72 |
+| Kleding | Ondergoed & baselayers | `ondergoed` | Ondergoed | 48 |
+| Kleding | Jurken & rokken | `jurken-rokken` | Jurken, Rokken | 3 |
+| Accessoires | Handschoenen | `handschoenen` | Handschoenen, Handsschoenen | 66 |
+| Accessoires | Kousen | `kousen` | Kousen | 18 |
+| Accessoires | Hoofddeksels | `hoofddeksels` | Mutsen & petten | 15 |
+| Accessoires | Overige accessoires | `overige-accessoires` | Accessoires | 54 |
 
-Sweaty Betty is **provisional** — the user expects it will likely leave the Akeneo feed, but it currently has live synced products, so it stays in the condition until that's confirmed (harmless if it later contributes zero SKUs).
+Ranks: parents 10, children 5. `kleding` also lists accessory values (Kousen, `Mutsen & Petten` with a capital P, Handsschoenen) and `Pyjama's` twice; that came in through an Admin edit and was left as found. No collection of its own, deliberately: Badmode (all Nike Swim, already in `zwemmen`), Pyjama's, One-piece, Badjassen, Skibroeken. Odlo base-layer tops and sports bras sit partly under Bovenkleding and partly under Ondergoed in Akeneo, so they show in either collection.
 
-### Outdoor & Werk (`outdoor-werk`)
-
-- Vendor is one of: Hi-Tec, Magnum, Mechanix (Mechanix added on pre-live 2026-11-03)
-
-Magnum (work/tactical/safety boots) hasn't synced yet, so this collection is sparse (Hi-Tec only) for now — same class of "not yet exercisable at full scale" caveat this project already accepts elsewhere (PLP load-more >18 products, predictive search >8 results). "Werk" isn't a misnomer: it only looked empty because the original 11-product test sync happened to have zero Magnum items.
-
-### Fashion & Lifestyle (`fashion-lifestyle`, renamed from "Dagelijks Comfort")
-
-- Vendor is one of: Juicy Couture, Pas dé Monacó, Irasuto Studios, FitFlop (FitFlop added on pre-live 2026-11-05)
-
-FitFlop makes up most of the collection: 159 of 190 products on 2026-11-05 (31 before). The owner gave the go knowing this.
-
-### Schoenen (`schoenen`, pre-live)
-
-- Product type is `Shoe` AND title does not contain `Socks` (since 2026-11-06; `Schoenen` from 2026-11-03). Nick made `Shoe` the final value (NICK.md #16 point 3). Five Odlo socks carry the shoe type by mistake (point 8). Drop the title condition once Akeneo types them `Sport`.
-
-### Sub-collections under Outdoor & Werk and Fashion & Lifestyle (pre-live, 2026-11-03)
-
-Team request: the main-menu dropdowns of these two items show product groups instead of brand names. The brands stay reachable under Merken. Each one is a smart collection with OR vendor rules, `custom.breadcrumb_rank = 5`, published to Online Store:
-
-| Menu item | Handle | Vendor is one of |
-|---|---|---|
-| Outdoor & Werk → Werkkleding | `werkkleding` | Mechanix |
-| Fashion & Lifestyle → Streetwear | `streetwear` | Pas dé Monacó, Irasuto Studios |
-| Fashion & Lifestyle → Loungewear | `loungewear` | Juicy Couture |
-| Fashion & Lifestyle → Comfort Footwear (2026-11-05) | `comfort-footwear` | FitFlop |
-
-`comfort-footwear` has **rank 15, not 5**. It holds every FitFlop product, so at 5 it would tie with the more specific `Sandalen`/`Sneakers`/… sub-collections. Ties go to Liquid's undocumented `product.collections` order, so a FitFlop sandal's breadcrumb could flip to "Comfort Footwear". It would also pour all of FitFlop into the related-products rail's first band. At 15 it ranks after the type collections and before Fashion & Lifestyle (20). For now it shows the same products as `/collections/fitflop`; Holster and Loewenweiss could join it with one vendor value.
-
-On 2026-11-03 Werkkleding and Streetwear are empty, because Mechanix, Pas dé Monacó and Irasuto Studios have no products in the live feed yet. The header dropdown still shows them (only the collection hero's pills hide empty collections). `Mechanix` is the expected vendor string, unverified like RH+ and Magnum: check it against the first real product record. A Juicy Couture product's breadcrumb now resolves to Fashion & Lifestyle › Loungewear (rank 5 beats the brand collection's 40).
-
-**Caveat:** RH+ and Magnum's vendor conditions use the brand labels from the SKU export ("RH+", "Magnum") verbatim, but neither brand has synced yet, so the exact vendor string is unverified — re-check against the real product record the moment either syncs.
+**Activity collections** (under Sport & Training, rank 5): `hardlopen` (running, vendor not Hi-Tec, 242), `training` (441), `wandelen` (hiking, vendor not Hi-Tec, 247), `fietsen` (cycling, 138), `skien-snowboard` (78), `zwemmen` (swimming, 13).
 
 ## Gender collections
 
-These automatic collections use the Product metafield `custom.genderid` with OR logic:
+Rank 30, not in the main menu (at ~80% women, Dames/Heren trees would be near-identical; gender is the first filter instead).
 
-- Dames: `Women` or `Unisex`
-- Heren: `Men` or `Unisex`
-- Kinderen: `Unisex`
+| Collection | Handle | Gender is one of | Products |
+|---|---|---|---:|
+| Dames | `dames` | Dames, Women, Unisex | 765 |
+| Heren | `heren` | Heren, Mannen, Unisex, Men | 303 |
+| Kinderen | `kinderen` | Kinderen, Jongens, Meisjes | 17 |
 
-That is the DEV rule set (DEV only has `Women`/`Men`/`Unisex`/`Kids`). **Pre-live (2026-11-06):** Nick's final values are `Dames`, `Heren`, `Unisex`, `Kinderen`, `Jongens`, `Meisjes` (NICK.md #16 point 2), so `Unisex` means adult unisex and is no longer in Kinderen:
+Drop `Women`, `Mannen`, `Men` once Nick's Dutch re-sync has landed (SHOP-SETUP.md, Open with Nick).
 
-- Dames: `Dames` or `Unisex` (+ `Women` until the re-sync)
-- Heren: `Heren` or `Unisex` (+ `Mannen`, `Men` until the re-sync)
-- Kinderen: `Kinderen`, `Jongens` or `Meisjes`
+## Brand collections
 
-Once no product carries `Women`, `Mannen` or `Men` any more, remove those values from the two rules.
+One per vendor (`fitflop`, `holster`, `irasuto-studios`, `juicy-couture`, `loewenweiss`, `mechanix`, `nike-swim`, `odlo`, `pas-de-monaco`, `rh`, `sneaker-lab`, `sweaty-betty`), rank 40. `mechanix` and `rh` have no rank yet; give them 40.
+
+**FitFlop sub-collections** (the only brand with a third menu level, because its old Drupal pages carried ~19,600 search clicks). **The handle is the old Drupal slug**, so `/nl/fitflop-sandalen` redirects 1:1; don't rename them. Vendor FitFlop AND:
+
+| Menu title | Handle | Second condition | Products |
+|---|---|---|---:|
+| Slippers | `fitflop-slippers` | category Teenslippers | 65 |
+| Slides | `fitflop-slides` | category Slippers | 49 |
+| Sandalen | `fitflop-sandalen` | category Sandalen | 36 |
+| Sneakers | `fitflop-sneakers` | category Sneakers | 62 |
+| Enkellaarzen | `fitflop-enkellaarzen` | category Laarzen | 25 |
+| Pantoffels | `fitflop-pantoffels` | category Slippers (same set as Slides; Akeneo has no Pantoffels value) | 49 |
+| Ballerina's & loafers | `fitflop-ballerinas` | category Ballerina's | 17 |
+| Dames | `fitflop-dames` | gender Women, Unisex | 244 |
+| Heren | `fitflop-heren` | gender Mannen, Unisex | 22 |
+| Outlet | `fitflop-outlet` | price reduced AND compare-at > 0 | 221 |
+
+No rank: a product in one of these is always also in a rank-5 collection.
+
+**Naming:** the storefront follows the old site, not Akeneo. Akeneo `Teenslippers` (toe-posts) are "Slippers" (`slippers`, `fitflop-slippers`; "FitFlop slippers" was the old site's biggest search term). Akeneo `Slippers` (slides plus Löwenweiss house slippers) are "Slides & pantoffels" (`slides`). The Category filter still shows the Akeneo wording.
+
+## Price and utility collections
+
+- `solden`: price reduced is set AND compare-at > 0 (699). The `> 0` guards against the sync's old `0.00` compare-at. Homepage outlet banner, footer "Outlet" and the menu's Solden link point here.
+- `volle-prijs`: price reduced is not set (325). Not published; the target for a code that should skip Sale (DISCOUNTS.md). WELCOME27 on live doesn't use it: it is an order discount on everything. A product with mixed reduced and full-price sizes is in both.
+- Campaign collections: handle `actie-…`, must be published to Online Store or no badge shows (DISCOUNTS.md). None exist on 2026-11-24.
+- `frontpage` (manual, empty) and `merken` (manual, unused; the brands directory is `/pages/merken`): leave unranked.
 
 ## Breadcrumb rank
 
-Most products belong to several of the collections above at once — e.g. an Odlo running jacket is in `Kleding`, `Heren` or `Dames`, `Odlo`, and `Sport & Training` simultaneously. The PDP breadcrumb can only name one, and Liquid's `product.collections` order is neither documented nor merchant-configurable, so without a rank the choice would be arbitrary and tend to default to whichever collection happens to be broadest.
+Collection metafield `custom.breadcrumb_rank`: when a product is in several collections, the PDP breadcrumb and the related-products rail start at the lowest rank; unset sorts last. Liquid's `product.collections` order is undocumented, so without ranks every trail named the broadest collection. Entering from a collection page, the breadcrumb names that collection instead (`pdp-breadcrumb`).
 
-Rank resolves that. It is the Collection metafield `custom.breadcrumb_rank` (integer, storefront access **public read**). **Lower wins; unset sorts last.** It selects the default PDP breadcrumb collection and has no effect on membership or a collection's own product order.
+| Rank | Band |
+|---:|---|
+| 5 | category, activity and product-group sub-collections |
+| 10 | `schoenen`, `kleding`, `accessoires` |
+| 15 | `comfort-footwear` |
+| 20 | needs collections |
+| 30 | gender |
+| 40 | brands |
+| unset | `solden`, `volle-prijs`, `all`, `merken`, `frontpage`, FitFlop sub-collections |
 
-| Rank | Band | Collections |
-|---|---|---|
-| 5 | Product sub-type and activity | the live second-level collections behind the two-level menu — `Sandalen`, `Teenslippers`, `Slippers`, `Sneakers`, `Laarzen`, `Hardlopen`, `Training`, … They locate a product more precisely than a parent collection, so they rank below 10. |
-| 10 | Product type | `Schoenen`, `Kleding`, `Accessoires` |
-| 15 | Brand-wide occasion sub-collection | `Comfort Footwear` (= all of FitFlop, so less precise than a type sub-collection, more than Fashion & Lifestyle) |
-| 20 | Occasion | `Fashion & Lifestyle`, `Sport & Training`, `Outdoor & Werk` |
-| 30 | Gender | `Dames`, `Heren`, `Kinderen` |
-| 40 | Brand | `FitFlop`, `Hi-Tec`, `Holster`, `Irasuto Studios`, `Juicy Couture`, `Loewenweiss`, `Nike Swim`, `Odlo`, `Pas dé Monacó`, `Sneaker Lab`, `Sweaty Betty` |
-| — | Left unset deliberately | `Solden`, `Merken`, `Home page` |
+A new collection has no rank and never wins a breadcrumb while a ranked one also holds the product. Assign a band when it's approved.
 
-The banding answers "which of these tells a shopper where they are?" — `Schoenen` locates them better than `Dames`, which locates them better than `Loewenweiss`. `Solden` and `Merken` are left unset so a sale or landing collection can never caption a trail.
+**Related products** (`pdp-related-products`): start at the product's lowest-ranked collection and broaden through higher ranks until four are found; same exact `custom.genderid` only; skip the viewed product, unavailable products and duplicates; keep each collection's own order; hide the rail when nothing qualifies.
 
-For breadcrumbs, rank is only the fallback: when a shopper reaches a product from a collection page, the breadcrumb names the collection they actually browsed instead. See the `pdp-breadcrumb` capability spec.
+## Main menu (`main-menu`)
 
-## PDP related products
+```text
+Sport & Training ▾   Alles voor sport & training, Hardlopen, Training, Wandelen, Fietsen, Skiën & snowboard, Zwemmen
+Outdoor & Werk ▾     Alles voor outdoor & werk, Werkkleding
+Fashion & Lifestyle ▾ Alles voor fashion & lifestyle, Streetwear, Loungewear, Comfort Footwear
+Schoenen ▾           Alle schoenen, Sandalen, Slippers, Slides & pantoffels, Sneakers, Laarzen, Ballerina's, Instappers
+Kleding ▾            Alle kleding, Broeken, Truien, Vesten, Jassen, Shirts & tops, Shorts, Leggings, Ondergoed & baselayers, Jurken & rokken
+Accessoires ▾        Alle accessoires, Handschoenen, Kousen, Hoofddeksels, Overige accessoires
+Merken ▾             Alle merken (/pages/merken), every brand collection A–Z; FitFlop ▾ Alles van FitFlop + its 10 sub-collections
+Solden
+```
 
-- Start at the lowest-ranked product collection; broaden through higher ranks only until four items are found. Unranked collections come last.
-- Keep only products with the exact same `custom.genderid`; exclude the viewed product, unavailable products, and duplicates.
-- Preserve each source collection's native Shopify product order. If no eligible product exists, hide the rail.
-- The rail never uses breadcrumb route/session context, so it is stable for every PDP entry point. See `pdp-related-products`.
-
-## Sources and maintenance
-
-- The three special collections above key on the exact Product **vendor** text (case-sensitive, no fuzzy match) — see "Special collections" for the mapping.
-- The Product metafields `custom.activities` (metaobject reference, multi-valued) and `custom.shopify_originalbrands_category` (plain string) still exist as real product data and may still surface as native PLP filters within whichever collection a product belongs to — they just no longer control membership of these three special collections, since a live check found `custom.activities` is genuinely multi-valued in ways that made the two most-visited pillars overlap (see "Special collections" above).
-- The gender collections use exact text values from the Product metafield `custom.genderid`.
-- The two metafield definitions must retain Shopify's **Use as a condition in collections** capability if anything elsewhere still conditions on them. See `MIGRATION-TO-LIVE.md` for the live-shop requirement.
-- **A newly created collection has no `breadcrumb_rank` and therefore sorts last.** That is a safe default, not a broken state — it simply never wins a breadcrumb while any ranked collection also contains the product. Assign it a band when the collection is approved.
-- When the catalog changes, run the repository-local `ob-collection-maintenance` skill. It now scans live **vendor** values against this approved mapping (updated 2026-09-03 alongside this rule-type change) and reports new or unassigned vendors. It does not assign a newly discovered vendor automatically; approve its destination first, then update the corresponding collection rule set and this file together.
+Every top-level label links to the same target as its first "Alle …" child, which also labels the collection hero's first pill. The nesting is breadcrumb data: the hero trail (`Home › Schoenen › Ballerina's`) and the PDP's BreadcrumbList read a collection's parent from its first position in this menu. Hover-open on fine pointers is `assets/details-disclosure.js`; touch and keyboard stay click/Enter. Hero pills hide children that are empty, but the header dropdown still lists them.
 
 ## Current scan baseline
 
-Live Admin API audit on 2026-09-21: **565 active products**, 11 distinct live
-vendor strings, and no vendor outside the approved baseline. The live special
-collections still use the documented OR rule sets and currently contain:
+Vendors on the live storefront, 2026-11-24 (in-stock products from the brand collections). The `ob-collection-maintenance` skill compares against this.
 
-- Sport & Training: 98 products
-- Outdoor & Werk: 2 products
-- Fashion & Lifestyle: 74 products
-
-| Vendor | Live products | Needs-collection |
+| Vendor | Products | Needs collection |
 |---|---:|---|
-| Odlo | 92 | Sport & Training |
-| RH+ | 0 | Sport & Training (vendor string unverified — not synced yet) |
-| Nike Swim | 3 | Sport & Training |
-| Sweaty Betty | 3 | Sport & Training (provisional — may leave the feed) |
-| Hi-Tec | 2 | Outdoor & Werk |
-| Magnum | 0 | Outdoor & Werk (vendor string unverified — not synced yet) |
-| Juicy Couture | 70 | Fashion & Lifestyle |
-| Pas dé Monacó | 3 | Fashion & Lifestyle |
-| Irasuto Studios | 1 | Fashion & Lifestyle |
-| FitFlop | 379 | Fashion & Lifestyle (since 2026-11-05, pre-live; sub-collection `comfort-footwear`) |
-| Holster | 3 | None — comfort footwear, reachable via Schoenen + its Merken brand page |
-| Loewenweiss | 8 | None — comfort footwear, reachable via Schoenen + its Merken brand page |
-| Sneaker Lab | 1 | None — care products, reachable via Accessoires + its Merken brand page |
-
-Every activity value is still assigned to a metaobject and every category value above is still real product data, but as of 2026-09-03 neither list controls membership of the three needs-collections — see "Special collections."
-
-## Pre-live rules (2026-11-06)
-
-Built on pre-live from the DEV records (title, handle, description, sort order, `breadcrumb_rank`, `bottom_description`, the same publications) once Nick answered NICK.md #16 points 1–3. Differences from the DEV tables below:
-
-- **Category field:** every category condition uses `akeneo.shopify_originalbrands_cate__1`. Pre-live has no `custom.shopify_originalbrands_category`.
-- **Live vocabulary:** `ballerinas` and `fitflop-ballerinas` = `Ballerina's`; `shorts` = `Shorts`; `jurken-rokken` = `Jurken` OR `Rokken`; `hoofddeksels` = `Mutsen & petten` (DEV: `Headware`); `shirts-tops` = `Hemden` OR `Bovenkleding`; `slides` = `Slippers`; `leggings` = `Leggings`. The DEV-only stale values (`Shirt`, `Legging`, `Slipper`, `Rokjes`, `Shorten`) are not in the live feed.
-- **Typo:** `handschoenen` and `accessoires` match `Handschoenen` and `Handsschoenen` (live typo, NICK.md #16). Drop `Handsschoenen` once Akeneo fixes it.
-- **Activities** reference the live metaobjects by handle (`running`, `training`, `hiking`, `cycling`, `ski_snowboard`, `swimming`). Pre-live has no `sb_hardlopen`, so `hardlopen` is `running` only.
-- **Gender:** see "Gender collections". `fitflop-dames`/`fitflop-heren` are AND rules and cannot carry a transitional value, so they use `Dames`/`Heren` and stay empty until the re-sync.
-- **New on pre-live (2026-11-06, owner go):** `jassen` (Jassen, category `Jassen`) and `ondergoed` (Ondergoed & baselayers, category `Ondergoed`), both rank 5, best selling, Online Store, under Kleding in `main-menu` after Vesten and after Leggings. `/odlo-underwear` (90 clicks) redirects to `ondergoed` (`redirects/overrides.csv`).
-- **No collection, deliberately:** `Badmode` (all 10 Nike Swim products are already in `zwemmen`), `Pyjama's` 2 and `One-piece` 1 (too small; brand pages and the Category filter reach them).
-- **Kleding is by category, not by product type** (pre-live 2026-11-06): OR over `Bovenkleding`, `Broeken`, `Hemden`, `Truien`, `Vesten`, `Shorts`, `Leggings`, `Jurken`, `Rokken`, `Jassen`, `Ondergoed`, `Badmode`, `Pyjama's`, `One-piece`. The old rule `type = Fashion` showed only 31 Juicy products, because Odlo and Sweaty Betty clothing is typed `Sport`. Owner principle: overlap between collections is fine, a relevant product missing is not. A new clothing category value from Akeneo must be added to this rule.
-- **Akeneo overlap, left as is:** Odlo base-layer tops and sports bras sit partly under `Bovenkleding` and partly under `Ondergoed`, so they show in Shirts & tops or in Ondergoed & baselayers depending on the product.
-
-Counts on 2026-11-06 (884 products): Dames 594, Heren 381, Kinderen 39, Accessoires 130, Schoenen 113; Sandalen 30, Slippers 36, Slides 54, Sneakers 59, Laarzen 34, Ballerina's 7, Instappers 8; Broeken 67, Truien 32, Vesten 26, Shirts & tops 152, Shorts 46, Leggings 63, Jurken & rokken 3; Handschoenen 24, Kousen 26, Hoofddeksels 55, Overige accessoires 25; Hardlopen 463, Training 573, Wandelen 529, Fietsen 163, Skiën & snowboard 152, Zwemmen 15; FitFlop Slippers 34, Slides 37, Sandalen 28, Sneakers 36, Enkellaarzen 12, Ballerina's 7, Dames 0, Heren 0. Added later the same day: Jassen 31, Ondergoed & baselayers 143, Kleding 723 (the sync was still adding products).
-
-## Two-level main navigation
-
-Implemented in the dev shop on 2026-09-21. The Main menu uses resource-linked
-collection/page items rather than hard-coded HTTP links. All 24 new smart
-collections are published to the Online Store, sort by best selling, and carry
-`custom.breadcrumb_rank = 5`. The existing `Accessoires` collection was converted
-in place to a smart collection, retains its URL, and carries rank 10.
-
-**One deliberate exception:** `Outdoor & Werk`'s `Magnum` child is a plain `HTTP`
-item pointing at `#`, added same-day once Magnum's SKUs still hadn't synced (see
-`NICK.md`). There is no Magnum collection yet to resource-link to. Replace it with
-a real `COLLECTION` item (same pattern as `Hi-Tec`'s child) the moment Magnum syncs
-and its vendor collection exists — until then this is the one menu item that isn't
-resource-linked.
-
-Desktop rendering uses Dawn's compact `Dropdown` menu type. Fine-pointer desktop
-devices open and close the dropdowns on hover; touch devices and keyboard users
-retain an explicit disclosure control. Every top-level label is a real link to
-the parent destination, identical to the first `Alles ...` child target; the
-adjacent caret opens the submenu for keyboard users. The hover enhancement lives
-in `assets/details-disclosure.js`; the menu tree itself remains Shopify Admin data.
-
-### Smart collection rules and verified counts
-
-| Parent | Collection | Handle | Included source value(s) | Products |
-|---|---|---|---|---:|
-| Sport & Training | Hardlopen | `hardlopen` | Activities: `Running` OR `Hardlopen` | 41 |
-| Sport & Training | Training | `training` | Activities: `Training` | 85 |
-| Sport & Training | Wandelen | `wandelen` | Activities: `Wandelen` | 80 |
-| Sport & Training | Fietsen | `fietsen` | Activities: `Fietsen` | 16 |
-| Sport & Training | Skiën & snowboard | `skien-snowboard` | Activities: `Skiën & Snowboard` | 25 |
-| Sport & Training | Zwemmen | `zwemmen` | Activities: `Zwemmen` | 4 |
-| Schoenen | Sandalen | `sandalen` | Category: `Sandalen` | 50 |
-| Schoenen | Slippers | `slippers` | Category: `Teenslippers` | 112 |
-| Schoenen | Slides & pantoffels | `slides` | Category: `Slippers` OR `Slipper` | 90 |
-| Schoenen | Sneakers | `sneakers` | Category: `Sneakers` | 78 |
-| Schoenen | Laarzen | `laarzen` | Category: `Laarzen` | 26 |
-| Schoenen | Ballerina's | `ballerinas` | Category: `Ballerinas` | 20 |
-| Schoenen | Instappers | `instappers` | Category: `Instappers` | 14 |
-| Kleding | Broeken | `broeken` | Category: `Broeken` | 34 |
-| Kleding | Truien | `truien` | Category: `Truien` | 20 |
-| Kleding | Vesten | `vesten` | Category: `Vesten` | 21 |
-| Kleding | Shirts & tops | `shirts-tops` | Category: `Hemden` OR `Bovenkleding` OR `Shirt` | 40 |
-| Kleding | Shorts | `shorts` | Category: `Shorten` | 10 |
-| Kleding | Leggings | `leggings` | Category: `Leggings` OR `Legging` | 5 |
-| Kleding | Jurken & rokken | `jurken-rokken` | Category: `Jurken` OR `Rokjes` | 6 |
-| Accessoires | Handschoenen | `handschoenen` | Category: `Handschoenen` | 14 |
-| Accessoires | Kousen | `kousen` | Category: `Kousen` | 10 |
-| Accessoires | Hoofddeksels | `hoofddeksels` | Category: `Headware` | 5 |
-| Accessoires | Overige accessoires | `overige-accessoires` | Category: `Accessoires` | 3 |
-
-The parent `Accessoires` collection contains the OR-union of `Handschoenen`,
-`Kousen`, `Headware`, and `Accessoires`: **32 products**. `Sneaker` remains out of
-the `Sneakers` collection until Nick normalizes or confirms that ambiguous value;
-the intentionally merged stale singular values are shown explicitly in the table.
-
-All 24 of these smart collections shipped 2026-09-21 with an empty `descriptionHtml`
-(only the top-level/needs/brand/gender collections had one). Descriptions were
-written the same day, one short Dutch paragraph per collection, sourced from each
-collection's actual vendor composition (checked live via the Admin API rather than
-assumed from the category name) — e.g. `Sandalen`/`Teenslippers`/`Sneakers`/`Laarzen`/
-`Ballerina's`/`Instappers` are 100% FitFlop, `Slippers` mixes in Löwenweiss, and the
-`Sport & Training` sub-collections (`Hardlopen`, `Training`, `Wandelen`, `Fietsen`,
-`Skiën & snowboard`) are effectively all Odlo.
-
-### Brand sub-collections (third menu level)
-
-Created in the dev shop on 2026-10-01 for the redirect map ([SEO-REDIRECTS.md](SEO-REDIRECTS.md)): the old
-site's brand × type pages carry most of its search traffic, and a filtered collection URL is
-canonicalised to its parent, so the top ones are real collections. **FitFlop only (10
-collections).** Seven Juicy Couture and Odlo sub-collections were created the same day and deleted
-on 2026-10-02 (owner decision): their old pages had 125 and 13 search clicks in 16 months against
-FitFlop's 19,600, and the menu should carry one third level, not three. **The handle is the old Drupal
-slug**, so `/nl/fitflop-sandalen` redirects 1:1 to `/collections/fitflop-sandalen`. All are smart
-collections with **AND** logic (vendor plus one more condition), published to the Online Store,
-sorted by best selling, with no `breadcrumb_rank` (a product in one of these is always also in a
-rank-5 collection, which keeps winning the PDP fallback).
-
-| Brand | Menu title | Handle | Second condition | Products |
-|---|---|---|---|---:|
-| FitFlop | Slippers | `fitflop-slippers` | Category: `Teenslippers` | 112 |
-| FitFlop | Slides | `fitflop-slides` | Category: `Slippers` | 79 |
-| FitFlop | Sandalen | `fitflop-sandalen` | Category: `Sandalen` | 50 |
-| FitFlop | Sneakers | `fitflop-sneakers` | Category: `Sneakers` | 78 |
-| FitFlop | Enkellaarzen | `fitflop-enkellaarzen` | Category: `Laarzen` | 26 |
-| FitFlop | Pantoffels | `fitflop-pantoffels` | none — **manual** collection, owner picks the products | 0 |
-| FitFlop | Ballerina's & loafers | `fitflop-ballerinas` | Category: `Ballerinas` | 20 |
-| FitFlop | Dames | `fitflop-dames` | Gender: `Women` | 345 |
-| FitFlop | Heren | `fitflop-heren` | Gender: `Men` | 34 |
-| FitFlop | Outlet | `fitflop-outlet` | Price reduced AND compare-at price > 0 | 1 |
-
-- **Storefront names follow the old site, not the Akeneo category** — see "Naming: Slippers, Slides,
-  Pantoffels" below. Read the rule column, not the title.
-- **A smart collection is all-AND or all-OR**, so "vendor AND (A OR B)" cannot be expressed. That is
-  why `fitflop-slides` omits the stale `Slipper` value.
-- **`fitflop-pantoffels` is manual** (3,739 clicks on the old page, no Akeneo value to key on). It
-  is empty until the owner adds products in Admin, and its menu pill stays hidden while it is.
-- **No sub-collections for any other brand on dev.** Every other brand's old sub-pages redirect to
-  the brand collection. Hi-Tec was never created (two products synced, and hiking/trail/snow have
-  no matching Akeneo value); decide it at launch by the same click test. Old-page clicks, for when this is reconsidered: Juicy Couture `-pants` 67,
-  `-hoodies` 39, `-shorts` 19; Odlo `-outlet` 129, `-underwear` 90, `-dames` 23, `-heren` 21,
-  `-running` 10. Odlo's activity pages are also covered by the Sport & Training sub-collections,
-  which are effectively all Odlo.
-- **On dev these overlap heavily with existing collections** (`fitflop-sandalen` equals `sandalen`
-  while FitFlop is the only brand with sandals). They diverge once Holster, Hi-Tec and Magnum sync.
-
-They are nested under FitFlop in `main-menu` (Merken), with an `Alles van FitFlop` self-link first.
-No theme change was needed — `ob-menu-trail` already treats a matched item with children as its own
-group, so the brand page shows its sub-collections and a sub-collection shows the brand's group.
-
-### Main menu structure
-
-```text
-Sport & Training ▾
-├─ Alles voor sport & training
-├─ Hardlopen
-├─ Training
-├─ Wandelen
-├─ Fietsen
-├─ Skiën & snowboard
-└─ Zwemmen
-
-Outdoor & Werk
-├─ Alles voor outdoor & werk
-├─ Hi-Tec
-└─ Magnum (temp. # link, geen collectie tot Akeneo-sync)
-
-Fashion & Lifestyle
-├─ Alles voor fashion & lifestyle
-├─ Juicy Couture
-├─ Pas dé Monacó
-└─ Irasuto Studios
-
-Schoenen ▾
-├─ Alle schoenen
-├─ Sandalen
-├─ Slippers (Akeneo: Teenslippers)
-├─ Slides & pantoffels (Akeneo: Slippers)
-├─ Sneakers
-├─ Laarzen
-├─ Ballerina's
-└─ Instappers
-
-Kleding ▾
-├─ Alle kleding
-├─ Broeken
-├─ Truien
-├─ Vesten
-├─ Shirts & tops
-├─ Shorts
-├─ Leggings
-└─ Jurken & rokken
-
-Accessoires ▾
-├─ Alle accessoires
-├─ Handschoenen
-├─ Kousen
-├─ Hoofddeksels
-└─ Overige accessoires
-
-Merken ▾
-├─ Alle merken
-└─ 11 huidige merken, alfabetisch; alleen FitFlop met een derde niveau
-   (zie "Brand sub-collections")
-
-Solden
-└─ voorlopig empty. Drin lassen!
-```
-
-## Naming: Slippers, Slides, Pantoffels (open for discussion with the OB team)
-
-**Problem.** The old site and Akeneo use the same words for different shoes. On the old site
-"FitFlop Slippers" are toe-post sandals; Akeneo calls those `Teenslippers`. Akeneo's `Slippers`
-are slides plus Löwenweiss wool house slippers. "Pantoffels" was an old-site page with no Akeneo
-value at all.
-
-**State on dev since 2026-10-01** (owner decisions, shop data only, reversible in Admin):
-
-| Storefront name | Handle | Akeneo value | Was |
-|---|---|---|---|
-| Slippers | `slippers` | `Teenslippers` | Teenslippers, `teenslippers` (old handle redirects) |
-| Slides & pantoffels | `slides` | `Slippers`, `Slipper` | Slippers, `slippers` |
-| FitFlop Slippers | `fitflop-slippers` | FitFlop + `Teenslippers` | new |
-| FitFlop Slides | `fitflop-slides` | FitFlop + `Slippers` | new |
-| FitFlop Pantoffels | `fitflop-pantoffels` | none, manual, empty | new |
-
-**Reasons.**
-
-- "FitFlop slippers" is the old site's biggest search term (8,553 clicks, 502k impressions in 16
-  months). The page that inherits that traffic should carry that name.
-- One word should mean one thing across the menu, so Schoenen was renamed to match FitFlop rather
-  than leaving Teenslippers / Slippers there.
-- "Slides & pantoffels", not plain "Slides", because the collection also holds the Löwenweiss
-  house slippers.
-- Pantoffels is manual because no Akeneo value identifies them; the old page had 3,739 clicks.
-
-**Open for the team.**
-
-- Is "Slippers" for toe-posts right for Dutch **and** Belgian shoppers, or should it stay
-  Teenslippers in the generic Schoenen menu?
-- Should Akeneo get a real `Pantoffels` category (and `Slides`), so these collections fill
-  themselves? That would replace the manual collection and split "Slides & pantoffels".
-- The Akeneo values are unchanged, so the PLP "Category" filter still shows the Akeneo wording.
-
-Reverting is a title/handle change on two collections and two menu labels; the redirect map only
-depends on the `fitflop-*` handles.
+| Odlo | 278 | Sport & Training |
+| FitFlop | 266 | Fashion & Lifestyle (+ Comfort Footwear) |
+| Sweaty Betty | 182 | Sport & Training |
+| Mechanix | 58 | Outdoor & Werk (+ Werkkleding) |
+| Juicy Couture | 55 | Fashion & Lifestyle (+ Loungewear) |
+| RH+ | 32 | Sport & Training |
+| Irasuto Studios | 17 | Fashion & Lifestyle (+ Streetwear) |
+| Holster | 13 | Fashion & Lifestyle |
+| Nike Swim | 12 | Sport & Training |
+| Loewenweiss | 7 | none |
+| Pas dé Monacó | 1 | Fashion & Lifestyle (+ Streetwear) |
+| Briko | ? | none yet, no brand collection |
+| Sneaker Lab | 0 | none |

@@ -15,7 +15,7 @@ Each cart drawer line item SHALL render its variant option values as plain text 
 - **THEN** that property still renders with its own `<dt>`/`<dd>` label pair, unaffected by the option-list typography change
 
 ### Requirement: Only one price renders per line item
-Each cart drawer line item SHALL show exactly one price (the line total for its quantity) — no separate per-unit price rendered under the title. The visible price SHALL use compact typography distinct from Dawn's default price styling, for both the current price and any struck-through original price.
+Each cart drawer line item SHALL show exactly one price (the line total for its quantity) — no separate per-unit price rendered under the title. The visible price SHALL use compact typography (13px, 500 weight, normal letter-spacing) distinct from Dawn's default price styling, applied to both the current price and any struck-through original price.
 
 #### Scenario: Single-quantity line item
 - **WHEN** a cart line item has quantity 1
@@ -129,3 +129,4 @@ Each cart drawer line-item image SHALL use `mix-blend-mode: multiply` and a 1.6r
 #### Scenario: Shopper views a white-background packshot
 - **WHEN** a cart drawer line item renders a white-background packshot
 - **THEN** the white background visibly blends into its local pale photo frame without creating a full-height tinted media column
+

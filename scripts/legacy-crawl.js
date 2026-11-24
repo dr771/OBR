@@ -2,7 +2,7 @@
 // Crawls the legacy Drupal site's listing/CMS/blog pages (not the 9k product pages) and records,
 // per old path: status, SEO title/description, h1 and the article ids it lists. Listing pages carry
 // each colour's photohost image path (…/product/<pid>/color/<article id>/image/<item>_<colour> (01)/…),
-// which is the only place the Akeneo item/colour code is exposed — see MIGRATION-TO-LIVE.md §5.
+// which is the only place the Akeneo item/colour code is exposed — see SEO-REDIRECTS.md.
 // Resumable: re-run to continue. The old site answers 429 to parallel requests, so one at a time.
 const fs = require('fs');
 const path = require('path');

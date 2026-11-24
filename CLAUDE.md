@@ -4,13 +4,13 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 ## Project Overview
 
-Shopify theme rebuild for Original Brands (originalbrands.nl) — multi-brand apparel + footwear retailer, migrating from a custom Drupal-ish CMS.
+Shopify theme for Original Brands (www.originalbrands.nl), a multi-brand apparel + footwear retailer. Migrated from a custom Drupal CMS; **live on Shopify since 2026-11-24**.
 
-- **Working shop (pre-live):** `original-brands-live.myshopify.com`, shop ID `109574717777`, permanent domain `original-brands-mtr6tuym.myshopify.com` (the one the CLI needs). Owned by the client (Nick) since 2026-10-30, Basic plan; Dr770.com works in it as collaborator. Storefront password-protected until launch. All theme and shop-data work happens here.
-- **Test shop (DEV):** `original-brands-dev.myshopify.com` (storefront password: `original`). Kept for experiments, Akeneo-dev comparisons and as the reference for how things looked before the migration. Reached through the CLI, not the connector.
+- **Live shop:** `original-brands-live.myshopify.com`, shop ID `109574717777`, permanent domain `original-brands-mtr6tuym.myshopify.com` (the one the CLI needs), storefront www.originalbrands.nl with real customers and orders. Owned by the client (Nick), Basic plan; Dr770.com works in it as collaborator. All theme and shop-data work happens here.
+- **Test shop (DEV):** `original-brands-dev.myshopify.com` (storefront password: `original`). Staging for theme code, experiments and Akeneo-dev comparisons. Reached through the CLI, not the connector.
 - **Theme base:** Dawn (cloned fresh 2026-08-10, no upstream git history)
 - **OB team requests** come in through the Asana project "Original Brands" (`app.asana.com/1/1119997236281324/project/1216851099755483`); Cindy Joris (OB team) files most of them. Read a task through the owner's open Asana tab in Chrome (the Asana MCP needs auth).
-- **Product data source:** Akeneo, synced by Nick (connected — see STATUS-LOG.md for what's in the store)
+- **Product data source:** Akeneo live, synced by Nick's connector. Run POST-SYNC-CHECK.md after every sync.
 - **Reference project:** SweatyBetty — same Dawn/Akeneo/OpenSpec stack, further along. Sibling directory of this repo (`../SweatyBetty`). Reuse its shipped patterns and lessons, not its SB-specific branding/hacks.
 - **Two machines:** this repo is worked on from **both** a macOS box (`~/Projects/OriginalBrands`) and a Windows box (`C:\Users\rezni\SHOPIFY\OriginalBrands`). Neither is "the old one". Prefer machine-neutral references in docs — `../SweatyBetty` resolves correctly on both, absolute paths don't. Pull before starting; the other machine may be ahead.
 
@@ -18,46 +18,44 @@ Shopify theme rebuild for Original Brands (originalbrands.nl) — multi-brand ap
 
 Read these before any major decision:
 
-- [MIXED-SHOPS-PLAYBOOK.md](MIXED-SHOPS-PLAYBOOK.md) — every scoping decision for Original Brands: reuse ledger against SB's shipped specs, live-site audit, homepage direction, Akeneo→Shopify product-model decision. Read this first, always.
-- [MIGRATION-TO-LIVE.md](MIGRATION-TO-LIVE.md) — launch checklist for the dev→live **store-to-store** migration (two separate shops, per Nick's Akeneo setup).
-- [MIGRATION-PLAN.md](MIGRATION-PLAN.md) — resumable execution order, current progress and next action for the DEV→pre-live→launch migration; read this when continuing migration work after an interruption.
-- [SEO-REDIRECTS.md](SEO-REDIRECTS.md) — redirect map from the old Drupal site: state, decisions, tooling (`scripts/build-redirects.js`), and the to-do lists for now, at launch and after launch. [BLOG.md](BLOG.md) holds the blog URL structure and the posts to recreate.
-- [NICK.md](NICK.md) — open Akeneo/sync data issues to raise with Nick. Don't re-report these as if new.
-- [NICK-PRELIVE.md](NICK-PRELIVE.md) — checklist for Nick about the pre-live shop: Akeneo schema, entity/payments/VAT, shipping, email, apps and texts to review. Tick items off as Nick answers. Older sections are Dutch; new ones are English (see below).
-- **Everything written for Nick or the OB team is in English** (owner decisions 2026-11-06 for Nick, 2026-11-24 for the team): Asana messages, new NICK.md / NICK-PRELIVE.md entries, paste-ready texts. Shop copy shown to customers stays Dutch.
-- [POST-SYNC-CHECK.md](POST-SYNC-CHECK.md) — run after every Akeneo sync. The four things that break silently (stale filter index, orphaned metaobject fields, DRAFT metaobjects, out-of-vocabulary category values), each with how to measure and fix it.
-- [cats-dev.csv](cats-dev.csv) — the Akeneo **dev** category vocabulary (code;label-nl_NL). The reference the shop's category values are checked against. Akeneo live differs.
-- [DISCOUNTS.md](DISCOUNTS.md) — short EN cheat sheet on the three discount kinds (ERP price reduction, visible campaign via `actie-*` collection + automatic discount, silent discount/code), the 5-step campaign setup, free shipping (a shipping rate, not a discount) and the traps. For the owner explaining it to marketing. Spec: `campaign-badges`, `cart-free-shipping-progress`, `header-announcement-bar`.
-- [CI-STYLE-TOKENS.md](CI-STYLE-TOKENS.md) — reusable cross-component design tokens (ink/accent colors, button component, link conventions, dense-UI heading rules, the cart-drawer font-family gotcha). Check before re-deriving typography/color values a new component needs — extracted from PDP/footer/PLP/cart-drawer work already shipped, not a spec.
+- [MIXED-SHOPS-PLAYBOOK.md](MIXED-SHOPS-PLAYBOOK.md) — the architecture and scoping decisions that still hold (data model, colour/size, listings, collections/navigation, campaigns, design direction, wishlist), each with its why. Read this first, always.
+- [SHOP-SETUP.md](SHOP-SETUP.md) — everything the theme needs from the shop (definitions, Search & Discovery, theme settings, menus, shipping, apps), plus the open to-dos after launch and with Nick.
+- [COLLECTIONS.md](COLLECTIONS.md) — live collection rules, breadcrumb ranks, main menu and the vendor baseline.
+- [POST-SYNC-CHECK.md](POST-SYNC-CHECK.md) — run after every Akeneo sync. The five things that break silently (stale filter index, orphaned metaobject labels, `publishable` back on, new vendors, untracked inventory), each with how to measure and fix it.
+- [SEO-REDIRECTS.md](SEO-REDIRECTS.md) — the legacy redirect map (rules, Shopify's redirect behaviour, `scripts/build-redirects.js`) and the blog structure.
+- [DISCOUNTS.md](DISCOUNTS.md) — EN cheat sheet on the three discount kinds, the 5-step campaign setup, free shipping and the traps, for explaining it to marketing. [PROMOBAR.md](PROMOBAR.md) — how the team runs the promo and trust bars. [PLP-SORTING.md](PLP-SORTING.md) — the four sort choices and curating "Uitgelicht".
+- [CI-STYLE-TOKENS.md](CI-STYLE-TOKENS.md) — reusable cross-component design tokens (ink/accent colors, button component, link conventions, dense-UI heading rules, the cart-drawer font-family gotcha). Check before re-deriving typography/color values a new component needs; descriptive, not a spec.
 - [GOTCHAS.md](GOTCHAS.md) — traps and debugging techniques (Dawn overrides, Liquid/metaobject failures, the filter index, the wishlist, Shopify CLI, browser). Read the relevant section before debugging; new findings go there.
+- **Everything written for Nick or the OB team is in English** (owner decisions 2026-11-06 for Nick, 2026-11-24 for the team): Asana messages, SHOP-SETUP.md entries, paste-ready texts. Shop copy shown to customers stays Dutch.
+- [cats-dev.csv](cats-dev.csv) — the Akeneo **dev** category vocabulary (code;label-nl_NL), for DEV only; the live vocabulary is in COLLECTIONS.md.
+- `content/collections/` — the collection bottom-description copy and the old site's texts it was written from.
 - `.agents/skills/ob-collection-maintenance/SKILL.md` — procedure for the three vendor-based needs collections when the brand roster changes. Codex loads it as a skill; follow it the same way.
-- `openspec/specs/` — capability specs, seeded on-touch as work starts (empty until the first change is proposed/archived)
+- `openspec/specs/` — capability specs (behavior contracts); archived changes in `openspec/changes/archive/`.
 - `mockup/` — the pre-Shopify static homepage mockup, reference only, not the live theme
 
 ## Shopify CLI
 
-**Direct-active-theme workflow — hard rule.** The pre-live shop's active Dawn theme
-`209721262417` is the working surface agents must edit, push to, and verify against.
-In this project, “live” means that active theme on `original-brands-live.myshopify.com`,
-even though its storefront is still password-protected and `originalbrands.nl` still points
-at the old site. Push each requested theme-code change directly to that theme with an
-explicit `--only` list, then verify the real storefront URL in Chrome. Horizon
+**Direct-active-theme workflow — hard rule.** The live shop's active Dawn theme
+`209721262417` is the working surface agents must edit, push to, and verify against;
+it is the production storefront at www.originalbrands.nl. Push each requested theme-code
+change to that theme (after DEV, below) with an explicit `--only` list, then verify the
+real storefront URL in Chrome. Horizon
 `209707532625` is a draft kept as rollback; never push to it.
 
 ```
-scripts/theme-push.sh <file> [<file> ...]          # pre-live theme 209721262417
+scripts/theme-push.sh <file> [<file> ...]          # live theme 209721262417
 scripts/theme-push.sh --dev <file> [<file> ...]    # DEV theme 148245381229
 ```
 
 **Deploy route for theme code: DEV first, then live (owner decision 2026-10-30).** DEV (`--store=original-brands-dev.myshopify.com --theme=148245381229`, or `scripts/theme-push.sh --dev`) is the staging shop for features and bug fixes:
 1. Reproduce on DEV, edit, push the changed files to DEV, verify on DEV's storefront (mobile and desktop as relevant).
 2. Commit and push to git: the commit is what goes live, so DEV and live always receive the same files.
-3. Push exactly those files to pre-live theme `209721262417`, then verify there: on the storefront where the page can show it, otherwise by pulling the file back and comparing it with the commit.
+3. Push exactly those files to the live theme `209721262417`, then verify there: on the storefront where the page can show it, otherwise by pulling the file back and comparing it with the commit.
 
-Only code travels this way. `config/settings_data.json`, theme-editor edits in `templates/*.json`, apps, products and menus are per shop and are never synced from DEV. Bugs that depend on live data are reproduced on pre-live directly. DEV's catalog is Akeneo **dev**, so it is not proof for data-dependent behavior.
+Only code travels this way. `config/settings_data.json`, theme-editor edits in `templates/*.json`, apps, products and menus are per shop and are never synced from DEV. Bugs that depend on live data are reproduced on the live shop directly. DEV's catalog is Akeneo **dev**, so it is not proof for data-dependent behavior.
 
 **Every theme push goes through `scripts/theme-push.sh`, for every file type.** The OB team edits the frontend in the Admin since 2026-11 (theme editor → `templates/*.json` and `sections/*.json`, "Edit default theme content" → `locales/*.json`, code editor → any file). A raw push of a stale local copy silently reverts those edits with a clean `git status` (happened 2026-09-03, commit `cdc6c7c`, and was caught on 2026-11-05 for the Merken subheading and the header group). A Claude hook (`.claude/settings.json` → `scripts/hooks/guard-theme-push.js`) blocks the raw `shopify theme push`; Codex has no hook and must follow this rule by hand. What the wrapper does:
-- Pre-live only takes committed files.
+- The live theme only takes committed files.
 - It pulls every named file fresh in one call; a failed pull aborts.
 - `scripts/check-theme-drift.py` compares each file with the shop's ledger `assets/ob-theme-push-ledger.json`, which holds a hash of every file as the wrapper last pushed it. Each shop has its own ledger, and both machines read the same one. An unchanged hash means no Admin edit.
 - An Admin edit to a JSON file is merged three-way into the local file. The script stops with exit 3: review `git diff`, commit, re-run. The same setting changed on both sides, or an edited Liquid/CSS/JS file, aborts with a diff.
@@ -70,13 +68,13 @@ out of sync with the active theme and therefore give false results. Only use one
 owner explicitly requests a separate preview; stop it afterward, never report it as live
 verification, and still make the approved change on theme `209721262417`.
 
-**Storefront testing on pre-live is unrestricted (owner decision 2026-11-07).** Click through real flows on the pre-live storefront in the owner's Chrome: add to cart, fill and empty the wishlist, change options. The owner's carts, wishlists and other browser state there are throwaway test data; no need to back them up, restore them, or avoid them. This covers storefront clicks only, not Admin writes or orders.
+**Storefront testing on the live shop is unrestricted (owner decision 2026-11-07).** Click through real flows on the storefront in the owner's Chrome: add to cart, fill and empty the wishlist, change options. The owner's carts, wishlists and other browser state there are throwaway test data; no need to back them up, restore them, or avoid them. This covers storefront clicks only, not Admin writes or orders.
 
 **Store-identity gate for admin writes.** Before every Shopify Admin API mutation, read the shop and proceed only when it is **Original Brands** with the exact domain `original-brands-live.myshopify.com` and shop ID `109574717777`. The claude.ai Shopify connector is pointed at this shop (owner decision 2026-10-30). The CLI (`shopify store execute --store original-brands-mtr6tuym.myshopify.com`) works too, and must use the permanent domain because the CLI rejects the primary one.
 
 **DEV writes are the exception.** Admin writes to DEV (`original-brands-dev.myshopify.com`, shop ID `72440086637`) only happen when the owner asks for an experiment there, and only through the CLI with `--store original-brands-dev.myshopify.com`, so the shop is explicit in the command. Never switch the shared connector to DEV for that. A write that lands on the other shop than the task intends is a stop condition.
 
-**Limits on pre-live writes.** No product/catalog deletion, no theme publishing and nothing on the production domain without the owner's explicit go-ahead. Akeneo-managed schema (product/variant metafield definitions, `filtercolors`/`activities` metaobjects) is created by Nick's Akeneo connector, not by us. Owner-only settings (business entity, payments, billing, plan) are Nick's.
+**Limits on live-shop writes.** It is production: no product/catalog deletion, no theme publishing, no domain/DNS change without the owner's explicit go-ahead. Akeneo-managed schema (product/variant metafield definitions, `filtercolors`/`activities` metaobjects) is created by Nick's Akeneo connector, not by us. Owner-only settings (business entity, payments, billing, plan) are Nick's.
 
 **Page-body writes via API — the agent clears the editor cache, not the owner.** The Admin page editor initialises from its IndexedDB `apollo-caches`, not from the server, so after a `pageUpdate` it can show the *old* body even after a hard reload — and the owner's next Save silently reverts the API change (happened 2026-09-30 on the FAQ). So, as part of every task that writes a page body via API, before reporting done: (1) re-read the body via API right before writing, in case the owner edited it in Admin; (2) after writing, on an `admin.shopify.com` tab in the owner's Chrome run `indexedDB.deleteDatabase('apollo-caches')`, reload the page's editor, and confirm it shows the new content; (3) tell the owner in one line that any *other* browser/machine where that page's editor was opened (e.g. the other machine) still needs a reload after clearing the same cache — the agent can only clear the Chrome it controls. Never ask the owner to remember this unprompted.
 
@@ -105,7 +103,7 @@ Akeneo/metafield interpretation lives in these, never inline in a template (mirr
 
 Client behavior for the card swatches is in `assets/ob-card-swatches.js` (document-level delegation — Dawn replaces the grid wholesale on every facet change). Two files are shared by the PLP and PDP rather than per-capability: `assets/ob-option-rail.js` (rail overflow cues + chevron scrolling, for any `[data-ob-option-rail]` inside a `[data-ob-option-rail-shell]`) and `assets/ob-swatch-tooltip.js` (the one fixed-position chip tooltip both surfaces need, since a rail's scroll track clips a chip-anchored CSS tooltip). Collection load-more behavior is delegated from `assets/ob-plp.js`; facet loading feedback and corrective scroll clamping remain in Dawn's `assets/facets.js` response path.
 
-Wishlist (theme-native since 2026-11-06, Wishlist King uninstalled): `assets/ob-wishlist-store.js` (the list in `localStorage` `ob-wishlist`, API `window.obWishlist`, header badge, card hearts, PDP button) and `assets/ob-wishlist-items.js` (favorites page `/pages/favorieten` and cart cross-sell rows, each rendered by `snippets/ob-wishlist-item.liquid` through the Section Rendering API). `obWishlistStartVariant` lives in `ob-size-memory.js`. `/apps/wishlist` redirects to the favorites page. Wishlist actions are published as analytics events (`obWishlistTrack`; team browsers opt out with `?ob_notrack=1`), and cart lines from the wishlist carry the hidden property `_wishlist`. Background: WISHLIST-CUSTOM.md.
+Wishlist (theme-native since 2026-11-06, Wishlist King uninstalled): `assets/ob-wishlist-store.js` (the list in `localStorage` `ob-wishlist`, API `window.obWishlist`, header badge, card hearts, PDP button) and `assets/ob-wishlist-items.js` (favorites page `/pages/favorieten` and cart cross-sell rows, each rendered by `snippets/ob-wishlist-item.liquid` through the Section Rendering API). `obWishlistStartVariant` lives in `ob-size-memory.js`. `/apps/wishlist` redirects to the favorites page. Wishlist actions are published as analytics events (`obWishlistTrack`; team browsers opt out with `?ob_notrack=1`), and cart lines from the wishlist carry the hidden property `_wishlist`. Why: MIXED-SHOPS-PLAYBOOK.md, Wishlist.
 
 Size choice lives in `assets/ob-size-memory.js` (every page, loaded before `ob-wishlist.js`): storefront size order (JS twin of `ob-option-value-order`), the shopper's remembered size per size key (localStorage `ob-size-memory`, real picks only), and the PDP start size. **PDP start-size priority:** (1) a variant linked from the cart or a wishlist stays; (2) a size the referring listing was filtered to; (3) the remembered size (same key, letter sizes also across keys); (4) the middle available size, never Dawn's first variant in Akeneo order. Wishlist entries (card heart, sizeless entries) use the same start size via `obWishlistStartVariant`, without step 1–2. Requirement: `wishlist-integration` "Wishlist entries start on a whole variant"; traps in GOTCHAS.md (Size preselects).
 
@@ -115,32 +113,19 @@ Size choice lives in `assets/ob-size-memory.js` (every page, loaded before `ob-w
 - **Spec-covered changes:** For any bug report or behavior-change request, run `openspec list --specs` first, before touching code — don't rely on recognizing the capability from how the request happens to be phrased. If the touched area matches a listed capability, read its spec before editing. If the change would alter a documented SHALL/MUST requirement (not just an unspecified implementation detail), route it through `/opsx:propose` → apply → archive instead of editing the code directly.
 - **Specs describe behavior, never appearance.** This is the altitude rule, and it decides whether a task needs a spec at all — apply it without asking when the answer is clear, and when the owner asks "spec for this or not?", answer *from this rule*, not from how big the task feels.
   - **Spec it** when the thing has an invariant that can break *silently*: data contracts (a metafield/metaobject key, an Akeneo option-key convention), fallback and resolution chains, cross-surface guarantees, integration behavior with an app or with Dawn's own JS, anything where a wrong result looks fine on screen. These are expensive to rediscover and dangerous to undo — that is what a SHALL is for.
-  - **Don't spec it** when the thing is taste: hex values, `letter-spacing`, px/rem measurements, breakpoints, spacing, hover choreography, which photo a section uses. Those change on every design pass, and a normative spec turns each of them into a ceremony. Record them in [CI-STYLE-TOKENS.md](CI-STYLE-TOKENS.md) (descriptive, not normative) and in [STATUS-LOG.md](STATUS-LOG.md), then edit the code directly.
-  - **Why this exists:** on 2026-09-18 a `homepage-sections` scenario had pinned the marquee background to `#edf7fd`. Changing one background color therefore required a whole second OpenSpec change (`unify-light-surface-tint`) on top of the actual work. The same spec also *required* keeping a dead, disabled section in the theme, so deleting two unreferenced files needed a formal capability modification. The project is pre-customer-feedback and design is still moving; pixel promises rot on contact with the next review. The durable value has consistently come from the narrative in Current Status (the traps: Dawn's `div:empty`, the `isolate` z-index, the shipping-zone/market mismatch), not from measured values frozen into SHALLs.
+  - **Don't spec it** when the thing is taste: hex values, `letter-spacing`, px/rem measurements, breakpoints, spacing, hover choreography, which photo a section uses. Those change on every design pass, and a normative spec turns each of them into a ceremony. Record reusable ones in [CI-STYLE-TOKENS.md](CI-STYLE-TOKENS.md) (descriptive, not normative), then edit the code directly.
+  - **Why this exists:** on 2026-09-18 a `homepage-sections` scenario had pinned the marquee background to `#edf7fd`. Changing one background color therefore required a whole second OpenSpec change (`unify-light-surface-tint`) on top of the actual work. The same spec also *required* keeping a dead, disabled section in the theme, so deleting two unreferenced files needed a formal capability modification. The project is pre-customer-feedback and design is still moving; pixel promises rot on contact with the next review. The durable value has consistently come from recorded traps (GOTCHAS.md: Dawn's `div:empty`, the `isolate` z-index, the shipping-zone/market mismatch), not from measured values frozen into SHALLs.
   - **Existing specs that already pin appearance are not to be mass-rewritten** — leave them until the code they describe is touched anyway, then drop the measured value from the requirement as part of that change rather than restating it.
 - **Theme settings are protected deployment state.** `.shopifyignore` excludes `config/settings_data.json`, so normal `theme push`, `theme pull`, and `theme dev` operations cannot overwrite merchant settings. Change settings in Shopify Admin. To record them in Git, pull `config/settings_data.json` from the intended theme into a temporary directory that has no `.shopifyignore`, review the diff, then copy only the reviewed live file into this repo and commit it. Never remove the ignore entry for an ordinary deployment. A deliberate settings migration to another shop/theme is a separate operation: resolve both theme IDs, pull and back up the target settings first, review the full source/target diff, and only then push the file from a temporary theme directory after explicit user approval.
 - **One shared knowledge base.** Nothing about this project goes into a tool's private memory; AGENTS.md lists where each kind of fact goes. Claude's auto-memory is off for this repo (`.claude/settings.json`), and this overrides the global Auto-Memory rule in `~/.claude/CLAUDE.md`.
 - **Theme check after Liquid edits.** Run `shopify theme check` before commit/push whenever a snippet, section or template changed, and grep the output for the touched files (background it for a full-theme run). Skip it for CSS/JS-only changes.
 - **"Autopilot" workflow:** once intent is confirmed (via `/opsx:explore` + discussion), "autopilot" means running `/opsx:propose`/`/opsx:ff` → `/opsx:apply` unattended, then **stopping before `/opsx:archive`** to let the user review/correct the actual code — the archived spec should reflect the final corrected code, not a pre-review draft. Only archive after explicit approval. Only skip the pre-archive stop if the user explicitly says the autopilot run should include archive.
-- **Shop-side dependencies go in the migration checklist, immediately.** This project ships by migrating to a *separate* live shop, so anything a feature depends on that lives in the shop rather than in this repo — an app config, a metafield/metaobject definition, a storefront-access setting, an admin toggle — must be appended to [MIGRATION-TO-LIVE.md](MIGRATION-TO-LIVE.md) *when you discover it*, not at launch. If a feature only works because of something you clicked in the admin, that's a checklist line.
+- **Shop-side dependencies go in SHOP-SETUP.md, immediately.** Anything a feature depends on that lives in the shop rather than in this repo — an app config, a metafield/metaobject definition, a storefront-access setting, an admin toggle — goes into [SHOP-SETUP.md](SHOP-SETUP.md) *when you set it up*. DEV and the live shop are separate shops: nothing configured in one exists in the other. If a feature only works because of something you clicked in the admin, that's a line there.
 - **"Update the docs" (end of a task):** check whether the task changed behavior for anything in `openspec/specs/` — if so, sync that spec too (a quick `/opsx:propose` → apply → archive cycle for a real requirement change, a direct edit for wording-only fixes). Also check whether MIXED-SHOPS-PLAYBOOK.md needs a new decision recorded (architecture/scoping calls go there, not into any tool's private memory — see AGENTS.md).
 
 ## Current Status
 
-Chronik der gebauten Capabilities und der gefundenen Fallen: siehe [STATUS-LOG.md](STATUS-LOG.md).
-Die Specs selbst liegen in `openspec/specs/`, archivierte Changes unter `openspec/changes/archive/`.
-
-**Shop config gotcha — shipping zone vs. market mismatch (fixed 2026-08-11).** The dev shop's only shipping zone covered the US while its only configured Market is EU (BE/NL/DE/FR/LU) — no zone covered any country a real buyer could select, so *every* shippable product read as sold out (`available: false`, `/cart/add.js` 422) regardless of stock or inventory settings, store-wide. Fixed by adding a real "EU" shipping zone/rate to the default delivery profile. This is a Shopify default a fresh/copied shop can silently reintroduce — checklist item added to MIGRATION-TO-LIVE.md. API gotcha (`deliveryProfileUpdate` needs `locationGroupsToUpdate`, not `profileLocationGroups`, which silently no-ops).
-
-**OpenSpec CLI:** `npm install -g @fission-ai/openspec` — the npm name `openspec` is an unrelated stub. See the OpenSpec CLI section above.
-
-See "Next up" in MIXED-SHOPS-PLAYBOOK.md for what's still open.
-
-**Theme workflow.** Shopify CLI is authenticated on this machine for both shops:
-```
-scripts/theme-push.sh <changed files>   # pre-live Dawn (working surface); --dev first for DEV
-```
-Always name the changed files. `.shopifyignore` independently blocks `config/settings_data.json`, including when it is accidentally named; do not remove that protection for a normal deploy. The wrapper protects Admin edits for every file type (see the Shopify CLI section above).
+**Live since 2026-11-24:** DNS switched to Shopify, storefront password off, 3,180 legacy redirects in place. What is still open after launch and with Nick: [SHOP-SETUP.md](SHOP-SETUP.md). Specs in `openspec/specs/`, archived changes in `openspec/changes/archive/`; no change is in flight.
 
 **Use the active main theme, not a CLI Development theme.** Development themes are both
 out of workflow and unreliable here: they are ephemeral, machine-bound, and can carry

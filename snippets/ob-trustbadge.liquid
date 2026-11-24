@@ -1,9 +1,9 @@
 {% comment %}
   Trusted Shops trustbadge (floating-trust-and-scroll-top spec): right edge, stacked
   above ob-scroll-top (bottom-left covered the page-width content's left edge). On mobile
-  it is hidden until a reveal point further down the page (ob-scroll-top.js). Theme-snippet
-  integration for the dev shop only — the official Trusted Shops Shopify app replaces
-  this at live migration (see MIGRATION-TO-LIVE.md).
+  it is hidden until a reveal point further down the page (ob-scroll-top.js). Interim
+  integration: once the official Trusted Shops Shopify app is installed, remove the
+  render from layout/theme.liquid (see SHOP-SETUP.md).
 
   Offsets: the widget's own bottom is 54px on desktop and 10px on mobile (its mobile
   layout applies up to 648px). Each offset puts the badge 15px above the arrow's top edge.

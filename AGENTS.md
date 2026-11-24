@@ -12,10 +12,11 @@ Where things go:
 
 - Architecture/scoping decisions, anything shared with the Only Brands
   sibling project → `MIXED-SHOPS-PLAYBOOK.md`
+- Something the theme needs from the shop (Admin setting, definition, app
+  config) and open shop-side to-dos → `SHOP-SETUP.md`
 - Process/workflow rules → CLAUDE.md's Hard Rules section
 - Capability behavior/requirements → `openspec/specs/`
 - Traps, workarounds, debugging techniques → `GOTCHAS.md`
-- Dated build history → `STATUS-LOG.md`
 - Repeatable procedures → a skill under `.agents/skills/` (Codex loads these
   directly; CLAUDE.md points Claude to them)
 

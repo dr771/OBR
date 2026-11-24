@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Builds the legacy-URL redirect map (MIGRATION-TO-LIVE.md §5) from:
+// Builds the legacy-URL redirect map (SEO-REDIRECTS.md) from:
 //   drupal_url_aliases.csv          the old site's alias export
 //   redirects/legacy-pages.json     scripts/legacy-crawl.js output (article id -> Akeneo item/colour code)
 //   redirects/gsc-clicks.json       Search Console clicks per old path, for the review order

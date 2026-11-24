@@ -15,7 +15,7 @@ Edit **Products → Collections → the collection → Metafields → Collectie 
 
 For repository edits, update `bottom-descriptions.md`, then run `python scripts/build-collection-copy.py`. Its small supported format is H2 headings, paragraphs and `[label](/collections/handle)` links. It verifies handle coverage, source availability and relative link targets while building the import artifact. Keep unique, helpful text; there is no target word count.
 
-For the separate live shop, first recreate the Collection rich-text definition with storefront `PUBLIC_READ`, then resolve live collection IDs by handle and import each `richText` object as a JSON string with `metafieldsSet`. Re-read current values first and use `compareDigest` to avoid overwriting concurrent changes. Never reuse DEV collection IDs. The theme section is already ordered after the grid. See [MIGRATION-TO-LIVE.md](../../MIGRATION-TO-LIVE.md).
+The live shop holds the imported values since the migration, and the team edits them in the Admin, so the Admin is the current source. For another bulk import, resolve the shop's collection IDs by handle (never reuse IDs across shops), re-read current values, and write each `richText` object as a JSON string with `metafieldsSet` and `compareDigest` so concurrent changes aren't overwritten. The definition is listed in [SHOP-SETUP.md](../../SHOP-SETUP.md).
 
 ## Source capture
 
@@ -27,4 +27,4 @@ The old CMS uses `.content__body` on brand landing pages and `.text__body` on pr
 
 Root-relative internal links contain no development hostname. Links point to actual collection handles; publication and rendered destinations are checked on the active storefront. FitFlop technology, waterproofing and warmth vary by model. No new copy promises treatment of pain, muscle toning, universal safety ratings, unverified recycling/certification, fixed delivery, discount percentages or perpetual stock.
 
-`kinderen` is deliberately pending: its current rules include Unisex adult items and the already documented marketing pallet (`NICK.md` #15). Authoring children's buying copy would misrepresent that assortment. `frontpage` and the unused `merken` collection are utility collections; the real brands directory is `/pages/merken`.
+`kinderen` is deliberately pending: on DEV its rules matched Unisex adult items and a marketing pallet, so children's buying copy would have misrepresented the assortment. On live it holds only Kinderen/Jongens/Meisjes products and can get copy. `frontpage` and the unused `merken` collection are utility collections; the real brands directory is `/pages/merken`.

@@ -17,12 +17,12 @@ At desktop widths the product section SHALL place media and product information 
 - **THEN** media and information stack in a single column with media first and no horizontal page overflow
 
 ### Requirement: Information-column typography follows the approved reference
-The brand line, product title, and price SHALL render at the approved reference's measured scale: the brand line uppercase at 1.1rem with 2.75px tracking and semibold weight in the muted ink, the title at 4.8rem on a 4.8rem line in the heading family at semibold weight with -0.48px tracking, and the price at 2rem on a 2.8rem line at semibold weight.
+The brand line, product title, and price SHALL render at the approved reference's measured scale: the brand line uppercase at 1.1rem with normal letter-spacing and semibold weight in the muted ink, the title at 4.8rem on a 4.8rem line in the heading family at semibold weight with -0.48px tracking, and the price at 2rem on a 2.8rem line at semibold weight. The reference's 2.75px brand-line tracking is deliberately not carried, per the storefront-wide no-positive-tracking rule.
 
 #### Scenario: Product information renders
 
 - **WHEN** a product with a vendor renders its title and price
-- **THEN** the brand line sits above the title, and brand, title, and price each match the reference's size, weight, line height, tracking, and colour
+- **THEN** the brand line sits above the title, and brand, title, and price each match the reference's size, weight, line height, and colour, with the brand line at normal letter-spacing and the title at its -0.48px tracking
 
 #### Scenario: Heading weight has a loaded face
 
@@ -110,3 +110,4 @@ The product section SHALL use the theme's configured page width as its maximum w
 
 - **WHEN** the PDP renders below the desktop breakpoint
 - **THEN** its content fills the available width less a 24px inset at each edge with no horizontal overflow
+

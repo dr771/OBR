@@ -12,9 +12,8 @@ provenance rule — same caveat applies to this file).
 ## Font stack
 
 - Body: **Inter**. Headings: **Fraunces** (serif) — **authoritative rule is
-  MIXED-SHOPS-PLAYBOOK.md:300-302, read that first**: "Dense commerce
-  UI... uses the Inter/body variable... Fraunces reserved for true
-  headings." In practice this cashes out by *surface*, not by tag or size,
+  MIXED-SHOPS-PLAYBOOK.md, Design direction, read that first**: Fraunces
+  for true headings, Inter for all dense commerce UI. In practice this cashes out by *surface*, not by tag or size,
   and the real mechanism is Dawn's own default: the theme's heading-font
   setting is Fraunces, so **every untouched `<h1>`-`<h6>` (and `.h0`-`.h5`
   utility class) is Fraunces sitewide unless a surface explicitly forces it
@@ -249,7 +248,7 @@ the FAQ page (`/pages/veelgestelde-vragen`), don't reinvent it. Values:
   `<p class="ob-content__lead">` — if that wrapper is lost the paragraph just
   stays in the body (soft failure), it doesn't break the page.
 - **Shop-side:** the page bodies live in the shop, not in git — see
-  MIGRATION-TO-LIVE.md (content pages).
+  SHOP-SETUP.md.
 
 ## Blog (2026-10-05)
 

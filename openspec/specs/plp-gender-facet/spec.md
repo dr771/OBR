@@ -1,7 +1,7 @@
 # plp-gender-facet Specification
 
 ## Purpose
-Exposes gender ("Geslacht") as a PLP facet, driven by the confirmed `custom.genderid` product metafield. Part of the confirmed facet superset (`MIXED-SHOPS-PLAYBOOK.md` "Confirmed facts") the reuse-source project doesn't need. No SB precedent exists for this facet.
+Exposes gender ("Geslacht") as a PLP facet, driven by the confirmed `custom.genderid` product metafield. The reuse-source project (SweatyBetty) doesn't need it. No SB precedent exists for this facet.
 
 ## Requirements
 
