@@ -1,0 +1,66 @@
+{% comment %}
+  OB: product JSON-LD. Shopify's structured_data output plus the fields
+  Search Console's Merchant listings report asks for and the filter leaves out:
+  - description on every variant: the report checks each hasVariant Product on
+    its own and ignores the ProductGroup's description;
+  - shippingDetails and hasMerchantReturnPolicy on every offer.
+
+  Injected by string replace on the filter's compact output, keyed on each
+  variant's @id. A format change on Shopify's side makes the replace miss: the
+  extras drop out silently, the JSON stays valid (GOTCHAS.md, Structured data).
+
+  Shipping: the Standard rate (€5.95, free from ob_free_shipping_threshold,
+  1–4 business days) to the ob_free_shipping_countries, or every country of
+  the storefront's markets when that is blank (SHOP-SETUP.md, Shipping). Free is judged per variant price, as a single-item
+  order. Returns: 30 days by mail, €5.95 return fee, the same from every
+  country (/policies/refund-policy). Change these together with the shop.
+
+  Usage:
+  {%- render 'ob-product-structured-data', product: product -%}
+{% endcomment %}
+
+{%- liquid
+  assign ob_sd = product | structured_data
+  assign ob_sd_threshold = settings.ob_free_shipping_threshold | default: 0 | times: 100 | round
+
+  assign ob_sd_description = product.description | replace: '<', ' <' | strip_html | split: ' ' | join: ' ' | truncatewords: 80
+  if ob_sd_description != blank
+    assign ob_sd_description_json = ob_sd_description | json | prepend: '#variant","@type":"Product","description":' | append: ','
+    assign ob_sd = ob_sd | replace: '#variant","@type":"Product",', ob_sd_description_json
+  endif
+
+  assign ob_sd_countries = settings.ob_free_shipping_countries | upcase | remove: ' ' | split: ','
+  if ob_sd_countries.size == 0
+    assign ob_sd_countries = localization.available_countries | map: 'iso_code'
+  endif
+-%}
+
+{%- capture ob_sd_regions -%}
+  {%- for ob_sd_country in ob_sd_countries -%}
+    {"@type":"DefinedRegion","addressCountry":{{ ob_sd_country | json }}}{% unless forloop.last %},{% endunless %}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- capture ob_sd_return_policy -%}
+  {"@type":"MerchantReturnPolicy","applicableCountry":{{ ob_sd_countries | json }},
+  {%- if shop.address.country_code != blank -%}"returnPolicyCountry":{{ shop.address.country_code | json }},{%- endif -%}
+  "returnPolicyCategory":"https://schema.org/MerchantReturnFiniteReturnWindow","merchantReturnDays":30,"returnMethod":"https://schema.org/ReturnByMail","returnFees":"https://schema.org/ReturnShippingFees","returnShippingFeesAmount":{"@type":"MonetaryAmount","value":5.95,"currency":{{ shop.currency | json }}}}
+{%- endcapture -%}
+
+{%- for variant in product.variants -%}
+  {%- liquid
+    assign ob_sd_rate = 5.95
+    if ob_sd_threshold > 0 and variant.price >= ob_sd_threshold
+      assign ob_sd_rate = 0
+    endif
+    assign ob_sd_key = 'variant=' | append: variant.id | append: '#offer","@type":"Offer",'
+  -%}
+  {%- capture ob_sd_offer_extras -%}
+    {{ ob_sd_key }}"shippingDetails":{"@type":"OfferShippingDetails","shippingRate":{"@type":"MonetaryAmount","value":{{ ob_sd_rate }},"currency":{{ shop.currency | json }}},"shippingDestination":[{{ ob_sd_regions }}],"deliveryTime":{"@type":"ShippingDeliveryTime","handlingTime":{"@type":"QuantitativeValue","minValue":0,"maxValue":1,"unitCode":"DAY"},"transitTime":{"@type":"QuantitativeValue","minValue":1,"maxValue":3,"unitCode":"DAY"}}},"hasMerchantReturnPolicy":{{ ob_sd_return_policy }},
+  {%- endcapture -%}
+  {%- assign ob_sd = ob_sd | replace: ob_sd_key, ob_sd_offer_extras -%}
+{%- endfor -%}
+
+<script type="application/ld+json">
+  {{ ob_sd }}
+</script>

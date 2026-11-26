@@ -52,6 +52,7 @@ Changed in the theme editor only; `config/settings_data.json` is protected (CLAU
 ## Shipping, checkout, accounts
 
 - Market **België & Nederland** (BE, NL, LU): *Standard* €5.95 below €70, free from €70, 1–4 business days, set in Markets → Shipping. It overrides the general delivery profile, and `deliveryProfiles` doesn't show it (GOTCHAS.md). A market country with no rate makes every product read as sold out.
+- The PDP JSON-LD (`ob-product-structured-data`) repeats the Standard rate (€5.95), the return window (30 days) and the return fee (€5.95) as fixed values for Google; threshold and countries come from the free-shipping theme settings. Change the snippet when the rate or the refund policy changes.
 - The PDP/cart tax caption shows only for country DE (PAngV). Check it once when a DE market goes live.
 - Checkout editor: accent `#0D80C4`, order summary `#F1F5F9` (the API needs Plus).
 - New customer accounts: imported Drupal customers sign in with an emailed code.

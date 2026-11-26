@@ -100,6 +100,7 @@ Akeneo/metafield interpretation lives in these, never inline in a template (mirr
 - `ob-swatch-input` — one PDP color chip (image swatch from the variant's own photo).
 - `ob-facet-color-chip` / `ob-facet-swatch-input` — color *filter* chip: flat hex from the `filtercolors` metaobject, deliberately not an image swatch.
 - `ob-plp-sort-options` — the four approved collection sort choices in fixed order, with a hidden selected fallback when Shopify's current/default sort is outside the whitelist. Search sorting deliberately stays native.
+- `ob-product-structured-data` — the PDP's product JSON-LD: Shopify's `structured_data` plus a description per variant and shipping/return details per offer for Search Console's Merchant listings.
 
 Client behavior for the card swatches is in `assets/ob-card-swatches.js` (document-level delegation — Dawn replaces the grid wholesale on every facet change). Two files are shared by the PLP and PDP rather than per-capability: `assets/ob-option-rail.js` (rail overflow cues + chevron scrolling, for any `[data-ob-option-rail]` inside a `[data-ob-option-rail-shell]`) and `assets/ob-swatch-tooltip.js` (the one fixed-position chip tooltip both surfaces need, since a rail's scroll track clips a chip-anchored CSS tooltip). Collection load-more behavior is delegated from `assets/ob-plp.js`; facet loading feedback and corrective scroll clamping remain in Dawn's `assets/facets.js` response path.
 

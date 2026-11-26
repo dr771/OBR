@@ -144,6 +144,12 @@ Non-obvious traps and working techniques for this repo, shared by Claude Code an
 - Windows: run `npx` through PowerShell (Git Bash breaks on the space in `C:\Program Files`). Chrome is at `C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`. When MCP can't connect and the user is away, take screenshots with a headless instance on a scratch profile and no debugging port (`--headless=new --user-data-dir=<scratch> --screenshot=…`) instead of killing their Chrome.
 - macOS: if `npx` fails with EPERM on `~/.npm/_cacache`, point it at a writable cache (`npm_config_cache=/private/tmp/npm-cache`).
 
+## Structured data (Search Console)
+
+- **Merchant listings checks each `hasVariant` Product on its own.** Shopify's `structured_data` puts `description` only on the ProductGroup, and the report flags "Missing field 'description'" on every variant anyway; it also wants `shippingDetails` and `hasMerchantReturnPolicy` per offer (first seen 2026-11-26, all 22 items). `snippets/ob-product-structured-data.liquid` adds all three by string replace on the filter's compact output (`variant=<id>#offer","@type":"Offer",`, `#variant","@type":"Product",`). If Shopify ever reformats that output (spaces, key order), the replace misses silently: the JSON stays valid but the warnings come back. Count the fields on a live PDP's JSON-LD after a Shopify release.
+- "Missing field 'aggregateRating'/'review'" (Product snippets) needs a reviews app; there is none, so it stays.
+- Search Console's Shipping and returns settings (Settings) override this markup if someone fills them in later.
+
 ## Trusted Shops trustbadge
 
 - **The widget sets an inline `z-index: 2147483647`** on `div#trustbadge-container-<hash>`, which it appends to `<body>`. Left alone it floats over the cart drawer and the mobile menu. `assets/component-ob-scroll-top.css` overrides it with `[id^='trustbadge-container-'] { z-index: 8 !important }`. The id prefix is the only stable hook; the inner elements have hashed class names, so the badge's position can only be changed through the script's `data-*` attributes (`data-mobile-y-offset`, `data-desktop-position`, …), not from CSS. If the badge suddenly covers a drawer, check whether Trusted Shops renamed the container.
