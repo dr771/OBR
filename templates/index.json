@@ -251,7 +251,7 @@
     "bestsellers": {
       "type": "featured-collection",
       "settings": {
-        "collection": "all",
+        "collection": "bestsellers",
         "products_to_show": 8,
         "eyebrow": "Populair nu",
         "title": "Onze bestsellers",
