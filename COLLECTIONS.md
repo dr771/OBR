@@ -105,6 +105,7 @@ No rank: a product in one of these is always also in a rank-5 collection.
 - `volle-prijs`: price reduced is not set (325). Not published; the target for a code that should skip Sale (DISCOUNTS.md). WELCOME27 on live doesn't use it: it is an order discount on everything. A product with mixed reduced and full-price sizes is in both.
 - Campaign collections: handle `actie-…`, must be published to Online Store or no badge shows (DISCOUNTS.md). None exist on 2026-11-24.
 - `frontpage` (manual, empty) and `merken` (manual, unused; the brands directory is `/pages/merken`): leave unranked.
+- `bestsellers` (manual, sort manual, published, created 2026-11-26): the homepage "Onze bestsellers" row. It used `all` (best-selling), but that ranking counted the pre-launch test orders #1001–#1024 and there is no Drupal sales history in Shopify. Eight in-stock picks from 16 months of Search Console demand (FitFlop slippers, sneakers, mules, boots, ballerinas; Mechanix gloves; Juicy Couture track pants). Manual means sold-out products stay in it: check it after each sync. Unranked. Swap back to `all` once there are enough real orders, or replace with the ERP's real top sellers.
 
 ## Breadcrumb rank
 
